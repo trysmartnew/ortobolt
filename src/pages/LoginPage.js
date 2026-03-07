@@ -1,0 +1,23 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import React, { useState } from 'react';
+import { Activity, Eye, EyeOff, Shield } from 'lucide-react';
+import { useApp } from '@/contexts/AppContext';
+import { Button } from '@/components/ui';
+export default function LoginPage() {
+    const { login } = useApp();
+    const [email, setEmail] = useState('fernanda.carvalho@ortobolt.com.br');
+    const [password, setPassword] = useState('demo1234');
+    const [showPass, setShowPass] = useState(false);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const handleSubmit = async () => {
+        setLoading(true);
+        setError('');
+        await new Promise(r => setTimeout(r, 800));
+        const ok = login(email, password);
+        if (!ok)
+            setError('E-mail ou senha inválidos. Use o acesso de demonstração.');
+        setLoading(false);
+    };
+    return (_jsxs("div", { className: "min-h-screen bg-gradient-to-br from-[#001a40] via-[#003070] to-[#0056b3] flex items-center justify-center p-4", children: [_jsx("div", { className: "absolute inset-0 opacity-5", style: { backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' } }), _jsxs("div", { className: "w-full max-w-md relative", children: [_jsxs("div", { className: "bg-white rounded-2xl shadow-2xl overflow-hidden", children: [_jsxs("div", { className: "bg-[#0056b3] px-8 py-8 text-white text-center relative overflow-hidden", children: [_jsx("div", { className: "absolute inset-0 opacity-10", style: { backgroundImage: 'radial-gradient(circle at 50% 120%, white 0%, transparent 60%)' } }), _jsxs("div", { className: "relative", children: [_jsx("div", { className: "w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm", children: _jsx(Activity, { className: "h-8 w-8 text-white" }) }), _jsx("h1", { className: "text-2xl font-bold tracking-wide", style: { fontFamily: 'Montserrat' }, children: "OrtoBolt" }), _jsx("p", { className: "text-blue-200 text-sm mt-1 font-mono", children: "Ortopedia Veterin\u00E1ria Inteligente" })] })] }), _jsxs("div", { className: "px-8 py-7 space-y-5", children: [_jsxs("div", { children: [_jsx("p", { className: "text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4", children: "Acesso ao Sistema" }), _jsxs("div", { className: "space-y-4", children: [_jsxs("div", { children: [_jsx("label", { className: "block text-xs font-semibold text-slate-600 mb-1.5", children: "E-mail Profissional" }), _jsx("input", { type: "email", value: email, onChange: e => setEmail(e.target.value), placeholder: "vet@hospital.com.br", className: "w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] focus:border-transparent font-mono" })] }), _jsxs("div", { children: [_jsx("label", { className: "block text-xs font-semibold text-slate-600 mb-1.5", children: "Senha" }), _jsxs("div", { className: "relative", children: [_jsx("input", { type: showPass ? 'text' : 'password', value: password, onChange: e => setPassword(e.target.value), placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022", onKeyDown: e => e.key === 'Enter' && handleSubmit(), className: "w-full border border-slate-200 rounded-lg px-3.5 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] focus:border-transparent font-mono" }), _jsx("button", { type: "button", onClick: () => setShowPass(v => !v), className: "absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600", children: showPass ? _jsx(EyeOff, { size: 15 }) : _jsx(Eye, { size: 15 }) })] })] })] }), error && _jsx("p", { className: "text-xs text-red-500 mt-2 bg-red-50 px-3 py-2 rounded-lg", children: error })] }), _jsx(Button, { className: "w-full", size: "lg", loading: loading, onClick: handleSubmit, children: "Entrar no Sistema" }), _jsxs("div", { className: "bg-slate-50 rounded-xl p-4 border border-slate-100", children: [_jsxs("div", { className: "flex items-center gap-2 mb-2", children: [_jsx(Shield, { className: "h-3.5 w-3.5 text-[#0056b3]" }), _jsx("p", { className: "text-xs font-semibold text-[#0056b3]", children: "Acesso de Demonstra\u00E7\u00E3o" })] }), _jsx("p", { className: "text-xs text-slate-500 font-mono", children: "Email: fernanda.carvalho@ortobolt.com.br" }), _jsx("p", { className: "text-xs text-slate-500 font-mono", children: "Senha: demo1234" })] })] })] }), _jsx("p", { className: "text-center text-blue-200/60 text-xs mt-6 font-mono", children: "\u00A9 2025 OrtoBolt \u00B7 CRMV-SP Certificado \u00B7 HL7 FHIR Compliant" })] })] }));
+}

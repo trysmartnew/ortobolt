@@ -1,0 +1,37 @@
+export const MOCK_USER = { id: 'vet-001', name: 'Dra. Fernanda Carvalho', email: 'fernanda.carvalho@ortobolt.com.br', role: 'veterinarian', specialty: 'Ortopedia e Traumatologia Veterinária', crmv: 'CRMV-SP 45.821', institution: 'Hospital Veterinário UNESP — Botucatu', certifications: [{ id: 'c1', title: 'Especialização em Ortopedia Veterinária', issuer: 'CFMV', year: 2019, verified: true }, { id: 'c2', title: 'Cirurgia Minimamente Invasiva — TPLO Avançado', issuer: 'ACVS', year: 2021, verified: true }, { id: 'c3', title: 'Visão Computacional Aplicada — Medicina Veterinária', issuer: 'USP', year: 2023, verified: true }], stats: { totalCases: 847, successRate: 96.4, avgPrecision: 94.7, monthlyProcedures: 23 }, preferences: { notifications: true, theme: 'light', language: 'pt', autoAnalysis: true, reportFormat: 'pdf' } };
+export const MOCK_CASES = [
+    { id: 'case-001', title: 'TPLO Bilateral — Ruptura LCA', patientName: 'Thor', species: 'canine', breed: 'Labrador Retriever', ageYears: 4, weightKg: 32.5, procedure: 'TPLO', status: 'completed', precisionScore: 97.2, riskLevel: 'low', createdAt: '2025-03-01T08:30:00Z', updatedAt: '2025-03-01T14:20:00Z', tags: ['TPLO', 'bilateral', 'LCA', 'canino'], imageUrl: 'https://picsum.photos/seed/ort1/400/300', veterinarianId: 'vet-001', aiAnalysis: { id: 'ai-001', timestamp: '2025-03-01T09:00:00Z', precisionScore: 97.2, confidence: 0.94, processingTimeMs: 1240, riskFactors: [{ category: 'Peso', description: 'Peso elevado pode aumentar estresse no implante', severity: 'low' }], recommendations: ['Fisioterapia pós-operatória por 8 semanas', 'Controle radiográfico em 6 semanas'], anatomicalLandmarks: [{ name: 'Plateau tibial', detected: true, confidence: 0.97 }, { name: 'Tuberosidade tibial', detected: true, confidence: 0.95 }, { name: 'Côndilo femoral lateral', detected: true, confidence: 0.93 }] }, notes: 'Procedimento bilateral executado sem intercorrências.' },
+    { id: 'case-002', title: 'FHO — Displasia Coxofemoral Severa', patientName: 'Mimi', species: 'feline', breed: 'Persa', ageYears: 7, weightKg: 5.1, procedure: 'FHO', status: 'completed', precisionScore: 95.8, riskLevel: 'medium', createdAt: '2025-03-03T10:00:00Z', updatedAt: '2025-03-03T12:45:00Z', tags: ['FHO', 'felino', 'displasia'], imageUrl: 'https://picsum.photos/seed/ort2/400/300', veterinarianId: 'vet-001', notes: 'Recuperação excelente. Deambulação em 72h.' },
+    { id: 'case-003', title: 'Fixação Interna — Fratura Fêmur Distal', patientName: 'Baio', species: 'equine', breed: 'Quarto de Milha', ageYears: 3, weightKg: 480, procedure: 'fracture_fixation', status: 'in_analysis', precisionScore: 88.4, riskLevel: 'high', createdAt: '2025-03-05T07:15:00Z', updatedAt: '2025-03-05T09:30:00Z', tags: ['equino', 'fratura', 'fêmur', 'crítico'], imageUrl: 'https://picsum.photos/seed/ort3/400/300', veterinarianId: 'vet-001' },
+    { id: 'case-004', title: 'TTA — Ruptura Parcial LCA', patientName: 'Max', species: 'canine', breed: 'Rottweiler', ageYears: 5, weightKg: 45.2, procedure: 'TTA', status: 'pending', riskLevel: 'medium', createdAt: '2025-03-06T14:00:00Z', updatedAt: '2025-03-06T14:00:00Z', tags: ['TTA', 'LCA', 'canino', 'grande porte'], imageUrl: 'https://picsum.photos/seed/ort4/400/300', veterinarianId: 'vet-001' },
+    { id: 'case-005', title: 'Cirurgia Espinhal — Hérnia Hansen Tipo I', patientName: 'Bolinha', species: 'canine', breed: 'Dachshund', ageYears: 6, weightKg: 9.8, procedure: 'spinal_surgery', status: 'critical', riskLevel: 'high', createdAt: '2025-03-07T03:00:00Z', updatedAt: '2025-03-07T03:00:00Z', tags: ['espinhal', 'hérnia', 'urgência', 'Hansen'], imageUrl: 'https://picsum.photos/seed/ort5/400/300', veterinarianId: 'vet-001' },
+    { id: 'case-006', title: 'Substituição Articular — Coxofemoral', patientName: 'Luna', species: 'canine', breed: 'Pastor Alemão', ageYears: 9, weightKg: 34.0, procedure: 'joint_replacement', status: 'completed', precisionScore: 92.1, riskLevel: 'medium', createdAt: '2025-02-28T11:00:00Z', updatedAt: '2025-02-28T16:30:00Z', tags: ['prótese', 'coxofemoral', 'idoso'], imageUrl: 'https://picsum.photos/seed/ort6/400/300', veterinarianId: 'vet-001' },
+];
+export const KPI_METRICS = [
+    { id: 'k1', label: 'Precisão Média IA', value: 94.7, unit: '%', trend: 2.3, trendDirection: 'up', icon: 'Target', color: '#0056b3' },
+    { id: 'k2', label: 'Casos este Mês', value: 23, trend: 15.0, trendDirection: 'up', icon: 'Clipboard', color: '#0891b2' },
+    { id: 'k3', label: 'Taxa de Sucesso', value: 96.4, unit: '%', trend: 0.8, trendDirection: 'up', icon: 'CheckCircle', color: '#059669' },
+    { id: 'k4', label: 'Tempo de Análise', value: '1.2', unit: 's', trend: -18.0, trendDirection: 'down', icon: 'Zap', color: '#d97706' },
+];
+export const CHART_DATA = [
+    { label: 'Set', precision: 91.2, cases: 18, success: 17 }, { label: 'Out', precision: 92.8, cases: 21, success: 20 },
+    { label: 'Nov', precision: 90.5, cases: 16, success: 15 }, { label: 'Dez', precision: 93.4, cases: 19, success: 18 },
+    { label: 'Jan', precision: 94.1, cases: 22, success: 21 }, { label: 'Fev', precision: 93.8, cases: 20, success: 19 },
+    { label: 'Mar', precision: 94.7, cases: 23, success: 22 },
+];
+export const MOCK_NOTIFICATIONS = [
+    { id: 'n1', type: 'alert', title: 'Caso Crítico Detectado', message: 'Caso #case-005 (Bolinha) requer atenção imediata — hérnia grau III.', timestamp: '2025-03-07T03:05:00Z', read: false, caseId: 'case-005' },
+    { id: 'n2', type: 'success', title: 'Análise Concluída', message: 'Análise do caso #case-001 (Thor) finalizada com 97.2% de precisão.', timestamp: '2025-03-07T02:00:00Z', read: false, caseId: 'case-001' },
+    { id: 'n3', type: 'info', title: 'Relatório Mensal Disponível', message: 'Relatório de desempenho de Fevereiro/2025 está pronto para download.', timestamp: '2025-03-01T08:00:00Z', read: true },
+    { id: 'n4', type: 'warning', title: 'Calibração Recomendada', message: 'Sistema de visão computacional sugere recalibração após 500 análises.', timestamp: '2025-02-28T18:30:00Z', read: true },
+    { id: 'n5', type: 'info', title: 'Atualização do Modelo IA', message: 'Modelo OrthoVision v3.2 disponível — precisão +1.8% em procedimentos TPLO.', timestamp: '2025-02-25T09:00:00Z', read: true },
+];
+export const MOCK_REPORTS = [
+    { id: 'r1', title: 'Relatório de Desempenho — Fevereiro 2025', type: 'monthly', generatedAt: '2025-03-01T08:00:00Z', period: 'Fev/2025', status: 'ready', sizeKb: 248 },
+    { id: 'r2', title: 'Relatório de Desempenho — Janeiro 2025', type: 'monthly', generatedAt: '2025-02-01T08:00:00Z', period: 'Jan/2025', status: 'ready', sizeKb: 312 },
+    { id: 'r3', title: 'Auditoria de Precisão — Q4 2024', type: 'audit', generatedAt: '2025-01-05T10:00:00Z', period: 'Out-Dez/2024', status: 'ready', sizeKb: 556 },
+    { id: 'r4', title: 'Análise de Caso — TPLO Thor', type: 'case', generatedAt: '2025-03-01T14:30:00Z', period: 'Mar/2025', status: 'ready', sizeKb: 128 },
+    { id: 'r5', title: 'Relatório de Desempenho — Março 2025', type: 'monthly', generatedAt: '2025-03-07T00:00:00Z', period: 'Mar/2025', status: 'generating', sizeKb: 0 },
+];
+export const PROCEDURE_LABELS = { TPLO: 'TPLO', FHO: 'FHO', TTA: 'TTA', LCP_repair: 'Reparo LCA', fracture_fixation: 'Fixação de Fratura', joint_replacement: 'Substituição Articular', spinal_surgery: 'Cirurgia Espinhal', other: 'Outro' };
+export const SPECIES_LABELS = { canine: 'Canino', feline: 'Felino', equine: 'Equino', bovine: 'Bovino', other: 'Outro' };
