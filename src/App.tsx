@@ -11,6 +11,7 @@ import SettingsPage from '@/pages/SettingsPage';
 import NotificationsPage from '@/pages/NotificationsPage';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
+import ProductTour, { TourButton, TOUR_STEPS } from '@/components/ProductTour';
 
 const PAGE_MAP = {
   dashboard:     DashboardPage,
@@ -24,9 +25,13 @@ const PAGE_MAP = {
 } as const;
 
 function AppInner() {
-  const { isLoggedIn, currentPage } = useApp();
+  const { isLoggedIn, currentPage, tourActive, startTour, closeTour } = useApp();
+
   if (!isLoggedIn) return <LoginPage />;
+
   const PageComponent = PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
+  const hasTour = (TOUR_STEPS[currentPage]?.length ?? 0) > 0;
+
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
       <Sidebar />
@@ -36,6 +41,18 @@ function AppInner() {
           <PageComponent />
         </main>
       </div>
+
+      {/* Product Tour overlay */}
+      <ProductTour
+        page={currentPage}
+        active={tourActive}
+        onClose={closeTour}
+      />
+
+      {/* Floating tour button — visible on every page that has steps */}
+      {hasTour && !tourActive && (
+        <TourButton onClick={startTour} />
+      )}
     </div>
   );
 }

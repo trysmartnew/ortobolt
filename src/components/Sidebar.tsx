@@ -1,15 +1,15 @@
 import React from 'react';
-import { LayoutDashboard, MessageSquare, Camera, Images, User, FileText, Settings, Bell, LogOut, Activity } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, Camera, Images, User, FileText, Settings, Bell, LogOut } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 
 const NAV = [
-  { id: 'dashboard',     label: 'Dashboard',      icon: LayoutDashboard },
-  { id: 'chat',          label: 'Chat IA',         icon: MessageSquare  },
-  { id: 'analysis',      label: 'Análise Visual',  icon: Camera         },
-  { id: 'gallery',       label: 'Galeria de Casos',icon: Images         },
-  { id: 'reports',       label: 'Relatórios',      icon: FileText       },
-  { id: 'profile',       label: 'Perfil',          icon: User           },
-  { id: 'settings',      label: 'Configurações',   icon: Settings       },
+  { id: 'dashboard',     label: 'Dashboard',       icon: LayoutDashboard },
+  { id: 'chat',          label: 'Chat IA',          icon: MessageSquare  },
+  { id: 'analysis',      label: 'Análise Visual',   icon: Camera         },
+  { id: 'gallery',       label: 'Galeria de Casos', icon: Images         },
+  { id: 'reports',       label: 'Relatórios',       icon: FileText       },
+  { id: 'profile',       label: 'Perfil',           icon: User           },
+  { id: 'settings',      label: 'Configurações',    icon: Settings       },
 ] as const;
 
 export default function Sidebar() {
@@ -18,23 +18,19 @@ export default function Sidebar() {
   return (
     <aside className="w-64 flex-shrink-0 bg-[#001a40] text-white flex flex-col h-screen sticky top-0 z-30">
       {/* Logo */}
-      <div className="px-6 py-5 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#0056b3] flex items-center justify-center flex-shrink-0">
-            <Activity className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="font-bold text-base tracking-wide" style={{ fontFamily: 'Montserrat' }}>OrtoBolt</h1>
-            <p className="text-[10px] text-blue-300 font-mono">v3.2 · OrthoVision AI</p>
-          </div>
-        </div>
+      <div className="px-4 py-4 border-b border-white/10 flex items-center justify-center">
+        <img
+          src="/logo.png"
+          alt="OrtoBolt — Veterinary Orthopedics"
+          className="w-full max-w-[180px] h-auto object-contain"
+          style={{ filter: 'brightness(1.1) drop-shadow(0 0 8px rgba(0,149,255,0.25))' }}
+        />
       </div>
 
       {/* Nav */}
       <nav className="flex-1 py-4 space-y-0.5 px-3 overflow-y-auto">
         {NAV.map(({ id, label, icon: Icon }) => {
           const active = currentPage === id;
-          const showBadge = id === 'notifications' && unreadCount > 0;
           return (
             <button
               key={id}
@@ -43,9 +39,8 @@ export default function Sidebar() {
                 active ? 'bg-[#0056b3] text-white shadow-lg' : 'text-blue-200/80 hover:bg-white/10 hover:text-white'
               }`}
             >
-              <Icon className="h-4.5 w-4.5 flex-shrink-0" size={18} />
+              <Icon className="flex-shrink-0" size={18} />
               <span className="flex-1 text-left">{label}</span>
-              {showBadge && <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">{unreadCount}</span>}
             </button>
           );
         })}
@@ -59,7 +54,9 @@ export default function Sidebar() {
           >
             <Bell size={18} />
             <span className="flex-1 text-left">Notificações</span>
-            {unreadCount > 0 && <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">{unreadCount}</span>}
+            {unreadCount > 0 && (
+              <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">{unreadCount}</span>
+            )}
           </button>
         </div>
       </nav>

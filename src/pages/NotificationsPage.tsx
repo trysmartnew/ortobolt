@@ -48,7 +48,7 @@ export default function NotificationsPage() {
       ) : (
         <>
           {unread.length > 0 && (
-            <div className="space-y-3">
+            <div data-tour="tour-unread-notifications" className="space-y-3">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Não lidas</p>
               {unread.map(n => <NotifRow key={n.id} n={n} onRead={markRead} />)}
             </div>

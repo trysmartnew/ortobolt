@@ -78,10 +78,10 @@ export default function GalleryPage() {
   return (
     <div className="p-6 max-w-7xl space-y-5">
       <SectionHeader title="Galeria de Casos Clínicos" subtitle={`${cases.length} casos no sistema`}
-        action={<Button size="sm" onClick={() => setShowAdd(true)}><Plus size={14} /> Novo Caso</Button>} />
+        action={<span data-tour="tour-add-case"><Button size="sm" onClick={() => setShowAdd(true)}><Plus size={14} /> Novo Caso</Button></span>} />
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3 items-center">
+      <div data-tour="tour-gallery-filters" className="flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 flex-1 min-w-48">
           <Search size={14} className="text-slate-400" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por nome, espécie, tag..." className="flex-1 text-sm outline-none bg-transparent font-mono" />
@@ -101,7 +101,7 @@ export default function GalleryPage() {
       {filtered.length === 0 ? (
         <EmptyState icon={<Filter size={48} />} title="Nenhum caso encontrado" description="Ajuste os filtros ou adicione um novo caso clínico." />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div data-tour="tour-gallery-grid" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map(c => (
             <Card key={c.id} className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow group" onClick={() => setSelected(c)}>
               <div className="relative">

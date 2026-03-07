@@ -102,14 +102,14 @@ export default function ChatPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 bg-white">
+      <div data-tour="tour-chat-messages" className="flex-1 overflow-y-auto px-6 py-5 space-y-5 bg-white">
         {chatHistory.map(m => <MessageBubble key={m.id} msg={m} />)}
         <div ref={bottomRef} />
       </div>
 
       {/* Suggested */}
       {chatHistory.length <= 1 && (
-        <div className="px-6 pb-3 flex flex-wrap gap-2 bg-white">
+        <div data-tour="tour-chat-suggestions" className="px-6 pb-3 flex flex-wrap gap-2 bg-white">
           {SUGGESTED.map((s, i) => (
             <button key={i} onClick={() => send(s)} className="text-xs text-[#0056b3] bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors text-left">{s}</button>
           ))}
@@ -117,7 +117,7 @@ export default function ChatPage() {
       )}
 
       {/* Input */}
-      <div className="flex-shrink-0 px-6 py-4 border-t border-slate-100 bg-white">
+      <div data-tour="tour-chat-input" className="flex-shrink-0 px-6 py-4 border-t border-slate-100 bg-white">
         <div className="flex items-end gap-3 bg-slate-50 rounded-2xl border border-slate-200 focus-within:border-[#0056b3] focus-within:ring-2 focus-within:ring-[#0056b3]/20 transition-all px-4 py-3">
           <textarea
             ref={inputRef}

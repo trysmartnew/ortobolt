@@ -21,6 +21,10 @@ interface AppContextType {
   addNotification: (n: Omit<Notification, 'id' | 'timestamp' | 'read'>) => void;
   chatHistory: ChatMessage[];
   setChatHistory: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
+  // Tour
+  tourActive: boolean;
+  startTour: () => void;
+  closeTour: () => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -31,6 +35,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
   const [cases, setCases] = useState<ClinicalCase[]>(MOCK_CASES);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
+  const [tourActive, setTourActive] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
     { id: 'init', role: 'assistant', content: '# Olá! Sou o **OrthoAI** 🐾\n\nSou seu assistente especializado em ortopedia veterinária. Posso ajudar com:\n\n- **Protocolos cirúrgicos** (TPLO, FHO, TTA e mais)\n- **Análise de risco** pré-operatório\n- **Dosagens e anestesia** específicas por espécie\n- **Reabilitação** pós-cirúrgica\n- **Interpretação** de achados radiográficos\n\nComo posso ajudar hoje?', timestamp: new Date().toISOString() },
   ]);
@@ -39,12 +44,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (email && password.length >= 4) {
       setUser(MOCK_USER);
       setIsLoggedIn(true);
+      // Auto-start tour on first login
+      setTimeout(() => setTourActive(true), 600);
       return true;
     }
     return false;
   }, []);
 
-  const logout = useCallback(() => { setIsLoggedIn(false); setUser(null); setCurrentPage('dashboard'); }, []);
+  const logout = useCallback(() => {
+    setIsLoggedIn(false);
+    setUser(null);
+    setCurrentPage('dashboard');
+    setTourActive(false);
+  }, []);
 
   const addCase = useCallback((c: ClinicalCase) => setCases(prev => [c, ...prev]), []);
   const updateCase = useCallback((id: string, updates: Partial<ClinicalCase>) =>
@@ -57,8 +69,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setNotifications(prev => [{ ...n, id: `n-${Date.now()}`, timestamp: new Date().toISOString(), read: false }, ...prev]);
   }, []);
 
+  const startTour = useCallback(() => setTourActive(true), []);
+  const closeTour = useCallback(() => setTourActive(false), []);
+
   return (
-    <AppContext.Provider value={{ user, isLoggedIn, login, logout, currentPage, setCurrentPage, cases, addCase, updateCase, notifications, unreadCount, markAllRead, markRead, addNotification, chatHistory, setChatHistory }}>
+    <AppContext.Provider value={{
+      user, isLoggedIn, login, logout,
+      currentPage, setCurrentPage,
+      cases, addCase, updateCase,
+      notifications, unreadCount, markAllRead, markRead, addNotification,
+      chatHistory, setChatHistory,
+      tourActive, startTour, closeTour,
+    }}>
       {children}
     </AppContext.Provider>
   );

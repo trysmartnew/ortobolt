@@ -79,7 +79,7 @@ export default function AnalysisPage() {
       {/* Controls */}
       {mode === 'idle' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button onClick={startCamera} className="flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-[#0056b3] hover:bg-blue-50/50 transition-all group">
+          <button data-tour="tour-webcam" onClick={startCamera} className="flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-[#0056b3] hover:bg-blue-50/50 transition-all group">
             <div className="w-14 h-14 rounded-2xl bg-[#0056b3]/10 flex items-center justify-center group-hover:bg-[#0056b3]/20 transition-colors">
               <Camera className="h-7 w-7 text-[#0056b3]" />
             </div>
@@ -88,7 +88,7 @@ export default function AnalysisPage() {
               <p className="text-xs text-slate-500 mt-1">Capture imagem radiográfica ou procedimento via webcam</p>
             </div>
           </button>
-          <button onClick={() => fileRef.current?.click()} className="flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-[#0056b3] hover:bg-blue-50/50 transition-all group">
+          <button data-tour="tour-upload" onClick={() => fileRef.current?.click()} className="flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-[#0056b3] hover:bg-blue-50/50 transition-all group">
             <div className="w-14 h-14 rounded-2xl bg-[#0056b3]/10 flex items-center justify-center group-hover:bg-[#0056b3]/20 transition-colors">
               <Upload className="h-7 w-7 text-[#0056b3]" />
             </div>
@@ -130,7 +130,7 @@ export default function AnalysisPage() {
 
       {/* Preview + analyze */}
       {(mode === 'preview' || mode === 'analyzing') && imageData && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div data-tour="tour-analysis-result" className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Card className="p-4">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Imagem Capturada</p>
             <img src={imageData} alt="Análise" className="w-full rounded-xl border border-slate-100 object-contain max-h-80" />

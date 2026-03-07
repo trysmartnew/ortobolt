@@ -27,14 +27,14 @@ export default function DashboardPage() {
       )}
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      <div data-tour="tour-kpis" className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         {KPI_METRICS.map(m => <KPIWidget key={m.id} {...m} />)}
       </div>
 
       {/* Charts row */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         {/* Precision trend */}
-        <Card className="p-5 xl:col-span-2">
+        <Card data-tour="tour-precision-chart" className="p-5 xl:col-span-2">
           <SectionHeader title="Evolução da Precisão IA" subtitle="Últimos 7 meses · OrthoVision v3.2" />
           <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={CHART_DATA} margin={{ top: 5, right: 10, bottom: 0, left: -20 }}>
@@ -54,7 +54,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Cases bar */}
-        <Card className="p-5">
+        <Card data-tour="tour-cases-chart" className="p-5">
           <SectionHeader title="Casos Mensais" subtitle="Volume e sucesso" />
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={CHART_DATA} margin={{ top: 5, right: 5, bottom: 0, left: -25 }}>
@@ -70,7 +70,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent cases */}
-      <Card className="overflow-hidden">
+      <Card data-tour="tour-recent-cases" className="overflow-hidden">
         <div className="p-5 border-b border-slate-50">
           <SectionHeader title="Casos Recentes" subtitle={`${cases.length} casos no sistema`}
             action={<button onClick={() => setCurrentPage('gallery')} className="text-xs font-semibold text-[#0056b3] hover:underline">Ver todos →</button>} />

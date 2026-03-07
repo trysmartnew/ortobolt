@@ -38,7 +38,7 @@ export default function SettingsPage() {
     <div className="p-6 max-w-2xl space-y-6">
       <SectionHeader title="Configurações" subtitle="Preferências do sistema e conta" />
 
-      <Card className="p-5">
+      <Card data-tour="tour-settings-toggles" className="p-5">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Notificações e Interface</p>
         <div>
           <SettingRow icon={Bell} title="Notificações em Tempo Real" description="Alertas de casos críticos e análises concluídas">

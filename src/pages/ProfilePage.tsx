@@ -56,7 +56,7 @@ export default function ProfilePage() {
       </Card>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div data-tour="tour-profile-stats" className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Total de Casos', value: user.stats.totalCases, color: '#0056b3' },
           { label: 'Taxa de Sucesso', value: `${user.stats.successRate}%`, color: '#059669' },
@@ -70,7 +70,7 @@ export default function ProfilePage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div data-tour="tour-competency-chart" className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Certifications */}
         <Card className="p-5">
           <SectionHeader title="Certificações" subtitle={`${user.certifications.length} certificados`} />

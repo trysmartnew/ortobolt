@@ -42,7 +42,7 @@ export default function ReportsPage() {
 
       {/* Generate section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="p-5">
+        <Card data-tour="tour-monthly-report" className="p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-[#0056b3]/10 rounded-xl flex items-center justify-center"><FileText className="h-5 w-5 text-[#0056b3]" /></div>
             <div>
@@ -56,7 +56,7 @@ export default function ReportsPage() {
           </Button>
         </Card>
 
-        <Card className="p-5">
+        <Card data-tour="tour-case-report" className="p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center"><CheckCircle className="h-5 w-5 text-emerald-600" /></div>
             <div>
@@ -72,7 +72,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Reports list */}
-      <Card className="overflow-hidden">
+      <Card data-tour="tour-report-history" className="overflow-hidden">
         <div className="p-5 border-b border-slate-50">
           <SectionHeader title="Histórico de Relatórios" subtitle={`${reports.length} relatórios gerados`} />
         </div>
