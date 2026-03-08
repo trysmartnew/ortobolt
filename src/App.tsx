@@ -14,7 +14,7 @@ import NotificationsPage from '@/pages/NotificationsPage';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
 import ProductTour from '@/components/ProductTour';
- 
+
 const PAGE_MAP = {
   dashboard:     DashboardPage,
   chat:          ChatPage,
@@ -26,65 +26,45 @@ const PAGE_MAP = {
   settings:      SettingsPage,
   notifications: NotificationsPage,
 } as const;
- 
+
 function AppInner() {
-  const {
-    isLoggedIn, authLoading,
-    currentPage, tourActive, closeTour,
-    logout, setUserFromSession,
-  } = useApp();
- 
-  // ── Verificar sessão ao inicializar ──────────────────────────────────
+  const { isLoggedIn, authLoading, currentPage, tourActive, closeTour, logout, setUserFromSession } = useApp();
+
   useEffect(() => {
-    // 1. Checar se há sessão ativa no localStorage
+    // Verificar sessão existente no localStorage
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        // Sessão válida → buscar perfil e marcar logado
         setUserFromSession(session.user);
       } else {
-        // Sem sessão → liberar tela de loading
-        // (authLoading vai para false dentro do setUserFromSession)
-        // Precisa setar manualmente aqui quando não há sessão:
-        setUserFromSession({ id: '' }).catch(() => {});
+        setUserFromSession({ id: '' });
       }
     });
- 
-    // 2. Ouvir eventos de auth (logout em outra aba, expiração de token)
+
+    // Ouvir mudanças de auth (logout em outra aba, token expirado)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === 'SIGNED_OUT') {
-          logout();
-        }
-        if (event === 'TOKEN_REFRESHED' && session?.user) {
-          setUserFromSession(session.user);
-        }
+      (event: string, session: { user?: { id: string } } | null) => {
+        if (event === 'SIGNED_OUT') logout();
+        if (event === 'TOKEN_REFRESHED' && session?.user) setUserFromSession(session.user);
       }
     );
- 
-    // Limpar listener ao desmontar o componente
     return () => subscription.unsubscribe();
-  }, []); // executa apenas uma vez ao montar
- 
-  // ── Tela de loading enquanto verifica sessão ─────────────────────────
+  }, []);
+
+  // Tela de loading enquanto verifica sessão
   if (authLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#001a40]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full
-               animate-spin mx-auto mb-4" />
+          <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4" />
           <p className="text-white/60 text-sm font-mono">Verificando sessão...</p>
         </div>
       </div>
     );
   }
- 
-  // ── Tela de login se não autenticado ─────────────────────────────────
+
   if (!isLoggedIn) return <LoginPage />;
- 
-  // ── App principal ─────────────────────────────────────────────────────
-  const PageComponent =
-    PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
- 
+  const PageComponent = PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
+
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
       <Sidebar />
@@ -98,7 +78,8 @@ function AppInner() {
     </div>
   );
 }
- 
+
 export default function App() {
   return <AppProvider><AppInner /></AppProvider>;
 }
+
