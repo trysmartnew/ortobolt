@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Trash2, Bot, User, Copy, Check, Paperclip } from 'lucide-react';
+import { Send, Trash2, Bot, User, Copy, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { sendChatMessage } from '@/services/aiService';
 import { Button, Card, Spinner } from '@/components/ui';
@@ -93,10 +93,10 @@ export default function ChatPage() {
           <div className="w-9 h-9 bg-[#0056b3] rounded-xl flex items-center justify-center"><Bot className="h-5 w-5 text-white" /></div>
           <div>
             <p className="text-sm font-bold text-slate-900">OrthoAI Assistant</p>
-            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /><span className="text-xs text-emerald-600 font-mono">Ativo · Gemini 2.0 Flash</span></div>
+            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /><span className="text-xs text-emerald-600 font-mono">Ativo · OpenRouter · Mistral-7B</span></div>
           </div>
         </div>
-        <button onClick={() => setChatHistory([chatHistory[0]])} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-red-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50">
+        <button onClick={() => setChatHistory(h => h.length > 0 ? [h[0]] : h)} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-red-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50">
           <Trash2 size={13} /> Limpar conversa
         </button>
       </div>

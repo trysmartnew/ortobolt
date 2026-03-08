@@ -30,7 +30,7 @@ export default function Sidebar() {
       {/* Nav */}
       <nav className="flex-1 py-4 space-y-0.5 px-3 overflow-y-auto">
         {NAV.map(({ id, label, icon: Icon }) => {
-          const active = currentPage === id;
+          const active = currentPage === id || (id === 'gallery' && currentPage === 'case');
           return (
             <button
               key={id}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
-import { AlertTriangle, Clock, CheckCircle2, Clipboard } from 'lucide-react';
+import { AlertTriangle, Clock, CheckCircle2, Clipboard, ChevronRight } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { KPIWidget, Card, StatusBadge, PrecisionGauge, SectionHeader, RiskTag } from '@/components/ui';
 import { KPI_METRICS, CHART_DATA } from '@/data/mockData';
@@ -8,7 +8,7 @@ import { KPI_METRICS, CHART_DATA } from '@/data/mockData';
 const ICON_MAP: Record<string, React.ElementType> = { Target: CheckCircle2, Clipboard, CheckCircle: CheckCircle2, Zap: Clock };
 
 export default function DashboardPage() {
-  const { cases, setCurrentPage } = useApp();
+  const { cases, setCurrentPage, openCase } = useApp();
   const recent = cases.slice(0, 5);
   const critical = cases.filter(c => c.status === 'critical');
 
@@ -33,9 +33,8 @@ export default function DashboardPage() {
 
       {/* Charts row */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        {/* Precision trend */}
         <Card data-tour="tour-precision-chart" className="p-5 xl:col-span-2">
-          <SectionHeader title="Evolução da Precisão IA" subtitle="Últimos 7 meses · OrthoVision v3.2" />
+          <SectionHeader title="Evolução da Precisão IA" subtitle="Últimas 7 semanas · OrthoVision v3.2" />
           <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={CHART_DATA} margin={{ top: 5, right: 10, bottom: 0, left: -20 }}>
               <defs>
@@ -53,9 +52,8 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </Card>
 
-        {/* Cases bar */}
         <Card data-tour="tour-cases-chart" className="p-5">
-          <SectionHeader title="Casos Mensais" subtitle="Volume e sucesso" />
+          <SectionHeader title="Casos Semanais" subtitle="Volume e sucesso" />
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={CHART_DATA} margin={{ top: 5, right: 5, bottom: 0, left: -25 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -69,7 +67,7 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Recent cases */}
+      {/* Recent cases — BUG-07 FIX: rows are now clickable via openCase */}
       <Card data-tour="tour-recent-cases" className="overflow-hidden">
         <div className="p-5 border-b border-slate-50">
           <SectionHeader title="Casos Recentes" subtitle={`${cases.length} casos no sistema`}
@@ -77,8 +75,13 @@ export default function DashboardPage() {
         </div>
         <div className="divide-y divide-slate-50">
           {recent.map(c => (
-            <div key={c.id} className="flex items-center gap-4 px-5 py-3 hover:bg-slate-50/50 transition-colors">
-              <img src={c.imageUrl} alt={c.patientName} className="w-11 h-11 rounded-lg object-cover flex-shrink-0 border border-slate-100" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+            <button
+              key={c.id}
+              onClick={() => openCase(c)}
+              className="w-full flex items-center gap-4 px-5 py-3 hover:bg-blue-50/40 transition-colors text-left group"
+              title="Abrir colaboração do caso"
+            >
+              <img src={c.imageUrl} alt={c.patientName} className="w-11 h-11 rounded-lg object-cover flex-shrink-0 border border-slate-100 group-hover:border-blue-200 transition-colors" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-semibold text-slate-900 truncate">{c.title}</p>
@@ -90,8 +93,9 @@ export default function DashboardPage() {
                 <RiskTag level={c.riskLevel} />
                 <StatusBadge status={c.status} />
                 {c.precisionScore !== undefined && <PrecisionGauge value={c.precisionScore} size={42} />}
+                <ChevronRight size={14} className="text-slate-300 group-hover:text-[#0056b3] transition-colors" />
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </Card>

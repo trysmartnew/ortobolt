@@ -12,7 +12,7 @@ import SettingsPage from '@/pages/SettingsPage';
 import NotificationsPage from '@/pages/NotificationsPage';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
-import ProductTour, { TourButton, TOUR_STEPS } from '@/components/ProductTour';
+import ProductTour from '@/components/ProductTour';
 
 const PAGE_MAP = {
   dashboard:     DashboardPage,
@@ -27,10 +27,9 @@ const PAGE_MAP = {
 } as const;
 
 function AppInner() {
-  const { isLoggedIn, currentPage, tourActive, startTour, closeTour } = useApp();
+  const { isLoggedIn, currentPage, tourActive, closeTour } = useApp();
   if (!isLoggedIn) return <LoginPage />;
   const PageComponent = PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
-  const hasTour = (TOUR_STEPS[currentPage]?.length ?? 0) > 0;
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
@@ -41,9 +40,7 @@ function AppInner() {
           <PageComponent />
         </main>
       </div>
-
       <ProductTour page={currentPage} active={tourActive} onClose={closeTour} />
-      {hasTour && !tourActive && <TourButton onClick={startTour} />}
     </div>
   );
 }

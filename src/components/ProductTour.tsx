@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { X, ChevronRight, ChevronLeft, MapPin } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 
 // ── Tour step definition ────────────────────────────────────────────────────
 export interface TourStep {
@@ -52,7 +52,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '__welcome__',
       title: '🤖 OrthoAI — Consultor Especializado',
-      content: 'O Chat IA conecta você ao Gemini 2.0 Flash com contexto especializado em ortopedia veterinária. Tire dúvidas sobre protocolos, dosagens e técnicas cirúrgicas.',
+      content: 'O Chat IA conecta você ao OrthoAI (OpenRouter · Mistral-7B) com contexto especializado em ortopedia veterinária. Tire dúvidas sobre protocolos, dosagens, cálculos de ângulos e técnicas cirúrgicas.',
       placement: 'center',
     },
     {
@@ -101,7 +101,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: 'tour-analysis-result',
       title: '🧠 Resultado da Análise',
-      content: 'Após o envio, o Gemini AI identifica estruturas anatômicas, possíveis lesões, angulações e sugere diagnósticos diferenciais com nível de confiança.',
+      content: 'Após o envio, o OrthoVision AI identifica estruturas anatômicas, mede ângulos articulares, avalia plateau tibial e sugere diagnósticos diferenciais com score de confiança por estrutura.',
       placement: 'top',
       highlight: true,
     },
@@ -468,17 +468,5 @@ export default function ProductTour({ page, active, onClose }: ProductTourProps)
   );
 }
 
-// ── Floating Tour Button ─────────────────────────────────────────────────────
-export function TourButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      title="Tour desta página"
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-3 py-2 rounded-full bg-[#0056b3] text-white text-xs font-semibold shadow-lg hover:bg-[#0047a0] hover:scale-105 transition-all duration-200 group"
-      style={{ fontFamily: 'Montserrat' }}
-    >
-      <MapPin size={14} className="group-hover:animate-bounce" />
-      <span>Tour</span>
-    </button>
-  );
-}
+// TourButton was moved to TopBar to avoid overlapping page content.
+// See: src/components/TopBar.tsx

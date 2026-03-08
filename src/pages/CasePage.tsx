@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   ArrowLeft, MessageSquare, Users, Monitor, Send, Bot,
   Building2, Award, Trash2, X, ChevronRight, UserPlus,
-  Shield, Eye, Zap, AlertTriangle,
+  Shield, Eye, AlertTriangle,
 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Button, Card, StatusBadge, RiskTag, PrecisionGauge, Modal, Spinner } from '@/components/ui';
@@ -180,7 +180,7 @@ function SpecialistsTab({ caseId }: { caseId:string }) {
   };
 
   const handleInvite = () => {
-    if (!form.name || !form.email) return;
+    if (!form.name.trim() || !form.email.trim() || !form.specialty.trim() || !form.institution.trim()) return;
     inviteCollaborator(caseId, form);
     setForm({ name:'', email:'', specialty:'', crmv:'', institution:'', role:'consultant' });
     setShowInvite(false);
@@ -234,7 +234,7 @@ function SpecialistsTab({ caseId }: { caseId:string }) {
           <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs text-blue-700">
             O especialista terá acesso às imagens, histórico e chat deste caso.
           </div>
-          {[{label:'Nome completo',key:'name',ph:'Dr. João Silva'},{label:'E-mail institucional',key:'email',ph:'joao@hospital.com'},{label:'Especialidade',key:'specialty',ph:'Ortopedia Veterinária'},{label:'CRMV',key:'crmv',ph:'CRMV-SP 00.000'},{label:'Instituição',key:'institution',ph:'Hospital Veterinário XYZ'}].map(({label,key,ph}) => (
+          {[{label:'Nome completo *',key:'name',ph:'Dr. João Silva'},{label:'E-mail institucional *',key:'email',ph:'joao@hospital.com'},{label:'Especialidade *',key:'specialty',ph:'Ortopedia Veterinária'},{label:'CRMV',key:'crmv',ph:'CRMV-SP 00.000'},{label:'Instituição *',key:'institution',ph:'Hospital Veterinário XYZ'}].map(({label,key,ph}) => (
             <div key={key}>
               <label className="block text-xs font-semibold text-slate-600 mb-1">{label}</label>
               <input value={(form as any)[key]} onChange={e => setForm(f => ({...f,[key]:e.target.value}))} placeholder={ph}
@@ -250,7 +250,7 @@ function SpecialistsTab({ caseId }: { caseId:string }) {
             </select>
           </div>
           <div className="flex gap-3 pt-2">
-            <Button className="flex-1" onClick={handleInvite}>Enviar Convite</Button>
+            <Button className="flex-1" onClick={handleInvite} disabled={!form.name.trim() || !form.email.trim() || !form.specialty.trim() || !form.institution.trim()}>Enviar Convite</Button>
             <Button variant="secondary" className="flex-1" onClick={() => setShowInvite(false)}>Cancelar</Button>
           </div>
         </div>

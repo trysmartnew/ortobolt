@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Bell, Moon, Globe, FileDown, Zap, Shield, Database, RefreshCw, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { Card, Button, SectionHeader } from '@/components/ui';
+import { Card, Button, SectionHeader, InlineToast } from '@/components/ui';
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -30,6 +30,7 @@ export default function SettingsPage() {
   const { user } = useApp();
   const [prefs, setPrefs] = useState(user?.preferences || { notifications: true, theme: 'light', language: 'pt', autoAnalysis: true, reportFormat: 'pdf' });
   const [saved, setSaved] = useState(false);
+  const [cacheCleared, setCacheCleared] = useState(false);
 
   const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
   const set = (key: string, val: any) => setPrefs(p => ({ ...p, [key]: val }));
@@ -84,7 +85,7 @@ export default function SettingsPage() {
             <span className="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">✓ Ativo · TLS 1.3</span>
           </SettingRow>
           <SettingRow icon={RefreshCw} title="Cache e Dados Locais" description="Limpar dados temporários do sistema">
-            <Button variant="secondary" size="sm" onClick={() => alert('Cache limpo com sucesso!')}>Limpar Cache</Button>
+            <Button variant="secondary" size="sm" onClick={() => { setCacheCleared(true); setTimeout(() => setCacheCleared(false), 2500); }}>Limpar Cache</Button>
           </SettingRow>
         </div>
       </Card>
@@ -95,6 +96,8 @@ export default function SettingsPage() {
         </Button>
         <Button variant="secondary" onClick={() => setPrefs(user?.preferences || prefs)} className="flex-shrink-0">Resetar</Button>
       </div>
+
+      {cacheCleared && <InlineToast message="Cache limpo com sucesso! Dados temporários removidos." type="success" />}
 
       <p className="text-xs text-slate-400 font-mono text-center">
         OrtoBolt v1.0.0 · © 2025 OrtoBolt LTDA · CRMV-SP Certificado · HL7 FHIR v4.0

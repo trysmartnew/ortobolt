@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
+import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge, InlineToast } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/data/mockData';
 import type { ClinicalCase, CaseStatus } from '@/types/index';
 
@@ -54,13 +54,29 @@ function CaseDetailModal({ c, onClose }: { c: ClinicalCase; onClose: () => void 
   );
 }
 
+// BUG-09, BUG-10 FIX: form validation with error messages
+function validateCaseForm(form: { title:string; patientName:string; ageYears:string; weightKg:string; breed:string }) {
+  const errs: string[] = [];
+  if (!form.title.trim()) errs.push('Título do caso é obrigatório.');
+  if (!form.patientName.trim()) errs.push('Nome do paciente é obrigatório.');
+  if (!form.breed.trim()) errs.push('Raça é obrigatória.');
+  const age = Number(form.ageYears);
+  if (form.ageYears !== '' && (isNaN(age) || age < 0 || age > 50)) errs.push('Idade deve ser um número entre 0 e 50.');
+  const weight = Number(form.weightKg);
+  if (form.weightKg !== '' && (isNaN(weight) || weight <= 0 || weight > 1000)) errs.push('Peso deve ser um número entre 0.1 e 1000 kg.');
+  return errs;
+}
+
 export default function GalleryPage() {
-  const { cases, addCase, openCase, getCaseCollaborators } = useApp();
+  // BUG-14 FIX: removed getCaseCollaborators from destructuring (was unused)
+  const { cases, addCase, openCase } = useApp();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [selected, setSelected] = useState<ClinicalCase | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ title: '', patientName: '', breed: '', procedure: 'TPLO', species: 'canine', ageYears: '', weightKg: '', notes: '' });
+  // BUG-10 FIX: form validation errors
+  const [formErrors, setFormErrors] = useState<string[]>([]);
 
   const filtered = cases.filter(c => {
     const q = search.toLowerCase();
@@ -70,10 +86,23 @@ export default function GalleryPage() {
   });
 
   const handleAdd = () => {
-    if (!form.title || !form.patientName) return;
-    addCase({ id: `case-${Date.now()}`, ...form, ageYears: Number(form.ageYears) || 0, weightKg: Number(form.weightKg) || 0, procedure: form.procedure as any, species: form.species as any, status: 'pending', riskLevel: 'medium', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tags: [form.procedure, form.species], veterinarianId: 'vet-001', imageUrl: `https://picsum.photos/seed/${Date.now()}/400/300` });
-    setShowAdd(false); setForm({ title:'', patientName:'', breed:'', procedure:'TPLO', species:'canine', ageYears:'', weightKg:'', notes:'' });
+    const errs = validateCaseForm(form);
+    if (errs.length > 0) { setFormErrors(errs); return; }
+    setFormErrors([]);
+    addCase({
+      id: `case-${Date.now()}`, ...form,
+      ageYears: Number(form.ageYears) || 0, weightKg: Number(form.weightKg) || 0,
+      procedure: form.procedure as any, species: form.species as any,
+      status: 'pending', riskLevel: 'medium',
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+      tags: [form.procedure, form.species], veterinarianId: 'vet-001',
+      imageUrl: `https://picsum.photos/seed/${Date.now()}/400/300`,
+    });
+    setShowAdd(false);
+    setForm({ title:'', patientName:'', breed:'', procedure:'TPLO', species:'canine', ageYears:'', weightKg:'', notes:'' });
   };
+
+  const handleCloseAdd = () => { setShowAdd(false); setFormErrors([]); };
 
   return (
     <div className="p-6 max-w-7xl space-y-5">
@@ -85,7 +114,7 @@ export default function GalleryPage() {
         <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 flex-1 min-w-48">
           <Search size={14} className="text-slate-400" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por nome, espécie, tag..." className="flex-1 text-sm outline-none bg-transparent font-mono" />
-          {search && <button onClick={() => setSearch('')}><X size={13} className="text-slate-400" /></button>}
+          {search && <button onClick={() => setSearch('')} title="Limpar busca"><X size={13} className="text-slate-400 hover:text-slate-600" /></button>}
         </div>
         <div className="flex gap-1.5">
           {STATUS_FILTERS.map(f => (
@@ -136,17 +165,23 @@ export default function GalleryPage() {
 
       {selected && <CaseDetailModal c={selected} onClose={() => setSelected(null)} />}
 
-      <Modal open={showAdd} onClose={() => setShowAdd(false)} title="Novo Caso Clínico">
+      {/* BUG-09, BUG-10 FIX: form with validation */}
+      <Modal open={showAdd} onClose={handleCloseAdd} title="Novo Caso Clínico">
         <div className="space-y-4">
+          {formErrors.length > 0 && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3 space-y-1">
+              {formErrors.map((e, i) => <p key={i} className="text-xs text-red-600 font-semibold">• {e}</p>)}
+            </div>
+          )}
           {[
-            { label: 'Título do Caso', key: 'title', placeholder: 'Ex.: TPLO Unilateral — Ruptura LCA' },
-            { label: 'Nome do Paciente', key: 'patientName', placeholder: 'Nome do animal' },
-            { label: 'Raça', key: 'breed', placeholder: 'Raça/Espécie' },
+            { label: 'Título do Caso *', key: 'title', placeholder: 'Ex.: TPLO Unilateral — Ruptura LCA' },
+            { label: 'Nome do Paciente *', key: 'patientName', placeholder: 'Nome do animal' },
+            { label: 'Raça *', key: 'breed', placeholder: 'Raça/Espécie detalhada' },
           ].map(({ label, key, placeholder }) => (
             <div key={key}>
               <label className="block text-xs font-semibold text-slate-600 mb-1">{label}</label>
-              <input value={(form as any)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder={placeholder}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] font-mono" />
+              <input value={(form as any)[key]} onChange={e => { setForm(f => ({ ...f, [key]: e.target.value })); setFormErrors([]); }} placeholder={placeholder}
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] font-mono ${!((form as any)[key]) && formErrors.length > 0 ? 'border-red-300 bg-red-50' : 'border-slate-200'}`} />
             </div>
           ))}
           <div className="grid grid-cols-2 gap-3">
@@ -164,11 +199,17 @@ export default function GalleryPage() {
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1">Idade (anos)</label>
-              <input type="number" value={form.ageYears} onChange={e => setForm(f => ({ ...f, ageYears: e.target.value }))} placeholder="Ex: 4" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] font-mono" />
+              <input type="number" min="0" max="50" step="0.5" value={form.ageYears}
+                onChange={e => { setForm(f => ({ ...f, ageYears: e.target.value })); setFormErrors([]); }}
+                placeholder="Ex: 4"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] font-mono" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1">Peso (kg)</label>
-              <input type="number" step="0.1" value={form.weightKg} onChange={e => setForm(f => ({ ...f, weightKg: e.target.value }))} placeholder="Ex: 32.5" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] font-mono" />
+              <input type="number" min="0.1" max="1000" step="0.1" value={form.weightKg}
+                onChange={e => { setForm(f => ({ ...f, weightKg: e.target.value })); setFormErrors([]); }}
+                placeholder="Ex: 32.5"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] font-mono" />
             </div>
           </div>
           <div>
@@ -177,7 +218,7 @@ export default function GalleryPage() {
           </div>
           <div className="flex gap-3 pt-2">
             <Button className="flex-1" onClick={handleAdd}>Adicionar Caso</Button>
-            <Button variant="secondary" className="flex-1" onClick={() => setShowAdd(false)}>Cancelar</Button>
+            <Button variant="secondary" className="flex-1" onClick={handleCloseAdd}>Cancelar</Button>
           </div>
         </div>
       </Modal>

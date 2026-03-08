@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Download, FileText, Clock, CheckCircle, AlertCircle, Plus } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { Button, Card, Badge, SectionHeader, Spinner } from '@/components/ui';
+import { Button, Card, Badge, SectionHeader, Spinner, InlineToast } from '@/components/ui';
 import { MOCK_REPORTS, KPI_METRICS, CHART_DATA } from '@/data/mockData';
 import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
 import type { Report } from '@/types/index';
@@ -13,6 +13,10 @@ export default function ReportsPage() {
   const { user, cases } = useApp();
   const [reports, setReports] = useState<Report[]>(MOCK_REPORTS);
   const [generating, setGenerating] = useState<string | null>(null);
+  // BUG-04 FIX: download state per-report
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  // BUG-20 FIX: replace alert() with inline toast
+  const [noCaseToast, setNoCaseToast] = useState(false);
 
   const downloadMonthly = async () => {
     if (!user) return;
@@ -24,10 +28,31 @@ export default function ReportsPage() {
   const downloadCase = async () => {
     if (!user) return;
     const completedCase = cases.find(c => c.aiAnalysis);
-    if (!completedCase) return alert('Nenhum caso com análise IA disponível.');
+    if (!completedCase) {
+      // BUG-20 FIX: inline toast instead of alert()
+      setNoCaseToast(true);
+      setTimeout(() => setNoCaseToast(false), 3000);
+      return;
+    }
     setGenerating('case');
     try { await generateCaseReport(completedCase, user); }
     finally { setGenerating(null); }
+  };
+
+  // BUG-04 FIX: re-generate and download existing report from history
+  const downloadHistoryReport = async (r: Report) => {
+    if (!user || downloadingId) return;
+    setDownloadingId(r.id);
+    try {
+      if (r.type === 'monthly') {
+        await generateMonthlyReport(user, KPI_METRICS, CHART_DATA, cases);
+      } else if (r.type === 'case') {
+        const caseData = cases.find(c => c.aiAnalysis);
+        if (caseData) await generateCaseReport(caseData, user);
+      }
+    } finally {
+      setDownloadingId(null);
+    }
   };
 
   const StatusIcon = ({ status }: { status: string }) => {
@@ -39,6 +64,10 @@ export default function ReportsPage() {
   return (
     <div className="p-6 max-w-4xl space-y-6">
       <SectionHeader title="Relatórios" subtitle="Exportação e análise de dados em PDF" />
+
+      {noCaseToast && (
+        <InlineToast message="Nenhum caso com análise IA disponível para gerar relatório de caso." type="info" />
+      )}
 
       {/* Generate section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -89,9 +118,15 @@ export default function ReportsPage() {
                 </div>
               </div>
               <Badge variant={TYPE_COLORS[r.type] || 'default'}>{TYPE_LABELS[r.type] || r.type}</Badge>
+              {/* BUG-04 FIX: download button now triggers PDF generation */}
               {r.status === 'ready' && (
-                <button className="text-[#0056b3] hover:text-[#004494] transition-colors p-1.5 rounded-lg hover:bg-blue-50">
-                  <Download size={15} />
+                <button
+                  onClick={() => downloadHistoryReport(r)}
+                  disabled={downloadingId === r.id}
+                  title="Baixar relatório"
+                  className="text-[#0056b3] hover:text-[#004494] transition-colors p-1.5 rounded-lg hover:bg-blue-50 disabled:opacity-50"
+                >
+                  {downloadingId === r.id ? <Spinner size="sm" /> : <Download size={15} />}
                 </button>
               )}
             </div>

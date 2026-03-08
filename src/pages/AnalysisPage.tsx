@@ -52,7 +52,7 @@ export default function AnalysisPage() {
   };
 
   const analyze = async () => {
-    if (!imageData) return;
+    if (!imageData || mode === 'analyzing') return;
     setMode('analyzing');
     const base64 = imageData.split(',')[1] || imageData;
     const res = await analyzeImage(base64);
@@ -74,7 +74,7 @@ export default function AnalysisPage() {
 
   return (
     <div className="p-6 max-w-4xl space-y-5">
-      <SectionHeader title="Análise de Imagem Ortopédica" subtitle="Visão computacional powered by Gemini 2.0 · OrthoVision v3.2" />
+      <SectionHeader title="Análise de Imagem Ortopédica" subtitle="Visão computacional · OpenRouter Vision · OrthoVision v3.2" />
 
       {/* Controls */}
       {mode === 'idle' && (

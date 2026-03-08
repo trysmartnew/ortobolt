@@ -49,9 +49,13 @@ export function Button({ children, variant='primary', size='md', loading, classN
   </button>;
 }
 
-// ── Card ─────────────────────────────────────────────────────────────────────
-export function Card({ children, className='' }: { children: React.ReactNode; className?: string }) {
-  return <div className={`bg-white rounded-xl border border-slate-100 shadow-sm ${className}`}>{children}</div>;
+// ── Card — BUG-01 FIX: forward all HTML div attrs so data-tour reaches DOM ───
+export function Card({ children, className='', ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={`bg-white rounded-xl border border-slate-100 shadow-sm ${className}`} {...props}>
+      {children}
+    </div>
+  );
 }
 
 // ── KPI Widget ───────────────────────────────────────────────────────────────
@@ -139,4 +143,19 @@ export function EmptyState({ icon, title, description }: { icon: React.ReactNode
     <p className="font-semibold text-slate-500">{title}</p>
     <p className="text-sm text-slate-400 max-w-xs">{description}</p>
   </div>;
+}
+
+// ── Toast (inline) ────────────────────────────────────────────────────────────
+export function InlineToast({ message, type = 'success' }: { message: string; type?: 'success'|'error'|'info' }) {
+  const styles = {
+    success: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    error:   'bg-red-50 border-red-200 text-red-700',
+    info:    'bg-blue-50 border-blue-200 text-blue-700',
+  };
+  return (
+    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-semibold ${styles[type]}`}>
+      <span>{type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}</span>
+      {message}
+    </div>
+  );
 }
