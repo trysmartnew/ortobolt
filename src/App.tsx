@@ -1,19 +1,21 @@
 import React, { useEffect } from 'react';
 import { AppProvider, useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
-import LoginPage from '@/pages/LoginPage';
+import HomePage      from '@/pages/HomePage';
+import LoginPage     from '@/pages/LoginPage';
+import RegisterPage  from '@/pages/RegisterPage';
 import DashboardPage from '@/pages/DashboardPage';
-import ChatPage from '@/pages/ChatPage';
-import AnalysisPage from '@/pages/AnalysisPage';
-import GalleryPage from '@/pages/GalleryPage';
-import CasePage from '@/pages/CasePage';
-import ProfilePage from '@/pages/ProfilePage';
-import ReportsPage from '@/pages/ReportsPage';
-import SettingsPage from '@/pages/SettingsPage';
+import ChatPage      from '@/pages/ChatPage';
+import AnalysisPage  from '@/pages/AnalysisPage';
+import GalleryPage   from '@/pages/GalleryPage';
+import CasePage      from '@/pages/CasePage';
+import ProfilePage   from '@/pages/ProfilePage';
+import ReportsPage   from '@/pages/ReportsPage';
+import SettingsPage  from '@/pages/SettingsPage';
 import NotificationsPage from '@/pages/NotificationsPage';
-import Sidebar from '@/components/Sidebar';
-import TopBar from '@/components/TopBar';
-import ProductTour from '@/components/ProductTour';
+import Sidebar       from '@/components/Sidebar';
+import TopBar        from '@/components/TopBar';
+import ProductTour   from '@/components/ProductTour';
 
 const PAGE_MAP = {
   dashboard:     DashboardPage,
@@ -28,10 +30,13 @@ const PAGE_MAP = {
 } as const;
 
 function AppInner() {
-  const { isLoggedIn, authLoading, currentPage, tourActive, closeTour, logout, setUserFromSession } = useApp();
+  const {
+    currentView, authLoading,
+    currentPage, tourActive, closeTour,
+    logout, setUserFromSession,
+  } = useApp();
 
   useEffect(() => {
-    // Verificar sessão existente no localStorage
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUserFromSession(session.user);
@@ -40,7 +45,6 @@ function AppInner() {
       }
     });
 
-    // Ouvir mudanças de auth (logout em outra aba, token expirado)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event: string, session: { user?: { id: string } } | null) => {
         if (event === 'SIGNED_OUT') logout();
@@ -50,7 +54,7 @@ function AppInner() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Tela de loading enquanto verifica sessão
+  // Loading enquanto verifica sessão
   if (authLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#001a40]">
@@ -62,7 +66,12 @@ function AppInner() {
     );
   }
 
-  if (!isLoggedIn) return <LoginPage />;
+  // Roteamento por view
+  if (currentView === 'home')     return <HomePage />;
+  if (currentView === 'login')    return <LoginPage />;
+  if (currentView === 'register') return <RegisterPage />;
+
+  // App principal (currentView === 'app')
   const PageComponent = PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
 
   return (

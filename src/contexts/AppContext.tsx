@@ -4,11 +4,14 @@ import { MOCK_CASES, MOCK_NOTIFICATIONS, MOCK_COLLABORATORS, MOCK_CASE_MESSAGES 
 import { supabase, fetchUserProfile } from '@/services/supabase';
 
 export type Page = 'dashboard'|'chat'|'analysis'|'gallery'|'case'|'profile'|'reports'|'settings'|'notifications';
+export type AppView = 'home' | 'login' | 'register' | 'app';
 
 interface AppContextType {
   user: User | null;
   isLoggedIn: boolean;
   authLoading: boolean;
+  currentView: AppView;
+  setCurrentView: (v: AppView) => void;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   setUserFromSession: (supaUser: { id: string }) => Promise<void>;
@@ -44,9 +47,10 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authLoading, setAuthLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
+  const [isLoggedIn, setIsLoggedIn]       = useState(false);
+  const [authLoading, setAuthLoading]     = useState(true);
+  const [currentView, setCurrentView]     = useState<AppView>('home');
+  const [user, setUser]                   = useState<User | null>(null);
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
   const [activeCase, setActiveCase] = useState<ClinicalCase | null>(null);
   const [cases, setCases] = useState<ClinicalCase[]>(MOCK_CASES);
@@ -69,6 +73,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (profile) {
       setUser(profile);
       setIsLoggedIn(true);
+      setCurrentView('app');
     }
     setAuthLoading(false);
   }, []);
@@ -83,6 +88,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!profile) return false;
     setUser(profile);
     setIsLoggedIn(true);
+    setCurrentView('app');
     setTimeout(() => setTourActive(true), 600);
     return true;
   }, []);
@@ -90,6 +96,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     await supabase.auth.signOut();
     setIsLoggedIn(false); setUser(null);
+    setCurrentView('home');
     setCurrentPage('dashboard'); setActiveCase(null); setTourActive(false);
   }, []);
 
@@ -139,7 +146,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppContext.Provider value={{
-      user, isLoggedIn, authLoading, login, logout, setUserFromSession,
+      user, isLoggedIn, authLoading, currentView, setCurrentView, login, logout, setUserFromSession,
       currentPage, setCurrentPage,
       cases, addCase, updateCase,
       activeCase, openCase, closeCase,
