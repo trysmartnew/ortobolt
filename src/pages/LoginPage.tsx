@@ -12,17 +12,34 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    setLoading(true); setError('');
-    await new Promise(r => setTimeout(r, 800));
-    const ok = login(email, password);
-    if (!ok) setError('E-mail ou senha inválidos. Use o acesso de demonstração.');
-    setLoading(false);
+    if (!email.trim() || !password.trim()) {
+      setError('Preencha o e-mail e a senha.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const ok = await login(email, password);
+
+      if (!ok) {
+        setError(
+          'E-mail ou senha incorretos. ' +
+          'Verifique suas credenciais e tente novamente.'
+        );
+      }
+    } catch (err) {
+      setError('Erro de conexão. Verifique sua internet e tente novamente.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#001a40] via-[#002d6b] to-[#001a40] flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <img
             src="/logo.png"
@@ -31,7 +48,6 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Card */}
         <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8">
           <h2 className="text-lg font-bold text-slate-800 mb-1" style={{ fontFamily: 'Montserrat' }}>Acessar plataforma</h2>
           <p className="text-xs text-slate-400 mb-6 font-mono">Acesso de demonstração pré-configurado</p>
