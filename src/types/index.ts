@@ -1,7 +1,10 @@
+// ── Core User & Auth ──────────────────────────────────────────────────────────
 export interface User { id:string; name:string; email:string; role:'veterinarian'|'resident'|'admin'; specialty:string; crmv:string; avatar?:string; institution:string; certifications:Certification[]; stats:UserStats; preferences:UserPreferences; }
 export interface Certification { id:string; title:string; issuer:string; year:number; verified:boolean; }
 export interface UserStats { totalCases:number; successRate:number; avgPrecision:number; monthlyProcedures:number; }
 export interface UserPreferences { notifications:boolean; theme:'light'|'dark'; language:'pt'|'en'; autoAnalysis:boolean; reportFormat:'pdf'|'docx'; }
+
+// ── Clinical Case ─────────────────────────────────────────────────────────────
 export type CaseStatus = 'pending'|'in_analysis'|'completed'|'critical';
 export type AnimalSpecies = 'canine'|'feline'|'equine'|'bovine'|'other';
 export type ProcedureType = 'TPLO'|'FHO'|'TTA'|'LCP_repair'|'fracture_fixation'|'joint_replacement'|'spinal_surgery'|'other';
@@ -9,9 +12,48 @@ export interface ClinicalCase { id:string; title:string; patientName:string; spe
 export interface AIAnalysisResult { id:string; timestamp:string; precisionScore:number; riskFactors:RiskFactor[]; recommendations:string[]; anatomicalLandmarks:AnatomicalLandmark[]; confidence:number; processingTimeMs:number; }
 export interface RiskFactor { category:string; description:string; severity:'low'|'medium'|'high'; }
 export interface AnatomicalLandmark { name:string; detected:boolean; confidence:number; coordinates?:{x:number;y:number}; }
+
+// ── Collaboration ─────────────────────────────────────────────────────────────
+export type CollaboratorRole = 'owner'|'consultant'|'observer';
+export type CollaboratorStatus = 'pending'|'accepted'|'declined';
+
+export interface Collaborator {
+  id: string;
+  caseId: string;
+  userId: string;
+  name: string;
+  email: string;
+  specialty: string;
+  crmv: string;
+  institution: string;
+  role: CollaboratorRole;
+  status: CollaboratorStatus;
+  invitedAt: string;
+  acceptedAt?: string;
+  online?: boolean;
+}
+
+export interface CaseMessage {
+  id: string;
+  caseId: string;
+  userId: string;
+  userName: string;
+  userRole: CollaboratorRole;
+  content: string;
+  createdAt: string;
+  type: 'text'|'ai_suggestion'|'system';
+}
+
+// ── KPIs / Charts ─────────────────────────────────────────────────────────────
 export interface KPIMetric { id:string; label:string; value:number|string; unit?:string; trend:number; trendDirection:'up'|'down'|'stable'; icon:string; color:string; }
 export interface ChartDataPoint { label:string; precision:number; cases:number; success:number; }
+
+// ── AI Chat ───────────────────────────────────────────────────────────────────
 export interface ChatMessage { id:string; role:'user'|'assistant'; content:string; timestamp:string; isLoading?:boolean; }
+
+// ── Notifications ─────────────────────────────────────────────────────────────
 export type NotificationType = 'alert'|'info'|'success'|'warning';
 export interface Notification { id:string; type:NotificationType; title:string; message:string; timestamp:string; read:boolean; caseId?:string; }
+
+// ── Reports ───────────────────────────────────────────────────────────────────
 export interface Report { id:string; title:string; type:'monthly'|'case'|'audit'|'performance'; generatedAt:string; period:string; status:'ready'|'generating'|'error'; sizeKb:number; }

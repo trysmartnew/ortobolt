@@ -201,6 +201,36 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
       highlight: true,
     },
   ],
+
+  case: [
+    {
+      target: '__welcome__',
+      title: '🤝 Colaboração Clínica',
+      content: 'Este é o espaço de colaboração do caso. Aqui você pode discutir o caso em tempo real com especialistas convidados, visualizar exames em conjunto e tomar decisões clínicas colaborativas.',
+      placement: 'center',
+    },
+    {
+      target: 'tour-collab-chat',
+      title: '💬 Chat do Caso',
+      content: 'Discuta o caso em tempo real com toda a equipe. O botão azul-violeta pede uma sugestão clínica ao OrthoAI para o caso específico.',
+      placement: 'top',
+      highlight: true,
+    },
+    {
+      target: 'tour-collab-specialists',
+      title: '👥 Especialistas Convidados',
+      content: 'Convide especialistas por e-mail com controle de permissão (Consultor ou Observador). Veja quem está online no caso em tempo real.',
+      placement: 'top',
+      highlight: true,
+    },
+    {
+      target: 'tour-collab-viewer',
+      title: '🔬 Visualização Conjunta',
+      content: 'Veja as imagens do caso com toda a equipe simultaneamente. Cursores de presença mostram onde cada especialista está focado na imagem.',
+      placement: 'top',
+      highlight: true,
+    },
+  ],
   settings: [
     {
       target: '__welcome__',

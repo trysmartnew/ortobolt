@@ -5,6 +5,7 @@ import DashboardPage from '@/pages/DashboardPage';
 import ChatPage from '@/pages/ChatPage';
 import AnalysisPage from '@/pages/AnalysisPage';
 import GalleryPage from '@/pages/GalleryPage';
+import CasePage from '@/pages/CasePage';
 import ProfilePage from '@/pages/ProfilePage';
 import ReportsPage from '@/pages/ReportsPage';
 import SettingsPage from '@/pages/SettingsPage';
@@ -18,6 +19,7 @@ const PAGE_MAP = {
   chat:          ChatPage,
   analysis:      AnalysisPage,
   gallery:       GalleryPage,
+  case:          CasePage,
   profile:       ProfilePage,
   reports:       ReportsPage,
   settings:      SettingsPage,
@@ -26,9 +28,7 @@ const PAGE_MAP = {
 
 function AppInner() {
   const { isLoggedIn, currentPage, tourActive, startTour, closeTour } = useApp();
-
   if (!isLoggedIn) return <LoginPage />;
-
   const PageComponent = PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
   const hasTour = (TOUR_STEPS[currentPage]?.length ?? 0) > 0;
 
@@ -42,17 +42,8 @@ function AppInner() {
         </main>
       </div>
 
-      {/* Product Tour overlay */}
-      <ProductTour
-        page={currentPage}
-        active={tourActive}
-        onClose={closeTour}
-      />
-
-      {/* Floating tour button — visible on every page that has steps */}
-      {hasTour && !tourActive && (
-        <TourButton onClick={startTour} />
-      )}
+      <ProductTour page={currentPage} active={tourActive} onClose={closeTour} />
+      {hasTour && !tourActive && <TourButton onClick={startTour} />}
     </div>
   );
 }

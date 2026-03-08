@@ -10,6 +10,7 @@ const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   reports:       { title: 'Relatórios',          subtitle: 'Exportação e análise de dados' },
   profile:       { title: 'Perfil Profissional', subtitle: 'Dados e certificações' },
   settings:      { title: 'Configurações',       subtitle: 'Preferências do sistema' },
+  case:          { title: 'Colaboração Clínica', subtitle: 'Discussão e visualização conjunta de casos' },
   notifications: { title: 'Notificações',        subtitle: 'Alertas e atualizações' },
 };
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Plus, Filter, Tag, Calendar, X, AlertTriangle } from 'lucide-react';
+import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/data/mockData';
@@ -55,7 +55,7 @@ function CaseDetailModal({ c, onClose }: { c: ClinicalCase; onClose: () => void 
 }
 
 export default function GalleryPage() {
-  const { cases, addCase } = useApp();
+  const { cases, addCase, openCase, getCaseCollaborators } = useApp();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [selected, setSelected] = useState<ClinicalCase | null>(null);
@@ -103,7 +103,7 @@ export default function GalleryPage() {
       ) : (
         <div data-tour="tour-gallery-grid" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map(c => (
-            <Card key={c.id} className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow group" onClick={() => setSelected(c)}>
+            <Card key={c.id} className="overflow-hidden hover:shadow-md transition-shadow group">
               <div className="relative">
                 <img src={c.imageUrl} alt={c.patientName} className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" onError={e => { (e.target as HTMLImageElement).src = 'https://picsum.photos/400/300'; }} />
                 {c.status === 'critical' && <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold"><AlertTriangle size={10} /> CRÍTICO</div>}
@@ -117,9 +117,16 @@ export default function GalleryPage() {
                 <div className="flex items-center gap-3 text-xs text-slate-500 font-mono mb-3">
                   <span>{c.patientName}</span><span>·</span><span>{SPECIES_LABELS[c.species]}</span><span>·</span><span>{c.weightKg}kg</span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex flex-wrap gap-1">{c.tags.slice(0,2).map(t => <Badge key={t} variant="blue">#{t}</Badge>)}</div>
                   <RiskTag level={c.riskLevel} />
+                </div>
+                <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
+                  <button onClick={() => setSelected(c)} className="flex-1 text-xs text-slate-500 hover:text-slate-700 py-1.5 rounded-lg hover:bg-slate-50 transition-colors font-medium">Ver detalhes</button>
+                  <button onClick={() => openCase(c)}
+                    className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-[#0056b3] hover:bg-[#004494] py-1.5 rounded-lg transition-colors">
+                    <Users size={12} /> Colaborar <ChevronRight size={11} />
+                  </button>
                 </div>
               </div>
             </Card>

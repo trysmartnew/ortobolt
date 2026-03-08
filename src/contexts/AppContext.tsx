@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import type { User, ClinicalCase, Notification, ChatMessage } from '@/types/index';
-import { MOCK_USER, MOCK_CASES, MOCK_NOTIFICATIONS } from '@/data/mockData';
+import type { User, ClinicalCase, Notification, ChatMessage, Collaborator, CaseMessage } from '@/types/index';
+import { MOCK_USER, MOCK_CASES, MOCK_NOTIFICATIONS, MOCK_COLLABORATORS, MOCK_CASE_MESSAGES } from '@/data/mockData';
 
-type Page = 'dashboard' | 'chat' | 'analysis' | 'gallery' | 'profile' | 'reports' | 'settings' | 'notifications';
+export type Page = 'dashboard'|'chat'|'analysis'|'gallery'|'case'|'profile'|'reports'|'settings'|'notifications';
 
 interface AppContextType {
   user: User | null;
@@ -14,17 +14,28 @@ interface AppContextType {
   cases: ClinicalCase[];
   addCase: (c: ClinicalCase) => void;
   updateCase: (id: string, updates: Partial<ClinicalCase>) => void;
+  activeCase: ClinicalCase | null;
+  openCase: (c: ClinicalCase) => void;
+  closeCase: () => void;
   notifications: Notification[];
   unreadCount: number;
   markAllRead: () => void;
   markRead: (id: string) => void;
-  addNotification: (n: Omit<Notification, 'id' | 'timestamp' | 'read'>) => void;
+  addNotification: (n: Omit<Notification,'id'|'timestamp'|'read'>) => void;
   chatHistory: ChatMessage[];
   setChatHistory: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
-  // Tour
   tourActive: boolean;
   startTour: () => void;
   closeTour: () => void;
+  // ── Collaboration ──────────────────────────────────────────────────────────
+  collaborators: Collaborator[];
+  getCaseCollaborators: (caseId: string) => Collaborator[];
+  inviteCollaborator: (caseId: string, data: { name:string; email:string; specialty:string; crmv:string; institution:string; role:'consultant'|'observer' }) => void;
+  removeCollaborator: (id: string) => void;
+  caseMessages: CaseMessage[];
+  getCaseMessages: (caseId: string) => CaseMessage[];
+  addCaseMessage: (caseId: string, content: string, type?: CaseMessage['type']) => void;
+  onlineUsers: string[];
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -33,18 +44,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
+  const [activeCase, setActiveCase] = useState<ClinicalCase | null>(null);
   const [cases, setCases] = useState<ClinicalCase[]>(MOCK_CASES);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
   const [tourActive, setTourActive] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
-    { id: 'init', role: 'assistant', content: '# Olá! Sou o **OrthoAI** 🐾\n\nSou seu assistente especializado em ortopedia veterinária. Posso ajudar com:\n\n- **Protocolos cirúrgicos** (TPLO, FHO, TTA e mais)\n- **Análise de risco** pré-operatório\n- **Dosagens e anestesia** específicas por espécie\n- **Reabilitação** pós-cirúrgica\n- **Interpretação** de achados radiográficos\n\nComo posso ajudar hoje?', timestamp: new Date().toISOString() },
+    { id:'init', role:'assistant', content:'# Olá! Sou o **OrthoAI** 🐾\n\nSou seu assistente especializado em ortopedia veterinária. Posso ajudar com:\n\n- **Protocolos cirúrgicos** (TPLO, FHO, TTA e mais)\n- **Análise de risco** pré-operatório\n- **Dosagens e anestesia** específicas por espécie\n- **Reabilitação** pós-cirúrgica\n- **Interpretação** de achados radiográficos\n\nComo posso ajudar hoje?', timestamp:new Date().toISOString() },
   ]);
+  const [collaborators, setCollaborators] = useState<Collaborator[]>(MOCK_COLLABORATORS);
+  const [caseMessages, setCaseMessages] = useState<CaseMessage[]>(MOCK_CASE_MESSAGES);
+  // Simulated presence — in production use Supabase Realtime / Socket.IO
+  const [onlineUsers] = useState<string[]>(['vet-002', 'vet-004']);
 
   const login = useCallback((email: string, password: string): boolean => {
     if (email && password.length >= 4) {
-      setUser(MOCK_USER);
-      setIsLoggedIn(true);
-      // Auto-start tour on first login
+      setUser(MOCK_USER); setIsLoggedIn(true);
       setTimeout(() => setTourActive(true), 600);
       return true;
     }
@@ -52,10 +66,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
-    setIsLoggedIn(false);
-    setUser(null);
-    setCurrentPage('dashboard');
-    setTourActive(false);
+    setIsLoggedIn(false); setUser(null);
+    setCurrentPage('dashboard'); setActiveCase(null); setTourActive(false);
+  }, []);
+
+  const openCase = useCallback((c: ClinicalCase) => {
+    setActiveCase(c); setCurrentPage('case');
+  }, []);
+
+  const closeCase = useCallback(() => {
+    setActiveCase(null); setCurrentPage('gallery');
   }, []);
 
   const addCase = useCallback((c: ClinicalCase) => setCases(prev => [c, ...prev]), []);
@@ -63,23 +83,49 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCases(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c)), []);
 
   const unreadCount = notifications.filter(n => !n.read).length;
-  const markAllRead = useCallback(() => setNotifications(prev => prev.map(n => ({ ...n, read: true }))), []);
-  const markRead = useCallback((id: string) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n)), []);
-  const addNotification = useCallback((n: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
-    setNotifications(prev => [{ ...n, id: `n-${Date.now()}`, timestamp: new Date().toISOString(), read: false }, ...prev]);
+  const markAllRead = useCallback(() => setNotifications(prev => prev.map(n => ({ ...n, read:true }))), []);
+  const markRead = useCallback((id: string) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, read:true } : n)), []);
+  const addNotification = useCallback((n: Omit<Notification,'id'|'timestamp'|'read'>) => {
+    setNotifications(prev => [{ ...n, id:`n-${Date.now()}`, timestamp:new Date().toISOString(), read:false }, ...prev]);
   }, []);
 
   const startTour = useCallback(() => setTourActive(true), []);
   const closeTour = useCallback(() => setTourActive(false), []);
+
+  // ── Collaboration ────────────────────────────────────────────────────────────
+  const getCaseCollaborators = useCallback((caseId: string) =>
+    collaborators.filter(c => c.caseId === caseId), [collaborators]);
+
+  const inviteCollaborator = useCallback((caseId: string, data: { name:string; email:string; specialty:string; crmv:string; institution:string; role:'consultant'|'observer' }) => {
+    const col: Collaborator = { id:`col-${Date.now()}`, caseId, userId:`u-${Date.now()}`, ...data, status:'pending', invitedAt:new Date().toISOString() };
+    setCollaborators(prev => [...prev, col]);
+    setCaseMessages(prev => [...prev, { id:`msg-${Date.now()}`, caseId, userId:'system', userName:'Sistema', userRole:'observer', content:`👋 **${data.name}** (${data.specialty}) foi convidado(a) como ${data.role === 'consultant' ? 'Consultor' : 'Observador'}.`, createdAt:new Date().toISOString(), type:'system' }]);
+    addNotification({ type:'info', title:'Convite enviado', message:`Convite enviado para ${data.name} — ${data.specialty}`, caseId });
+  }, [addNotification]);
+
+  const removeCollaborator = useCallback((id: string) =>
+    setCollaborators(prev => prev.filter(c => c.id !== id)), []);
+
+  const getCaseMessages = useCallback((caseId: string) =>
+    caseMessages.filter(m => m.caseId === caseId), [caseMessages]);
+
+  const addCaseMessage = useCallback((caseId: string, content: string, type: CaseMessage['type'] = 'text') => {
+    if (!user) return;
+    setCaseMessages(prev => [...prev, { id:`msg-${Date.now()}`, caseId, userId:user.id, userName:user.name, userRole:'owner', content, createdAt:new Date().toISOString(), type }]);
+  }, [user]);
 
   return (
     <AppContext.Provider value={{
       user, isLoggedIn, login, logout,
       currentPage, setCurrentPage,
       cases, addCase, updateCase,
+      activeCase, openCase, closeCase,
       notifications, unreadCount, markAllRead, markRead, addNotification,
       chatHistory, setChatHistory,
       tourActive, startTour, closeTour,
+      collaborators, getCaseCollaborators, inviteCollaborator, removeCollaborator,
+      caseMessages, getCaseMessages, addCaseMessage,
+      onlineUsers,
     }}>
       {children}
     </AppContext.Provider>
