@@ -1,7 +1,9 @@
+// src/pages/GalleryPage.tsx
+// ✅ U-02: addToast no handleAdd — feedback visual ao criar caso
 import React, { useState } from 'react';
 import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge, InlineToast } from '@/components/ui';
+import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/data/mockData';
 import type { ClinicalCase, CaseStatus } from '@/types/index';
 
@@ -54,28 +56,25 @@ function CaseDetailModal({ c, onClose }: { c: ClinicalCase; onClose: () => void 
   );
 }
 
-// BUG-09, BUG-10 FIX: form validation with error messages
 function validateCaseForm(form: { title:string; patientName:string; ageYears:string; weightKg:string; breed:string }) {
   const errs: string[] = [];
   if (!form.title.trim()) errs.push('Título do caso é obrigatório.');
   if (!form.patientName.trim()) errs.push('Nome do paciente é obrigatório.');
   if (!form.breed.trim()) errs.push('Raça é obrigatória.');
   const age = Number(form.ageYears);
-  if (form.ageYears !== '' && (isNaN(age) || age < 0 || age > 50)) errs.push('Idade deve ser um número entre 0 e 50.');
+  if (form.ageYears !== '' && (isNaN(age) || age < 0 || age > 50)) errs.push('Idade deve ser entre 0 e 50.');
   const weight = Number(form.weightKg);
-  if (form.weightKg !== '' && (isNaN(weight) || weight <= 0 || weight > 1000)) errs.push('Peso deve ser um número entre 0.1 e 1000 kg.');
+  if (form.weightKg !== '' && (isNaN(weight) || weight <= 0 || weight > 1000)) errs.push('Peso deve ser entre 0.1 e 1000 kg.');
   return errs;
 }
 
 export default function GalleryPage() {
-  // BUG-14 FIX: removed getCaseCollaborators from destructuring (was unused)
-  const { cases, addCase, openCase } = useApp();
+  const { cases, addCase, openCase, addToast } = useApp();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [selected, setSelected] = useState<ClinicalCase | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ title: '', patientName: '', breed: '', procedure: 'TPLO', species: 'canine', ageYears: '', weightKg: '', notes: '' });
-  // BUG-10 FIX: form validation errors
   const [formErrors, setFormErrors] = useState<string[]>([]);
 
   const filtered = cases.filter(c => {
@@ -87,7 +86,12 @@ export default function GalleryPage() {
 
   const handleAdd = () => {
     const errs = validateCaseForm(form);
-    if (errs.length > 0) { setFormErrors(errs); return; }
+    if (errs.length > 0) {
+      setFormErrors(errs);
+      // ✅ U-02: toast de validação
+      addToast('Preencha todos os campos obrigatórios.', 'warning');
+      return;
+    }
     setFormErrors([]);
     addCase({
       id: `case-${Date.now()}`, ...form,
@@ -100,6 +104,8 @@ export default function GalleryPage() {
     });
     setShowAdd(false);
     setForm({ title:'', patientName:'', breed:'', procedure:'TPLO', species:'canine', ageYears:'', weightKg:'', notes:'' });
+    // ✅ U-02: toast de sucesso
+    addToast(`Caso "${form.title}" adicionado com sucesso!`, 'success');
   };
 
   const handleCloseAdd = () => { setShowAdd(false); setFormErrors([]); };
@@ -165,7 +171,6 @@ export default function GalleryPage() {
 
       {selected && <CaseDetailModal c={selected} onClose={() => setSelected(null)} />}
 
-      {/* BUG-09, BUG-10 FIX: form with validation */}
       <Modal open={showAdd} onClose={handleCloseAdd} title="Novo Caso Clínico">
         <div className="space-y-4">
           {formErrors.length > 0 && (

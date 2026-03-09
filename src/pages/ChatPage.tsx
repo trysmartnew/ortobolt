@@ -1,3 +1,5 @@
+// src/pages/ChatPage.tsx
+// ✅ U-02: addToast no catch — erro de IA não trava mais a conversa
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Trash2, Bot, User, Copy, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
@@ -17,17 +19,15 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
   const isUser = msg.role === 'user';
   const copy = () => { navigator.clipboard.writeText(msg.content); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
-  // Simple markdown-like rendering
   const renderContent = (text: string) => {
     return text.split('\n').map((line, i) => {
-      if (line.startsWith('# ')) return <h3 key={i} className="font-bold text-base mb-1">{line.slice(2)}</h3>;
+      if (line.startsWith('# '))  return <h3 key={i} className="font-bold text-base mb-1">{line.slice(2)}</h3>;
       if (line.startsWith('## ')) return <h4 key={i} className="font-bold text-sm mb-1">{line.slice(3)}</h4>;
       if (line.startsWith('- ') || line.startsWith('• ')) return <li key={i} className="ml-3 text-sm">{line.slice(2)}</li>;
-      if (line.startsWith('**') && line.endsWith('**')) return <strong key={i} className="font-semibold block">{line.slice(2,-2)}</strong>;
+      if (line.startsWith('**') && line.endsWith('**')) return <strong key={i} className="font-semibold block">{line.slice(2, -2)}</strong>;
       if (line === '') return <br key={i} />;
-      // Inline bold
       const parts = line.split(/(\*\*[^*]+\*\*)/g);
-      return <p key={i} className="text-sm">{parts.map((p, j) => p.startsWith('**') ? <strong key={j}>{p.slice(2,-2)}</strong> : p)}</p>;
+      return <p key={i} className="text-sm">{parts.map((p, j) => p.startsWith('**') ? <strong key={j}>{p.slice(2, -2)}</strong> : p)}</p>;
     });
   };
 
@@ -62,7 +62,7 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
 }
 
 export default function ChatPage() {
-  const { chatHistory, setChatHistory } = useApp();
+  const { chatHistory, setChatHistory, addToast } = useApp();
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -75,14 +75,26 @@ export default function ChatPage() {
     if (!msg || sending) return;
     setInput('');
     setSending(true);
+
     const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', content: msg, timestamp: new Date().toISOString() };
     const loadingMsg: ChatMessage = { id: 'loading', role: 'assistant', content: '', timestamp: new Date().toISOString(), isLoading: true };
     setChatHistory(prev => [...prev, userMsg, loadingMsg]);
+
     const history = chatHistory.filter(m => !m.isLoading).map(m => ({ role: m.role, content: m.content }));
-    const reply = await sendChatMessage(msg, history);
-    const aiMsg: ChatMessage = { id: `ai-${Date.now()}`, role: 'assistant', content: reply, timestamp: new Date().toISOString() };
-    setChatHistory(prev => [...prev.filter(m => m.id !== 'loading'), aiMsg]);
-    setSending(false);
+
+    try {
+      // ✅ U-02: try/catch — erro não trava a conversa
+      const reply = await sendChatMessage(msg, history);
+      const aiMsg: ChatMessage = { id: `ai-${Date.now()}`, role: 'assistant', content: reply, timestamp: new Date().toISOString() };
+      setChatHistory(prev => [...prev.filter(m => m.id !== 'loading'), aiMsg]);
+    } catch (err) {
+      // Remover loading bubble e mostrar toast de erro
+      setChatHistory(prev => prev.filter(m => m.id !== 'loading'));
+      addToast('Erro ao conectar com a IA. Verifique sua conexão e tente novamente.', 'error');
+      console.error('Chat error:', err);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (

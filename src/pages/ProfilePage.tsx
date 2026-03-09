@@ -1,7 +1,9 @@
+// src/pages/ProfilePage.tsx
+// ✅ U-02: InlineToast local substituído por addToast global
 import React, { useState } from 'react';
 import { Award, Star, BarChart3, Edit2, Check, X, Plus } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { Card, Button, Badge, SectionHeader, InlineToast } from '@/components/ui';
+import { Card, Button, Badge, SectionHeader } from '@/components/ui';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 
 const RADAR_DATA = [
@@ -10,30 +12,25 @@ const RADAR_DATA = [
 ];
 
 export default function ProfilePage() {
-  const { user, setCurrentPage } = useApp();
-  const [editMode, setEditMode] = useState(false);
-  const [editName, setEditName] = useState(user?.name || '');
-  const [editSpec, setEditSpec] = useState(user?.specialty || '');
-  // BUG-06 FIX: persisted display values (local state after save)
+  const { user, setCurrentPage, addToast } = useApp();
+  const [editMode, setEditMode]   = useState(false);
+  const [editName, setEditName]   = useState(user?.name || '');
+  const [editSpec, setEditSpec]   = useState(user?.specialty || '');
   const [displayName, setDisplayName] = useState(user?.name || '');
   const [displaySpec, setDisplaySpec] = useState(user?.specialty || '');
-  const [savedToast, setSavedToast] = useState(false);
-  // BUG-13 FIX: certification add state
   const [showAddCert, setShowAddCert] = useState(false);
-  const [certForm, setCertForm] = useState({ title: '', issuer: '', year: new Date().getFullYear().toString() });
-  const [certSaved, setCertSaved] = useState(false);
+  const [certForm, setCertForm]   = useState({ title: '', issuer: '', year: new Date().getFullYear().toString() });
   const [certifications, setCertifications] = useState(user?.certifications || []);
 
   if (!user) return null;
 
-  // BUG-06 FIX: save properly updates display state
   const handleSave = () => {
     if (!editName.trim()) return;
     setDisplayName(editName);
     setDisplaySpec(editSpec);
     setEditMode(false);
-    setSavedToast(true);
-    setTimeout(() => setSavedToast(false), 2500);
+    // ✅ U-02: toast global em vez de InlineToast local
+    addToast('Perfil atualizado com sucesso!', 'success');
   };
 
   const handleCancelEdit = () => {
@@ -42,9 +39,11 @@ export default function ProfilePage() {
     setEditMode(false);
   };
 
-  // BUG-13 FIX: add certification with feedback
   const handleAddCert = () => {
-    if (!certForm.title || !certForm.issuer) return;
+    if (!certForm.title || !certForm.issuer) {
+      addToast('Preencha o título e o emissor da certificação.', 'warning');
+      return;
+    }
     const newCert = {
       id: `c-${Date.now()}`, title: certForm.title, issuer: certForm.issuer,
       year: Number(certForm.year) || new Date().getFullYear(), verified: false,
@@ -52,8 +51,8 @@ export default function ProfilePage() {
     setCertifications(prev => [...prev, newCert]);
     setCertForm({ title: '', issuer: '', year: new Date().getFullYear().toString() });
     setShowAddCert(false);
-    setCertSaved(true);
-    setTimeout(() => setCertSaved(false), 2500);
+    // ✅ U-02: toast global
+    addToast('Certificação adicionada!', 'success');
   };
 
   return (
@@ -79,9 +78,7 @@ export default function ProfilePage() {
                   <input value={editSpec} onChange={e => setEditSpec(e.target.value)}
                     className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
                 </div>
-                {!editName.trim() && (
-                  <p className="text-xs text-red-500 font-semibold">Nome não pode estar vazio.</p>
-                )}
+                {!editName.trim() && <p className="text-xs text-red-500 font-semibold">Nome não pode estar vazio.</p>}
                 <div className="flex gap-2">
                   <Button size="sm" onClick={handleSave} disabled={!editName.trim()}><Check size={13} /> Salvar</Button>
                   <Button size="sm" variant="secondary" onClick={handleCancelEdit}><X size={13} /> Cancelar</Button>
@@ -95,11 +92,6 @@ export default function ProfilePage() {
                     className="text-slate-400 hover:text-[#0056b3] transition-colors"><Edit2 size={14} /></button>
                 </div>
                 <p className="text-sm text-slate-500 mt-0.5">{displaySpec}</p>
-                {savedToast && (
-                  <div className="mt-2">
-                    <InlineToast message="Perfil atualizado com sucesso!" type="success" />
-                  </div>
-                )}
                 <div className="flex flex-wrap gap-2 mt-3">
                   <Badge variant="blue">{user.crmv}</Badge>
                   <Badge variant="info">{user.role === 'veterinarian' ? 'Médico Veterinário' : user.role}</Badge>
@@ -130,7 +122,6 @@ export default function ProfilePage() {
         {/* Certifications */}
         <Card className="p-5">
           <SectionHeader title="Certificações" subtitle={`${certifications.length} certificados`} />
-          {certSaved && <div className="mb-3"><InlineToast message="Certificação adicionada!" type="success" /></div>}
           <div className="space-y-3">
             {certifications.map(cert => (
               <div key={cert.id} className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
@@ -141,13 +132,11 @@ export default function ProfilePage() {
                   <p className="text-sm font-semibold text-slate-900 leading-tight">{cert.title}</p>
                   <p className="text-xs text-slate-500 font-mono mt-0.5">{cert.issuer} · {cert.year}</p>
                 </div>
-                {cert.verified && <Badge variant="success"><Check size={9} className="mr-0.5" />Verificado</Badge>}
-                {!cert.verified && <Badge variant="default">Pendente</Badge>}
+                {cert.verified ? <Badge variant="success"><Check size={9} className="mr-0.5" />Verificado</Badge> : <Badge variant="default">Pendente</Badge>}
               </div>
             ))}
           </div>
 
-          {/* BUG-13 FIX: Add certification form */}
           {showAddCert ? (
             <div className="mt-4 p-4 border border-slate-200 rounded-xl space-y-3 bg-slate-50">
               <p className="text-xs font-bold text-slate-600">Nova Certificação</p>
@@ -166,9 +155,7 @@ export default function ProfilePage() {
                 <Button size="sm" className="flex-1" onClick={handleAddCert} disabled={!certForm.title || !certForm.issuer}>
                   <Check size={12} /> Adicionar
                 </Button>
-                <Button size="sm" variant="secondary" className="flex-1" onClick={() => setShowAddCert(false)}>
-                  Cancelar
-                </Button>
+                <Button size="sm" variant="secondary" className="flex-1" onClick={() => setShowAddCert(false)}>Cancelar</Button>
               </div>
             </div>
           ) : (
@@ -194,15 +181,9 @@ export default function ProfilePage() {
 
       {/* Quick actions */}
       <div className="flex flex-wrap gap-3">
-        <Button variant="secondary" size="sm" onClick={() => setCurrentPage('reports')}>
-          <BarChart3 size={13} /> Ver Relatórios
-        </Button>
-        <Button variant="secondary" size="sm" onClick={() => setCurrentPage('gallery')}>
-          Ver Histórico de Casos
-        </Button>
-        <Button variant="secondary" size="sm" onClick={() => setCurrentPage('settings')}>
-          Configurações de Conta
-        </Button>
+        <Button variant="secondary" size="sm" onClick={() => setCurrentPage('reports')}><BarChart3 size={13} /> Ver Relatórios</Button>
+        <Button variant="secondary" size="sm" onClick={() => setCurrentPage('gallery')}>Ver Histórico de Casos</Button>
+        <Button variant="secondary" size="sm" onClick={() => setCurrentPage('settings')}>Configurações de Conta</Button>
       </div>
     </div>
   );

@@ -1,7 +1,9 @@
+// src/pages/SettingsPage.tsx
+// ✅ U-02: InlineToast local substituído por addToast global
 import React, { useState } from 'react';
 import { Bell, Moon, Globe, FileDown, Zap, Shield, Database, RefreshCw, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { Card, Button, SectionHeader, InlineToast } from '@/components/ui';
+import { Card, Button, SectionHeader } from '@/components/ui';
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -27,12 +29,24 @@ function SettingRow({ icon: Icon, title, description, children }: { icon: React.
 }
 
 export default function SettingsPage() {
-  const { user } = useApp();
+  const { user, addToast } = useApp();
   const [prefs, setPrefs] = useState(user?.preferences || { notifications: true, theme: 'light', language: 'pt', autoAnalysis: true, reportFormat: 'pdf' });
-  const [saved, setSaved] = useState(false);
-  const [cacheCleared, setCacheCleared] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  const save = async () => {
+    setSaving(true);
+    // Simula gravação (substituir por supabase.from('users').update({preferences: prefs}) quando pronto)
+    await new Promise(r => setTimeout(r, 600));
+    setSaving(false);
+    // ✅ U-02: toast global em vez de InlineToast local
+    addToast('Configurações salvas com sucesso!', 'success');
+  };
+
+  const clearCache = () => {
+    // ✅ U-02: toast global
+    addToast('Cache limpo com sucesso!', 'info');
+  };
+
   const set = (key: string, val: any) => setPrefs(p => ({ ...p, [key]: val }));
 
   return (
@@ -85,19 +99,17 @@ export default function SettingsPage() {
             <span className="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">✓ Ativo · TLS 1.3</span>
           </SettingRow>
           <SettingRow icon={RefreshCw} title="Cache e Dados Locais" description="Limpar dados temporários do sistema">
-            <Button variant="secondary" size="sm" onClick={() => { setCacheCleared(true); setTimeout(() => setCacheCleared(false), 2500); }}>Limpar Cache</Button>
+            <Button variant="secondary" size="sm" onClick={clearCache}>Limpar Cache</Button>
           </SettingRow>
         </div>
       </Card>
 
       <div className="flex gap-3 pt-2">
-        <Button onClick={save} className="flex-1">
-          {saved ? <><Check size={14} />Salvo!</> : 'Salvar Configurações'}
+        <Button onClick={save} loading={saving} className="flex-1">
+          {saving ? 'Salvando...' : <><Check size={14} />Salvar Configurações</>}
         </Button>
         <Button variant="secondary" onClick={() => setPrefs(user?.preferences || prefs)} className="flex-shrink-0">Resetar</Button>
       </div>
-
-      {cacheCleared && <InlineToast message="Cache limpo com sucesso! Dados temporários removidos." type="success" />}
 
       <p className="text-xs text-slate-400 font-mono text-center">
         OrtoBolt v1.0.0 · © 2025 OrtoBolt LTDA · CRMV-SP Certificado · HL7 FHIR v4.0
