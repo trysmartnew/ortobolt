@@ -59,7 +59,7 @@ export function Card({ children, className='', ...props }: React.HTMLAttributes<
 }
 
 // ── KPI Widget ───────────────────────────────────────────────────────────────
-export function KPIWidget({ label, value, unit, trend, trendDirection, color }: { label: string; value: number|string; unit?: string; trend: number; trendDirection: 'up'|'down'|'stable'; color: string }) {
+export const KPIWidget = React.memo(function KPIWidget({ label, value, unit, trend, trendDirection, color }: { label: string; value: number|string; unit?: string; trend: number; trendDirection: 'up'|'down'|'stable'; color: string }) {
   const TrendIcon = trendDirection === 'up' ? TrendingUp : trendDirection === 'down' ? TrendingDown : Minus;
   const trendColor = trendDirection === 'up' ? 'text-emerald-600' : trendDirection === 'down' ? 'text-red-500' : 'text-slate-500';
   return (
@@ -72,10 +72,10 @@ export function KPIWidget({ label, value, unit, trend, trendDirection, color }: 
           <TrendIcon className="h-3.5 w-3.5" /> {Math.abs(trend)}%
         </div>
       </div>
-      <p className="text-[10px] text-slate-400 mt-1.5 pl-2">vs. mês anterior</p>
+<p className="text-[10px] text-slate-400 mt-1.5 pl-2">vs. mês anterior</p>
     </Card>
   );
-}
+});  
 
 // ── Spinner ──────────────────────────────────────────────────────────────────
 export function Spinner({ size = 'md' }: { size?: 'sm'|'md'|'lg' }) {

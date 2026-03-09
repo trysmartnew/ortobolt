@@ -1,4 +1,8 @@
-import React, { useEffect } from 'react';
+// src/App.tsx
+// ✅ C-05: useEffect com stale closure corrigido — useRef para handlers estáveis
+// ✅ U-02: ToastContainer renderizado no topo do layout
+
+import React, { useEffect, useRef } from 'react';
 import { AppProvider, useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
 import HomePage      from '@/pages/HomePage';
@@ -16,6 +20,7 @@ import NotificationsPage from '@/pages/NotificationsPage';
 import Sidebar       from '@/components/Sidebar';
 import TopBar        from '@/components/TopBar';
 import ProductTour   from '@/components/ProductTour';
+import ToastContainer from '@/components/ToastContainer';
 
 const PAGE_MAP = {
   dashboard:     DashboardPage,
@@ -34,25 +39,41 @@ function AppInner() {
     currentView, authLoading,
     currentPage, tourActive, closeTour,
     logout, setUserFromSession,
+    toasts, removeToast,
   } = useApp();
 
+  // ✅ C-05: Refs estáveis — evitam stale closure no listener onAuthStateChange
+  const logoutRef         = useRef(logout);
+  const setSessionRef     = useRef(setUserFromSession);
+
+  // Manter refs sempre atualizadas sem re-montar o effect
+  useEffect(() => { logoutRef.current = logout; }, [logout]);
+  useEffect(() => { setSessionRef.current = setUserFromSession; }, [setUserFromSession]);
+
   useEffect(() => {
+    // Verificar sessão existente ao montar
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        setUserFromSession(session.user);
+        setSessionRef.current(session.user);
       } else {
-        setUserFromSession({ id: '' });
+        setSessionRef.current({ id: '' });
       }
     });
 
+    // Listener de mudanças de auth — usa refs, nunca stale
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event: string, session: { user?: { id: string } } | null) => {
-        if (event === 'SIGNED_OUT') logout();
-        if (event === 'TOKEN_REFRESHED' && session?.user) setUserFromSession(session.user);
+      (event, session) => {
+        if (event === 'SIGNED_OUT') {
+          logoutRef.current();
+        }
+        if (event === 'TOKEN_REFRESHED' && session?.user) {
+          setSessionRef.current(session.user);
+        }
       }
     );
+
     return () => subscription.unsubscribe();
-  }, []);
+  }, []); // ✅ Array vazio é seguro agora graças às refs
 
   // Loading enquanto verifica sessão
   if (authLoading) {
@@ -67,9 +88,9 @@ function AppInner() {
   }
 
   // Roteamento por view
-  if (currentView === 'home')     return <HomePage />;
-  if (currentView === 'login')    return <LoginPage />;
-  if (currentView === 'register') return <RegisterPage />;
+  if (currentView === 'home')     return <><HomePage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
+  if (currentView === 'login')    return <><LoginPage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
+  if (currentView === 'register') return <><RegisterPage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
 
   // App principal (currentView === 'app')
   const PageComponent = PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
@@ -84,6 +105,8 @@ function AppInner() {
         </main>
       </div>
       <ProductTour page={currentPage} active={tourActive} onClose={closeTour} />
+      {/* ✅ U-02: Toast container — aparece sobre tudo */}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 }
@@ -91,4 +114,3 @@ function AppInner() {
 export default function App() {
   return <AppProvider><AppInner /></AppProvider>;
 }
-

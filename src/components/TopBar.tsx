@@ -15,7 +15,9 @@ const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   notifications: { title: 'Notificações',        subtitle: 'Alertas e atualizações' },
 };
 
-export default function TopBar() {
+export default React.memo(function Sidebar() {
+// (fechar com });  no final — adicionar o ) antes do ;)
+
   const { currentPage, setCurrentPage, unreadCount, tourActive, startTour } = useApp();
   const { title, subtitle } = PAGE_TITLES[currentPage] || PAGE_TITLES.dashboard;
   const [online] = React.useState(true);
@@ -59,4 +61,4 @@ export default function TopBar() {
       </div>
     </header>
   );
-}
+});

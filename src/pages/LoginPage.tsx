@@ -1,5 +1,9 @@
+// src/pages/LoginPage.tsx
+// ✅ C-02: UI de bloqueio por tentativas excessivas (loginLocked / loginLockSecondsLeft)
+// ✅ U-01: rememberMe passado para login() e respeitado na sessão
+
 import React, { useState } from 'react';
-import { Eye, EyeOff, Shield, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Shield, ArrowLeft, Lock } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
 
@@ -25,7 +29,7 @@ const AppleIcon = () => (
 );
 
 export default function LoginPage() {
-  const { login, setCurrentView } = useApp();
+  const { login, setCurrentView, loginLocked, loginLockSecondsLeft } = useApp();
   const [email, setEmail]           = useState('');
   const [password, setPassword]     = useState('');
   const [showPass, setShowPass]     = useState(false);
@@ -39,13 +43,28 @@ export default function LoginPage() {
   const [forgotLoading, setForgotLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!email.trim() || !password.trim()) { setError('Preencha o e-mail e a senha.'); return; }
-    setLoading(true); setError('');
+    // ✅ C-02: Bloquear submit se conta está travada
+    if (loginLocked) {
+      setError(`Muitas tentativas incorretas. Aguarde ${loginLockSecondsLeft}s para tentar novamente.`);
+      return;
+    }
+    if (!email.trim() || !password.trim()) {
+      setError('Preencha o e-mail e a senha.');
+      return;
+    }
+    setLoading(true);
+    setError('');
     try {
-      const ok = await login(email, password);
-      if (!ok) setError('E-mail ou senha incorretos. Verifique suas credenciais.');
-    } catch { setError('Erro de conexão. Verifique sua internet e tente novamente.'); }
-    finally { setLoading(false); }
+      // ✅ U-01: Passar rememberMe para o login (AppContext gerencia a persistência)
+      const ok = await login(email, password, rememberMe);
+      if (!ok && !loginLocked) {
+        setError('E-mail ou senha incorretos. Verifique suas credenciais.');
+      }
+    } catch {
+      setError('Erro de conexão. Verifique sua internet e tente novamente.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSocialLogin = async (provider: 'google' | 'facebook' | 'apple') => {
@@ -56,21 +75,28 @@ export default function LoginPage() {
         options: { redirectTo: window.location.origin },
       });
       if (err) setError(`Erro ao entrar com ${provider}: ${err.message}`);
-    } catch { setError('Erro ao conectar com provedor social.'); }
-    finally { setSocialLoading(null); }
+    } catch {
+      setError('Erro ao conectar com provedor social.');
+    } finally {
+      setSocialLoading(null);
+    }
   };
 
   const handleForgotPassword = async () => {
     if (!forgotEmail.trim()) { setError('Informe seu e-mail.'); return; }
-    setForgotLoading(true); setError('');
+    setForgotLoading(true);
+    setError('');
     try {
       const { error: err } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
         redirectTo: `${window.location.origin}`,
       });
       if (err) setError(err.message);
       else setForgotSent(true);
-    } catch { setError('Erro ao enviar e-mail. Tente novamente.'); }
-    finally { setForgotLoading(false); }
+    } catch {
+      setError('Erro ao enviar e-mail. Tente novamente.');
+    } finally {
+      setForgotLoading(false);
+    }
   };
 
   if (forgotMode) {
@@ -161,12 +187,22 @@ export default function LoginPage() {
             <h1 className="text-2xl font-extrabold text-slate-800 mb-1">Entrar na plataforma</h1>
             <p className="text-sm text-slate-400">
               Não tem conta?{' '}
-              <button onClick={() => setCurrentView('register')}
-                className="font-semibold" style={{ color: '#0056b3' }}>
+              <button onClick={() => setCurrentView('register')} className="font-semibold" style={{ color: '#0056b3' }}>
                 Cadastre-se aqui
               </button>
             </p>
           </div>
+
+          {/* ✅ C-02: Banner de bloqueio */}
+          {loginLocked && (
+            <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-5">
+              <Lock size={16} className="text-red-500 flex-shrink-0" />
+              <div>
+                <p className="text-xs font-bold text-red-700">Acesso temporariamente bloqueado</p>
+                <p className="text-xs text-red-500">Muitas tentativas incorretas. Aguarde {loginLockSecondsLeft}s.</p>
+              </div>
+            </div>
+          )}
 
           {/* Social login */}
           <div className="space-y-2.5 mb-6">
@@ -177,7 +213,7 @@ export default function LoginPage() {
             ].map(({ id, label, Icon }) => (
               <button key={id}
                 onClick={() => handleSocialLogin(id as 'google' | 'facebook' | 'apple')}
-                disabled={!!socialLoading}
+                disabled={!!socialLoading || loginLocked}
                 className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl text-sm font-medium transition-all disabled:opacity-50 hover:bg-slate-50"
                 style={{ border: '1.5px solid #E2E8F0', color: '#374151', background: '#fff' }}>
                 <Icon />
@@ -197,7 +233,9 @@ export default function LoginPage() {
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">E-mail</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
-                placeholder="seu@email.com" onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
+                placeholder="seu@email.com"
+                disabled={loginLocked}
+                onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
             </div>
 
             <div>
@@ -210,7 +248,9 @@ export default function LoginPage() {
               <div className="relative">
                 <input type={showPass ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
                   className="w-full px-3 py-2.5 pr-10 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
-                  placeholder="••••••••" onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
+                  placeholder="••••••••"
+                  disabled={loginLocked}
+                  onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
                 <button type="button" onClick={() => setShowPass(v => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                   {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -218,6 +258,7 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* ✅ U-01: rememberMe agora tem efeito real */}
             <label className="flex items-center gap-2.5 cursor-pointer select-none">
               <div className="relative">
                 <input type="checkbox" className="sr-only" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
@@ -226,17 +267,22 @@ export default function LoginPage() {
                   {rememberMe && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
                 </div>
               </div>
-              <span className="text-xs text-slate-500">Manter conectado</span>
+              <span className="text-xs text-slate-500">
+                Manter conectado{' '}
+                <span className="text-slate-400">
+                  ({rememberMe ? 'sessão salva no navegador' : 'sessão encerra ao fechar o navegador'})
+                </span>
+              </span>
             </label>
 
             {error && <div className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</div>}
 
-            <button onClick={handleSubmit} disabled={loading}
+            <button onClick={handleSubmit} disabled={loading || loginLocked}
               className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
               style={{ background: '#0056b3', boxShadow: '0 4px 14px rgba(0,86,179,0.3)' }}
-              onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#004494'; }}
+              onMouseEnter={e => { if (!loading && !loginLocked) e.currentTarget.style.background = '#004494'; }}
               onMouseLeave={e => { e.currentTarget.style.background = '#0056b3'; }}>
-              {loading ? 'Entrando...' : 'Entrar na plataforma'}
+              {loading ? 'Entrando...' : loginLocked ? `Bloqueado (${loginLockSecondsLeft}s)` : 'Entrar na plataforma'}
             </button>
           </div>
 
@@ -254,4 +300,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

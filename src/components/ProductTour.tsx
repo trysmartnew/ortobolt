@@ -383,7 +383,7 @@ interface ProductTourProps {
   onClose: () => void;
 }
 
-export default function ProductTour({ page, active, onClose }: ProductTourProps) {
+export default React.memo(function ProductTour({ page, active, onClose }) {
   const [stepIndex, setStepIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
   const steps = TOUR_STEPS[page] || [];
@@ -464,9 +464,9 @@ export default function ProductTour({ page, active, onClose }: ProductTourProps)
           onClose={onClose}
         />
       )}
-    </>
+ </>
   );
-}
+});
 
 // TourButton was moved to TopBar to avoid overlapping page content.
 // See: src/components/TopBar.tsx

@@ -1,3 +1,7 @@
+// src/services/supabase.ts
+// ✅ C-03: select('*') substituído por lista explícita de campos
+// ✅ C-03: Tipagem (c: any) em certifications substituída por interface explícita
+
 import { createClient } from '@supabase/supabase-js';
 import type { User } from '@/types/index';
 
@@ -19,23 +23,54 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
   },
 });
 
+// ✅ C-03: Interface explícita — sem 'any'
+interface UserProfileRow {
+  id: string;
+  name: string | null;
+  email: string | null;
+  role: 'veterinarian' | 'resident' | 'admin' | null;
+  specialty: string | null;
+  crmv: string | null;
+  institution: string | null;
+  avatar: string | null;
+  total_cases: number | null;
+  success_rate: number | null;
+  avg_precision: number | null;
+  monthly_procedures: number | null;
+  preferences: User['preferences'] | null;
+}
+
+interface CertRow {
+  id: string;
+  title: string;
+  issuer: string;
+  year: number;
+  verified: boolean;
+}
+
 export async function fetchUserProfile(userId: string): Promise<User | null> {
+  // ✅ C-03: Campos explícitos — nunca select('*')
   const { data: profile, error } = await supabase
     .from('users')
-    .select('*')
+    .select(
+      'id, name, email, role, specialty, crmv, institution, avatar, ' +
+      'total_cases, success_rate, avg_precision, monthly_procedures, preferences'
+    )
     .eq('id', userId)
-    .single();
+    .single<UserProfileRow>();
 
   if (error || !profile) {
     console.error('fetchUserProfile error:', error?.message);
     return null;
   }
 
+  // ✅ C-03: select apenas campos necessários em certifications também
   const { data: certs } = await supabase
     .from('certifications')
-    .select('*')
+    .select('id, title, issuer, year, verified')
     .eq('user_id', userId)
-    .order('year', { ascending: false });
+    .order('year', { ascending: false })
+    .returns<CertRow[]>();
 
   const user: User = {
     id:          profile.id,
@@ -45,8 +80,8 @@ export async function fetchUserProfile(userId: string): Promise<User | null> {
     specialty:   profile.specialty   || 'Ortopedia Veterinária',
     crmv:        profile.crmv        || '',
     institution: profile.institution || '',
-    avatar:      profile.avatar,
-    certifications: (certs || []).map((c: any) => ({
+    avatar:      profile.avatar      ?? undefined,
+    certifications: (certs || []).map((c: CertRow) => ({
       id:       c.id,
       title:    c.title,
       issuer:   c.issuer,
@@ -70,4 +105,3 @@ export async function fetchUserProfile(userId: string): Promise<User | null> {
 
   return user;
 }
-

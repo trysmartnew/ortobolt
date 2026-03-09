@@ -88,7 +88,7 @@ function MessageBubble({ msg, currentUserId, onlineUsers }: { msg:CaseMessage; c
 
 // ── Chat Tab ──────────────────────────────────────────────────────────────────
 function ChatTab({ caseId }: { caseId:string }) {
-  const { getCaseMessages, addCaseMessage, user, activeCase, getCaseCollaborators, onlineUsers } = useApp();
+  const { getCaseMessages, addCaseMessage, user, activeCase, getCaseCollaborators, onlineUsers, addToast } = useApp();
   const [input, setInput] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -104,12 +104,18 @@ function ChatTab({ caseId }: { caseId:string }) {
   };
 
   const askAI = async () => {
-    if (!activeCase || aiLoading) return;
-    setAiLoading(true);
+  if (!activeCase || aiLoading) return;
+  setAiLoading(true);
+  try {
     const r = await getCaseAISuggestion(activeCase);
     addCaseMessage(caseId, r, 'ai_suggestion');
+    addToast('Sugestão OrthoAI gerada com sucesso.', 'success');
+  } catch {
+    addToast('Erro ao obter sugestão da IA. Tente novamente.', 'error');
+  } finally {
     setAiLoading(false);
-  };
+  }
+};
 
   return (
     <div data-tour="tour-collab-chat" className="flex flex-col h-full">
@@ -118,7 +124,7 @@ function ChatTab({ caseId }: { caseId:string }) {
         <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
         <span className="text-xs font-semibold text-emerald-600">{onlineCount} online</span>
         <div className="flex -space-x-2">
-          <Avatar name={user?.name || 'Você'} online size="sm" />
+          <Avatar name={Users?.name || 'Você'} online size="sm" />
           {collabs.map(c => <Avatar key={c.id} name={c.name} online={onlineUsers.includes(c.userId)} size="sm" />)}
         </div>
         <span className="text-xs text-slate-400 ml-auto font-mono">Chat clínico do caso</span>
@@ -164,11 +170,12 @@ function ChatTab({ caseId }: { caseId:string }) {
       </div>
     </div>
   );
-}
+} 
+
 
 // ── Specialists Tab ───────────────────────────────────────────────────────────
 function SpecialistsTab({ caseId }: { caseId:string }) {
-  const { getCaseCollaborators, inviteCollaborator, removeCollaborator, user, onlineUsers } = useApp();
+  const { getCaseCollaborators, inviteCollaborator, removeCollaborator, user, onlineUsers, addToast } = useApp();
   const [showInvite, setShowInvite] = useState(false);
   const [form, setForm] = useState({ name:'', email:'', specialty:'', crmv:'', institution:'', role:'consultant' as 'consultant'|'observer' });
   const collabs = getCaseCollaborators(caseId);
@@ -180,10 +187,14 @@ function SpecialistsTab({ caseId }: { caseId:string }) {
   };
 
   const handleInvite = () => {
-    if (!form.name.trim() || !form.email.trim() || !form.specialty.trim() || !form.institution.trim()) return;
-    inviteCollaborator(caseId, form);
-    setForm({ name:'', email:'', specialty:'', crmv:'', institution:'', role:'consultant' });
-    setShowInvite(false);
+  if (!form.name.trim() || !form.email.trim() || !form.specialty.trim() || !form.institution.trim()) {
+    addToast('Preencha todos os campos obrigatórios.', 'warning');
+    return;
+  }
+  inviteCollaborator(caseId, form);
+  setForm({ name:'', email:'', specialty:'', crmv:'', institution:'', role:'consultant' });
+  setShowInvite(false);
+  addToast(`Convite enviado para ${form.name}.`, 'success');
   };
 
   const STATUS_CLS: Record<string,string> = { accepted:'text-emerald-600', pending:'text-amber-500', declined:'text-red-500' };

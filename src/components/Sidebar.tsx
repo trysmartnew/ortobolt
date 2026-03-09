@@ -12,7 +12,9 @@ const NAV = [
   { id: 'settings',      label: 'Configurações',    icon: Settings       },
 ] as const;
 
-export default function Sidebar() {
+export default React.memo(function Sidebar() {
+// (fechar com });  no final — adicionar o ) antes do ;)
+
   const { currentPage, setCurrentPage, user, logout, unreadCount } = useApp();
 
   return (
@@ -79,3 +81,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+)

@@ -1,26 +1,39 @@
+// src/pages/AnalysisPage.tsx
+// ✅ C-06: Validação de tipo MIME e tamanho máximo no upload de imagens
+
 import React, { useState, useRef, useCallback } from 'react';
-import { Camera, Upload, Scan, AlertCircle, CheckCircle, X, RefreshCw } from 'lucide-react';
+import { Camera, Upload, Scan, AlertCircle, CheckCircle, X, RefreshCw, ShieldCheck } from 'lucide-react';
 import { analyzeImage } from '@/services/aiService';
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
 
 type Mode = 'idle' | 'camera' | 'preview' | 'analyzing' | 'result';
 
+// ✅ C-06: Tipos e tamanho permitidos
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+const MAX_FILE_SIZE_MB   = 15;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
 export default function AnalysisPage() {
-  const [mode, setMode] = useState<Mode>('idle');
+  const [mode, setMode]           = useState<Mode>('idle');
   const [imageData, setImageData] = useState<string | null>(null);
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult]       = useState<string | null>(null);
   const [streamError, setStreamError] = useState('');
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef  = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const fileRef   = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   const startCamera = async () => {
     setStreamError('');
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720, facingMode: 'environment' } });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 1280, height: 720, facingMode: 'environment' },
+      });
       streamRef.current = stream;
-      if (videoRef.current) { videoRef.current.srcObject = stream; videoRef.current.play(); }
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
       setMode('camera');
     } catch {
       setStreamError('Câmera indisponível. Use upload de arquivo.');
@@ -34,8 +47,10 @@ export default function AnalysisPage() {
 
   const capture = () => {
     if (!videoRef.current || !canvasRef.current) return;
-    const v = videoRef.current; const c = canvasRef.current;
-    c.width = v.videoWidth; c.height = v.videoHeight;
+    const v = videoRef.current;
+    const c = canvasRef.current;
+    c.width = v.videoWidth;
+    c.height = v.videoHeight;
     c.getContext('2d')?.drawImage(v, 0, 0);
     const data = c.toDataURL('image/jpeg', 0.85);
     setImageData(data);
@@ -43,11 +58,38 @@ export default function AnalysisPage() {
     setMode('preview');
   };
 
+  // ✅ C-06: Validação completa no handleFile
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
+
+    // 1. Validar tipo MIME real (não só a extensão)
+    if (!ALLOWED_MIME_TYPES.includes(f.type)) {
+      setStreamError(
+        `Formato de arquivo inválido: "${f.type || 'desconhecido'}". ` +
+        `Use JPG, PNG ou WEBP.`
+      );
+      // Limpar input para permitir nova seleção do mesmo arquivo
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
+
+    // 2. Validar tamanho
+    if (f.size > MAX_FILE_SIZE_BYTES) {
+      const sizeMB = (f.size / 1024 / 1024).toFixed(1);
+      setStreamError(
+        `Arquivo muito grande: ${sizeMB}MB. O tamanho máximo é ${MAX_FILE_SIZE_MB}MB.`
+      );
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
+
+    setStreamError('');
     const reader = new FileReader();
-    reader.onload = ev => { setImageData(ev.target?.result as string); setMode('preview'); };
+    reader.onload = ev => {
+      setImageData(ev.target?.result as string);
+      setMode('preview');
+    };
     reader.readAsDataURL(f);
   };
 
@@ -60,26 +102,51 @@ export default function AnalysisPage() {
     setMode('result');
   };
 
-  const reset = () => { setMode('idle'); setImageData(null); setResult(null); setStreamError(''); stopCamera(); };
+  const reset = () => {
+    setMode('idle');
+    setImageData(null);
+    setResult(null);
+    setStreamError('');
+    stopCamera();
+    if (fileRef.current) fileRef.current.value = '';
+  };
 
-  // Parse markdown-ish result
+  // Renderizar resultado markdown básico
   const renderResult = (text: string) =>
     text.split('\n').map((line, i) => {
-      if (line.startsWith('**') && line.endsWith('**')) return <h4 key={i} className="font-bold text-slate-900 mt-3 mb-1">{line.slice(2,-2)}</h4>;
-      if (line.startsWith('- ') || line.startsWith('• ')) return <li key={i} className="ml-4 text-sm text-slate-700 list-disc">{line.slice(2)}</li>;
-      if (line.startsWith('#')) return <h3 key={i} className="font-bold text-[#0056b3] text-base mt-4 mb-2">{line.replace(/^#+\s/, '')}</h3>;
+      if (line.startsWith('**') && line.endsWith('**'))
+        return <h4 key={i} className="font-bold text-slate-900 mt-3 mb-1">{line.slice(2,-2)}</h4>;
+      if (line.startsWith('- ') || line.startsWith('• '))
+        return <li key={i} className="ml-4 text-sm text-slate-700 list-disc">{line.slice(2)}</li>;
+      if (line.startsWith('#'))
+        return <h3 key={i} className="font-bold text-[#0056b3] text-base mt-4 mb-2">{line.replace(/^#+\s/, '')}</h3>;
       if (line === '') return <br key={i} />;
       return <p key={i} className="text-sm text-slate-700">{line}</p>;
     });
 
   return (
     <div className="p-6 max-w-4xl space-y-5">
-      <SectionHeader title="Análise de Imagem Ortopédica" subtitle="Visão computacional · OpenRouter Vision · OrthoVision v3.2" />
+      <SectionHeader
+        title="Análise de Imagem Ortopédica"
+        subtitle="Visão computacional · OpenRouter Vision · OrthoVision v3.2"
+      />
 
-      {/* Controls */}
+      {/* ✅ C-06: Badge informativo de formatos aceitos */}
+      {mode === 'idle' && (
+        <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 w-fit">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+          Formatos aceitos: JPG, PNG, WEBP · Tamanho máximo: {MAX_FILE_SIZE_MB}MB · Dados anonimizados antes do envio à IA
+        </div>
+      )}
+
+      {/* Controles */}
       {mode === 'idle' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button data-tour="tour-webcam" onClick={startCamera} className="flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-[#0056b3] hover:bg-blue-50/50 transition-all group">
+          <button
+            data-tour="tour-webcam"
+            onClick={startCamera}
+            className="flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-[#0056b3] hover:bg-blue-50/50 transition-all group"
+          >
             <div className="w-14 h-14 rounded-2xl bg-[#0056b3]/10 flex items-center justify-center group-hover:bg-[#0056b3]/20 transition-colors">
               <Camera className="h-7 w-7 text-[#0056b3]" />
             </div>
@@ -88,27 +155,42 @@ export default function AnalysisPage() {
               <p className="text-xs text-slate-500 mt-1">Capture imagem radiográfica ou procedimento via webcam</p>
             </div>
           </button>
-          <button data-tour="tour-upload" onClick={() => fileRef.current?.click()} className="flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-[#0056b3] hover:bg-blue-50/50 transition-all group">
+          <button
+            data-tour="tour-upload"
+            onClick={() => fileRef.current?.click()}
+            className="flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-[#0056b3] hover:bg-blue-50/50 transition-all group"
+          >
             <div className="w-14 h-14 rounded-2xl bg-[#0056b3]/10 flex items-center justify-center group-hover:bg-[#0056b3]/20 transition-colors">
               <Upload className="h-7 w-7 text-[#0056b3]" />
             </div>
             <div className="text-center">
               <p className="font-bold text-slate-900">Upload de Imagem</p>
-              <p className="text-xs text-slate-500 mt-1">JPG, PNG, DICOM — radiografias, ecografias, tomografias</p>
+              <p className="text-xs text-slate-500 mt-1">JPG, PNG, WEBP — radiografias, ecografias, tomografias</p>
             </div>
           </button>
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+          {/* ✅ C-06: accept restrito aos tipos validados */}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={handleFile}
+          />
         </div>
       )}
 
-      {streamError && <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3 text-red-700 text-sm"><AlertCircle size={16} />{streamError}</div>}
+      {streamError && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3 text-red-700 text-sm">
+          <AlertCircle size={16} className="flex-shrink-0" />
+          {streamError}
+        </div>
+      )}
 
       {/* Camera view */}
       {mode === 'camera' && (
         <Card className="overflow-hidden">
           <div className="relative bg-black rounded-xl overflow-hidden">
             <video ref={videoRef} className="w-full max-h-[400px] object-cover" autoPlay muted playsInline />
-            {/* Overlay crosshair */}
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
               <div className="border-2 border-[#0056b3]/50 w-64 h-64 rounded-lg">
                 <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#0056b3]" />
@@ -139,7 +221,13 @@ export default function AnalysisPage() {
             <div>
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Configurações de Análise</p>
               <div className="space-y-3">
-                {[['Modelo', 'OrthoVision v3.2'],['Modo', 'Análise Ortopédica Completa'],['Espécie alvo', 'Multi-espécie'],['Detecção', 'Landmarks + Patologias']].map(([k,v]) => (
+                {[
+                  ['Modelo', 'OrthoVision v3.2'],
+                  ['Modo', 'Análise Ortopédica Completa'],
+                  ['Espécie alvo', 'Multi-espécie'],
+                  ['Detecção', 'Landmarks + Patologias'],
+                  ['Privacidade', 'Dados anonimizados ✓'],
+                ].map(([k,v]) => (
                   <div key={k} className="flex justify-between text-sm">
                     <span className="text-slate-500">{k}</span>
                     <span className="font-mono font-medium text-slate-800">{v}</span>
@@ -150,7 +238,11 @@ export default function AnalysisPage() {
             <div className="space-y-2 mt-4">
               {mode === 'analyzing' ? (
                 <div className="flex items-center justify-center gap-3 py-4">
-                  <Spinner /><div><p className="text-sm font-semibold text-slate-700">Analisando imagem...</p><p className="text-xs text-slate-400 font-mono">OrthoVision processando landmarks anatômicos</p></div>
+                  <Spinner />
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700">Analisando imagem...</p>
+                    <p className="text-xs text-slate-400 font-mono">OrthoVision processando landmarks anatômicos</p>
+                  </div>
                 </div>
               ) : (
                 <Button className="w-full" size="lg" onClick={analyze}><Scan size={15} /> Iniciar Análise IA</Button>
@@ -183,7 +275,6 @@ export default function AnalysisPage() {
 
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Info cards */}
       {mode === 'idle' && (
         <div className="grid grid-cols-3 gap-4">
           {[

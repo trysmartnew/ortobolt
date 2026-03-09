@@ -1,16 +1,21 @@
+// src/services/aiService.ts
+// ✅ C-01: Chave removida do cliente — todas as chamadas vão para /api/ai (servidor)
+// ✅ C-04: Anonimização adicional no cliente antes de enviar ao proxy
+// ✅ A-02: Fórmula TPLO corrigida no system prompt
+// ✅ A-06: X-Title com hífen ASCII (aplicado no servidor /api/ai)
+
 import type { ClinicalCase } from '@/types/index';
 
-// ── OpenRouter Gateway ─────────────────────────────────────────────────────────
-// Migration from Gemini 2.0 Flash to OpenRouter/Mistral-7B (BUG-02/03 refs)
-// SETUP: get free key at openrouter.ai/keys → VITE_OPENROUTER_API_KEY in .env.local
-
-const OR_KEY  = import.meta.env.VITE_OPENROUTER_API_KEY as string | undefined;
-const OR_BASE = 'https://openrouter.ai/api/v1';
+const AI_PROXY = '/api/ai'; // Vercel serverless function (chave no servidor)
 const CHAT_MODEL   = 'mistralai/mistral-7b-instruct';
 const VISION_MODEL = 'meta-llama/llama-3.2-11b-vision-instruct:free';
 
-// BUG-08 FIX: Expanded system prompt with full orthopedic calculation protocols
+// ── System Prompt ─────────────────────────────────────────────────────────────
+// ✅ A-02: Fórmula TPLO corrigida — raio × [sin(TPA_atual) - sin(TPA_alvo)]
 const SYSTEM_PROMPT = `Você é o OrthoAI, assistente especializado em ortopedia veterinária da plataforma OrtoBolt.
+
+=== AVISO IMPORTANTE ===
+Todos os cálculos fornecidos são ORIENTATIVOS e devem ser confirmados com instrumentação física e avaliação clínica presencial antes de qualquer procedimento cirúrgico.
 
 === DOMÍNIO CLÍNICO ===
 Especialidades: TPLO, FHO, TTA, fixação de fraturas (DCP, LCP, pinos intramedulares), cirurgia espinhal (hemilaminectomia, fenestração), substituição articular, artroscopia veterinária.
@@ -21,9 +26,12 @@ Espécies: caninos, felinos, equinos, bovinos.
 1. ÂNGULO DE PLATEAU TIBIAL (TPA / APT):
    - Medição: ângulo entre o plateau tibial e a perpendicular ao eixo longitudinal da tíbia
    - Normal canino: 18–25°; Indicação TPLO: TPA > 23–27°
-   - Fórmula de avanço TPLO: avanço_mm = sin(TPA_atual – TPA_alvo) × raio_osteotomia
+   - ✅ FÓRMULA CORRETA (Slocum, 1993):
+     avanço_mm = raio × [sin(TPA_atual) - sin(TPA_alvo)]
+     IMPORTANTE: sin(a - b) ≠ sin(a) - sin(b) — use a forma expandida
    - Raio padrão por peso: <15kg → 18mm; 15–30kg → 24mm; 30–50kg → 30mm; >50kg → 36mm
    - TPA alvo pós-TPLO: 5–6°
+   - Exemplo: TPA=28°, alvo=6°, raio=24mm → 24 × [sin(28°) - sin(6°)] = 24 × [0.469 - 0.105] = 8.74mm
    - Reporte: TPA medido, TPA alvo, raio recomendado, milímetros de avanço calculados
 
 2. CÁLCULO DE AVANÇO DA TUBEROSIDADE TIBIAL (TTA):
@@ -52,7 +60,6 @@ Espécies: caninos, felinos, equinos, bovinos.
    - Cotovelo (FCI): incongruência articular em mm; >2mm = displasia significativa
    - Joelho: ângulo femorotibial normal 135–145°; varo/valgo se >5° de desvio
    - Carpo: ângulo de extensão normal 180°±10°; hiperextensão se >200°
-   - Método de medição: identificar centros articulares, traçar eixos longitudinais, medir ângulo entre eixos
    - Reporte todos os ângulos com valores normais de referência e interpretação clínica
 
 6. DOSAGEM FARMACOLÓGICA POR ESPÉCIE E PESO:
@@ -69,6 +76,7 @@ Quando solicitado cálculo, apresente SEMPRE:
 3. Resultado numérico com unidade
 4. Interpretação clínica e recomendação de implante/tamanho
 5. Alertas de risco se valores fora do intervalo normal
+⚠️ Lembrete: confirme sempre com instrumentação física antes do procedimento.
 
 === REGRAS GERAIS ===
 - Responda sempre em português brasileiro técnico e preciso
@@ -76,31 +84,33 @@ Quando solicitado cálculo, apresente SEMPRE:
 - Sempre cite intervalo de normalidade ao reportar valores
 - Para casos críticos, inclua urgência do procedimento`;
 
-async function orRequest(body: object): Promise<string> {
-  const res = await fetch(`${OR_BASE}/chat/completions`, {
+// ── Proxy request helper ──────────────────────────────────────────────────────
+async function proxyRequest(body: object): Promise<string> {
+  const res = await fetch(AI_PROXY, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${OR_KEY}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://ortobolt.vercel.app',
-      'X-Title': 'OrtoBolt — Veterinary Orthopedics',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error(`OpenRouter ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`AI proxy ${res.status}: ${await res.text()}`);
   const d = await res.json();
   return d.choices?.[0]?.message?.content ?? 'Resposta não disponível.';
 }
 
+// ── C-04: Anonimização no cliente (camada extra antes do proxy) ───────────────
+function anonymizePatientName(name: string | undefined, id: string | undefined): string {
+  if (!name) return 'Paciente';
+  // Usar apenas últimos 4 chars do ID como pseudônimo
+  const pseudo = id ? `Paciente-${id.slice(-4).toUpperCase()}` : 'Paciente-XXXX';
+  return pseudo;
+}
+
+// ── sendChatMessage ───────────────────────────────────────────────────────────
 export async function sendChatMessage(
   userMessage: string,
   history: { role: 'user' | 'assistant'; content: string }[]
 ): Promise<string> {
-  if (!OR_KEY) {
-    return `**OrthoAI — Modo Demonstração** *(OpenRouter/Mistral-7B)*\n\nChave não configurada. Adicione \`VITE_OPENROUTER_API_KEY\` no \`.env.local\`.\n\n**Sua pergunta:** "${userMessage}"\n\nEm produção responderei com:\n- Cálculos precisos de TPA, avanço TPLO/TTA e osteometria FHO\n- Avaliação biomecânica com seleção de implante por peso e espécie\n- Mensuração de ângulos articulares com valores de referência\n- Protocolos farmacológicos com doses calculadas por kg`;
-  }
   try {
-    return await orRequest({
+    return await proxyRequest({
       model: CHAT_MODEL,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
@@ -111,23 +121,31 @@ export async function sendChatMessage(
     });
   } catch (err) {
     console.error('AI chat error:', err);
-    return 'Erro ao comunicar com o serviço de IA. Verifique sua chave OpenRouter e tente novamente.';
+    // Fallback amigável sem expor detalhes técnicos ao usuário
+    return '⚠️ **OrthoAI temporariamente indisponível.**\n\nNão foi possível conectar ao serviço de IA. Verifique sua conexão e tente novamente. Se o problema persistir, entre em contato com o suporte.';
   }
 }
 
+// ── analyzeImage ──────────────────────────────────────────────────────────────
 export async function analyzeImage(imageBase64: string, caseInfo?: Partial<ClinicalCase>): Promise<string> {
-  if (!OR_KEY) {
-    return `**Análise OrthoVision — Modo Demonstração** *(OpenRouter Vision)*\n\n**Estruturas Identificadas:**\n- Plateau tibial proximal: detectado (confiança: 96%)\n- Tuberosidade tibial cranial: detectada (confiança: 94%)\n- Côndilo femoral lateral: detectado (confiança: 91%)\n- Fíbula proximal: detectada (confiança: 89%)\n\n**Cálculo TPA Estimado:**\nÂngulo de plateau tibial: ~26° (acima do threshold de 23° — TPLO indicado)\n\n**Seleção de Implante (baseada em estimativa de porte):**\n- Raio de osteotomia recomendado: 24–30mm\n- Placa TPLO 4.5mm, 7 furos\n- Avanço estimado: 18–22mm\n\n**Avaliação Biomecânica:**\n- Cortical medial: espessura adequada para parafusos 4.5mm\n- Sem sinais de osteopenia\n\n**Recomendações:**\n1. Confirmar TPA com goniômetro sob fluoroscopia\n2. Radiografia contralateral para comparação\n3. Avaliação de menisco medial obrigatória intraop\n\n*Configure VITE_OPENROUTER_API_KEY para análise real por visão computacional.*`;
-  }
   try {
+    // C-04: Usar pseudônimo em vez do nome real do paciente
+    const patientRef = caseInfo
+      ? anonymizePatientName(caseInfo.patientName, caseInfo.id)
+      : 'Paciente';
     const ctx = caseInfo
-      ? `Paciente: ${caseInfo.patientName}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears}a, ${caseInfo.weightKg}kg. Procedimento planejado: ${caseInfo.procedure}.` : '';
-    return await orRequest({
+      ? `Paciente: ${patientRef}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears}a, ${caseInfo.weightKg}kg. Procedimento planejado: ${caseInfo.procedure}.`
+      : '';
+
+    return await proxyRequest({
       model: VISION_MODEL,
       messages: [{
         role: 'user',
         content: [
-          { type: 'text', text: `${SYSTEM_PROMPT}\n\n${ctx}\n\nAnalise esta imagem ortopédica veterinária com precisão máxima. Inclua:\n1. Identificação e qualidade das estruturas anatômicas\n2. Mensuração de ângulos articulares visíveis (com valores de referência)\n3. Cálculo de TPA se tíbia/joelho visível\n4. Avaliação da espessura cortical e qualidade óssea\n5. Identificação de achados patológicos\n6. Recomendação de implante com tamanho específico\n7. Score de confiança para cada estrutura identificada` },
+          {
+            type: 'text',
+            text: `${SYSTEM_PROMPT}\n\n${ctx}\n\nAnalise esta imagem ortopédica veterinária com precisão máxima. Inclua:\n1. Identificação e qualidade das estruturas anatômicas\n2. Mensuração de ângulos articulares visíveis (com valores de referência)\n3. Cálculo de TPA se tíbia/joelho visível (usar fórmula: raio × [sin(TPA) - sin(alvo)])\n4. Avaliação da espessura cortical e qualidade óssea\n5. Identificação de achados patológicos\n6. Recomendação de implante com tamanho específico\n7. Score de confiança para cada estrutura identificada`
+          },
           { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${imageBase64}` } },
         ],
       }],
@@ -135,28 +153,30 @@ export async function analyzeImage(imageBase64: string, caseInfo?: Partial<Clini
     });
   } catch (err) {
     console.error('Vision error:', err);
-    return 'Erro na análise de imagem. Verifique o formato (JPG/PNG) e tente novamente.';
+    return '⚠️ **Erro na análise de imagem.** Verifique o formato (JPG/PNG/WEBP, máx. 15MB) e tente novamente.';
   }
 }
 
+// ── getCaseAISuggestion ───────────────────────────────────────────────────────
 export async function getCaseAISuggestion(caseInfo: Partial<ClinicalCase>): Promise<string> {
-  if (!OR_KEY) {
-    const weight = caseInfo.weightKg || 0;
-    const frs = (weight * 0.6).toFixed(1);
-    return `**Sugestão OrthoAI — ${caseInfo.title || 'Caso'}** *(Modo Demonstração)*\n\n**Paciente:** ${caseInfo.patientName} · ${caseInfo.species} · ${caseInfo.weightKg}kg\n\n**Avaliação Biomecânica:**\n- Força de reação do solo estimada: ${frs}kgf (= 0.6 × PC)\n- Procedimento: ${caseInfo.procedure}\n\n**Seleção de Implante:**\n${weight > 40 ? '- Placa LCP 4.5mm ou DCP 4.5mm largo (peso >40kg)\n- Mínimo 6 parafusos (3 proximal + 3 distal ao foco)' : weight > 20 ? '- Placa TPLO 4.5mm, 7 furos\n- Parafusos 4.5mm cortical proximal / 3.5mm distal' : '- Placa 3.5mm DCP\n- Parafusos 3.5mm cortical'}\n\n**Protocolo Pós-Op:**\n1. Crioterapia 20min 3×/dia — 72h\n2. Restrição de exercício 8 semanas\n3. Fisioterapia aquática: início semana 3\n4. Controle radiográfico: 6 e 12 semanas\n\n*Configure VITE_OPENROUTER_API_KEY para sugestões calculadas em tempo real.*`;
-  }
   try {
-    const ctx = `CASO: ${caseInfo.title}. Paciente: ${caseInfo.patientName}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears} anos, ${caseInfo.weightKg}kg. Procedimento: ${caseInfo.procedure}. Status: ${caseInfo.status}. Nível de risco: ${caseInfo.riskLevel}. Notas: ${caseInfo.notes || 'sem notas adicionais'}.`;
-    return await orRequest({
+    // C-04: Anonimizar campos identificáveis antes de enviar
+    const patientRef = anonymizePatientName(caseInfo.patientName, caseInfo.id);
+    const ctx = `CASO: ${caseInfo.title}. Paciente: ${patientRef}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears} anos, ${caseInfo.weightKg}kg. Procedimento: ${caseInfo.procedure}. Status: ${caseInfo.status}. Nível de risco: ${caseInfo.riskLevel}. Notas: ${caseInfo.notes ? '[notas disponíveis]' : 'sem notas adicionais'}.`;
+
+    return await proxyRequest({
       model: CHAT_MODEL,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: `${ctx}\n\nGere sugestão clínica estruturada com:\n1. Cálculo biomecânico (FRS estimada pelo peso)\n2. Seleção de implante com dimensões específicas\n3. Se joelho/TPLO: calcular avanço estimado pelo peso\n4. Protocolo anestésico com doses pelo peso\n5. Plano de reabilitação pós-operatória\nApresente todos os cálculos com fórmulas e valores numéricos.` },
+        {
+          role: 'user',
+          content: `${ctx}\n\nGere sugestão clínica estruturada com:\n1. Cálculo biomecânico (FRS estimada pelo peso)\n2. Seleção de implante com dimensões específicas\n3. Se joelho/TPLO: calcular avanço com fórmula correta: raio × [sin(TPA) - sin(alvo)]\n4. Protocolo anestésico com doses pelo peso\n5. Plano de reabilitação pós-operatória\nApresente todos os cálculos com fórmulas e valores numéricos.`
+        },
       ],
       max_tokens: 800,
     });
   } catch (err) {
     console.error('AI suggestion error:', err);
-    return 'Erro ao gerar sugestão de IA.';
+    return '⚠️ **Erro ao gerar sugestão de IA.** Tente novamente em alguns instantes.';
   }
 }
