@@ -370,7 +370,7 @@ const TABS: { id:Tab; label:string; icon:React.ElementType }[] = [
 ];
 
 export default function CasePage() {
-  const { activeCase, closeCase, getCaseCollaborators } = useApp();
+  const { activeCase, closeCase, deleteCase, addToast, getCaseCollaborators } = useApp();
   const [tab, setTab] = useState<Tab>('chat');
 
   if (!activeCase) return (
@@ -401,6 +401,18 @@ export default function CasePage() {
               <AlertTriangle size={10} /> CRÍTICO
             </div>
           )}
+          <button
+            onClick={() => {
+              if (window.confirm(`Excluir o caso "${activeCase.title}"? Esta ação não pode ser desfeita.`)) {
+                deleteCase(activeCase.id);
+                addToast(`Caso "${activeCase.title}" excluído.`, 'info');
+              }
+            }}
+            title="Excluir caso"
+            className="p-1.5 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+          >
+            <Trash2 size={14} />
+          </button>
         </div>
       </div>
 

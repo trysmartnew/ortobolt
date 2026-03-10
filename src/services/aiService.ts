@@ -3,12 +3,25 @@
 // ✅ C-04: Anonimização adicional no cliente antes de enviar ao proxy
 // ✅ A-02: Fórmula TPLO corrigida no system prompt
 // ✅ A-06: X-Title com hífen ASCII (aplicado no servidor /api/ai)
+// ✅ Q-01: Modelo único Qwen3-VL-235B-A22B Thinking para chat + visão
+// ✅ Q-02: stripThinking() remove bloco <think>…</think> antes de exibir ao usuário
 
 import type { ClinicalCase } from '@/types/index';
 
-const AI_PROXY = '/api/ai'; // Vercel serverless function (chave no servidor)
-const CHAT_MODEL   = 'mistralai/mistral-7b-instruct';
-const VISION_MODEL = 'meta-llama/llama-3.2-11b-vision-instruct:free';
+const AI_PROXY  = '/api/ai'; // Vercel serverless function (chave no servidor)
+// ── Modelo único — Qwen3 VL 235B A22B Thinking ──────────────────────────────
+// Substitui Mistral (chat) + Llama Vision (visão) por um único modelo multimodal
+// com raciocínio profundo nativo. Suporta texto, imagens e português BR nativo.
+const QWEN_MODEL = 'qwen/qwen3-vl-235b-a22b-thinking';
+
+// ── Q-02: Remover bloco de raciocínio interno antes de exibir ao usuário ─────
+// O modelo Thinking emite <think>…</think> com o raciocínio interno.
+// Para o veterinário exibimos apenas a resposta final, limpa e direta.
+function stripThinking(text: string): string {
+  return text
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .trim();
+}
 
 // ── System Prompt ─────────────────────────────────────────────────────────────
 // ✅ A-02: Fórmula TPLO corrigida — raio × [sin(TPA_atual) - sin(TPA_alvo)]
@@ -93,7 +106,9 @@ async function proxyRequest(body: object): Promise<string> {
   });
   if (!res.ok) throw new Error(`AI proxy ${res.status}: ${await res.text()}`);
   const d = await res.json();
-  return d.choices?.[0]?.message?.content ?? 'Resposta não disponível.';
+  // ✅ Q-02: stripThinking — remove raciocínio interno <think>…</think>
+  const raw = d.choices?.[0]?.message?.content ?? 'Resposta não disponível.';
+  return stripThinking(raw);
 }
 
 // ── C-04: Anonimização no cliente (camada extra antes do proxy) ───────────────
@@ -111,7 +126,7 @@ export async function sendChatMessage(
 ): Promise<string> {
   try {
     return await proxyRequest({
-      model: CHAT_MODEL,
+      model: QWEN_MODEL,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         ...history.map(m => ({ role: m.role, content: m.content })),
@@ -138,7 +153,7 @@ export async function analyzeImage(imageBase64: string, caseInfo?: Partial<Clini
       : '';
 
     return await proxyRequest({
-      model: VISION_MODEL,
+      model: QWEN_MODEL,
       messages: [{
         role: 'user',
         content: [
@@ -165,7 +180,7 @@ export async function getCaseAISuggestion(caseInfo: Partial<ClinicalCase>): Prom
     const ctx = `CASO: ${caseInfo.title}. Paciente: ${patientRef}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears} anos, ${caseInfo.weightKg}kg. Procedimento: ${caseInfo.procedure}. Status: ${caseInfo.status}. Nível de risco: ${caseInfo.riskLevel}. Notas: ${caseInfo.notes ? '[notas disponíveis]' : 'sem notas adicionais'}.`;
 
     return await proxyRequest({
-      model: CHAT_MODEL,
+      model: QWEN_MODEL,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         {

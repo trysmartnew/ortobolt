@@ -62,6 +62,7 @@ interface AppContextType {
   cases: ClinicalCase[];
   addCase: (c: ClinicalCase) => void;
   updateCase: (id: string, updates: Partial<ClinicalCase>) => void;
+  deleteCase: (id: string) => void;
 
   activeCase: ClinicalCase | null;
   openCase: (c: ClinicalCase) => void;
@@ -299,6 +300,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCases((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
   }, []);
 
+  const deleteCase = useCallback((id: string) => {
+    setCases((prev) => prev.filter((c) => c.id !== id));
+    // Se o caso aberto foi deletado, voltar à galeria
+    setActiveCase((prev) => (prev?.id === id ? null : prev));
+    setCurrentPage((prev) => (prev === 'case' ? 'gallery' : prev));
+  }, []);
+
   // ── Notifications ────────────────────────────────────────────────────────
   const markAllRead = useCallback(() =>
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true }))), []);
@@ -416,7 +424,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       user, isLoggedIn, authLoading, currentView, setCurrentView,
       login, logout, setUserFromSession,
       currentPage, setCurrentPage,
-      cases, addCase, updateCase,
+      cases, addCase, updateCase, deleteCase,
       activeCase, openCase, closeCase,
       notifications, unreadCount, markAllRead, markRead, addNotification,
       chatHistory, setChatHistory,

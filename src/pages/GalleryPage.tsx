@@ -1,7 +1,7 @@
 // src/pages/GalleryPage.tsx
 // ✅ U-02: addToast no handleAdd — feedback visual ao criar caso
 import React, { useState } from 'react';
-import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight } from 'lucide-react';
+import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/data/mockData';
@@ -69,7 +69,7 @@ function validateCaseForm(form: { title:string; patientName:string; ageYears:str
 }
 
 export default function GalleryPage() {
-  const { cases, addCase, openCase, addToast } = useApp();
+  const { cases, addCase, openCase, deleteCase, addToast } = useApp();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [selected, setSelected] = useState<ClinicalCase | null>(null);
@@ -161,6 +161,18 @@ export default function GalleryPage() {
                   <button onClick={() => openCase(c)}
                     className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-[#0056b3] hover:bg-[#004494] py-1.5 rounded-lg transition-colors">
                     <Users size={12} /> Colaborar <ChevronRight size={11} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (window.confirm(`Excluir o caso "${c.title}"? Esta ação não pode ser desfeita.`)) {
+                        deleteCase(c.id);
+                        addToast(`Caso "${c.title}" excluído.`, 'info');
+                      }
+                    }}
+                    title="Excluir caso"
+                    className="p-1.5 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                  >
+                    <Trash2 size={13} />
                   </button>
                 </div>
               </div>

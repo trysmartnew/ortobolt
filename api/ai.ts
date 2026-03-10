@@ -15,6 +15,11 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const OR_BASE = 'https://openrouter.ai/api/v1';
 
+// ✅ Q-01: Whitelist de modelos permitidos — rejeitar qualquer outro
+// Isso impede que um atacante use a função serverless como proxy aberto
+// para outros modelos da OpenRouter às custas da chave do OrtoBolt.
+const ALLOWED_MODELS = ['qwen/qwen3-vl-235b-a22b-thinking'] as const;
+
 // ── Anonimizador LGPD ──────────────────────────────────────────────────────
 // C-04: Remove/mascara campos que possam identificar tutores ou pacientes
 function anonymizeCaseContext(ctx: string): string {
@@ -63,6 +68,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       max_tokens?: number;
       caseContext?: string; // campo extra para contexto a ser anonimizado
     };
+
+    // ✅ Q-01: Validar modelo — rejeitar qualquer modelo fora da whitelist
+    if (!ALLOWED_MODELS.includes(body.model as typeof ALLOWED_MODELS[number])) {
+      return res.status(400).json({ error: `Modelo não permitido: ${body.model}` });
+    }
 
     // C-04: Aplicar anonimização em mensagens do usuário que contenham contexto clínico
     const sanitizedMessages = body.messages.map((msg) => {
