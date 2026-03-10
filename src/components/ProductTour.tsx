@@ -377,13 +377,17 @@ function TooltipBox({
 }
 
 // ── Main ProductTour component ───────────────────────────────────────────────
-interface ProductTourProps {
-  page: string;
-  active: boolean;
-  onClose: () => void;
+
+
+// ── Tipagem das props do ProductTour ───────────────────────────────────────
+export interface ProductTourProps {
+  page: string;           // ex: 'dashboard', 'chat', 'gallery'
+  active: boolean;        // se o tour está visível
+  onClose: () => void;    // callback ao fechar
 }
 
-export default React.memo(function ProductTour({ page, active, onClose }) {
+// ── Main ProductTour component ───────────────────────────────────────────────
+export default React.memo(function ProductTour({ page, active, onClose }: ProductTourProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
   const steps = TOUR_STEPS[page] || [];

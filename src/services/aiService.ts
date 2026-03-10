@@ -98,16 +98,44 @@ Quando solicitado cálculo, apresente SEMPRE:
 - Para casos críticos, inclua urgência do procedimento`;
 
 // ── Proxy request helper ──────────────────────────────────────────────────────
-async function proxyRequest(body: object): Promise<string> {
+
+// ✅ Interface tipada para resposta da OpenRouter
+interface AIResponse { 
+  choices?: Array<{ 
+    message?: { 
+      content?: string;
+      role?: string;
+    };
+    finish_reason?: string;
+  }>;
+  error?: { message?: string };
+}
+
+// ✅ Função com tipagem correta no body e retorno
+async function proxyRequest(body: { 
+  model: string; 
+  messages: Array<{ role: string; content: string | Array<{ type: string; text?: string; image_url?: { url: string } }> }>; 
+  max_tokens?: number; 
+}): Promise<string> {
+  
   const res = await fetch(AI_PROXY, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error(`AI proxy ${res.status}: ${await res.text()}`);
-  const d = await res.json();
+  
+  // ✅ Tratamento de erro HTTP
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`AI proxy ${res.status}: ${errorText}`);
+  }
+  
+  // ✅ Parse com tipagem
+  const d: AIResponse = await res.json();
+  
   // ✅ Q-02: stripThinking — remove raciocínio interno <think>…</think>
   const raw = d.choices?.[0]?.message?.content ?? 'Resposta não disponível.';
+  
   return stripThinking(raw);
 }
 
