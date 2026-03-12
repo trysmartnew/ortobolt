@@ -269,7 +269,7 @@ export async function sendChatMessage(
         ...history.map(m => ({ role: m.role, content: m.content })),
         { role: 'user', content: userMessage },
       ],
-      max_tokens: 1200,
+      max_tokens: 8000,
     });
   } catch (err) {
     console.error('AI chat error:', err);
@@ -301,7 +301,7 @@ export async function analyzeImage(imageBase64: string, caseInfo?: Partial<Clini
           { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${imageBase64}` } },
         ],
       }],
-      max_tokens: 1200,
+      max_tokens: 8000,
     });
   } catch (err) {
     console.error('Vision error:', err);
