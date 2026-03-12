@@ -40,16 +40,22 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos em milissegundos
 // ✅ Gera chave única para cache baseada em modelo + conteúdo da mensagem
 // Para imagens: usa hash do base64 para evitar chaves gigantes
 function getCacheKey(model: string, messages: ProxyMessage[]): string {
-  const msgCount = messages.length;
-  const lastMsg = messages[messages.length - 1];
-  const lastContent = typeof lastMsg?.content === 'string'
-    ? lastMsg.content
-    : Array.isArray(lastMsg?.content)
-      ? lastMsg.content.map(c =>
-          c.type === 'text' ? (c.text ?? '') : `img:${c.image_url?.url?.length ?? 0}`
-        ).join('|')
-      : '';
-  return `${model}:${msgCount}:${lastContent.slice(0, 300)}`;
+  const contentHash = messages.map(m => {
+    if (typeof m.content === 'string') return m.content;
+    if (Array.isArray(m.content)) {
+      return m.content.map(c => {
+        if (c.type === 'text') return c.text ?? '';
+        if (c.type === 'image_url') {
+          const url = c.image_url?.url || '';
+          return `img:${url.length}:${url.slice(0, 64)}`;
+        }
+        return '';
+      }).join('|');
+    }
+    return '';
+  }).join('||');
+  
+  return `${model}:${contentHash.slice(0, 500)}`;
 }
 
 // ✅ Verifica se há entrada válida no cache
