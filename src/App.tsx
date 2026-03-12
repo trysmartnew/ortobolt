@@ -61,21 +61,15 @@ function AppInner() {
     });
 
     // Listener de mudanças de auth — usa refs, nunca stale
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-  (event, session) => {
-    // Log útil para debugar no console F12
-    console.log(`[Auth Event]: ${event}`);
-
-    // TRATAMENTO DE LOGIN (Incluindo Google/Magic Link)
-    if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session?.user) {
-      setSessionRef.current(session.user);
-
-      // Limpa aquele hash gigante da URL (access_token) para o site ficar limpo
-      if (window.location.hash || window.location.search.includes('code=')) {
-        const cleanUrl = window.location.origin + window.location.pathname;
-        window.history.replaceState({}, document.title, cleanUrl);
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+  if (session?.user) {
+    setSessionRef.current(session.user);
+    // ADICIONE ESTA LINHAnpm run lint: Garante que se estiver logado, ele saia da tela de login
+    if (currentView !== 'app') {
+       // Se o seu useApp tiver uma função para mudar view, use-a aqui
+       // window.location.reload(); // Solução extrema: recarregar resolve o cache de auth
     }
+  }
 
     // TRATAMENTO DE LOGOUT
     if (event === 'SIGNED_OUT') {
