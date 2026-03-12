@@ -218,7 +218,10 @@ async function proxyRequest(body: {
   // 2. Executar fetch normal
   const res = await fetch(AI_PROXY, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json' // ✅ Adicionado para forçar o tipo correto
+    },
     body: JSON.stringify(body),
   });
 
