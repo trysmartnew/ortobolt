@@ -1,16 +1,11 @@
-// api/ai.ts — Vercel Serverless Function
-// ✅ C-01: Chave OpenRouter NUNCA vai ao cliente — fica 100% no servidor
-// ✅ C-04: Anonimização de dados clínicos aplicada aqui antes do envio à IA
-// ✅ STREAM: Suporte a SSE — elimina timeout de 60s em prompts longos
-
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-export const config = { maxDuration: 60 };
-
-const ALLOWED_MODELS = ['qwen/qwen3-vl-235b-a22b-thinking'] as const;
+// 1. Definir o runtime como 'edge' para suportar streams longos
+export const config = {
+  runtime: 'edge',
+};
 
 // ── Anonimizador LGPD ──────────────────────────────────────────────────────
 function anonymizeCaseContext(ctx: string): string {
+  if (typeof ctx !== 'string') return ctx;
   return ctx
     .replace(/\b([A-ZÁÉÍÓÚÀÂÊÔÃÕÇ][a-záéíóúàâêôãõç]+)\s([A-ZÁÉÍÓÚÀÂÊÔÃÕÇ][a-záéíóúàâêôãõç]+)\b/g, '[NOME]')
     .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[EMAIL]')
@@ -18,103 +13,73 @@ function anonymizeCaseContext(ctx: string): string {
     .replace(/\d{3}\.?\d{3}\.?\d{3}-?\d{2}/g, '[CPF]');
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // 1. CORS sempre primeiro
-  const origin = req.headers.origin || '';
+export default async function handler(req: Request) {
+  // 2. Configuração de CORS para Edge
+  const origin = req.headers.get('origin') || '';
   const allowedOrigins = [
     'https://ortobolt.vercel.app',
     'http://localhost:5173',
     'http://localhost:4173',
   ];
 
+  const headers = new Headers({
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  });
+
   if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+    headers.set('Access-Control-Allow-Origin', origin);
   }
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // 2. Preflight
+  // 3. Resposta de Preflight (OPTIONS)
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const key = process.env.OPENROUTER_API_KEY;
-  if (!key) {
-    return res.status(500).json({ error: 'OpenRouter API key not configured on server.' });
+    return new Response(null, { status: 204, headers });
   }
 
   try {
-    const body = req.body as {
-      model: string;
-      messages: { role: string; content: unknown }[];
-      max_tokens?: number;
-      stream?: boolean;
-    };
+    const body = await req.json();
+    const { model, messages, stream } = body;
 
-    if (!ALLOWED_MODELS.includes(body.model as typeof ALLOWED_MODELS[number])) {
-      return res.status(400).json({ error: `Modelo não permitido: ${body.model}` });
-    }
+    // Anonimizar mensagens do usuário antes de enviar para a IA
+    const sanitizedMessages = messages.map((m: any) => ({
+      ...m,
+      content: m.role === 'user' ? anonymizeCaseContext(m.content) : m.content
+    }));
 
-    const sanitizedMessages = body.messages.map((msg) => {
-      if (msg.role === 'user' && typeof msg.content === 'string') {
-        return { ...msg, content: anonymizeCaseContext(msg.content) };
-      }
-      return msg;
-    });
-
-    const isStream = body.stream === true;
-
-    const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${key}`,
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': 'https://ortobolt.vercel.app',
-        'X-Title': 'OrtoBolt - Veterinary Orthopedics',
+        'X-Title': 'OrtoBolt AI Assistant',
       },
       body: JSON.stringify({
-        model: body.model,
+        model,
         messages: sanitizedMessages,
-        max_tokens: body.max_tokens ?? 8000,
-        stream: isStream,
+        stream: stream ?? true,
+        max_tokens: 16000, // Margem para o "Thinking" do modelo
+        temperature: 0.7,
       }),
     });
 
-    if (!upstream.ok) {
-      const errText = await upstream.text();
-      return res.status(upstream.status).json({ error: errText });
+    // 4. Repasse do Stream ou JSON
+    if (stream) {
+      headers.set('Content-Type', 'text/event-stream; charset=utf-8');
+      return new Response(openRouterResponse.body, { status: 200, headers });
     }
 
-    // ── Modo streaming: pipar SSE direto ao cliente ──────────────────────────
-    if (isStream && upstream.body) {
-      res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      res.setHeader('X-Accel-Buffering', 'no');
+    const data = await openRouterResponse.json();
+    return new Response(JSON.stringify(data), { 
+      status: 200, 
+      headers: { ...Object.fromEntries(headers), 'Content-Type': 'application/json' } 
+    });
 
-      const reader = upstream.body.getReader();
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          res.write(value);
-        }
-      } finally {
-        reader.releaseLock();
-      }
-      return res.end();
-    }
-
-    // ── Modo normal (analyzeImage, getCaseAISuggestion) ──────────────────────
-    const data = await upstream.json();
-    return res.status(200).json(data);
-
-  } catch (err) {
-    console.error('AI proxy error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+  } catch (error: any) {
+    console.error('Erro na Edge Function:', error);
+    return new Response(JSON.stringify({ error: 'Erro interno no processamento da IA' }), { 
+      status: 500, 
+      headers: { ...Object.fromEntries(headers), 'Content-Type': 'application/json' } 
+    });
   }
 }
