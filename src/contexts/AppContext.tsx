@@ -30,7 +30,6 @@ import type {
   CaseMessage,
 } from '@/types/index';
 
-import { MOCK_CASE_MESSAGES } from '@/data/mockData';
 import { supabase, fetchUserProfile } from '@/services/supabase';
 
 export type Page =
@@ -127,10 +126,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // ✅ D-02: iniciar vazio
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
-  const [caseMessages, setCaseMessages]   = useState<CaseMessage[]>(MOCK_CASE_MESSAGES);
+  const [caseMessages, setCaseMessages] = useState<CaseMessage[]>([]);
   const [onlineUsers, setOnlineUsers]     = useState<string[]>([]);
   const [tourActive, setTourActive]       = useState(false);
   const [toasts, setToasts]               = useState<Toast[]>([]);
+
+  // ✅ NOVO: Flag anti-loop de logout
+const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // ✅ C-02: Rate limiting state
   const [loginAttempts, setLoginAttempts] = useState(0);
@@ -253,8 +255,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return true;
   }, [loginAttempts, lockedUntil, addToast]);
 
-  const logout = useCallback(async () => {
+// ✅ C-02: Logout com flag anti-loop e tratamento de erro completo
+const logout = useCallback(async () => {
+  // Evitar chamadas múltiplas simultâneas (previne loop com listener)
+  if (isLoggingOut) {
+    console.log('⚠️ Logout já em andamento, ignorando chamada duplicada');
+    return;
+  }
+  
+  try {
+    setIsLoggingOut(true);
+    console.log('🔐 Iniciando logout...');
+    
+    // Executar signOut do Supabase
     await supabase.auth.signOut();
+    console.log('✅ Supabase signOut completado');
+    
+    // Limpar todos os estados de forma segura e ordenada
     setUser(null);
     setIsLoggedIn(false);
     setCurrentView('home');
@@ -264,7 +281,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCases([]);
     setNotifications([]);
     setCollaborators([]);
-  }, []);
+    setChatHistory([{
+      id: 'init', 
+      role: 'assistant',
+      content: '# Olá! Sou o OrthoAI 🐾\n\nSou seu assistente especializado em ortopedia veterinária. Como posso ajudar hoje?',
+      timestamp: new Date().toISOString(),
+    }]);
+    setCaseMessages([]);
+    setOnlineUsers([]);
+    
+    console.log('🧹 Estados limpos, logout completado');
+    addToast('Sessão encerrada com sucesso!', 'info');
+    
+  } catch (error) {
+    console.error('❌ Erro ao fazer logout:', error);
+    
+    // Mesmo com erro, limpar estados locais críticos para não travar a UI
+    setUser(null);
+    setIsLoggedIn(false);
+    setCurrentView('home');
+    addToast('Erro ao encerrar sessão. Tente novamente.', 'error');
+    
+  } finally {
+    // Liberar flag após pequeno delay para evitar race condition
+    setTimeout(() => setIsLoggingOut(false), 500);
+  }
+}, [isLoggingOut, addToast]); // ✅ Dependências corretas
 
   // ✅ setUserFromSession com guarda de ID vazio
   const setUserFromSession = useCallback(async (supaUser: { id: string }) => {
@@ -392,6 +434,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   // ✅ D-03/D-04: Realtime
+  useEffect(() => {
+  if (!activeCase || !user) return;
+  
+  // Buscar mensagens iniciais do histórico
+  const loadInitialMessages = async () => {
+    const { data, error } = await supabase
+      .from('case_messages')
+      .select('*')
+      .eq('case_id', activeCase.id)
+      .order('created_at', { ascending: true });
+    
+    if (error) {
+      console.error('Erro ao carregar mensagens:', error);
+      return;
+    }
+    
+    if (data && data.length > 0) {
+      setCaseMessages(data as CaseMessage[]);
+    }
+  };
+
+  loadInitialMessages();
+  
+  // ... subscription realtime existente continua aqui ...
+}, [activeCase, user]);
   useEffect(() => {
     if (!activeCase || !user) return;
 

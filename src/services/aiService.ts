@@ -8,7 +8,99 @@
 
 import type { ClinicalCase } from '@/types/index';
 
-const AI_PROXY  = '/api/ai'; // Vercel serverless function (chave no servidor)
+// ── Cache de Respostas IA ───────────────────────────────────────────────────
+// ✅ Reduz chamadas repetitivas à OpenRouter, economizando tokens e tempo
+// Estrutura: Map<chave_cache, { resposta, timestamp_expiracao }>
+interface CacheEntry {
+  response: string;
+  expiresAt: number; // timestamp em ms quando expira
+}
+// ── Interfaces tipadas para IA ───────────────────────────────────────────
+type MessageContent = 
+  | string 
+  | Array<{
+      type: 'text' | 'image_url';
+      text?: string;
+      image_url?: { url: string };
+    }>;
+
+interface ProxyMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: MessageContent;
+}
+
+interface ProxyBody {
+  model: string;
+  messages: ProxyMessage[];
+  max_tokens?: number;
+}
+const responseCache = new Map<string, CacheEntry>();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos em milissegundos
+
+// ✅ Gera chave única para cache baseada em modelo + conteúdo da mensagem
+// Para imagens: usa hash do base64 para evitar chaves gigantes
+function getCacheKey(model: string, messages: ProxyMessage[]): string {
+  const contentHash = messages.map(m => {
+    if (typeof m.content === 'string') return m.content;
+    if (Array.isArray(m.content)) {
+      return m.content.map(c => {
+        if (c.type === 'text') return c.text ?? '';
+        if (c.type === 'image_url') {
+          const url = c.image_url?.url || '';
+          return `img:${url.length}:${url.slice(0, 64)}`;
+        }
+        return '';
+      }).join('|');
+    }
+    return '';
+  }).join('||');
+  
+  return `${model}:${contentHash.slice(0, 500)}`;
+}
+
+// ✅ Verifica se há entrada válida no cache
+function getCachedResponse(key: string): string | null {
+  const entry = responseCache.get(key);
+  if (!entry) return null;
+  
+  // Verifica se ainda está válido
+  if (Date.now() > entry.expiresAt) {
+    responseCache.delete(key); // Limpa entrada expirada
+    return null;
+  }
+  return entry.response;
+}
+
+// ✅ Salva resposta no cache com TTL
+function setCachedResponse(key: string, response: string): void {
+  // Limita tamanho do cache para evitar memory leak (máx 50 entradas)
+  if (responseCache.size >= 50) {
+    // Remove a entrada mais antiga (primeira do Map)
+    const firstKey = responseCache.keys().next().value;
+    if (firstKey) responseCache.delete(firstKey);
+  }
+  
+  responseCache.set(key, {
+    response,
+    expiresAt: Date.now() + CACHE_TTL_MS,
+  });
+}
+
+// ✅ Limpa cache expirado periodicamente (opcional, mas recomendado)
+function cleanupExpiredCache(): void {
+  const now = Date.now();
+  for (const [key, entry] of responseCache.entries()) {
+    if (now > entry.expiresAt) {
+      responseCache.delete(key);
+    }
+  }
+}
+
+// Executa cleanup a cada 2 minutos
+setInterval(cleanupExpiredCache, 2 * 60 * 1000);
+
+const AI_PROXY = '/api/ai'; // Vercel serverless function (chave no servidor)
+
 // ── Modelo único — Qwen3 VL 235B A22B Thinking ──────────────────────────────
 // Substitui Mistral (chat) + Llama Vision (visão) por um único modelo multimodal
 // com raciocínio profundo nativo. Suporta texto, imagens e português BR nativo.
@@ -111,32 +203,49 @@ interface AIResponse {
   error?: { message?: string };
 }
 
-// ✅ Função com tipagem correta no body e retorno
-async function proxyRequest(body: { 
-  model: string; 
-  messages: Array<{ role: string; content: string | Array<{ type: string; text?: string; image_url?: { url: string } }> }>; 
-  max_tokens?: number; 
+// ── Proxy request helper COM cache integrado ──────────────────────────────
+
+async function proxyRequest(body: {
+  model: string;
+  messages: ProxyMessage[];  // ✅ Usa a interface definida
+  max_tokens?: number;
 }): Promise<string> {
+  // 1. Gerar chave e verificar cache ANTES do fetch
+  const cacheKey = getCacheKey(body.model, body.messages);
+  const cached = getCachedResponse(cacheKey);
   
+  if (cached) {
+    if (import.meta.env.DEV) {
+      console.log('📦 Cache hit:', cacheKey.slice(0, 40));
+    }
+    return cached;
+  }
+
+  // 2. Executar fetch normal
   const res = await fetch(AI_PROXY, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  
-  // ✅ Tratamento de erro HTTP
+
   if (!res.ok) {
     const errorText = await res.text();
     throw new Error(`AI proxy ${res.status}: ${errorText}`);
   }
-  
-  // ✅ Parse com tipagem
+
   const d: AIResponse = await res.json();
-  
-  // ✅ Q-02: stripThinking — remove raciocínio interno <think>…</think>
   const raw = d.choices?.[0]?.message?.content ?? 'Resposta não disponível.';
-  
-  return stripThinking(raw);
+  const result = stripThinking(raw);
+
+  // 3. Salvar no cache APÓS resposta bem-sucedida (nunca salvar erros)
+  if (result !== 'Resposta não disponível.' && !result.includes('⚠️')) {
+    setCachedResponse(cacheKey, result);
+    if (import.meta.env.DEV) {
+      console.log('💾 Cache saved:', cacheKey.slice(0, 40));
+    }
+  }
+
+  return result;
 }
 
 // ── C-04: Anonimização no cliente (camada extra antes do proxy) ───────────────
