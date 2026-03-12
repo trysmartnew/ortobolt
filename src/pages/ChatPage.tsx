@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Trash2, Bot, User, Copy, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { sendChatMessage } from '@/services/aiService';
+import { sendChatMessageStream } from '@/services/aiService';
 import { Button, Card, Spinner } from '@/components/ui';
 import type { ChatMessage } from '@/types/index';
 
@@ -83,10 +83,16 @@ export default function ChatPage() {
     const history = chatHistory.filter(m => !m.isLoading).map(m => ({ role: m.role, content: m.content }));
 
     try {
-      // ✅ U-02: try/catch — erro não trava a conversa
-      const reply = await sendChatMessage(msg, history);
-      const aiMsg: ChatMessage = { id: `ai-${Date.now()}`, role: 'assistant', content: reply, timestamp: new Date().toISOString() };
-      setChatHistory(prev => [...prev.filter(m => m.id !== 'loading'), aiMsg]);
+      const aiId = `ai-${Date.now()}`;
+      setChatHistory(prev => [
+        ...prev.filter(m => m.id !== 'loading'),
+        { id: aiId, role: 'assistant', content: '', timestamp: new Date().toISOString() },
+      ]);
+      await sendChatMessageStream(msg, history, (partial) => {
+        setChatHistory(prev =>
+          prev.map(m => m.id === aiId ? { ...m, content: partial } : m)
+        );
+      });
     } catch (err) {
       // Remover loading bubble e mostrar toast de erro
       setChatHistory(prev => prev.filter(m => m.id !== 'loading'));
@@ -149,3 +155,4 @@ export default function ChatPage() {
     </div>
   );
 }
+

@@ -272,7 +272,73 @@ export async function sendChatMessage(
   }
 }
 
-// ── analyzeImage ──────────────────────────────────────────────────────────────
+
+// ── sendChatMessageStream — streaming SSE ─────────────────────────────────────
+// ✅ STREAM: Resposta token a token — elimina timeout Vercel de 60s
+export async function sendChatMessageStream(
+  userMessage: string,
+  history: { role: 'user' | 'assistant'; content: string }[],
+  onChunk: (accumulatedText: string) => void
+): Promise<string> {
+  const messages: ProxyMessage[] = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    ...history.map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })),
+    { role: 'user', content: userMessage },
+  ];
+
+  const res = await fetch(AI_PROXY, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: QWEN_MODEL,
+      messages,
+      max_tokens: 8000,
+      stream: true,
+    }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`AI proxy ${res.status}: ${errText}`);
+  }
+
+  const reader = res.body!.getReader();
+  const decoder = new TextDecoder();
+  let accumulated = '';
+  let buffer = '';
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data: ')) continue;
+        const data = trimmed.slice(6);
+        if (data === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(data);
+          const token = parsed.choices?.[0]?.delta?.content ?? '';
+          if (token) {
+            accumulated += token;
+            onChunk(stripThinking(accumulated));
+          }
+        } catch {
+          // chunk SSE inválido, ignorar
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  return stripThinking(accumulated) || 'Resposta não disponível.';
+}
+
+// ── analyzeImage
 export async function analyzeImage(imageBase64: string, caseInfo?: Partial<ClinicalCase>): Promise<string> {
   try {
     // C-04: Usar pseudônimo em vez do nome real do paciente
@@ -326,3 +392,4 @@ export async function getCaseAISuggestion(caseInfo: Partial<ClinicalCase>): Prom
     return '⚠️ **Erro ao gerar sugestão de IA.** Tente novamente em alguns instantes.';
   }
 }
+
