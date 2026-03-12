@@ -62,15 +62,32 @@ function AppInner() {
 
     // Listener de mudanças de auth — usa refs, nunca stale
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === 'SIGNED_OUT') {
-          logoutRef.current();
-        }
-        if (event === 'TOKEN_REFRESHED' && session?.user) {
-          setSessionRef.current(session.user);
-        }
+  (event, session) => {
+    // Log útil para debugar no console F12
+    console.log(`[Auth Event]: ${event}`);
+
+    // TRATAMENTO DE LOGIN (Incluindo Google/Magic Link)
+    if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session?.user) {
+      setSessionRef.current(session.user);
+
+      // Limpa aquele hash gigante da URL (access_token) para o site ficar limpo
+      if (window.location.hash || window.location.search.includes('code=')) {
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
       }
-    );
+    }
+
+    // TRATAMENTO DE LOGOUT
+    if (event === 'SIGNED_OUT') {
+      logoutRef.current();
+    }
+
+    // ATUALIZAÇÃO DE TOKEN
+    if (event === 'TOKEN_REFRESHED' && session?.user) {
+      setSessionRef.current(session.user);
+    }
+  }
+);
 
     return () => subscription.unsubscribe();
   }, []); // ✅ Array vazio é seguro agora graças às refs
