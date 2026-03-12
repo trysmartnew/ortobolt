@@ -250,7 +250,10 @@ const [isLoggingOut, setIsLoggingOut] = useState(false);
     setUser(profile);
     setIsLoggedIn(true);
     setCurrentView('app');
-    setTimeout(() => setTourActive(true), 600);
+    const tourKey = `ortobolt_tour_v1_${data.user.id}`;
+if (!localStorage.getItem(tourKey)) {
+  setTimeout(() => setTourActive(true), 600);
+}
     addToast(`Bem-vindo(a), ${profile.name.split(' ')[0]}!`, 'success');
     return true;
   }, [loginAttempts, lockedUntil, addToast]);
@@ -366,7 +369,12 @@ const logout = useCallback(async () => {
 
   // ── Tour ─────────────────────────────────────────────────────────────────
   const startTour = useCallback(() => setTourActive(true), []);
-  const closeTour = useCallback(() => setTourActive(false), []);
+  const closeTour = useCallback(() => {
+  setTourActive(false);
+  if (user?.id) {
+    localStorage.setItem(`ortobolt_tour_v1_${user.id}`, '1');
+  }
+}, [user]);
 
   // ── Collaboration ────────────────────────────────────────────────────────
   const getCaseCollaborators = useCallback(

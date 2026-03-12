@@ -65,7 +65,7 @@ export const KPIWidget = React.memo(function KPIWidget({ label, value, unit, tre
   return (
     <Card className="p-5 relative overflow-hidden group hover:shadow-md transition-shadow">
       <div className="absolute top-0 left-0 w-1 h-full rounded-l-xl" style={{ backgroundColor: color }} />
-      <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 pl-2">{label}</p>
+      <p className="text-xs font-semibold text-slate-600 uppercase tracking-widest mb-2 pl-2">{label}</p>
       <div className="flex items-end justify-between pl-2">
         <span className="text-3xl font-bold font-mono text-slate-900 tracking-tight">{value}<span className="text-base font-medium text-slate-500 ml-0.5">{unit}</span></span>
         <div className={`flex items-center gap-1 text-xs font-semibold ${trendColor}`}>
@@ -88,7 +88,7 @@ export function SectionHeader({ title, subtitle, action }: { title: string; subt
   return <div className="flex items-start justify-between mb-6">
     <div>
       <h2 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{title}</h2>
-      {subtitle && <p className="text-sm text-slate-500 mt-0.5">{subtitle}</p>}
+      {subtitle && <p className="text-sm text-slate-600 mt-0.5 font-medium">{subtitle}</p>}
     </div>
     {action}
   </div>;
@@ -141,7 +141,7 @@ export function EmptyState({ icon, title, description }: { icon: React.ReactNode
   return <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
     <div className="text-slate-200">{icon}</div>
     <p className="font-semibold text-slate-500">{title}</p>
-    <p className="text-sm text-slate-400 max-w-xs">{description}</p>
+    <p className="text-sm text-slate-500 max-w-xs">{description}</p>
   </div>;
 }
 
