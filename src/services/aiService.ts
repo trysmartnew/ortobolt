@@ -3,10 +3,10 @@
 // ✅ C-04: Anonimização adicional no cliente antes de enviar ao proxy
 // ✅ A-02: Fórmula TPLO corrigida no system prompt
 // ✅ Q-01: Modelo único Qwen3-VL-235B-A22B Thinking para chat + visão
-// ✅ Q-02: stripThinking() remove bloco <think> antes de exibir ao usuário
+// ✅ Q-02: stripThinking() remove bloco … antes de exibir ao usuário
 // ✅ CACHE: getCacheKey usa msgCount:lastContent (não SYSTEM_PROMPT)
 // ✅ STREAM: sendChatMessageStream — resposta token a token
-// ✅ IMG: compressImageBase64 — reduz payload em ~70%
+// ✅ SEC-01: max_tokens reduzido para 2000 (plano gratuito OpenRouter)
 import type { ClinicalCase } from '@/types/index';
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
@@ -87,7 +87,7 @@ function cleanupExpiredCache(): void {
 setInterval(cleanupExpiredCache, 2 * 60 * 1000);
 
 // ── ✅ NOVO: Compressão de imagem para otimizar upload ────────────────────────
-export async function compressImageBase64(
+async function compressImageBase64(
   base64: string,
   maxWidthPx = 1024,
   quality = 0.80
@@ -126,11 +126,16 @@ function stripThinking(text: string): string {
 
 // ── System Prompt ─────────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `Você é o OrthoAI, assistente especializado em ortopedia veterinária da plataforma OrtoBolt.
+
 === AVISO IMPORTANTE ===
-Todos os cálculos fornecidos são ORIENTATIVOS e devem ser confirmados com instrumentação física e avaliação clínica presencial antes de qualquer procedimento cirúrgico.
+Todos os cálculos fornecidos são ORIENTATIVOS e devem ser confirmados com instrumentação
+física e avaliação clínica presencial antes de qualquer procedimento cirúrgico.
+
 === DOMÍNIO CLÍNICO ===
-Especialidades: TPLO, FHO, TTA, fixação de fraturas (DCP, LCP, pinos intramedulares), cirurgia espinhal (hemilaminectomia, fenestração), substituição articular, artroscopia.
+Especialidades: TPLO, FHO, TTA, fixação de fraturas (DCP, LCP, pinos intramedulares),
+cirurgia espinhal (hemilaminectomia, fenestração), substituição articular, artroscopia.
 Espécies: caninos, felinos, equinos, bovinos.
+
 === PROTOCOLOS DE CÁLCULO CIRÚRGICO ===
 ÂNGULO DE PLATEAU TIBIAL (TPA / APT):
 Normal canino: 18–25°; Indicação TPLO: TPA > 23–27°
@@ -138,25 +143,31 @@ Normal canino: 18–25°; Indicação TPLO: TPA > 23–27°
 avanço_mm = raio × [sin(TPA_atual) - sin(TPA_alvo)]
 Raio por peso: <15kg → 18mm; 15–30kg → 24mm; 30–50kg → 30mm; >50kg → 36mm
 TPA alvo pós-TPLO: 5–6°
+
 CÁLCULO TTA:
 Espaçador (mm) = sin(TPA – 90°) × comprimento LP (LP = 3× altura do plateau)
 Tamanhos: 3, 6, 9, 12, 15, 18, 21mm
+
 FHO:
 Ângulo de corte padrão: 110–115° em relação ao eixo diafisário
 Felinos: corte a 2–3mm; Caninos: corte a 3–5mm; clearance acetabular ≥2mm
+
 BIOMECÂNICA:
 FRS estimada = 0.6 × peso corporal
 DCP 4.5mm: ≤300Nm; DCP 3.5mm: ≤120Nm; LCP 5.0mm: ≤450Nm
 Equinos >400kg: SEMPRE LCP 5.0mm; mínimo 8 parafusos
+
 ÂNGULOS RADIOGRÁFICOS:
 Coxofemoral: Índice de Norberg ≥105° (normal)
 Joelho: femorotibial normal 135–145°
+
 DOSAGEM:
 Meloxicam: cão 0.1mg/kg SID; gato 0.05mg/kg SID; equino 0.6mg/kg SID
 Tramadol: cão 2–5mg/kg TID; gato 1–2mg/kg BID
 Dexmedetomidina: cão 5–20mcg/kg IM; gato 10–40mcg/kg IM
 Cetamina: cão/gato 5–10mg/kg IV; equino 2.2mg/kg IV
 Morfina: cão 0.3–0.5mg/kg IM; gato 0.1–0.2mg/kg IM
+
 === REGRAS GERAIS ===
 Responda sempre em português brasileiro técnico e preciso
 Nunca faça diagnóstico definitivo sem exame físico e imaginologia confirmada
@@ -190,11 +201,9 @@ async function proxyRequest(body: {
   const d: AIResponse = await res.json();
   const raw = d.choices?.[0]?.message?.content ?? 'Resposta não disponível.';
   const result = stripThinking(raw);
-
   if (result !== 'Resposta não disponível.' && !result.includes('⚠️')) {
     setCachedResponse(cacheKey, result);
   }
-
   return result;
 }
 
@@ -220,7 +229,8 @@ export async function sendChatMessage(
         ...history.map((m) => ({ role: m.role, content: m.content })),
         { role: 'user', content: userMessage },
       ],
-      max_tokens: 8000,
+      // ✅ SEC-01: Reduzido de 8000 para 2000 (plano gratuito OpenRouter)
+      max_tokens: 2000,
     });
   } catch (err) {
     console.error('AI chat error:', err);
@@ -249,8 +259,9 @@ export async function sendChatMessageStream(
     body: JSON.stringify({
       model: QWEN_MODEL,
       messages,
-      max_tokens: 8000,
-      stream: true, // ✅ Habilita streaming
+      // ✅ SEC-01: Reduzido de 8000 para 2000 (plano gratuito OpenRouter)
+      max_tokens: 2000,
+      stream: true,
     }),
   });
 
@@ -304,7 +315,6 @@ export async function analyzeImage(
   try {
     // ✅ Comprimir imagem antes de enviar (reduz payload em ~70%)
     const compressed = await compressImageBase64(imageBase64);
-
     const patientRef = caseInfo
       ? anonymizePatientName(caseInfo.patientName, caseInfo.id)
       : 'Paciente';
@@ -331,7 +341,8 @@ export async function analyzeImage(
           ],
         },
       ],
-      max_tokens: 8000,
+      // ✅ SEC-01: Reduzido de 8000 para 2000 (plano gratuito OpenRouter)
+      max_tokens: 2000,
     });
   } catch (err) {
     console.error('Vision error:', err);
@@ -368,7 +379,8 @@ export async function getCaseAISuggestion(
             `5. Plano de reabilitação pós-operatória`,
         },
       ],
-      max_tokens: 800, // resposta concisa para sugestão rápida
+      // ✓ Mantém 800 (já otimizado para resposta concisa)
+      max_tokens: 800,
     });
   } catch (err) {
     console.error('AI suggestion error:', err);
