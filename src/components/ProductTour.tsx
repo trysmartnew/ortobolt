@@ -1,16 +1,16 @@
+// src/components/ProductTour.tsx
+// ✅ BUG-05 FIX: Modelo atualizado para Qwen3-VL-235B
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 
-// ── Tour step definition ────────────────────────────────────────────────────
 export interface TourStep {
-  target: string;           // data-tour attribute value
+  target: string;
   title: string;
   content: string;
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'center';
-  highlight?: boolean;      // draw glowing ring
+  highlight?: boolean;
 }
 
-// ── Steps per page ──────────────────────────────────────────────────────────
 export const TOUR_STEPS: Record<string, TourStep[]> = {
   dashboard: [
     {
@@ -52,7 +52,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '__welcome__',
       title: '🤖 OrthoAI — Consultor Especializado',
-      content: 'O Chat IA conecta você ao OrthoAI (OpenRouter · Mistral-7B) com contexto especializado em ortopedia veterinária. Tire dúvidas sobre protocolos, dosagens, cálculos de ângulos e técnicas cirúrgicas.',
+      content: 'O Chat IA conecta você ao OrthoAI (OpenRouter · Qwen3-VL-235B) com contexto especializado em ortopedia veterinária. Tire dúvidas sobre protocolos, dosagens, cálculos de ângulos e técnicas cirúrgicas.',
       placement: 'center',
     },
     {
@@ -201,7 +201,6 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
       highlight: true,
     },
   ],
-
   case: [
     {
       target: '__welcome__',
@@ -248,8 +247,12 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   ],
 };
 
-// ── Spotlight + tooltip overlay ─────────────────────────────────────────────
-interface Rect { top: number; left: number; width: number; height: number; }
+interface Rect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
 
 function getRect(target: string): Rect | null {
   const el = document.querySelector(`[data-tour="${target}"]`);
@@ -277,23 +280,28 @@ function Spotlight({ rect }: { rect: Rect }) {
   );
 }
 
-function TooltipBox({
-  step, rect, stepIndex, total,
-  onNext, onPrev, onClose,
-}: {
-  step: TourStep; rect: Rect | null; stepIndex: number; total: number;
-  onNext: () => void; onPrev: () => void; onClose: () => void;
-}) {
+interface TooltipBoxProps {
+  step: TourStep;
+  rect: Rect | null;
+  stepIndex: number;
+  total: number;
+  onNext: () => void;
+  onPrev: () => void;
+  onClose: () => void;
+}
+
+function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: TooltipBoxProps) {
   const isCenter = step.placement === 'center' || !rect;
   const TW = 320;
   const TH = 180;
   const PAD = 16;
-
   let style: React.CSSProperties = {};
+  
   if (isCenter) {
     style = {
       position: 'fixed',
-      top: '50%', left: '50%',
+      top: '50%',
+      left: '50%',
       transform: 'translate(-50%, -50%)',
       zIndex: 9999,
     };
@@ -302,6 +310,7 @@ function TooltipBox({
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     let top = 0, left = 0;
+    
     if (placement === 'bottom') {
       top = rect.top + rect.height + PAD;
       left = Math.min(Math.max(rect.left + rect.width / 2 - TW / 2, 16), vw - TW - 16);
@@ -315,7 +324,7 @@ function TooltipBox({
       top = Math.min(Math.max(rect.top + rect.height / 2 - TH / 2, 16), vh - TH - 16);
       left = rect.left - TW - PAD;
     }
-    // clamp
+    
     top = Math.max(16, Math.min(top, vh - TH - 16));
     left = Math.max(16, Math.min(left, vw - TW - 16));
     style = { position: 'fixed', top, left, zIndex: 9999 };
@@ -323,20 +332,15 @@ function TooltipBox({
 
   return (
     <div style={{ ...style, width: TW }} className="bg-white rounded-2xl shadow-2xl border border-blue-100 overflow-hidden">
-      {/* Header */}
       <div className="bg-gradient-to-r from-[#0056b3] to-[#0077e6] px-4 py-3 flex items-center justify-between">
         <span className="text-white font-bold text-sm" style={{ fontFamily: 'Montserrat' }}>{step.title}</span>
         <button onClick={onClose} className="text-white/70 hover:text-white transition-colors">
           <X size={16} />
         </button>
       </div>
-
-      {/* Body */}
       <div className="px-4 py-3">
         <p className="text-slate-600 text-sm leading-relaxed">{step.content}</p>
       </div>
-
-      {/* Footer */}
       <div className="px-4 pb-3 flex items-center justify-between">
         <div className="flex gap-1">
           {Array.from({ length: total }).map((_, i) => (
@@ -376,22 +380,16 @@ function TooltipBox({
   );
 }
 
-// ── Main ProductTour component ───────────────────────────────────────────────
-
-
-// ── Tipagem das props do ProductTour ───────────────────────────────────────
 export interface ProductTourProps {
-  page: string;           // ex: 'dashboard', 'chat', 'gallery'
-  active: boolean;        // se o tour está visível
-  onClose: () => void;    // callback ao fechar
+  page: string;
+  active: boolean;
+  onClose: () => void;
 }
 
-// ── Main ProductTour component ───────────────────────────────────────────────
 export default React.memo(function ProductTour({ page, active, onClose }: ProductTourProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
   const steps = TOUR_STEPS[page] || [];
-
   const currentStep = steps[stepIndex];
 
   const updateRect = useCallback(() => {
@@ -401,7 +399,6 @@ export default React.memo(function ProductTour({ page, active, onClose }: Produc
     }
     const r = getRect(currentStep.target);
     if (r) {
-      // scroll into view
       const el = document.querySelector(`[data-tour="${currentStep.target}"]`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       setTimeout(() => setRect(getRect(currentStep.target)), 300);
@@ -433,30 +430,27 @@ export default React.memo(function ProductTour({ page, active, onClose }: Produc
     if (stepIndex < steps.length - 1) setStepIndex(s => s + 1);
     else onClose();
   };
+
   const handlePrev = () => setStepIndex(s => Math.max(0, s - 1));
 
   return (
     <>
-      {/* CSS animation */}
       <style>{`
         @keyframes tourPulse {
-          0%, 100% { border-color: rgba(0,149,255,0.9); box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 20px rgba(0,149,255,0.4); }
-          50% { border-color: rgba(0,200,255,1); box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 30px rgba(0,200,255,0.6); }
+          0%, 100% {
+            border-color: rgba(0,149,255,0.9);
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 20px rgba(0,149,255,0.4);
+          }
+          50% {
+            border-color: rgba(0,200,255,1);
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 30px rgba(0,200,255,0.6);
+          }
         }
       `}</style>
-
-      {/* Dark overlay (only for center steps without spotlight) */}
       {(currentStep?.target === '__welcome__' || !rect) && (
-        <div
-          className="fixed inset-0 bg-black/65 z-[9997]"
-          onClick={onClose}
-        />
+        <div className="fixed inset-0 bg-black/65 z-[9997]" onClick={onClose} />
       )}
-
-      {/* Spotlight */}
       {rect && currentStep?.target !== '__welcome__' && <Spotlight rect={rect} />}
-
-      {/* Tooltip */}
       {currentStep && (
         <TooltipBox
           step={currentStep}
@@ -468,9 +462,6 @@ export default React.memo(function ProductTour({ page, active, onClose }: Produc
           onClose={onClose}
         />
       )}
- </>
+    </>
   );
 });
-
-// TourButton was moved to TopBar to avoid overlapping page content.
-// See: src/components/TopBar.tsx

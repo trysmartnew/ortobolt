@@ -1,4 +1,4 @@
-// api/ai.ts — Vercel Serverless Function (Node.js Runtime)
+// api/ai.ts — Vercel Serverless Function (Node.js)
 // ✅ REMOVIDO: runtime: 'edge' — usando Node.js para streaming
 // ✅ OPENROUTER_API_KEY fica apenas no servidor (process.env)
 // ✅ SUPORTA STREAMING via SSE (Server-Sent Events)
