@@ -1,7 +1,7 @@
 // api/ai.ts — Vercel Serverless Function (Node.js Runtime)
-// ✅ REMOVIDO: runtime: 'edge' — usando Node.js para streaming
+// ✅ NÃO USAR Edge Runtime — limite de 10s é insuficiente para IA
 // ✅ OPENROUTER_API_KEY fica apenas no servidor (process.env)
-// ✅ SUPORTA STREAMING via SSE (Server-Sent Events)
+
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // Whitelist de modelos permitidos — impede uso indevido da chave
@@ -30,9 +30,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     'http://localhost:5173',
     'http://localhost:4173',
   ];
+  
   if (allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
+  
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -58,7 +60,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       model: string;
       messages: { role: string; content: unknown }[];
       max_tokens?: number;
-      stream?: boolean;
     };
 
     // 5. Whitelist de modelos — rejeita qualquer modelo não autorizado
@@ -80,55 +81,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return msg;
     });
 
-    // 8. Request para OpenRouter
-    const streamEnabled = body.stream === true;
+    // 8. Request para OpenRouter com retry simples
+    let attempts = 0;
+    const maxAttempts = 3;
+    let response: Response | null = null;
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${key}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://ortobolt.vercel.app',
-        'X-Title': 'OrtoBolt - Veterinary Orthopedics',
-      },
-      body: JSON.stringify({
-        model: body.model,
-        messages: sanitizedMessages,
-        stream: streamEnabled,
-        max_tokens: body.max_tokens ?? 1200,
-      }),
-    });
+    while (attempts < maxAttempts) {
+      try {
+        response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${key}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://ortobolt.vercel.app',
+            'X-Title': 'OrtoBolt - Veterinary Orthopedics',
+          },
+          body: JSON.stringify({
+            model: body.model,
+            messages: sanitizedMessages,
+            max_tokens: body.max_tokens ?? 1200,
+          }),
+        });
 
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error(`[AI Proxy] OpenRouter error: ${response.status} ${errText}`);
-      return res.status(response.status).json({ error: errText });
-    }
+        if (response.status !== 429 && response.status !== 503) {
+          break; // Não é rate limit ou serviço indisponível — não retry
+        }
 
-    // 9. ✅ STREAMING: Se stream=true, encaminhar o stream diretamente
-    if (streamEnabled && response.body) {
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-
-      // Encaminhar chunks do OpenRouter para o cliente
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        // Enviar chunk para o cliente
-        res.write(chunk);
+        attempts++;
+        if (attempts < maxAttempts) {
+          await new Promise(r => setTimeout(r, 1000 * attempts)); // Backoff exponencial
+        }
+      } catch (err) {
+        attempts++;
+        if (attempts >= maxAttempts) throw err;
+        await new Promise(r => setTimeout(r, 1000 * attempts));
       }
-
-      res.end();
-      return;
     }
 
-    // 10. Modo normal (JSON): analyzeImage, getCaseAISuggestion
+    if (!response || !response.ok) {
+      const errText = await response?.text() || 'Unknown error';
+      console.error(`[AI Proxy] OpenRouter error: ${response?.status} ${errText}`);
+      return res.status(response?.status || 500).json({ error: errText });
+    }
+
     const data = await response.json();
     return res.status(200).json(data);
 

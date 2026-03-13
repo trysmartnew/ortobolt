@@ -5,7 +5,7 @@ import { TOUR_STEPS } from '@/components/ProductTour';
 
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   dashboard:     { title: 'Dashboard',          subtitle: 'Visão geral em tempo real' },
-  chat:          { title: 'Consultor IA',        subtitle: 'OrthoAI · OpenRouter · Mistral-7B' },
+   chat: { title: 'Consultor De Ortopedia Veterinária', subtitle: 'OrthoAI · OpenRouter · Qwen3-VL-235B' },
   analysis:      { title: 'Análise Visual',      subtitle: 'OrthoVision v3.2 · IA Computacional' },
   gallery:       { title: 'Galeria de Casos',    subtitle: 'Casos clínicos e histórico' },
   reports:       { title: 'Relatórios',          subtitle: 'Exportação e análise de dados' },
@@ -15,8 +15,7 @@ const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   notifications: { title: 'Notificações',        subtitle: 'Alertas e atualizações' },
 };
 
-export default React.memo(function Sidebar() {
-// (fechar com });  no final — adicionar o ) antes do ;)
+export default React.memo(function TopBar() {
 
   const { currentPage, setCurrentPage, unreadCount, tourActive, startTour } = useApp();
   const { title, subtitle } = PAGE_TITLES[currentPage] || PAGE_TITLES.dashboard;

@@ -1,12 +1,10 @@
 // src/services/aiService.ts
 // ✅ C-01: Chave removida do cliente — todas as chamadas vão para /api/ai
 // ✅ C-04: Anonimização adicional no cliente antes de enviar ao proxy
-// ✅ A-02: Fórmula TPLO corrigida no system prompt
 // ✅ Q-01: Modelo único Qwen3-VL-235B-A22B Thinking para chat + visão
-// ✅ Q-02: stripThinking() remove bloco <think> antes de exibir ao usuário
+// ✅ Q-02: stripThinking() remove bloco <think>…</think> antes de exibir
 // ✅ CACHE: getCacheKey usa msgCount:lastContent (não SYSTEM_PROMPT)
-// ✅ STREAM: sendChatMessageStream — resposta token a token
-// ✅ IMG: compressImageBase64 — reduz payload em ~70%
+
 import type { ClinicalCase } from '@/types/index';
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
@@ -40,7 +38,6 @@ interface AIResponse {
 const responseCache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
 
-// ✅ getCacheKey: usa msgCount + lastContent — SYSTEM_PROMPT não domina a chave
 function getCacheKey(model: string, messages: ProxyMessage[]): string {
   const msgCount = messages.length;
   const lastMsg = messages[messages.length - 1];
@@ -250,7 +247,7 @@ export async function sendChatMessageStream(
       model: QWEN_MODEL,
       messages,
       max_tokens: 8000,
-      stream: true, // ✅ Habilita streaming
+      stream: true,
     }),
   });
 
@@ -304,7 +301,7 @@ export async function analyzeImage(
   try {
     // ✅ Comprimir imagem antes de enviar (reduz payload em ~70%)
     const compressed = await compressImageBase64(imageBase64);
-
+    
     const patientRef = caseInfo
       ? anonymizePatientName(caseInfo.patientName, caseInfo.id)
       : 'Paciente';

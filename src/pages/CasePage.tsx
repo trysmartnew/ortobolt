@@ -124,7 +124,7 @@ function ChatTab({ caseId }: { caseId:string }) {
         <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
         <span className="text-xs font-semibold text-emerald-600">{onlineCount} online</span>
         <div className="flex -space-x-2">
-          <Avatar name={Users?.name || 'Você'} online size="sm" />
+          <Avatar name={user?.name || 'Você'} online size="sm" />
           {collabs.map(c => <Avatar key={c.id} name={c.name} online={onlineUsers.includes(c.userId)} size="sm" />)}
         </div>
         <span className="text-xs text-slate-400 ml-auto font-mono">Chat clínico do caso</span>

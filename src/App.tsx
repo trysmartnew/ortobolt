@@ -64,11 +64,6 @@ function AppInner() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
   if (session?.user) {
     setSessionRef.current(session.user);
-    // ADICIONE ESTA LINHAnpm run lint: Garante que se estiver logado, ele saia da tela de login
-    if (currentView !== 'app') {
-       // Se o seu useApp tiver uma função para mudar view, use-a aqui
-       // window.location.reload(); // Solução extrema: recarregar resolve o cache de auth
-    }
   }
 
     // TRATAMENTO DE LOGOUT
