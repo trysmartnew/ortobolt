@@ -22,7 +22,7 @@ export default React.memo(function Sidebar() {
       {/* Logo */}
       <div className="px-4 py-4 border-b border-white/10 flex items-center justify-center">
         <img
-          src="/logo.png"
+          src="/logo-paginas.png"
           alt="OrtoBolt — Veterinary Orthopedics"
           className="w-full max-w-[180px] h-auto object-contain"
           style={{ filter: 'brightness(1.1) drop-shadow(0 0 8px rgba(0,149,255,0.25))' }}

@@ -111,7 +111,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="OrtoBolt" className="h-8 w-auto object-contain" />
+            <img src="/logo-inicio.png" alt="OrtoBolt" className="h-8 w-auto object-contain" />
           </div>
 
           {/* Nav desktop */}
@@ -407,7 +407,7 @@ export default function HomePage() {
       {/* ── FOOTER ─────────────────────────────────────────────────────── */}
       <footer className="py-8 bg-white border-t border-slate-100">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <img src="/logo.png" alt="OrtoBolt" className="h-7 w-auto object-contain opacity-60" />
+          <img src="/logo-inicio.png" alt="OrtoBolt" className="h-7 w-auto object-contain opacity-60" />
           <p className="text-xs" style={{ color: '#94A3B8' }}>
             © 2025 OrtoBolt · Ortopedia Veterinária Inteligente · LGPD Compliant
           </p>
