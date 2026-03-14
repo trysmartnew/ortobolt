@@ -230,7 +230,7 @@ export async function sendChatMessage(
         { role: 'user', content: userMessage },
       ],
       // ✅ SEC-01: Reduzido de 8000 para 2000 (plano gratuito OpenRouter)
-      max_tokens: 800,
+      max_tokens: 2000,
     });
   } catch (err) {
     console.error('AI chat error:', err);
@@ -260,7 +260,7 @@ export async function sendChatMessageStream(
       model: QWEN_MODEL,
       messages,
       // ✅ SEC-01: Reduzido de 8000 para 2000 (plano gratuito OpenRouter)
-      max_tokens: 800,
+      max_tokens: 2000,
       stream: true,
     }),
   });
@@ -342,7 +342,7 @@ export async function analyzeImage(
         },
       ],
       // ✅ SEC-01: Reduzido de 8000 para 2000 (plano gratuito OpenRouter)
-      max_tokens: 800,
+      max_tokens: 2000,
     });
   } catch (err) {
     console.error('Vision error:', err);
