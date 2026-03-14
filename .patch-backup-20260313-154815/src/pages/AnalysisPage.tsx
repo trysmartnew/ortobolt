@@ -1,34 +1,26 @@
-// ================================================================================
-// ARQUIVO: src/pages/AnalysisPage.tsx
-// AÇÃO: CRIAR (arquivo novo)
-// ================================================================================
+// src/pages/AnalysisPage.tsx
+// ✅ C-06: Validação de tipo MIME e tamanho máximo no upload de imagens
+
 import React, { useState, useRef, useCallback } from 'react';
-import { Camera, Upload, Scan, AlertCircle, CheckCircle, X, RefreshCw, ShieldCheck, ZoomIn } from 'lucide-react';
+import { Camera, Upload, Scan, AlertCircle, CheckCircle, X, RefreshCw, ShieldCheck } from 'lucide-react';
 import { analyzeImage } from '@/services/aiService';
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
-import AnalysisToolbar from '@/components/AnalysisToolbar';
-import ImageViewer from '@/components/ImageViewer';
-import PreReportAI from '@/components/PreReportAI';
 
 type Mode = 'idle' | 'camera' | 'preview' | 'analyzing' | 'result';
 
+// ✅ C-06: Tipos e tamanho permitidos
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-const MAX_FILE_SIZE_MB = 15;
+const MAX_FILE_SIZE_MB   = 15;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 export default function AnalysisPage() {
-  const [mode, setMode] = useState('idle');
+  const [mode, setMode]           = useState<Mode>('idle');
   const [imageData, setImageData] = useState<string | null>(null);
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult]       = useState<string | null>(null);
   const [streamError, setStreamError] = useState('');
-  const [showViewer, setShowViewer] = useState(false);
-  const [showCompare, setShowCompare] = useState(false);
-  const [compareImageData, setCompareImageData] = useState<string | null>(null);
-  const [compareResult, setCompareResult] = useState<string | null>(null);
-
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef  = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const fileRef   = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   const startCamera = async () => {
@@ -66,19 +58,23 @@ export default function AnalysisPage() {
     setMode('preview');
   };
 
+  // ✅ C-06: Validação completa no handleFile
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
 
+    // 1. Validar tipo MIME real (não só a extensão)
     if (!ALLOWED_MIME_TYPES.includes(f.type)) {
       setStreamError(
         `Formato de arquivo inválido: "${f.type || 'desconhecido'}". ` +
         `Use JPG, PNG ou WEBP.`
       );
+      // Limpar input para permitir nova seleção do mesmo arquivo
       if (fileRef.current) fileRef.current.value = '';
       return;
     }
 
+    // 2. Validar tamanho
     if (f.size > MAX_FILE_SIZE_BYTES) {
       const sizeMB = (f.size / 1024 / 1024).toFixed(1);
       setStreamError(
@@ -115,10 +111,11 @@ export default function AnalysisPage() {
     if (fileRef.current) fileRef.current.value = '';
   };
 
+  // Renderizar resultado markdown básico
   const renderResult = (text: string) =>
     text.split('\n').map((line, i) => {
       if (line.startsWith('**') && line.endsWith('**'))
-        return <h4 key={i} className="font-bold text-slate-900 mt-3 mb-1">{line.slice(2, -2)}</h4>;
+        return <h4 key={i} className="font-bold text-slate-900 mt-3 mb-1">{line.slice(2,-2)}</h4>;
       if (line.startsWith('- ') || line.startsWith('• '))
         return <li key={i} className="ml-4 text-sm text-slate-700 list-disc">{line.slice(2)}</li>;
       if (line.startsWith('#'))
@@ -128,7 +125,13 @@ export default function AnalysisPage() {
     });
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 max-w-4xl space-y-5">
+      <SectionHeader
+        title="Análise de Imagem Ortopédica"
+        subtitle="Visão computacional · OpenRouter Vision · OrthoVision v3.2"
+      />
+
+      {/* ✅ C-06: Badge informativo de formatos aceitos */}
       {mode === 'idle' && (
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 w-fit">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
@@ -136,6 +139,7 @@ export default function AnalysisPage() {
         </div>
       )}
 
+      {/* Controles */}
       {mode === 'idle' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button
@@ -164,6 +168,7 @@ export default function AnalysisPage() {
               <p className="text-xs text-slate-500 mt-1">JPG, PNG, WEBP — radiografias, ecografias, tomografias</p>
             </div>
           </button>
+          {/* ✅ C-06: accept restrito aos tipos validados */}
           <input
             ref={fileRef}
             type="file"
@@ -181,6 +186,7 @@ export default function AnalysisPage() {
         </div>
       )}
 
+      {/* Camera view */}
       {mode === 'camera' && (
         <Card className="overflow-hidden">
           <div className="relative bg-black rounded-xl overflow-hidden">
@@ -204,6 +210,7 @@ export default function AnalysisPage() {
         </Card>
       )}
 
+      {/* Preview + analyze */}
       {(mode === 'preview' || mode === 'analyzing') && imageData && (
         <div data-tour="tour-analysis-result" className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Card className="p-4">
@@ -220,7 +227,7 @@ export default function AnalysisPage() {
                   ['Espécie alvo', 'Multi-espécie'],
                   ['Detecção', 'Landmarks + Patologias'],
                   ['Privacidade', 'Dados anonimizados ✓'],
-                ].map(([k, v]) => (
+                ].map(([k,v]) => (
                   <div key={k} className="flex justify-between text-sm">
                     <span className="text-slate-500">{k}</span>
                     <span className="font-mono font-medium text-slate-800">{v}</span>
@@ -246,104 +253,24 @@ export default function AnalysisPage() {
         </div>
       )}
 
+      {/* Result */}
       {mode === 'result' && result && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Card className="p-4">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Imagem Analisada</p>
-            {imageData && (
-              <img
-                src={imageData}
-                alt="Resultado"
-                className="w-full rounded-xl border border-slate-100 object-contain max-h-80 cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => setShowViewer(true)}
-              />
-            )}
-            <Button variant="secondary" size="sm" className="w-full mt-2" onClick={() => setShowViewer(true)}>
-              <ZoomIn size={13} /> Abrir Visualizador
-            </Button>
+            {imageData && <img src={imageData} alt="Resultado" className="w-full rounded-xl border border-slate-100 object-contain max-h-80" />}
           </Card>
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle className="h-5 w-5 text-emerald-500" />
               <p className="font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>Análise Concluída</p>
             </div>
-            <div className="prose-sm space-y-1 overflow-y-auto max-h-[320px] pr-1">
-              {renderResult(result)}
-            </div>
-
-            <PreReportAI initialAnalysis={result} />
-
-            <AnalysisToolbar
-              result={result}
-              imageData={imageData || ''}
-              onReanalyze={() => { setMode('analyzing'); analyze(); }}
-              onShowCompare={() => setShowCompare(true)}
-            />
-
+            <div className="prose-sm space-y-1 overflow-y-auto max-h-[320px] pr-1">{renderResult(result)}</div>
             <div className="mt-4 pt-4 border-t border-slate-100">
               <Button variant="secondary" size="sm" onClick={reset} className="w-full"><RefreshCw size={13} /> Nova Análise</Button>
             </div>
           </Card>
         </div>
-      )}
-
-      {showCompare && (
-        <Card className="p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <h3 className="font-bold text-slate-900">Comparação de Exames</h3>
-            <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-semibold">Beta</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs font-semibold text-slate-500 mb-2">Exame Original</p>
-              {imageData && <img src={imageData} alt="Original" className="w-full rounded-lg border" />}
-              {result && (
-                <div className="mt-2 text-xs text-slate-600 bg-slate-50 rounded p-2 max-h-40 overflow-y-auto">
-                  {result.slice(0, 200)}...
-                </div>
-              )}
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-500 mb-2">Exame Comparativo</p>
-              {compareImageData ? (
-                <>
-                  <img src={compareImageData} alt="Comparação" className="w-full rounded-lg border" />
-                  {compareResult && (
-                    <div className="mt-2 text-xs text-slate-600 bg-slate-50 rounded p-2 max-h-40 overflow-y-auto">
-                      {compareResult.slice(0, 200)}...
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div
-                  onClick={() => fileRef.current?.click()}
-                  className="w-full h-48 border-2 border-dashed border-slate-200 rounded-lg flex items-center justify-center text-slate-400 text-xs cursor-pointer hover:border-[#0056b3] hover:bg-blue-50/30 transition-all"
-                >
-                  Clique para selecionar segundo exame
-                </div>
-              )}
-            </div>
-          </div>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="hidden"
-            onChange={async (e) => {
-              const f = e.target.files?.[0];
-              if (!f) return;
-              const reader = new FileReader();
-              reader.onload = async (ev) => {
-                const data = ev.target?.result as string;
-                setCompareImageData(data);
-                const base64 = data.split(',')[1] || data;
-                const res = await analyzeImage(base64);
-                setCompareResult(res);
-              };
-              reader.readAsDataURL(f);
-            }}
-          />
-        </Card>
       )}
 
       <canvas ref={canvasRef} className="hidden" />
@@ -363,13 +290,6 @@ export default function AnalysisPage() {
           ))}
         </div>
       )}
-
-      {showViewer && imageData && (
-        <ImageViewer src={imageData} onClose={() => setShowViewer(false)} />
-      )}
     </div>
   );
 }
-// ================================================================================
-// FIM: src/pages/AnalysisPage.tsx
-// ================================================================================

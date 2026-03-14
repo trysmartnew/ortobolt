@@ -1,3 +1,17 @@
+// src/contexts/AppContext.tsx
+// ✅ C-02: Rate limiting — 5 tentativas → bloqueio 15 min
+// ✅ A-05: useMemo para unreadCount
+// ✅ U-02: Sistema de Toast global
+// ✅ U-01: rememberMe com controle de storage
+// ✅ D-01: MOCK_CASES substituído por fetch real do Supabase + mapCaseFromDB
+// ✅ D-02: MOCK_COLLABORATORS substituído por fetch real + mapCollaboratorFromDB
+// ✅ D-05: MOCK_NOTIFICATIONS substituído por fetch real + mapNotificationFromDB + persistência
+// ✅ D-03/D-04: Realtime de mensagens e presença + persistência
+// ✅ P1: addCase/deleteCase/updateCase com persistência Supabase
+// ✅ P1: addCaseMessage com persistência + mapper snake_case → camelCase
+// ✅ P2: markAllRead/markRead com persistência Supabase
+// ✅ Collaboration: getCaseCollaborators, inviteCollaborator, removeCollaborator completos
+// ✅ setUserFromSession com guarda de ID vazio
 import React, {
   createContext,
   useContext,
@@ -36,6 +50,7 @@ export interface Toast {
   type: 'success' | 'error' | 'info' | 'warning';
 }
 
+// ✅ TIPO SEPARADO PARA EVITAR ERROS DE SINTAXE
 export interface CollaboratorInviteData {
   name: string;
   email: string;
@@ -90,97 +105,102 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
+// ── ✅ Mapeamento seguro: snake_case (Supabase) → camelCase (ClinicalCase) ────────
 function mapCaseFromDB(row: Record<string, unknown>): ClinicalCase {
   return {
-    id: String(row.id ?? ''),
-    title: String(row.title ?? ''),
-    patientName: String(row.patient_name ?? row.patientName ?? ''),
-    species: (row.species ?? 'canine') as AnimalSpecies,
-    breed: String(row.breed ?? ''),
-    ageYears: Number(row.age_years ?? row.ageYears ?? 0),
-    weightKg: Number(row.weight_kg ?? row.weightKg ?? 0),
-    procedure: (row.procedure ?? 'other') as ProcedureType,
-    status: (row.status ?? 'pending') as CaseStatus,
+    id:             String(row.id             ?? ''),
+    title:          String(row.title           ?? ''),
+    patientName:    String(row.patient_name    ?? row.patientName    ?? ''),
+    species:        (row.species               ?? 'canine')  as AnimalSpecies,
+    breed:          String(row.breed           ?? ''),
+    ageYears:       Number(row.age_years       ?? row.ageYears       ?? 0),
+    weightKg:       Number(row.weight_kg       ?? row.weightKg       ?? 0),
+    procedure:      (row.procedure             ?? 'other')   as ProcedureType,
+    status:         (row.status                ?? 'pending') as CaseStatus,
     precisionScore: row.precision_score != null ? Number(row.precision_score) : undefined,
-    riskLevel: (row.risk_level ?? row.riskLevel ?? 'low') as 'low' | 'medium' | 'high',
-    createdAt: String(row.created_at ?? row.createdAt ?? new Date().toISOString()),
-    updatedAt: String(row.updated_at ?? row.updatedAt ?? new Date().toISOString()),
-    tags: Array.isArray(row.tags) ? row.tags as string[] : [],
-    imageUrl: row.image_url != null ? String(row.image_url) : undefined,
-    notes: row.notes != null ? String(row.notes) : undefined,
+    riskLevel:      (row.risk_level            ?? row.riskLevel ?? 'low') as 'low'|'medium'|'high',
+    createdAt:      String(row.created_at      ?? row.createdAt      ?? new Date().toISOString()),
+    updatedAt:      String(row.updated_at      ?? row.updatedAt      ?? new Date().toISOString()),
+    tags:           Array.isArray(row.tags) ? row.tags as string[] : [],
+    imageUrl:       row.image_url != null ? String(row.image_url) : undefined,
+    notes:          row.notes != null ? String(row.notes) : undefined,
     veterinarianId: String(row.veterinarian_id ?? row.veterinarianId ?? ''),
-    aiAnalysis: undefined,
+    aiAnalysis:     undefined,
   };
 }
 
+// ── ✅ NOVO: Mapeamento seguro para CaseMessage (snake_case → camelCase) ────────
 function mapMsgFromDB(row: Record<string, unknown>): CaseMessage {
   return {
-    id: String(row.id ?? `msg-${Date.now()}`),
-    caseId: String(row.case_id ?? row.caseId ?? ''),
-    userId: String(row.user_id ?? row.userId ?? ''),
-    userName: String(row.user_name ?? row.userName ?? ''),
-    userRole: (row.user_role ?? row.userRole ?? 'observer') as CollaboratorRole,
-    content: String(row.content ?? ''),
+    id:        String(row.id        ?? `msg-${Date.now()}`),
+    caseId:    String(row.case_id   ?? row.caseId    ?? ''),
+    userId:    String(row.user_id   ?? row.userId    ?? ''),
+    userName:  String(row.user_name ?? row.userName  ?? ''),
+    userRole:  (row.user_role ?? row.userRole ?? 'observer') as CollaboratorRole,
+    content:   String(row.content   ?? ''),
     createdAt: String(row.created_at ?? row.createdAt ?? new Date().toISOString()),
-    type: (row.type ?? 'text') as CaseMessage['type'],
+    type:      (row.type ?? 'text') as CaseMessage['type'],
   };
 }
 
+// ── ✅ NOVO: Mapeamento seguro para Notification (snake_case → camelCase) ────────
 function mapNotificationFromDB(row: Record<string, unknown>): Notification {
   return {
-    id: String(row.id ?? ''),
-    type: (row.type ?? 'info') as NotificationType,
-    title: String(row.title ?? ''),
-    message: String(row.message ?? ''),
+    id:        String(row.id       ?? ''),
+    type:      (row.type ?? 'info') as NotificationType,
+    title:     String(row.title    ?? ''),
+    message:   String(row.message  ?? ''),
     timestamp: String(row.created_at ?? row.timestamp ?? new Date().toISOString()),
-    read: Boolean(row.read ?? false),
-    caseId: row.case_id != null ? String(row.case_id) : undefined,
+    read:      Boolean(row.read    ?? false),
+    caseId:    row.case_id != null ? String(row.case_id) : undefined,
   };
 }
 
+// ── ✅ NOVO: Mapeamento seguro para Collaborator (snake_case → camelCase) ────────
 function mapCollaboratorFromDB(row: Record<string, unknown>): Collaborator {
   return {
-    id: String(row.id ?? ''),
-    caseId: String(row.case_id ?? row.caseId ?? ''),
-    userId: String(row.user_id ?? row.userId ?? ''),
-    name: String(row.name ?? ''),
-    email: String(row.email ?? ''),
-    specialty: String(row.specialty ?? ''),
-    crmv: String(row.crmv ?? ''),
-    institution: String(row.institution ?? ''),
-    role: (row.role ?? 'observer') as CollaboratorRole,
-    status: (row.status ?? 'pending') as CollaboratorStatus,
-    invitedAt: String(row.invited_at ?? row.invitedAt ?? ''),
-    acceptedAt: row.accepted_at != null ? String(row.accepted_at) : undefined,
-    online: false,
+    id:          String(row.id           ?? ''),
+    caseId:      String(row.case_id      ?? row.caseId      ?? ''),
+    userId:      String(row.user_id      ?? row.userId      ?? ''),
+    name:        String(row.name         ?? ''),
+    email:       String(row.email        ?? ''),
+    specialty:   String(row.specialty    ?? ''),
+    crmv:        String(row.crmv         ?? ''),
+    institution: String(row.institution  ?? ''),
+    role:        (row.role   ?? 'observer') as CollaboratorRole,
+    status:      (row.status ?? 'pending') as CollaboratorStatus,
+    invitedAt:   String(row.invited_at   ?? row.invitedAt   ?? ''),
+    acceptedAt:  row.accepted_at != null ? String(row.accepted_at) : undefined,
+    online:      false,
   };
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser]               = useState<User | null>(null);
+  const [isLoggedIn, setIsLoggedIn]   = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
-  const [cases, setCases] = useState<ClinicalCase[]>([]);
+  
+  const [cases, setCases]           = useState<ClinicalCase[]>([]);
   const [activeCase, setActiveCase] = useState<ClinicalCase | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([{
-    id: 'init',
-    role: 'assistant',
+  const [chatHistory, setChatHistory]     = useState<ChatMessage[]>([{
+    id: 'init', role: 'assistant',
     content: '# Olá! Sou o OrthoAI 🐾\n\nSou seu assistente especializado em ortopedia veterinária. Como posso ajudar hoje?',
     timestamp: new Date().toISOString(),
   }]);
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
   const [caseMessages, setCaseMessages] = useState<CaseMessage[]>([]);
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
-  const [tourActive, setTourActive] = useState(false);
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [onlineUsers, setOnlineUsers]     = useState<string[]>([]);
+  const [tourActive, setTourActive]       = useState(false);
+  const [toasts, setToasts]               = useState<Toast[]>([]);
+  
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [loginAttempts, setLoginAttempts] = useState(0);
-  const [lockedUntil, setLockedUntil] = useState<Date | null>(null);
-  const [, setLockTick] = useState(0);
-
+  const [lockedUntil, setLockedUntil]     = useState<Date | null>(null);
+  const [, setLockTick]                   = useState(0);
+  
   const loginLocked = !!(lockedUntil && new Date() < lockedUntil);
   const loginLockSecondsLeft = loginLocked && lockedUntil
     ? Math.ceil((lockedUntil.getTime() - Date.now()) / 1000)
@@ -201,6 +221,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
+  // ✅ D-01: Fetch casos reais COM mapeamento seguro
   useEffect(() => {
     if (!user) return;
     supabase
@@ -219,6 +240,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       });
   }, [user]);
 
+  // ✅ D-05: Fetch notificações reais COM mapper
   useEffect(() => {
     if (!user) return;
     supabase
@@ -233,6 +255,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       });
   }, [user]);
 
+  // ✅ D-02: Fetch colaboradores reais COM mapper
   useEffect(() => {
     if (!user) return;
     supabase
@@ -301,13 +324,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setUser(profile);
     setIsLoggedIn(true);
     setCurrentView('app');
-
-    // ✅ CORREÇÃO 3.1: Verificar se tour já foi exibido
-    const tourKey = `ortobolt_tour_v1_${profile.id}`;
-    if (!localStorage.getItem(tourKey)) {
-      const tourKey = `ortobolt_tour_v1_${profile.id}`; if (!localStorage.getItem(tourKey)) { setTimeout(() => setTourActive(true), 600); }
-    }
-
+    setTimeout(() => setTourActive(true), 600);
     addToast(`Bem-vindo(a), ${profile.name.split(' ')[0]}!`, 'success');
     return true;
   }, [loginAttempts, lockedUntil, addToast]);
@@ -317,10 +334,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.log('⚠️ Logout já em andamento, ignorando chamada duplicada');
       return;
     }
+    
     try {
       setIsLoggingOut(true);
       console.log('🔐 Iniciando logout...');
-
+      
       await supabase.auth.signOut();
       console.log('✅ Supabase signOut completado');
 
@@ -334,7 +352,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setNotifications([]);
       setCollaborators([]);
       setChatHistory([{
-        id: 'init',
+        id: 'init', 
         role: 'assistant',
         content: '# Olá! Sou o OrthoAI 🐾\n\nSou seu assistente especializado em ortopedia veterinária. Como posso ajudar hoje?',
         timestamp: new Date().toISOString(),
@@ -360,6 +378,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setAuthLoading(false);
       return;
     }
+    
     const profile = await fetchUserProfile(supaUser.id);
     if (profile) {
       setUser(profile);
@@ -382,21 +401,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const addCase = useCallback((c: ClinicalCase) => {
     setCases((prev) => [c, ...prev]);
     supabase.from('clinical_cases').insert({
-      id: c.id,
-      title: c.title,
-      patient_name: c.patientName,
-      species: c.species,
-      breed: c.breed,
-      age_years: c.ageYears,
-      weight_kg: c.weightKg,
-      procedure: c.procedure,
-      status: c.status,
-      risk_level: c.riskLevel,
-      tags: c.tags,
-      notes: c.notes ?? null,
+      id:              c.id,
+      title:           c.title,
+      patient_name:    c.patientName,
+      species:         c.species,
+      breed:           c.breed,
+      age_years:       c.ageYears,
+      weight_kg:       c.weightKg,
+      procedure:       c.procedure,
+      status:          c.status,
+      risk_level:      c.riskLevel,
+      tags:            c.tags,
+      notes:           c.notes ?? null,
       veterinarian_id: c.veterinarianId,
-      created_at: c.createdAt,
-      updated_at: c.updatedAt,
+      created_at:      c.createdAt,
+      updated_at:      c.updatedAt,
     }).then(({ error }) => {
       if (error) {
         console.error('addCase Supabase error:', error.message);
@@ -408,12 +427,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const updateCase = useCallback((id: string, updates: Partial<ClinicalCase>) => {
     setCases((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
     const dbUpdates: Record<string, unknown> = {};
-    if (updates.status !== undefined) dbUpdates.status = updates.status;
-    if (updates.riskLevel !== undefined) dbUpdates.risk_level = updates.riskLevel;
+    if (updates.status        !== undefined) dbUpdates.status          = updates.status;
+    if (updates.riskLevel     !== undefined) dbUpdates.risk_level      = updates.riskLevel;
     if (updates.precisionScore !== undefined) dbUpdates.precision_score = updates.precisionScore;
-    if (updates.notes !== undefined) dbUpdates.notes = updates.notes;
-    if (updates.title !== undefined) dbUpdates.title = updates.title;
+    if (updates.notes         !== undefined) dbUpdates.notes           = updates.notes;
+    if (updates.title         !== undefined) dbUpdates.title           = updates.title;
     dbUpdates.updated_at = new Date().toISOString();
+
     supabase.from('clinical_cases').update(dbUpdates).eq('id', id)
       .then(({ error }) => {
         if (error) {
@@ -460,7 +480,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ]), []);
 
   const startTour = useCallback(() => setTourActive(true), []);
-
+  
   const closeTour = useCallback(() => {
     setTourActive(false);
     if (user?.id) {
@@ -534,14 +554,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
       createdAt: new Date().toISOString(),
       type,
     };
+
     setCaseMessages((prev) => [...prev, msg]);
 
     supabase.from('case_messages').insert({
-      id: msg.id,
-      case_id: caseId,
-      user_id: user.id,
-      user_name: user.name,
-      user_role: 'owner',
+      id:         msg.id,
+      case_id:    caseId,
+      user_id:    user.id,
+      user_name:  user.name,
+      user_role:  'owner',
       content,
       type,
       created_at: msg.createdAt,
@@ -555,14 +576,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!activeCase || !user) return;
-
+    
     const loadInitialMessages = async () => {
       const { data, error } = await supabase
         .from('case_messages')
         .select('*')
         .eq('case_id', activeCase.id)
         .order('created_at', { ascending: true });
-
+      
       if (error) {
         console.error('Erro ao carregar mensagens:', error);
         return;
@@ -572,7 +593,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setCaseMessages(data.map(row => mapMsgFromDB(row as Record<string, unknown>)));
       }
     };
-
+    
     loadInitialMessages();
 
     const channel = supabase

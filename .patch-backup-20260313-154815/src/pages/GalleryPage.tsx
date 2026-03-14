@@ -1,15 +1,11 @@
-// ================================================================================
-// ARQUIVO: src/pages/GalleryPage.tsx
-// AÇÃO: SUBSTITUIR ARQUIVO INTEIRO
-// ================================================================================
-import React, { useState, useRef } from 'react';
-import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2, ImagePlus, Pencil, Loader2 } from 'lucide-react';
+// src/pages/GalleryPage.tsx
+// ✅ U-02: addToast no handleAdd — feedback visual ao criar caso
+// ✅ D-01: veterinarianId usa user?.id em vez de hardcoded 'vet-001'
+import React, { useState } from 'react';
+import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/data/mockData';
-import { supabase } from '@/services/supabase';
-import { compressImageBase64 } from '@/services/aiService';
-import ImageViewer from '@/components/ImageViewer';
 import type { ClinicalCase, CaseStatus, ProcedureType, AnimalSpecies } from '@/types/index';
 
 const STATUS_FILTERS: { value: CaseStatus | 'all'; label: string }[] = [
@@ -20,199 +16,73 @@ const STATUS_FILTERS: { value: CaseStatus | 'all'; label: string }[] = [
   { value: 'critical', label: 'Críticos' },
 ];
 
-// ── Componente CaseDetailModal com Upload de Imagem ────────────────────────────
 function CaseDetailModal({ c, onClose }: { c: ClinicalCase; onClose: () => void }) {
-  const { updateCase, addToast, user } = useApp();
-  const [uploading, setUploading] = useState(false);
-  const [showViewer, setShowViewer] = useState(false);
-  const imgFileRef = useRef<HTMLInputElement>(null);
-
   return (
-    <>
-      <Modal open title={c.title} onClose={onClose}>
-        {/* ✅ PASSO 4: Handler de Upload de Imagem */}
-        <div className="relative group">
-          {c.imageUrl ? (
-            <>
-              <img
-                src={c.imageUrl}
-                alt={c.patientName}
-                className="w-full h-48 object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => setShowViewer(true)}
-              />
-              <button
-                onClick={() => imgFileRef.current?.click()}
-                className="absolute top-2 right-2 bg-black/60 text-white p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80"
-                title="Editar imagem"
-                disabled={uploading}
-              >
-                {uploading ? <Loader2 size={14} className="animate-spin" /> : <Pencil size={14} />}
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={() => imgFileRef.current?.click()}
-              disabled={uploading}
-              className="w-full h-32 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-[#0056b3] hover:bg-blue-50/30 transition-all text-slate-400 hover:text-[#0056b3]"
-            >
-              {uploading ? (
-                <>
-                  <Loader2 size={20} className="animate-spin" />
-                  <span className="text-xs">Enviando...</span>
-                </>
-              ) : (
-                <>
-                  <ImagePlus size={20} />
-                  <span className="text-xs font-semibold">Adicionar imagem do caso</span>
-                </>
-              )}
-            </button>
-          )}
-
-          {/* Input de arquivo oculto */}
-          <input
-            ref={imgFileRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="hidden"
-            onChange={async (e) => {
-              const file = e.target.files?.[0];
-              if (!file || !user) return;
-
-              // Validação de tamanho (máx 5MB)
-              if (file.size > 5 * 1024 * 1024) {
-                addToast('Imagem muito grande. Máx 5MB.', 'error');
-                return;
-              }
-
-              setUploading(true);
-              try {
-                // Ler arquivo como base64
-                const reader = new FileReader();
-                const base64: string = await new Promise(res => {
-                  reader.onload = ev => res(ev.target?.result as string);
-                  reader.readAsDataURL(file);
-                });
-
-                // Comprimir imagem antes do upload
-                const compressed = await compressImageBase64(base64);
-
-                // Gerar nome do arquivo único
-                const filename = `${user.id}/${c.id}/${Date.now()}.jpg`;
-
-                // Upload para Supabase Storage
-                const { error: upErr } = await supabase.storage
-                  .from('case-images')
-                  .upload(filename, Buffer.from(compressed, 'base64'), {
-                    contentType: 'image/jpeg',
-                    upsert: true
-                  });
-
-                if (upErr) throw upErr;
-
-                // Obter URL pública
-                const { data: { publicUrl } } = supabase.storage
-                  .from('case-images')
-                  .getPublicUrl(filename);
-
-                // Atualizar caso com URL da imagem
-                updateCase(c.id, { imageUrl: publicUrl });
-                addToast('Imagem atualizada com sucesso!', 'success');
-              } catch (err) {
-                console.error(err);
-                addToast('Erro ao enviar imagem. Tente novamente.', 'error');
-              } finally {
-                setUploading(false);
-                if (imgFileRef.current) imgFileRef.current.value = '';
-              }
-            }}
-          />
+    <Modal open title={c.title} onClose={onClose}>
+      {c.imageUrl && <img src={c.imageUrl} alt={c.patientName} className="w-full h-48 object-cover rounded-xl" />}
+      
+      {[['Paciente', c.patientName], ['Espécie', SPECIES_LABELS[c.species]], ['Raça', c.breed], ['Idade', `${c.ageYears} anos`], ['Peso', `${c.weightKg} kg`], ['Procedimento', PROCEDURE_LABELS[c.procedure]]].map(([k, v]) => (
+        <div key={k} className="bg-slate-50 rounded-lg p-3">
+          <span className="text-xs font-semibold text-slate-500">{k}</span>
+          <p className="text-sm font-medium text-slate-900">{v}</p>
         </div>
-
-        {/* Dados do Paciente */}
-        <div className="grid grid-cols-2 gap-3 mt-4">
-          {[
-            ['Paciente', c.patientName],
-            ['Espécie', SPECIES_LABELS[c.species]],
-            ['Raça', c.breed],
-            ['Idade', `${c.ageYears} anos`],
-            ['Peso', `${c.weightKg} kg`],
-            ['Procedimento', PROCEDURE_LABELS[c.procedure]]
-          ].map(([k, v]) => (
-            <div key={k} className="bg-slate-50 rounded-lg p-3">
-              <span className="text-xs font-semibold text-slate-500">{k}</span>
-              <p className="text-sm font-medium text-slate-900">{v}</p>
+      ))}
+      
+      <div className="flex items-center gap-2 mt-2">
+        <StatusBadge status={c.status} />
+        <RiskTag level={c.riskLevel} />
+      </div>
+      
+      {c.precisionScore && (
+        <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+          <PrecisionGauge value={c.precisionScore} size={48} />
+          <p className="text-xs text-slate-500 mt-1">precisão IA</p>
+        </div>
+      )}
+      
+      {c.aiAnalysis && (
+        <div className="mt-4 space-y-3">
+          <p className="text-xs font-bold text-slate-700">Análise OrthoVision IA</p>
+          {c.aiAnalysis.anatomicalLandmarks.map(l => (
+            <div key={l.name} className="flex items-center justify-between text-xs">
+              <span className="text-slate-600">{l.name}</span>
+              <span className={`font-mono font-semibold ${l.detected ? 'text-emerald-600' : 'text-red-500'}`}>
+                {l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗'}
+              </span>
             </div>
           ))}
+          
+          {c.aiAnalysis.recommendations.length > 0 && (
+            <>
+              <p className="text-xs font-bold text-slate-700 mt-2">Recomendações</p>
+              <ul className="space-y-1">
+                {c.aiAnalysis.recommendations.map((r, i) => (
+                  <li key={i} className="text-xs text-slate-700 flex gap-2">
+                    <span>›</span> {r}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
-
-        {/* Status e Risco */}
-        <div className="flex items-center gap-2 mt-2">
-          <StatusBadge status={c.status} />
-          <RiskTag level={c.riskLevel} />
-        </div>
-
-        {/* Precisão IA */}
-        {c.precisionScore && (
-          <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-            <PrecisionGauge value={c.precisionScore} size={48} />
-            <p className="text-xs text-slate-500 mt-1">precisão IA</p>
-          </div>
-        )}
-
-        {/* Análise IA */}
-        {c.aiAnalysis && (
-          <div className="mt-4 space-y-3">
-            <p className="text-xs font-bold text-slate-700">Análise OrthoVision IA</p>
-            {c.aiAnalysis.anatomicalLandmarks.map(l => (
-              <div key={l.name} className="flex items-center justify-between text-xs">
-                <span className="text-slate-600">{l.name}</span>
-                <span className={`font-mono font-semibold ${l.detected ? 'text-emerald-600' : 'text-red-500'}`}>
-                  {l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗'}
-                </span>
-              </div>
-            ))}
-
-            {c.aiAnalysis.recommendations.length > 0 && (
-              <>
-                <p className="text-xs font-bold text-slate-700 mt-2">Recomendações</p>
-                <ul className="space-y-1">
-                  {c.aiAnalysis.recommendations.map((r, i) => (
-                    <li key={i} className="text-xs text-slate-700 flex gap-2">
-                      <span>›</span> {r}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* Observações */}
-        {c.notes && (
-          <div className="mt-4 p-3 bg-slate-50 rounded-lg">
-            <p className="text-xs font-bold text-slate-700 mb-1">Observações</p>
-            <p className="text-xs text-slate-600">{c.notes}</p>
-          </div>
-        )}
-
-        {/* Tags */}
-        {c.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-3">
-            {c.tags.map(t => <Badge key={t} variant="blue">#{t}</Badge>)}
-          </div>
-        )}
-      </Modal>
-
-      {/* ✅ PASSO 5: ImageViewer no Render */}
-      {showViewer && c.imageUrl && (
-        <ImageViewer src={c.imageUrl} onClose={() => setShowViewer(false)} />
       )}
-    </>
+      
+      {c.notes && (
+        <div className="mt-4 p-3 bg-slate-50 rounded-lg">
+          <p className="text-xs font-bold text-slate-700 mb-1">Observações</p>
+          <p className="text-xs text-slate-600">{c.notes}</p>
+        </div>
+      )}
+      
+      {c.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-3">
+          {c.tags.map(t => <Badge key={t} variant="blue">#{t}</Badge>)}
+        </div>
+      )}
+    </Modal>
   );
 }
 
-// ── Validação do Formulário ────────────────────────────────────────────────────
 function validateCaseForm(form: { title: string; patientName: string; ageYears: string; weightKg: string; breed: string }) {
   const errs: string[] = [];
   if (!form.title.trim()) errs.push('Título do caso é obrigatório.');
@@ -225,9 +95,10 @@ function validateCaseForm(form: { title: string; patientName: string; ageYears: 
   return errs;
 }
 
-// ── Componente Principal GalleryPage ───────────────────────────────────────────
 export default function GalleryPage() {
+  // ✅ CORREÇÃO: Adicionar 'user' ao destructure
   const { cases, addCase, openCase, deleteCase, addToast, user } = useApp();
+  
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [selected, setSelected] = useState<ClinicalCase | null>(null);
@@ -251,19 +122,23 @@ export default function GalleryPage() {
     return matchSearch && matchStatus;
   });
 
+  // ✅ CORREÇÃO: handleAdd com user?.id e tipagem correta
   const handleAdd = () => {
     const errs = validateCaseForm(form);
     if (errs.length > 0) {
       setFormErrors(errs);
+      // ✅ U-02: toast de validação
       addToast('Preencha todos os campos obrigatórios.', 'warning');
       return;
     }
     setFormErrors([]);
+    
     addCase({
       id: `case-${Date.now()}`,
       ...form,
       ageYears: Number(form.ageYears) || 0,
       weightKg: Number(form.weightKg) || 0,
+      // ✅ CORREÇÃO: Tipagem explícita em vez de 'as any'
       procedure: form.procedure as ProcedureType,
       species: form.species as AnimalSpecies,
       status: 'pending',
@@ -271,9 +146,11 @@ export default function GalleryPage() {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       tags: [form.procedure, form.species],
+      // ✅ CORREÇÃO: Usar ID real do usuário logado
       veterinarianId: user?.id ?? '',
-      imageUrl: undefined,
+      // ✅ CORREÇÃO: imageUrl: undefined,  // será preenchido via upload de imagem na AnalysisPage
     });
+    
     setShowAdd(false);
     setForm({
       title: '',
@@ -285,6 +162,8 @@ export default function GalleryPage() {
       weightKg: '',
       notes: ''
     });
+    
+    // ✅ U-02: toast de sucesso
     addToast(`Caso "${form.title}" adicionado com sucesso!`, 'success');
   };
 
@@ -294,8 +173,7 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="p-6 max-w-7xl space-y-6">
       <SectionHeader
         title="Galeria de Casos Clínicos"
         subtitle={`${cases.length} casos no sistema`}
@@ -306,7 +184,7 @@ export default function GalleryPage() {
         }
       />
 
-      {/* Filtros */}
+      {/* Filters */}
       <div data-tour="tour-gallery-filters" className="flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 flex-1 min-w-48">
           <Search size={14} className="text-slate-400" />
@@ -339,7 +217,7 @@ export default function GalleryPage() {
         </div>
       </div>
 
-      {/* Grid de Casos */}
+      {/* Grid */}
       {filtered.length === 0 ? (
         <EmptyState
           icon={<Filter size={48} />}
@@ -420,10 +298,8 @@ export default function GalleryPage() {
         </div>
       )}
 
-      {/* Modal de Detalhes */}
       {selected && <CaseDetailModal c={selected} onClose={() => setSelected(null)} />}
 
-      {/* Modal de Adicionar Caso */}
       <Modal open={showAdd} onClose={handleCloseAdd} title="Novo Caso Clínico">
         <div className="space-y-4">
           {formErrors.length > 0 && (
@@ -530,6 +406,3 @@ export default function GalleryPage() {
     </div>
   );
 }
-// ================================================================================
-// FIM: src/pages/GalleryPage.tsx
-// ================================================================================
