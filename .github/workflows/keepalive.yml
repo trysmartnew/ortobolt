@@ -12,10 +12,12 @@ jobs:
 
     steps:
       - name: Ping Supabase
+        env:
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           curl --fail --silent --show-error \
             -X GET \
             "https://fhecacefkmnqtkdsldsy.supabase.co/rest/v1/" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY"
           echo "Supabase pingado com sucesso em $(date)"
