@@ -15,9 +15,18 @@ jobs:
         env:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          curl --fail --silent --show-error \
+          set -euo pipefail
+
+          if [ -z "${SUPABASE_ANON_KEY:-}" ]; then
+            echo "ERROR: SUPABASE_ANON_KEY secret is missing or empty."
+            exit 1
+          fi
+
+          curl --fail --silent --show-error --max-time 20 \
             -X GET \
-            "https://iatncfufdldzppmjwmvt.supabase.co/rest/v1/" \
+            "https://iatncfufdldzppmjwmvt.supabase.co/rest/v1/keepalive?select=id&limit=1" \
             -H "apikey: $SUPABASE_ANON_KEY" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY"
-          echo "Supabase pingado com sucesso em $(date)"
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Accept: application/json"
+
+          echo "Supabase keepalive executado com sucesso em $(date)"
