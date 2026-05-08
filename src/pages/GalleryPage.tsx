@@ -1,4 +1,3 @@
-// src/pages/GalleryPage.tsx
 // ✅ U-02: addToast no handleAdd — feedback visual ao criar caso
 // ✅ D-01: veterinarianId usa user?.id em vez de hardcoded 'vet-001'
 import React, { useState } from 'react';
@@ -149,8 +148,9 @@ export default function GalleryPage() {
       // ✅ CORREÇÃO: Usar ID real do usuário logado
       veterinarianId: user?.id ?? '',
       // ✅ CORREÇÃO: imageUrl: undefined,  // será preenchido via upload de imagem na AnalysisPage
+      imageUrl: undefined,
     });
-    
+
     setShowAdd(false);
     setForm({
       title: '',
@@ -162,7 +162,7 @@ export default function GalleryPage() {
       weightKg: '',
       notes: ''
     });
-    
+
     // ✅ U-02: toast de sucesso
     addToast(`Caso "${form.title}" adicionado com sucesso!`, 'success');
   };

@@ -8,6 +8,7 @@ import { useApp } from '@/contexts/AppContext';
 import { Button, Card, StatusBadge, RiskTag, PrecisionGauge, Modal, Spinner } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/data/mockData';
 import { getCaseAISuggestion } from '@/services/aiService';
+import DOMPurify from 'dompurify';
 import type { Collaborator, CaseMessage, CollaboratorRole } from '@/types/index';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -32,9 +33,10 @@ function formatTime(iso: string) {
 }
 
 function renderMarkdown(text: string) {
-  return text
+  const html = text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n/g, '<br/>');
+  return DOMPurify.sanitize(html, { ALLOWED_TAGS: ['strong', 'br'] });
 }
 
 // ── Message Bubble ────────────────────────────────────────────────────────────

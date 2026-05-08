@@ -21,6 +21,7 @@ import Sidebar       from '@/components/Sidebar';
 import TopBar        from '@/components/TopBar';
 import ProductTour   from '@/components/ProductTour';
 import ToastContainer from '@/components/ToastContainer';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 const PAGE_MAP = {
   dashboard:     DashboardPage,
@@ -118,5 +119,11 @@ function AppInner() {
 }
 
 export default function App() {
-  return <AppProvider><AppInner /></AppProvider>;
+  return (
+    <AppProvider>
+      <ErrorBoundary>
+        <AppInner />
+      </ErrorBoundary>
+    </AppProvider>
+  );
 }

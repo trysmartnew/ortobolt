@@ -20,11 +20,33 @@ const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
 export default React.memo(function TopBar() {
   const { currentPage, setCurrentPage, unreadCount, tourActive, startTour } = useApp();
   const { title, subtitle } = PAGE_TITLES[currentPage] || PAGE_TITLES.dashboard;
-  const [online] = React.useState(true);
+  const [online, setOnline] = React.useState(navigator.onLine);
   const hasTour = (TOUR_STEPS[currentPage]?.length ?? 0) > 0;
+  const [timeString, setTimeString] = React.useState(() => `${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`);
+
+  React.useEffect(() => {
+    const handleOnline = () => setOnline(true);
+    const handleOffline = () => setOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeString(`${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`);
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 sticky top-0 z-20 flex-shrink-0">
+    <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 sticky top-0 z-20 shrink-0">
       <div>
         <h1 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>{title}</h1>
         <p className="text-xs text-slate-400 font-mono">{subtitle}</p>
@@ -46,7 +68,7 @@ export default React.memo(function TopBar() {
           {online ? 'Online' : 'Offline'}
         </div>
         <div className="text-xs font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded-md">
-          {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+          {timeString}
         </div>
         <button onClick={() => setCurrentPage('notifications')} className="relative p-2 rounded-lg hover:bg-slate-100 transition-colors">
           <Bell className="h-4.5 w-4.5 text-slate-600" size={18} />

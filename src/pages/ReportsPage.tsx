@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/services/supabase';
 import type { Report, KPIMetric, ChartDataPoint } from '@/types/index';
-import { Download, FileText, Clock, CheckCircle, AlertCircle, Plus } from 'lucide-react';
+import { Download, FileText, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Button, Card, Badge, SectionHeader, Spinner, InlineToast } from '@/components/ui';
 import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
