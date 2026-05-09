@@ -99,7 +99,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           body: JSON.stringify({
             model: body.model,
             messages: sanitizedMessages,
-            max_tokens: body.max_tokens ?? 1200,
+            max_tokens: Math.min(body.max_tokens ?? 1000, 1000),
           }),
         });
 

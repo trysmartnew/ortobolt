@@ -217,7 +217,7 @@ export async function sendChatMessage(
         ...history.map((m) => ({ role: m.role, content: m.content })),
         { role: 'user', content: userMessage },
       ],
-      max_tokens: 8000,
+      max_tokens: 1000,
     });
   } catch (err) {
     console.error('AI chat error:', err);
@@ -246,7 +246,7 @@ export async function sendChatMessageStream(
     body: JSON.stringify({
       model: QWEN_MODEL,
       messages,
-      max_tokens: 8000,
+      max_tokens: 1000,
       stream: true,
     }),
   });
@@ -328,7 +328,7 @@ export async function analyzeImage(
           ],
         },
       ],
-      max_tokens: 8000,
+      max_tokens: 1000,
     });
   } catch (err) {
     console.error('Vision error:', err);
