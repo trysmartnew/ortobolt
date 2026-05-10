@@ -1,0 +1,28 @@
+<svg width="100%" viewBox="0 0 680 680" role="img">
+<defs>
+  <linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#7ef5ff"/>
+    <stop offset="100%" stop-color="#00a8cc"/>
+  </linearGradient>
+  <linearGradient id="cg2" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98"/>
+    <stop offset="100%" stop-color="#a0e8f5" stop-opacity="0.92"/>
+  </linearGradient>
+</defs>
+<rect width="680" height="680" rx="160" fill="#0b1a35"/>
+<path d="M 340 88 C 462 88 558 162 558 285 C 558 372 505 432 434 456 C 456 475 472 500 472 530 C 472 566 445 592 412 592 C 385 592 363 574 352 550 C 347 552 343 553 340 553 C 210 553 122 444 122 308 C 122 188 218 88 340 88 Z" fill="url(#cg)"/>
+<path d="M 340 88 C 462 88 558 162 558 285 C 558 372 505 432 434 456 C 456 475 472 500 472 530 C 472 566 445 592 412 592 C 385 592 363 574 352 550 C 347 552 343 553 340 553 C 210 553 122 444 122 308 C 122 188 218 88 340 88 Z" fill="#0b1a35" opacity="0.38"/>
+<circle cx="340" cy="310" r="125" fill="#0b1a35"/>
+<path d="M 288 268 C 288 240 312 220 340 220 C 368 220 392 240 392 268 C 392 284 383 298 370 306 L 390 360 L 340 380 L 290 360 L 310 306 C 297 298 288 284 288 268 Z" fill="url(#cg2)"/>
+<circle cx="340" cy="268" r="32" fill="#0b1a35"/>
+<circle cx="340" cy="268" r="16" fill="url(#cg)"/>
+<circle cx="400" cy="468" r="26" fill="url(#cg2)" opacity="0.92"/>
+<circle cx="400" cy="468" r="12" fill="#0b1a35"/>
+<g fill="url(#cg)" opacity="0.55">
+  <circle cx="192" cy="210" r="13"/>
+  <circle cx="488" cy="190" r="11"/>
+  <circle cx="148" cy="368" r="10"/>
+  <circle cx="535" cy="322" r="10"/>
+  <circle cx="188" cy="498" r="11"/>
+</g>
+</svg>
