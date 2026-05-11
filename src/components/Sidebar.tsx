@@ -36,7 +36,7 @@ export default React.memo(function Sidebar() {
           return (
             <button
               key={id}
-              onClick={() => setCurrentPage(id as any)}
+           onClick={() => setCurrentPage(id)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 active ? 'bg-[#0056b3] text-white shadow-lg' : 'text-blue-200/80 hover:bg-white/10 hover:text-white'
               }`}

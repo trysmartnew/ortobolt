@@ -250,13 +250,13 @@ function SpecialistsTab({ caseId }: { caseId:string }) {
           {[{label:'Nome completo *',key:'name',ph:'Dr. João Silva'},{label:'E-mail institucional *',key:'email',ph:'joao@hospital.com'},{label:'Especialidade *',key:'specialty',ph:'Ortopedia Veterinária'},{label:'CRMV',key:'crmv',ph:'CRMV-SP 00.000'},{label:'Instituição *',key:'institution',ph:'Hospital Veterinário XYZ'}].map(({label,key,ph}) => (
             <div key={key}>
               <label className="block text-xs font-semibold text-slate-600 mb-1">{label}</label>
-              <input value={(form as any)[key]} onChange={e => setForm(f => ({...f,[key]:e.target.value}))} placeholder={ph}
+              <input value={form[key as keyof typeof form]} onChange={e => setForm(f => ({...f,[key]: e.target.value}))} placeholder={ph}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]/30" />
             </div>
           ))}
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">Permissão</label>
-            <select value={form.role} onChange={e => setForm(f => ({...f,role:e.target.value as any}))}
+            <select value={form.role} onChange={e => setForm(f => ({...f, role: e.target.value as typeof form.role }))}
               className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]/30">
               <option value="consultant">Consultor — pode comentar e sugerir</option>
               <option value="observer">Observador — somente leitura</option>

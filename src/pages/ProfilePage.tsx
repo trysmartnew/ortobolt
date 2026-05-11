@@ -147,8 +147,7 @@ export default function ProfilePage() {
               ].map(({ label, key, ph }) => (
                 <div key={key}>
                   <label className="block text-xs font-semibold text-slate-500 mb-1">{label}</label>
-                  <input value={(certForm as any)[key]} onChange={e => setCertForm(f => ({ ...f, [key]: e.target.value }))}
-                    placeholder={ph} className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
+                  <input value={certForm[key as keyof typeof certForm]} onChange={e => setCertForm(f => ({ ...f, [key]: e.target.value }))} placeholder={ph} className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
                 </div>
               ))}
               <div className="flex gap-2">
@@ -188,3 +187,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+
