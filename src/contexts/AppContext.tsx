@@ -331,17 +331,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     if (isLoggingOut) {
-      console.log('⚠️ Logout já em andamento, ignorando chamada duplicada');
       return;
     }
     
     try {
       setIsLoggingOut(true);
-      console.log('🔐 Iniciando logout...');
-      
       await supabase.auth.signOut();
-      console.log('✅ Supabase signOut completado');
-
       setUser(null);
       setIsLoggedIn(false);
       setCurrentView('home');
@@ -360,7 +355,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setCaseMessages([]);
       setOnlineUsers([]);
 
-      console.log('🧹 Estados limpos, logout completado');
       addToast('Sessão encerrada com sucesso!', 'info');
     } catch (error) {
       console.error('❌ Erro ao fazer logout:', error);
