@@ -9,3 +9,8 @@ dist/
 *.tsbuildinfo
 
 aiService_debug.txt
+
+# Backups locais
+public/backups/
+*.backup-*.png
+*.backup
