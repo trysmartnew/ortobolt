@@ -24,7 +24,7 @@ jobs:
 
           curl --fail --silent --show-error --max-time 20 \
             -X GET \
-            "https://iatncfufdldzppmjwmvt.supabase.co/rest/v1/keepalive?select=id&limit=1" \
+            "https://fhecacefkmnqtkdsldsy.supabase.co/rest/v1/keepalive?select=id&limit=1" \
             -H "apikey: $SUPABASE_ANON_KEY" \
             -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
             -H "Accept: application/json"
