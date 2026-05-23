@@ -5,7 +5,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // Whitelist de modelos permitidos — impede uso indevido da chave
-const ALLOWED_MODELS = ['qwen/qwen3-vl-235b-a22b-thinking'] as const;
+const ALLOWED_MODELS = ['google/gemma-4-27b-it:free'] as const;
 type AllowedModel = typeof ALLOWED_MODELS[number];
 
 // Anonimizador LGPD — remove dados identificáveis antes de enviar à IA
@@ -133,3 +133,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
+

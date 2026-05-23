@@ -1,7 +1,7 @@
 // src/services/aiService.ts
 // ✅ C-01: Chave removida do cliente — todas as chamadas vão para /api/ai
 // ✅ C-04: Anonimização adicional no cliente antes de enviar ao proxy
-// ✅ Q-01: Modelo único Qwen3-VL-235B-A22B Thinking para chat + visão
+// ✅ Modelo: Gemma 4 27B (free) para chat + visão
 // ✅ Q-02: stripThinking() remove bloco <think>…</think> antes de exibir
 // ✅ CACHE: getCacheKey usa msgCount:lastContent (não SYSTEM_PROMPT)
 
@@ -115,10 +115,10 @@ export async function compressImageBase64(
 }
 
 const AI_PROXY = '/api/ai';
-const QWEN_MODEL = 'qwen/qwen3-vl-235b-a22b-thinking';
+const QWEN_MODEL = 'google/gemma-4-27b-it:free';
 
 function stripThinking(text: string): string {
-  return text.replace(/[\s\S]*?<think>[\s\S]*?<\/think>/gi, '').trim();
+  return text.replace(/<think>[\s\S]*?<\/think>|<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
 }
 
 // ── System Prompt ─────────────────────────────────────────────────────────────
@@ -372,3 +372,5 @@ export async function getCaseAISuggestion(
     return '⚠️ Erro ao gerar sugestão de IA. Tente novamente em alguns instantes.';
   }
 }
+
+
