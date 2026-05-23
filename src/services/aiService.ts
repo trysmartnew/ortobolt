@@ -115,7 +115,7 @@ export async function compressImageBase64(
 }
 
 const AI_PROXY = '/api/ai';
-const QWEN_MODEL = 'google/gemma-4-27b-it:free';
+const QWEN_MODEL = 'google/gemma-4-31b-it:free';
 
 function stripThinking(text: string): string {
   return text.replace(/<think>[\s\S]*?<\/think>|<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
@@ -372,5 +372,6 @@ export async function getCaseAISuggestion(
     return '⚠️ Erro ao gerar sugestão de IA. Tente novamente em alguns instantes.';
   }
 }
+
 
 
