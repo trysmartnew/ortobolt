@@ -6,8 +6,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // ── Modelos ───────────────────────────────────────────────────────────────────
-const PRIMARY_MODEL  = 'deepseek/deepseek-chat-v3-0324:free';
-const FALLBACK_MODEL = 'meta-llama/llama-4-maverick:free';
+const PRIMARY_MODEL  = 'deepseek/deepseek-v4-flash:free';
+const FALLBACK_MODEL = 'meta-llama/llama-3.3-70b-instruct:free';
 
 // Whitelist — aceita também o modelo legado para não quebrar clientes antigos
 const ALLOWED_MODELS = [
