@@ -24,6 +24,7 @@
     "@types/node": "^22.19.15",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vercel/node": "^5.8.4",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   },
