@@ -1,7 +1,7 @@
 // src/pages/SettingsPage.tsx
 // ✅ U-02: InlineToast local substituído por addToast global
 import React, { useState } from 'react';
-import { Bell, Moon, Globe, FileDown, Zap, Shield, Database, RefreshCw, Check } from 'lucide-react';
+import { Bell, Globe, FileDown, Zap, Shield, Database, RefreshCw, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, SectionHeader } from '@/components/ui';
 
@@ -30,7 +30,7 @@ function SettingRow({ icon: Icon, title, description, children }: { icon: React.
 
 export default function SettingsPage() {
   const { user, addToast } = useApp();
-  const [prefs, setPrefs] = useState(user?.preferences || { notifications: true, theme: 'light', language: 'pt', autoAnalysis: true, reportFormat: 'pdf' });
+  const [prefs, setPrefs] = useState(user?.preferences || { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' });
   const [saving, setSaving] = useState(false);
 
   const save = async () => {
@@ -58,12 +58,6 @@ export default function SettingsPage() {
         <div>
           <SettingRow icon={Bell} title="Notificações em Tempo Real" description="Alertas de casos críticos e análises concluídas">
             <Toggle checked={prefs.notifications} onChange={v => set('notifications', v)} />
-          </SettingRow>
-          <SettingRow icon={Moon} title="Tema do Sistema" description="Aparência da plataforma">
-            <select value={prefs.theme} onChange={e => set('theme', e.target.value)} className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]">
-              <option value="light">Claro</option>
-              <option value="dark">Escuro</option>
-            </select>
           </SettingRow>
           <SettingRow icon={Globe} title="Idioma" description="Língua da interface e relatórios">
             <select value={prefs.language} onChange={e => set('language', e.target.value)} className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]">
@@ -117,3 +111,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+
