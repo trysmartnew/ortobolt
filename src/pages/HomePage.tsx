@@ -97,7 +97,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white pt-20" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+    <div className="min-h-screen bg-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
 
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
       <header
@@ -181,7 +181,7 @@ export default function HomePage() {
         )}
             </header>
 
-      <div className="py-8 px-6"><img src="/logo-inicio.png" alt="OrtoBolt" className="h-60 w-auto object-contain" /></div>
+      <img src="/logo-inicio.png" alt="OrtoBolt" style={{ position: 'fixed', left: '1rem', top: '1rem', zIndex: 50, height: '15rem', width: 'auto', objectFit: 'contain', pointerEvents: 'none' }} />
 
       {/* ── HERO ───────────────────────────────────────────────────────── */}
       <section
@@ -418,8 +418,6 @@ export default function HomePage() {
     </div>
   );
 }
-
-
 
 
 
