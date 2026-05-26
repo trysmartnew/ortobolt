@@ -44,7 +44,7 @@ export default function SettingsPage() {
   };
 
   const clearCache = () => {
-    try { localStorage.removeItem('ortobolt_prefs'); addToast('Cache limpo com sucesso!', 'info'); }
+    try { const d = { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' }; localStorage.removeItem('ortobolt_prefs'); setPrefs(d); addToast('Cache limpo com sucesso!', 'info'); }
     catch { addToast('Erro ao limpar cache.', 'error'); }
   };
 
@@ -103,14 +103,15 @@ export default function SettingsPage() {
         <Button onClick={save} loading={saving} className="flex-1">
           {saving ? 'Salvando...' : <><Check size={14} />Salvar Configurações</>}
         </Button>
-        <Button variant="secondary" onClick={() => setPrefs(user?.preferences || prefs)} className="flex-shrink-0">Resetar</Button>
+        <Button variant="secondary" onClick={() => { const d = { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' }; setPrefs(d); localStorage.setItem('ortobolt_prefs', JSON.stringify(d)); addToast('Configurações resetadas.', 'info'); }} className="flex-shrink-0">Resetar</Button>
       </div>
 
       <p className="text-xs text-slate-400 font-mono text-center">
-        OrtoBolt v1.0.0 · © 2025 OrtoBolt LTDA · CRMV-SP Certificado · HL7 FHIR v4.0
+        OrtoBolt v1.0.0 · © 2026 OrtoBolt LTDA · CRMV-SP Certificado · HL7 FHIR v4.0
       </p>
     </div>
   );
 }
+
 
 
