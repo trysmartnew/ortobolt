@@ -1,5 +1,5 @@
 // src/components/ProductTour.tsx
-// ✅ BUG-05 FIX: Modelo atualizado para Qwen3-VL-235B
+// ✅ BUG-05 FIX: Modelo atualizado para OrthoVision v3.2
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 
@@ -52,7 +52,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '__welcome__',
       title: '🤖 OrthoAI — Consultor Especializado',
-      content: 'O Chat IA conecta você ao OrthoAI (OpenRouter · Qwen3-VL-235B) com contexto especializado em ortopedia veterinária. Tire dúvidas sobre protocolos, dosagens, cálculos de ângulos e técnicas cirúrgicas.',
+      content: 'O Chat IA conecta você ao OrthoAI (OpenRouter · OrthoVision v3.2) com contexto especializado em ortopedia veterinária. Tire dúvidas sobre protocolos, dosagens, cálculos de ângulos e técnicas cirúrgicas.',
       placement: 'center',
     },
     {

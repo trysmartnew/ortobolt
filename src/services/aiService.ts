@@ -115,7 +115,7 @@ export async function compressImageBase64(
 }
 
 const AI_PROXY = '/api/ai';
-const QWEN_MODEL = 'google/gemma-4-31b-it:free';
+const PRIMARY_MODEL = 'google/gemma-4-31b-it:free';
 
 function stripThinking(text: string): string {
   return text.replace(/<think>[\s\S]*?<\/think>|<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
@@ -211,7 +211,7 @@ export async function sendChatMessage(
 ): Promise<string> {
   try {
     return await proxyRequest({
-      model: QWEN_MODEL,
+      model: PRIMARY_MODEL,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         ...history.map((m) => ({ role: m.role, content: m.content })),
@@ -244,7 +244,7 @@ export async function sendChatMessageStream(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: QWEN_MODEL,
+      model: PRIMARY_MODEL,
       messages,
       max_tokens: 1000,
       stream: true,
@@ -311,7 +311,7 @@ export async function analyzeImage(
       : '';
 
     return await proxyRequest({
-      model: QWEN_MODEL,
+      model: PRIMARY_MODEL,
       messages: [
         {
           role: 'user',
@@ -351,7 +351,7 @@ export async function getCaseAISuggestion(
       `Procedimento: ${caseInfo.procedure}. Status: ${caseInfo.status}. Risco: ${caseInfo.riskLevel}.`;
 
     return await proxyRequest({
-      model: QWEN_MODEL,
+      model: PRIMARY_MODEL,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         {

@@ -1,5 +1,5 @@
 // src/pages/ChatPage.tsx
-// ✅ BUG-05 FIX: Modelo atualizado para Qwen3-VL-235B
+// ✅ BUG-05 FIX: Modelo atualizado para OrthoVision v3.2
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, Trash2, Bot, User, Copy, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
@@ -124,7 +124,7 @@ export default function ChatPage() {
       <div className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 flex-shrink-0">
         <div>
           <h1 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>OrthoAI Assistant</h1>
-          <p className="text-xs text-slate-400 font-mono">Ativo · OpenRouter · Qwen3-VL-235B</p>
+          <p className="text-xs text-slate-400 font-mono">Ativo · OpenRouter · OrthoVision v3.2</p>
         </div>
         <button
           onClick={() => setChatHistory(h => h.length > 0 ? [h[0]] : h)}

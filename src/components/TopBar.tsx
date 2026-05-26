@@ -1,5 +1,5 @@
 // src/components/TopBar.tsx
-// ✅ BUG-05 FIX: Modelo atualizado para Qwen3-VL-235B
+// ✅ Modelo atualizado para OrthoVision v3.2 (Gemma 4 31B)
 import React from 'react';
 import { Bell, Wifi, WifiOff, MapPin } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
@@ -7,7 +7,7 @@ import { TOUR_STEPS } from '@/components/ProductTour';
 
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   dashboard:     { title: 'Dashboard',          subtitle: 'Visão geral em tempo real' },
-  chat:          { title: 'Consultor IA',       subtitle: 'OrthoAI · OpenRouter · Qwen3-VL-235B' },
+  chat:          { title: 'Consultor IA',       subtitle: 'OrthoAI · OpenRouter · OrthoVision v3.2' },
   analysis:      { title: 'Análise Visual',     subtitle: 'OrthoVision v3.2 · IA Computacional' },
   gallery:       { title: 'Galeria de Casos',   subtitle: 'Casos clínicos e histórico' },
   reports:       { title: 'Relatórios',         subtitle: 'Exportação e análise de dados' },
