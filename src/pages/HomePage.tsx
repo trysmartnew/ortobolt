@@ -108,10 +108,10 @@ export default function HomePage() {
           boxShadow: scrolled ? '0 1px 20px rgba(0,0,0,0.08)' : 'none',
         }}
       >
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <img src="/logo-inicio.png" alt="OrtoBolt" className="h-20 w-auto object-contain" />
+          <div className="flex items-center gap-2 -ml-4">
+            <img src="/logo-inicio.png" alt="OrtoBolt" className="h-60 w-auto object-contain" />
           </div>
 
           {/* Nav desktop */}
@@ -406,9 +406,7 @@ export default function HomePage() {
 
       {/* ── FOOTER ─────────────────────────────────────────────────────── */}
       <footer className="py-8 bg-white border-t border-slate-100">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <img src="/logo-inicio.png" alt="OrtoBolt" className="h-52 w-auto object-contain opacity-60" />
-          <p className="text-xs" style={{ color: '#94A3B8' }}>
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">          <p className="text-xs" style={{ color: '#94A3B8' }}>
             © 2025 OrtoBolt · Ortopedia Veterinária Inteligente · LGPD Compliant
           </p>
           <div className="flex items-center gap-2 text-xs" style={{ color: '#94A3B8' }}>
@@ -420,6 +418,8 @@ export default function HomePage() {
     </div>
   );
 }
+
+
 
 
 
