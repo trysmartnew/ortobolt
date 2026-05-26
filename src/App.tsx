@@ -115,7 +115,7 @@ function AppInner() {
       <ProductTour page={currentPage} active={tourActive} onClose={closeTour} />
       {/* ✅ U-02: Toast container — aparece sobre tudo */}
       <ToastContainer toasts={toasts} onRemove={removeToast} />
-      <AIAssistant />
+      {currentPage !== 'chat' && <AIAssistant />}
     </div>
   );
 }
@@ -129,6 +129,7 @@ export default function App() {
     </AppProvider>
   );
 }
+
 
 
 
