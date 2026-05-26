@@ -97,7 +97,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+    <div className="min-h-screen bg-white pt-20" style={{ fontFamily: 'Montserrat, sans-serif' }}>
 
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
       <header
@@ -418,6 +418,7 @@ export default function HomePage() {
     </div>
   );
 }
+
 
 
 
