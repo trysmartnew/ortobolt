@@ -21,6 +21,7 @@ import Sidebar       from '@/components/Sidebar';
 import TopBar        from '@/components/TopBar';
 import ProductTour   from '@/components/ProductTour';
 import ToastContainer from '@/components/ToastContainer';
+import AIAssistant    from '@/components/AIAssistant';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 const PAGE_MAP = {
@@ -114,6 +115,7 @@ function AppInner() {
       <ProductTour page={currentPage} active={tourActive} onClose={closeTour} />
       {/* ✅ U-02: Toast container — aparece sobre tudo */}
       <ToastContainer toasts={toasts} onRemove={removeToast} />
+      <AIAssistant />
     </div>
   );
 }
@@ -127,3 +129,6 @@ export default function App() {
     </AppProvider>
   );
 }
+
+
+
