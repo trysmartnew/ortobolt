@@ -110,7 +110,7 @@ export default function HomePage() {
       >
         <div className="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-2 -ml-4">
+          <div className="flex items-center gap-2 -ml-16">
             <img src="/logo-inicio.png" alt="OrtoBolt" className="h-60 w-auto object-contain" />
           </div>
 
@@ -418,6 +418,7 @@ export default function HomePage() {
     </div>
   );
 }
+
 
 
 
