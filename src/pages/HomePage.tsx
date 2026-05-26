@@ -29,13 +29,6 @@ const FEATURES = [
     bg: '#ECFDF5',
   },
   {
-    icon: Users,
-    title: 'Colaboração em Tempo Real',
-    desc: 'Convide especialistas, compartilhe casos clínicos e discuta diagnósticos com sua equipe na mesma plataforma.',
-    color: '#7C3AED',
-    bg: '#F5F3FF',
-  },
-  {
     icon: Shield,
     title: 'Segurança LGPD',
     desc: 'Dados clínicos protegidos com criptografia AES-256, backups automáticos e total conformidade com a LGPD.',
@@ -59,14 +52,6 @@ const TESTIMONIALS = [
     rating: 5,
     avatar: 'MA',
     color: '#0056b3',
-  },
-  {
-    name: 'Dra. Carolina Menezes',
-    role: 'Ortopedista Veterinária · CRMV-MG 8.104',
-    text: 'A função de colaboração em tempo real é incrível. Consigo discutir casos complexos com especialistas de outros estados sem sair da plataforma. Elevou o nível do meu atendimento.',
-    rating: 5,
-    avatar: 'CM',
-    color: '#059669',
   },
   {
     name: 'Dr. Paulo Henrique',
@@ -225,7 +210,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed">
-            O OrtoBolt une inteligência artificial, análise de imagens e colaboração em tempo real
+            O OrtoBolt une inteligência artificial e análise de imagens
             para elevar o padrão da ortopedia veterinária no Brasil.
           </p>
 
@@ -417,6 +402,7 @@ export default function HomePage() {
     </div>
   );
 }
+
 
 
 

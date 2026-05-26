@@ -48,7 +48,7 @@ export default function SettingsPage() {
     catch { addToast('Erro ao limpar cache.', 'error'); }
   };
 
-  const set = (key: string, val: any) => setPrefs(p => ({ ...p, [key]: val }));
+  const set = (key: string, val: any) => setPrefs((p: typeof prefs) => ({ ...p, [key]: val }));
 
   return (
     <div className="p-6 max-w-2xl space-y-6">
@@ -112,6 +112,7 @@ export default function SettingsPage() {
     </div>
   );
 }
+
 
 
 

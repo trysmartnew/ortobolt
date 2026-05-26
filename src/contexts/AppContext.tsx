@@ -4,13 +4,9 @@
 // ✅ U-02: Sistema de Toast global
 // ✅ U-01: rememberMe com controle de storage
 // ✅ D-01: MOCK_CASES substituído por fetch real do Supabase + mapCaseFromDB
-// ✅ D-02: MOCK_COLLABORATORS substituído por fetch real + mapCollaboratorFromDB
 // ✅ D-05: MOCK_NOTIFICATIONS substituído por fetch real + mapNotificationFromDB + persistência
-// ✅ D-03/D-04: Realtime de mensagens e presença + persistência
 // ✅ P1: addCase/deleteCase/updateCase com persistência Supabase
-// ✅ P1: addCaseMessage com persistência + mapper snake_case → camelCase
 // ✅ P2: markAllRead/markRead com persistência Supabase
-// ✅ Collaboration: getCaseCollaborators, inviteCollaborator, removeCollaborator completos
 // ✅ setUserFromSession com guarda de ID vazio
 import React, {
   createContext,
@@ -27,13 +23,9 @@ import type {
   ClinicalCase,
   Notification,
   ChatMessage,
-  Collaborator,
-  CaseMessage,
   AnimalSpecies,
   ProcedureType,
   CaseStatus,
-  CollaboratorRole,
-  CollaboratorStatus,
   NotificationType,
 } from '@/types/index';
 import { supabase, fetchUserProfile } from '@/services/supabase';
@@ -50,15 +42,6 @@ export interface Toast {
   type: 'success' | 'error' | 'info' | 'warning';
 }
 
-// ✅ TIPO SEPARADO PARA EVITAR ERROS DE SINTAXE
-export interface CollaboratorInviteData {
-  name: string;
-  email: string;
-  specialty: string;
-  crmv: string;
-  institution: string;
-  role: 'consultant' | 'observer';
-}
 
 interface AppContextType {
   user: User | null;
@@ -88,14 +71,6 @@ interface AppContextType {
   tourActive: boolean;
   startTour: () => void;
   closeTour: () => void;
-  collaborators: Collaborator[];
-  getCaseCollaborators: (caseId: string) => Collaborator[];
-  inviteCollaborator: (caseId: string, data: CollaboratorInviteData) => void;
-  removeCollaborator: (id: string) => void;
-  caseMessages: CaseMessage[];
-  getCaseMessages: (caseId: string) => CaseMessage[];
-  addCaseMessage: (caseId: string, content: string, type?: CaseMessage['type']) => void;
-  onlineUsers: string[];
   toasts: Toast[];
   addToast: (message: string, type: Toast['type']) => void;
   removeToast: (id: number) => void;
@@ -129,19 +104,6 @@ function mapCaseFromDB(row: Record<string, unknown>): ClinicalCase {
   };
 }
 
-// ── ✅ NOVO: Mapeamento seguro para CaseMessage (snake_case → camelCase) ────────
-function mapMsgFromDB(row: Record<string, unknown>): CaseMessage {
-  return {
-    id:        String(row.id        ?? `msg-${Date.now()}`),
-    caseId:    String(row.case_id   ?? row.caseId    ?? ''),
-    userId:    String(row.user_id   ?? row.userId    ?? ''),
-    userName:  String(row.user_name ?? row.userName  ?? ''),
-    userRole:  (row.user_role ?? row.userRole ?? 'observer') as CollaboratorRole,
-    content:   String(row.content   ?? ''),
-    createdAt: String(row.created_at ?? row.createdAt ?? new Date().toISOString()),
-    type:      (row.type ?? 'text') as CaseMessage['type'],
-  };
-}
 
 // ── ✅ NOVO: Mapeamento seguro para Notification (snake_case → camelCase) ────────
 function mapNotificationFromDB(row: Record<string, unknown>): Notification {
@@ -156,24 +118,6 @@ function mapNotificationFromDB(row: Record<string, unknown>): Notification {
   };
 }
 
-// ── ✅ NOVO: Mapeamento seguro para Collaborator (snake_case → camelCase) ────────
-function mapCollaboratorFromDB(row: Record<string, unknown>): Collaborator {
-  return {
-    id:          String(row.id           ?? ''),
-    caseId:      String(row.case_id      ?? row.caseId      ?? ''),
-    userId:      String(row.user_id      ?? row.userId      ?? ''),
-    name:        String(row.name         ?? ''),
-    email:       String(row.email        ?? ''),
-    specialty:   String(row.specialty    ?? ''),
-    crmv:        String(row.crmv         ?? ''),
-    institution: String(row.institution  ?? ''),
-    role:        (row.role   ?? 'observer') as CollaboratorRole,
-    status:      (row.status ?? 'pending') as CollaboratorStatus,
-    invitedAt:   String(row.invited_at   ?? row.invitedAt   ?? ''),
-    acceptedAt:  row.accepted_at != null ? String(row.accepted_at) : undefined,
-    online:      false,
-  };
-}
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser]               = useState<User | null>(null);
@@ -190,9 +134,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     content: '# Olá! Sou o OrthoAI 🐾\n\nSou seu assistente especializado em ortopedia veterinária. Como posso ajudar hoje?',
     timestamp: new Date().toISOString(),
   }]);
-  const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
-  const [caseMessages, setCaseMessages] = useState<CaseMessage[]>([]);
-  const [onlineUsers, setOnlineUsers]     = useState<string[]>([]);
   const [tourActive, setTourActive]       = useState(false);
   const [toasts, setToasts]               = useState<Toast[]>([]);
   
@@ -255,18 +196,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       });
   }, [user]);
 
-  // ✅ D-02: Fetch colaboradores reais COM mapper
-  useEffect(() => {
-    if (!user) return;
-    supabase
-      .from('case_collaborators')
-      .select('*')
-      .then(({ data }) => {
-        if (data) {
-          setCollaborators(data.map(r => mapCollaboratorFromDB(r as Record<string, unknown>)));
-        }
-      });
-  }, [user]);
 
   const login = useCallback(async (
     email: string,
@@ -345,15 +274,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setTourActive(false);
       setCases([]);
       setNotifications([]);
-      setCollaborators([]);
       setChatHistory([{
         id: 'init', 
         role: 'assistant',
         content: '# Olá! Sou o OrthoAI 🐾\n\nSou seu assistente especializado em ortopedia veterinária. Como posso ajudar hoje?',
         timestamp: new Date().toISOString(),
       }]);
-      setCaseMessages([]);
-      setOnlineUsers([]);
 
       addToast('Sessão encerrada com sucesso!', 'info');
     } catch (error) {
@@ -482,141 +408,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  const getCaseCollaborators = useCallback(
-    (caseId: string) => collaborators.filter((c) => c.caseId === caseId),
-    [collaborators]
-  );
 
-  const inviteCollaborator = useCallback((
-    caseId: string,
-    data: CollaboratorInviteData
-  ) => {
-    const col: Collaborator = {
-      id: `col-${Date.now()}`,
-      caseId,
-      userId: `u-${Date.now()}`,
-      name: data.name,
-      email: data.email,
-      specialty: data.specialty,
-      crmv: data.crmv,
-      institution: data.institution,
-      role: data.role,
-      status: 'pending',
-      invitedAt: new Date().toISOString(),
-    };
-    setCollaborators((prev) => [...prev, col]);
-    setCaseMessages((prev) => [...prev, {
-      id: `msg-${Date.now()}`,
-      caseId,
-      userId: 'system',
-      userName: 'Sistema',
-      userRole: 'observer',
-      content: `👋 **${data.name}** (${data.specialty}) foi convidado(a) como ${data.role === 'consultant' ? 'Consultor' : 'Observador'}.`,
-      createdAt: new Date().toISOString(),
-      type: 'system',
-    }]);
-    addNotification({
-      type: 'info',
-      title: 'Convite enviado',
-      message: `Convite enviado para ${data.name} — ${data.specialty}`,
-      caseId,
-    });
-  }, [addNotification]);
 
-  const removeCollaborator = useCallback((id: string) => {
-    setCollaborators((prev) => prev.filter((c) => c.id !== id));
-  }, []);
 
-  const getCaseMessages = useCallback(
-    (caseId: string) => caseMessages.filter((m) => m.caseId === caseId),
-    [caseMessages]
-  );
 
-  const addCaseMessage = useCallback((
-    caseId: string,
-    content: string,
-    type: CaseMessage['type'] = 'text'
-  ) => {
-    if (!user) return;
-    const msg: CaseMessage = {
-      id: 'msg-' + Date.now(),
-      caseId,
-      userId: user.id,
-      userName: user.name,
-      userRole: 'owner',
-      content,
-      createdAt: new Date().toISOString(),
-      type,
-    };
 
-    setCaseMessages((prev) => [...prev, msg]);
-
-    supabase.from('case_messages').insert({
-      id:         msg.id,
-      case_id:    caseId,
-      user_id:    user.id,
-      user_name:  user.name,
-      user_role:  'owner',
-      content,
-      type,
-      created_at: msg.createdAt,
-    }).then(({ error }) => {
-      if (error) {
-        console.error('addCaseMessage Supabase error:', error.message);
-        setCaseMessages((prev) => prev.filter((m) => m.id !== msg.id));
-      }
-    });
-  }, [user]);
-
-  useEffect(() => {
-    if (!activeCase || !user) return;
-    
-    const loadInitialMessages = async () => {
-      const { data, error } = await supabase
-        .from('case_messages')
-        .select('*')
-        .eq('case_id', activeCase.id)
-        .order('created_at', { ascending: true });
-      
-      if (error) {
-        console.error('Erro ao carregar mensagens:', error);
-        return;
-      }
-
-      if (data && data.length > 0) {
-        setCaseMessages(data.map(row => mapMsgFromDB(row as Record<string, unknown>)));
-      }
-    };
-    
-    loadInitialMessages();
-
-    const channel = supabase
-      .channel(`case-${activeCase.id}`)
-      .on('postgres_changes', {
-        event: 'INSERT', schema: 'public',
-        table: 'case_messages',
-        filter: `case_id=eq.${activeCase.id}`,
-      }, (payload) => {
-        const newMsg = mapMsgFromDB(payload.new as Record<string, unknown>);
-        setCaseMessages((prev) => {
-          if (prev.some(m => m.id === newMsg.id)) return prev;
-          return [...prev, newMsg];
-        });
-      })
-      .on('presence', { event: 'sync' }, () => {
-        const state = channel.presenceState<{ userId: string }>();
-        setOnlineUsers(
-          Object.values(state).map((p: any) => p[0]?.userId).filter(Boolean)
-        );
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await channel.track({ userId: user.id, online_at: new Date().toISOString() });
-        }
-      });
-
-    return () => { supabase.removeChannel(channel); };
-  }, [activeCase, user]);
 
   return (
     <AppContext.Provider value={{
@@ -628,9 +424,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       notifications, unreadCount, markAllRead, markRead, addNotification,
       chatHistory, setChatHistory,
       tourActive, startTour, closeTour,
-      collaborators, getCaseCollaborators, inviteCollaborator, removeCollaborator,
-      caseMessages, getCaseMessages, addCaseMessage,
-      onlineUsers,
       toasts, addToast, removeToast,
       loginLocked, loginLockSecondsLeft,
     }}>
@@ -644,3 +437,4 @@ export function useApp() {
   if (!ctx) throw new Error('useApp must be inside AppProvider');
   return ctx;
 }
+

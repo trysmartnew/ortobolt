@@ -13,37 +13,6 @@ export interface AIAnalysisResult { id:string; timestamp:string; precisionScore:
 export interface RiskFactor { category:string; description:string; severity:'low'|'medium'|'high'; }
 export interface AnatomicalLandmark { name:string; detected:boolean; confidence:number; coordinates?:{x:number;y:number}; }
 
-// ── Collaboration ─────────────────────────────────────────────────────────────
-export type CollaboratorRole = 'owner'|'consultant'|'observer';
-export type CollaboratorStatus = 'pending'|'accepted'|'declined';
-
-export interface Collaborator {
-  id: string;
-  caseId: string;
-  userId: string;
-  name: string;
-  email: string;
-  specialty: string;
-  crmv: string;
-  institution: string;
-  role: CollaboratorRole;
-  status: CollaboratorStatus;
-  invitedAt: string;
-  acceptedAt?: string;
-  online?: boolean;
-}
-
-export interface CaseMessage {
-  id: string;
-  caseId: string;
-  userId: string;
-  userName: string;
-  userRole: CollaboratorRole;
-  content: string;
-  createdAt: string;
-  type: 'text'|'ai_suggestion'|'system';
-}
-
 // ── KPIs / Charts ─────────────────────────────────────────────────────────────
 export interface KPIMetric { id:string; label:string; value:number|string; unit?:string; trend:number; trendDirection:'up'|'down'|'stable'; icon:string; color:string; }
 export interface ChartDataPoint { label:string; precision:number; cases:number; success:number; }
@@ -57,3 +26,5 @@ export interface Notification { id:string; type:NotificationType; title:string; 
 
 // ── Reports ───────────────────────────────────────────────────────────────────
 export interface Report { id:string; title:string; type:'monthly'|'case'|'audit'|'performance'; generatedAt:string; period:string; status:'ready'|'generating'|'error'; sizeKb:number; }
+
+
