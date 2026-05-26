@@ -108,10 +108,10 @@ export default function HomePage() {
           boxShadow: scrolled ? '0 1px 20px rgba(0,0,0,0.08)' : 'none',
         }}
       >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <img src="/logo-inicio.png" alt="OrtoBolt" className="h-72 w-auto object-contain" />
+            <img src="/logo-inicio.png" alt="OrtoBolt" className="h-20 w-auto object-contain" />
           </div>
 
           {/* Nav desktop */}
@@ -420,6 +420,7 @@ export default function HomePage() {
     </div>
   );
 }
+
 
 
 
