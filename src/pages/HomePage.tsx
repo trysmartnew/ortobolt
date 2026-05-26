@@ -181,7 +181,7 @@ export default function HomePage() {
         )}
             </header>
 
-      <img src="/logo-inicio.png" alt="OrtoBolt" style={{ position: 'fixed', left: '1rem', top: '1rem', zIndex: 50, height: '15rem', width: 'auto', objectFit: 'contain', pointerEvents: 'none' }} />
+      <img src="/logo-inicio.png" alt="OrtoBolt" className="h-60 w-auto object-contain" />
 
       {/* ── HERO ───────────────────────────────────────────────────────── */}
       <section
@@ -418,6 +418,8 @@ export default function HomePage() {
     </div>
   );
 }
+
+
 
 
 
