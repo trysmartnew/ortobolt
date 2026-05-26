@@ -1,19 +1,23 @@
 // api/ai.ts — Vercel Serverless Function (Node.js Runtime)
-// ✅ Fallback automático: DeepSeek (primário) → Llama 4 Maverick (fallback)
-// ✅ Retry 3x por modelo em caso de 429/503/500
+// ✅ Fallback automático em cascata: 3 modelos com visão (Vision)
+// ✅ Retry 3x por modelo (total até 9 tentativas)
 // ✅ OPENROUTER_API_KEY apenas no servidor (process.env)
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// ── Modelos ───────────────────────────────────────────────────────────────────
-const PRIMARY_MODEL  = 'deepseek/deepseek-v4-flash:free';
-const FALLBACK_MODEL = 'meta-llama/llama-3.3-70b-instruct:free';
+// ── Modelos com Visão (Vision) ────────────────────────────────────────────────
+const PRIMARY_MODEL = 'google/gemma-4-31b-it:free';  // Google — Quality 65 (melhor visão)
+const FALLBACK_1    = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';  // NVIDIA — provider diferente
+const FALLBACK_2    = 'google/gemma-4-26b-a4b-it:free';  // Google MoE — menos congestionado
 
-// Whitelist — aceita também o modelo legado para não quebrar clientes antigos
+// Whitelist — aceita também modelos legados para não quebrar clientes antigos
 const ALLOWED_MODELS = [
   PRIMARY_MODEL,
-  FALLBACK_MODEL,
-  'google/gemma-4-31b-it:free', // legado — roteado para o primário
+  FALLBACK_1,
+  FALLBACK_2,
+  'google/gemma-4-31b-it:free',  // legado (mesmo do primário)
+  'deepseek/deepseek-v4-flash:free',  // legado (texto)
+  'meta-llama/llama-3.3-70b-instruct:free',  // legado (texto)
 ] as const;
 type AllowedModel = typeof ALLOWED_MODELS[number];
 
@@ -52,7 +56,7 @@ async function callOpenRouter(
       });
 
       // Sucesso ou erro não-retryable → retorna imediatamente
-      if (response.status !== 429 && response.status !== 503) {
+      if (response.status !== 429 && response.status !== 503 && response.status !== 500) {
         return response;
       }
       lastResponse = response;
@@ -132,15 +136,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       response = new Response(null, { status: 503 });
     }
 
-    // 7. Fallback (429, 503, 500 ou erro de rede)
+    // 7. Fallback 1 (429, 503, 500 ou erro de rede)
     if (!response.ok && [429, 503, 500].includes(response.status)) {
       console.warn(
-        `[AI Proxy] Primary ${PRIMARY_MODEL} failed (${response.status}). Fallback → ${FALLBACK_MODEL}`
+        `[AI Proxy] Primary ${PRIMARY_MODEL} failed (${response.status}). Fallback 1 → ${FALLBACK_1}`
       );
       try {
-        response = await callOpenRouter(FALLBACK_MODEL, sanitizedMessages, maxTokens, key);
+        response = await callOpenRouter(FALLBACK_1, sanitizedMessages, maxTokens, key);
       } catch (err) {
-        console.error('[AI Proxy] Fallback network error:', err);
+        console.error('[AI Proxy] Fallback 1 network error:', err);
+        response = new Response(null, { status: 503 });
+      }
+    }
+
+    // 8. Fallback 2 (se Fallback 1 também falhou)
+    if (!response.ok && [429, 503, 500].includes(response.status)) {
+      console.warn(
+        `[AI Proxy] Fallback 1 ${FALLBACK_1} failed (${response.status}). Fallback 2 → ${FALLBACK_2}`
+      );
+      try {
+        response = await callOpenRouter(FALLBACK_2, sanitizedMessages, maxTokens, key);
+      } catch (err) {
+        console.error('[AI Proxy] Fallback 2 network error:', err);
         return res.status(503).json({ error: 'All providers unreachable' });
       }
     }
