@@ -30,21 +30,22 @@ function SettingRow({ icon: Icon, title, description, children }: { icon: React.
 
 export default function SettingsPage() {
   const { user, addToast } = useApp();
-  const [prefs, setPrefs] = useState(user?.preferences || { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' });
+  const [prefs, setPrefs] = useState(() => {
+    try { const s = localStorage.getItem('ortobolt_prefs'); return s ? JSON.parse(s) : (user?.preferences || { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' }); }
+    catch { return { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' }; }
+  });
   const [saving, setSaving] = useState(false);
 
   const save = async () => {
     setSaving(true);
-    // Simula gravação (substituir por supabase.from('users').update({preferences: prefs}) quando pronto)
-    await new Promise(r => setTimeout(r, 600));
-    setSaving(false);
-    // ✅ U-02: toast global em vez de InlineToast local
-    addToast('Configurações salvas com sucesso!', 'success');
+    try { localStorage.setItem('ortobolt_prefs', JSON.stringify(prefs)); addToast('Configurações salvas com sucesso!', 'success'); }
+    catch { addToast('Erro ao salvar configurações.', 'error'); }
+    finally { setSaving(false); }
   };
 
   const clearCache = () => {
-    // ✅ U-02: toast global
-    addToast('Cache limpo com sucesso!', 'info');
+    try { localStorage.removeItem('ortobolt_prefs'); addToast('Cache limpo com sucesso!', 'info'); }
+    catch { addToast('Erro ao limpar cache.', 'error'); }
   };
 
   const set = (key: string, val: any) => setPrefs(p => ({ ...p, [key]: val }));
@@ -111,4 +112,5 @@ export default function SettingsPage() {
     </div>
   );
 }
+
 
