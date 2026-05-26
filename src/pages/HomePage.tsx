@@ -180,10 +180,7 @@ export default function HomePage() {
           </div>
         )}
             </header>
-
-      <img src="/logo-inicio.png" alt="OrtoBolt" className="h-60 w-auto object-contain" />
-
-      {/* ── HERO ───────────────────────────────────────────────────────── */}
+{/* ── HERO ───────────────────────────────────────────────────────── */}
       <section
         className="relative min-h-screen flex items-center justify-center overflow-hidden"
         style={{
@@ -210,6 +207,8 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-24 pb-20">
+          <img src="/logo-inicio.png" alt="OrtoBolt" className="h-60 w-auto object-contain mx-auto mb-8"/>
+
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 text-xs font-semibold"
             style={{ background: 'rgba(255,255,255,0.1)', color: '#7DD3FC', border: '1px solid rgba(125,211,252,0.3)' }}>
@@ -418,6 +417,8 @@ export default function HomePage() {
     </div>
   );
 }
+
+
 
 
 
