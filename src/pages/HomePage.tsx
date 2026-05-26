@@ -108,11 +108,9 @@ export default function HomePage() {
           boxShadow: scrolled ? '0 1px 20px rgba(0,0,0,0.08)' : 'none',
         }}
       >
-        <div className="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo */}
-          <div className="absolute left-4 top-2 flex items-center">
-            <img src="/logo-inicio.png" alt="OrtoBolt" className="h-60 w-auto object-contain" />
-          </div>
+          
 
           {/* Nav desktop */}
           <nav className="hidden md:flex items-center gap-8">
@@ -181,7 +179,9 @@ export default function HomePage() {
             </button>
           </div>
         )}
-      </header>
+            </header>
+
+      <img src="/logo-inicio.png" alt="OrtoBolt" className="fixed left-4 top-4 z-50 h-60 w-auto object-contain pointer-events-none" />
 
       {/* ── HERO ───────────────────────────────────────────────────────── */}
       <section
@@ -418,6 +418,8 @@ export default function HomePage() {
     </div>
   );
 }
+
+
 
 
 
