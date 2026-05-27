@@ -1,5 +1,4 @@
 // src/components/ProductTour.tsx
-// ✅ BUG-05 FIX: Modelo atualizado para OrthoVision v3.2
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 
@@ -13,251 +12,70 @@ export interface TourStep {
 
 export const TOUR_STEPS: Record<string, TourStep[]> = {
   dashboard: [
-    {
-      target: '__welcome__',
-      title: '👋 Bem-vindo ao OrtoBolt!',
-      content: 'Esta é sua central de ortopedia veterinária inteligente. Vamos fazer um tour rápido para você conhecer tudo que a plataforma oferece.',
-      placement: 'center',
-    },
-    {
-      target: 'tour-kpis',
-      title: '📊 Métricas em Tempo Real',
-      content: 'Aqui ficam seus KPIs principais: casos ativos, taxa de precisão cirúrgica, procedimentos este mês e alertas críticos. Atualizam automaticamente.',
-      placement: 'bottom',
-      highlight: true,
-    },
-    {
-      target: 'tour-precision-chart',
-      title: '📈 Tendência de Precisão',
-      content: 'Gráfico de evolução da sua precisão cirúrgica ao longo do tempo. Você pode visualizar a tendência semanal e identificar padrões de melhoria.',
-      placement: 'bottom',
-      highlight: true,
-    },
-    {
-      target: 'tour-cases-chart',
-      title: '📋 Volume por Procedimento',
-      content: 'Distribuição dos seus casos por tipo de procedimento (TPLO, FHO, TTA, etc.). Útil para entender seu perfil de especialização.',
-      placement: 'bottom',
-      highlight: true,
-    },
-    {
-      target: 'tour-recent-cases',
-      title: '🐾 Casos Recentes',
-      content: 'Lista dos últimos casos clínicos com status, nível de risco e score de precisão. Clique em qualquer caso para ver os detalhes completos.',
-      placement: 'top',
-      highlight: true,
-    },
+    { target: '__welcome__', title: '👋 Bem-vindo ao Centro de Comando Cirúrgico', content: 'Esta é sua central operacional. Aqui você vê suas cirurgias de hoje, casos críticos e métricas em tempo real — tudo focado no que importa AGORA.', placement: 'center' },
+    { target: 'tour-dashboard-hero', title: '☀️ Saudação Personalizada', content: 'Veja seu nome, data atual e resumo do dia: número de cirurgias, casos críticos e análises pendentes. Comece o dia com clareza.', placement: 'bottom', highlight: true },
+    { target: 'tour-dashboard-surgeries', title: '🏥 Cirurgias de Hoje', content: 'Suas cirurgias agendadas com status (concluída, próxima, agendada). Clique em qualquer cirurgia para ver o caso completo e protocolo.', placement: 'bottom', highlight: true },
+    { target: 'tour-dashboard-triage', title: '⚡ Triage Inteligente', content: 'Casos ordenados por prioridade clínica: críticos (🔴), em análise (🟡) e estáveis (🟢). Atenção imediata aos casos urgentes.', placement: 'left', highlight: true },
+    { target: 'tour-dashboard-metrics', title: '📊 Métricas Operacionais', content: 'Comparação hoje vs ontem: casos novos, análises feitas, laudos emitidos. Acompanhe sua produtividade em tempo real.', placement: 'top', highlight: true },
   ],
   chat: [
-    {
-      target: '__welcome__',
-      title: '🤖 OrthoAI — Consultor Especializado',
-      content: 'O Chat IA conecta você ao OrthoAI (OpenRouter · OrthoVision v3.2) com contexto especializado em ortopedia veterinária. Tire dúvidas sobre protocolos, dosagens, cálculos de ângulos e técnicas cirúrgicas.',
-      placement: 'center',
-    },
-    {
-      target: 'tour-chat-suggestions',
-      title: '💡 Perguntas Sugeridas',
-      content: 'Clique em qualquer sugestão para enviar rapidamente perguntas frequentes sobre protocolos TPLO, FHO, anestesia e reabilitação.',
-      placement: 'bottom',
-      highlight: true,
-    },
-    {
-      target: 'tour-chat-messages',
-      title: '💬 Histórico da Conversa',
-      content: 'O histórico completo da sessão fica aqui. O OrthoAI mantém contexto ao longo da conversa para respostas cada vez mais precisas.',
-      placement: 'bottom',
-      highlight: true,
-    },
-    {
-      target: 'tour-chat-input',
-      title: '✍️ Envie sua Pergunta',
-      content: 'Digite qualquer dúvida sobre ortopedia veterinária. Use linguagem técnica ou simples — o OrthoAI entende ambas. Pressione Enter ou clique em Enviar.',
-      placement: 'top',
-      highlight: true,
-    },
+    { target: '__welcome__', title: '🤖 OrthoAI — Seu Copiloto Veterinário', content: 'Converse com a IA especializada em ortopedia veterinária. Tire dúvidas sobre protocolos, dosagens, cálculos biomecânicos e diagnósticos diferenciais.', placement: 'center' },
+    { target: 'tour-chat-suggestions', title: '💡 Perguntas Sugeridas', content: 'Clique em qualquer sugestão para iniciar rapidamente: protocolos TPLO/FHO, cálculos de dosagem, diagnóstico diferencial.', placement: 'bottom', highlight: true },
+    { target: 'tour-chat-messages', title: '💬 Histórico da Conversa', content: 'O OrthoAI mantém contexto ao longo da conversa. Respostas estruturadas com análise, possíveis causas e recomendação de ação.', placement: 'bottom', highlight: true },
+    { target: 'tour-chat-input', title: '✍️ Envie sua Pergunta', content: 'Digite qualquer dúvida clínica. Use linguagem técnica ou simples. Pressione Enter para enviar.', placement: 'top', highlight: true },
   ],
   analysis: [
-    {
-      target: '__welcome__',
-      title: '🔬 Análise Visual com IA',
-      content: 'Esta página usa visão computacional para analisar imagens radiográficas e fotos clínicas. Capture pela câmera ou faça upload de uma imagem.',
-      placement: 'center',
-    },
-    {
-      target: 'tour-webcam',
-      title: '📷 Captura ao Vivo',
-      content: 'Ative a câmera para capturar imagens diretamente. O crosshair central ajuda no alinhamento. Clique em "Capturar" para fotografar.',
-      placement: 'right',
-      highlight: true,
-    },
-    {
-      target: 'tour-upload',
-      title: '📁 Upload de Imagem',
-      content: 'Arraste e solte ou clique para fazer upload de radiografias, fotos cirúrgicas ou imagens de RM. Suporta JPG, PNG e WEBP.',
-      placement: 'left',
-      highlight: true,
-    },
-    {
-      target: 'tour-analysis-result',
-      title: '🧠 Resultado da Análise',
-      content: 'Após o envio, o OrthoVision AI identifica estruturas anatômicas, mede ângulos articulares, avalia plateau tibial e sugere diagnósticos diferenciais com score de confiança por estrutura.',
-      placement: 'top',
-      highlight: true,
-    },
+    { target: '__welcome__', title: '🔬 Análise Visual com IA', content: 'Analise radiografias e fotos clínicas com visão computacional. Detecta landmarks anatômicos, mede ângulos e sugere diagnósticos.', placement: 'center' },
+    { target: 'tour-webcam', title: '📷 Captura ao Vivo', content: 'Ative a câmera para capturar imagens. O crosshair central ajuda no alinhamento. Clique em "Capturar" para fotografar.', placement: 'right', highlight: true },
+    { target: 'tour-upload', title: '📁 Upload de Imagem', content: 'Arraste ou clique para fazer upload de radiografias, fotos cirúrgicas ou imagens de RM. Suporta JPG, PNG e WEBP.', placement: 'left', highlight: true },
+    { target: 'tour-analysis-result', title: '🧠 Resultado da Análise', content: 'O OrthoVision AI identifica estruturas anatômicas, mede ângulos articulares e sugere diagnósticos diferenciais com score de confiança.', placement: 'top', highlight: true },
   ],
   gallery: [
-    {
-      target: '__welcome__',
-      title: '🗂️ Galeria de Casos Clínicos',
-      content: 'Acervo completo dos seus casos ortopédicos com filtros avançados por espécie, procedimento, status e data.',
-      placement: 'center',
-    },
-    {
-      target: 'tour-gallery-filters',
-      title: '🔍 Filtros Avançados',
-      content: 'Filtre por status (Concluído, Em andamento, Aguardando), espécie (Cão, Gato), tipo de procedimento e nível de risco.',
-      placement: 'bottom',
-      highlight: true,
-    },
-    {
-      target: 'tour-gallery-grid',
-      title: '🐕 Cards de Casos',
-      content: 'Cada card exibe paciente, procedimento, score de precisão e nível de risco. Clique em "Ver detalhes" para abrir o caso completo com análise IA.',
-      placement: 'bottom',
-      highlight: true,
-    },
-    {
-      target: 'tour-add-case',
-      title: '➕ Adicionar Caso',
-      content: 'Registre um novo caso clínico com todas as informações do paciente, procedimento, imagens e notas. Os dados ficam disponíveis para análise futura.',
-      placement: 'left',
-      highlight: true,
-    },
-  ],
-  reports: [
-    {
-      target: '__welcome__',
-      title: '📄 Central de Relatórios',
-      content: 'Gere relatórios profissionais em PDF automaticamente — relatório mensal completo ou relatório individual por caso cirúrgico.',
-      placement: 'center',
-    },
-    {
-      target: 'tour-monthly-report',
-      title: '📅 Relatório Mensal',
-      content: 'Gera um PDF completo com métricas do mês: volume de casos, taxa de precisão, procedimentos por tipo e comparativo com o mês anterior.',
-      placement: 'bottom',
-      highlight: true,
-    },
-    {
-      target: 'tour-case-report',
-      title: '🔖 Relatório de Caso',
-      content: 'Relatório individual de um caso específico, incluindo dados do paciente, diagnóstico, procedimento realizado e análise pós-operatória.',
-      placement: 'bottom',
-      highlight: true,
-    },
-    {
-      target: 'tour-report-history',
-      title: '📂 Histórico de Relatórios',
-      content: 'Todos os relatórios gerados ficam listados aqui com data e tipo. Você pode baixar novamente qualquer relatório anterior.',
-      placement: 'top',
-      highlight: true,
-    },
-  ],
-  profile: [
-    {
-      target: '__welcome__',
-      title: '👨‍⚕️ Perfil Profissional',
-      content: 'Seu perfil clínico completo com estatísticas de desempenho, certificações e gráfico de competências por área de especialização.',
-      placement: 'center',
-    },
-    {
-      target: 'tour-profile-stats',
-      title: '📊 Estatísticas de Carreira',
-      content: 'Resumo do seu histórico: total de cirurgias, anos de experiência, taxa de sucesso geral e certificações ativas.',
-      placement: 'bottom',
-      highlight: true,
-    },
-    {
-      target: 'tour-competency-chart',
-      title: '🕸️ Radar de Competências',
-      content: 'Gráfico radar que visualiza seu nível em cada área: Cirurgia, Diagnóstico, Reabilitação, Emergência, Anestesia e Oncologia.',
-      placement: 'top',
-      highlight: true,
-    },
-  ],
-  notifications: [
-    {
-      target: '__welcome__',
-      title: '🔔 Central de Notificações',
-      content: 'Alertas de casos críticos, lembretes de retorno, atualizações do sistema e notificações do OrthoAI ficam centralizados aqui.',
-      placement: 'center',
-    },
-    {
-      target: 'tour-unread-notifications',
-      title: '🔴 Não Lidas',
-      content: 'Notificações que ainda não foram vistas aparecem destacadas. Clique em "Marcar como lida" ou use o botão de marcar todas.',
-      placement: 'bottom',
-      highlight: true,
-    },
+    { target: '__welcome__', title: '🗂️ Galeria de Casos Clínicos', content: 'Acervo completo dos seus casos ortopédicos com filtros avançados por espécie, procedimento, status e data.', placement: 'center' },
+    { target: 'tour-gallery-filters', title: '🔍 Filtros Avançados', content: 'Filtre por status (pendente, em análise, concluído, crítico), espécie, procedimento e nível de risco.', placement: 'bottom', highlight: true },
+    { target: 'tour-gallery-grid', title: '🐕 Cards de Casos', content: 'Cada card mostra paciente, procedimento, score de precisão e nível de risco. Clique para abrir o caso completo.', placement: 'bottom', highlight: true },
+    { target: 'tour-add-case', title: '➕ Adicionar Caso', content: 'Registre um novo caso clínico com dados do paciente, procedimento e imagens. Disponível para análise futura.', placement: 'left', highlight: true },
   ],
   case: [
-    {
-      target: '__welcome__',
-      title: '🤝 Colaboração Clínica',
-      content: 'Este é o espaço de colaboração do caso. Aqui você pode discutir o caso em tempo real com especialistas convidados, visualizar exames em conjunto e tomar decisões clínicas colaborativas.',
-      placement: 'center',
-    },
-    {
-      target: 'tour-collab-chat',
-      title: '💬 Chat do Caso',
-      content: 'Discuta o caso em tempo real com toda a equipe. O botão azul-violeta pede uma sugestão clínica ao OrthoAI para o caso específico.',
-      placement: 'top',
-      highlight: true,
-    },
-    {
-      target: 'tour-collab-specialists',
-      title: '👥 Especialistas Convidados',
-      content: 'Convide especialistas por e-mail com controle de permissão (Consultor ou Observador). Veja quem está online no caso em tempo real.',
-      placement: 'top',
-      highlight: true,
-    },
-    {
-      target: 'tour-collab-viewer',
-      title: '🔬 Visualização Conjunta',
-      content: 'Veja as imagens do caso com toda a equipe simultaneamente. Cursores de presença mostram onde cada especialista está focado na imagem.',
-      placement: 'top',
-      highlight: true,
-    },
+    { target: '__welcome__', title: '🏥 Detalhe do Caso + Protocolo Pós-Operatório', content: 'Veja todos os dados do paciente, análise da IA e o protocolo pós-operatório completo com calculadora de dosagem e checklist interativo.', placement: 'center' },
+    { target: 'tour-case-protocol', title: '📋 Protocolo Pós-Operatório', content: 'Protocolo específico para o procedimento (TPLO, FHO, TTA, etc.) com etapas de medicação, restrição, cuidado e retorno.', placement: 'bottom', highlight: true },
+    { target: 'tour-case-checklist', title: '✅ Checklist Interativo', content: 'Marque as etapas conforme o paciente evolui. O progresso é salvo automaticamente no seu navegador.', placement: 'bottom', highlight: true },
+    { target: 'tour-case-notes', title: '📝 Notas Clínicas', content: 'Adicione anotações livres com timestamp. Histórico completo de observações do caso.', placement: 'top', highlight: true },
+  ],
+  reports: [
+    { target: '__welcome__', title: '📄 Central de Relatórios', content: 'Gere relatórios profissionais em PDF automaticamente — relatório mensal completo ou relatório individual por caso cirúrgico.', placement: 'center' },
+    { target: 'tour-monthly-report', title: '📅 Relatório Mensal', content: 'PDF completo com métricas do mês: volume de casos, taxa de precisão, procedimentos por tipo e comparativo com o mês anterior.', placement: 'bottom', highlight: true },
+    { target: 'tour-case-report', title: '🔖 Relatório de Caso', content: 'Relatório individual de um caso específico com dados do paciente, diagnóstico, procedimento e análise pós-operatória.', placement: 'bottom', highlight: true },
+    { target: 'tour-report-history', title: '📂 Histórico de Relatórios', content: 'Todos os relatórios gerados ficam listados aqui com data e tipo. Baixe novamente qualquer relatório anterior.', placement: 'top', highlight: true },
+  ],
+  profile: [
+    { target: '__welcome__', title: '👨‍⚕️ Perfil Profissional', content: 'Seu perfil clínico completo com estatísticas de desempenho, certificações e gráfico de competências por área de especialização.', placement: 'center' },
+    { target: 'tour-profile-stats', title: '📊 Estatísticas de Carreira', content: 'Resumo do seu histórico: total de cirurgias, anos de experiência, taxa de sucesso geral e certificações ativas.', placement: 'bottom', highlight: true },
+    { target: 'tour-competency-chart', title: '🕸️ Radar de Competências', content: 'Gráfico radar que visualiza seu nível em cada área: Cirurgia, Diagnóstico, Reabilitação, Emergência, Anestesia e Oncologia.', placement: 'top', highlight: true },
+  ],
+  notifications: [
+    { target: '__welcome__', title: '🔔 Central de Notificações', content: 'Alertas de casos críticos, lembretes de retorno, atualizações do sistema e notificações do OrthoAI ficam centralizados aqui.', placement: 'center' },
+    { target: 'tour-unread-notifications', title: '🔴 Não Lidas', content: 'Notificações que ainda não foram vistas aparecem destacadas. Clique em "Marcar como lida" ou use o botão de marcar todas.', placement: 'bottom', highlight: true },
   ],
   settings: [
-    {
-      target: '__welcome__',
-      title: '⚙️ Configurações do Sistema',
-      content: 'Personalize notificações, preferências de análise, tema e privacidade. Suas configurações ficam salvas automaticamente.',
-      placement: 'center',
-    },
-    {
-      target: 'tour-settings-toggles',
-      title: '🔧 Preferências',
-      content: 'Ative ou desative notificações, análise automática, modo escuro e salvamento automático de relatórios.',
-      placement: 'bottom',
-      highlight: true,
-    },
+    { target: '__welcome__', title: '⚙️ Configurações do Sistema', content: 'Personalize notificações, preferências de análise, idioma e privacidade. Suas configurações ficam salvas automaticamente.', placement: 'center' },
+    { target: 'tour-settings-toggles', title: '🔧 Preferências', content: 'Ative ou desative notificações, análise automática, idioma e salvamento automático de relatórios.', placement: 'bottom', highlight: true },
+  ],
+  sidebar: [
+    { target: '__welcome__', title: '🧭 Navegação Lateral', content: 'Acesse todas as funcionalidades do OrtoBolt pela sidebar. Cada ícone leva a uma área específica da plataforma.', placement: 'center' },
+    { target: 'tour-sidebar-dashboard', title: '📊 Dashboard', content: 'Centro de comando cirúrgico com suas cirurgias de hoje, casos críticos e métricas operacionais.', placement: 'right', highlight: true },
+    { target: 'tour-sidebar-chat', title: '🤖 Chat IA', content: 'OrthoAI — seu copiloto veterinário especializado em ortopedia, protocolos e cálculos biomecânicos.', placement: 'right', highlight: true },
+    { target: 'tour-sidebar-gallery', title: '🗂️ Galeria', content: 'Acervo completo dos seus casos clínicos com filtros avançados e busca inteligente.', placement: 'right', highlight: true },
   ],
 };
 
-interface Rect {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-}
+interface Rect { top: number; left: number; width: number; height: number; }
 
 function getRect(target: string): Rect | null {
   const el = document.querySelector(`[data-tour="${target}"]`);
   if (!el) return null;
   const r = el.getBoundingClientRect();
+  if (r.width === 0 || r.height === 0) return null;
   return { top: r.top, left: r.left, width: r.width, height: r.height };
 }
 
@@ -271,10 +89,11 @@ function Spotlight({ rect }: { rect: Rect }) {
         left: rect.left - PAD,
         width: rect.width + PAD * 2,
         height: rect.height + PAD * 2,
-        borderRadius: 12,
+        borderRadius: 18,
         boxShadow: '0 0 0 9999px rgba(0,0,0,0.65)',
-        border: '2px solid rgba(0,149,255,0.9)',
+        border: '2px solid rgba(0,86,179,0.9)',
         animation: 'tourPulse 2s ease-in-out infinite',
+        transition: 'top 0.2s ease-out, left 0.2s ease-out, width 0.2s ease-out, height 0.2s ease-out',
       }}
     />
   );
@@ -292,19 +111,13 @@ interface TooltipBoxProps {
 
 function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: TooltipBoxProps) {
   const isCenter = step.placement === 'center' || !rect;
-  const TW = 320;
-  const TH = 180;
+  const TW = 360;
+  const TH = 200;
   const PAD = 16;
   let style: React.CSSProperties = {};
   
   if (isCenter) {
-    style = {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      zIndex: 9999,
-    };
+    style = { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999 };
   } else if (rect) {
     const placement = step.placement || 'bottom';
     const vw = window.innerWidth;
@@ -327,50 +140,38 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
     
     top = Math.max(16, Math.min(top, vh - TH - 16));
     left = Math.max(16, Math.min(left, vw - TW - 16));
-    style = { position: 'fixed', top, left, zIndex: 9999 };
+    style = { position: 'fixed', top, left, zIndex: 9999, transition: 'top 0.2s ease-out, left 0.2s ease-out' };
   }
 
   return (
-    <div style={{ ...style, width: TW }} className="bg-white rounded-2xl shadow-2xl border border-blue-100 overflow-hidden">
-      <div className="bg-gradient-to-r from-[#0056b3] to-[#0077e6] px-4 py-3 flex items-center justify-between">
-        <span className="text-white font-bold text-sm" style={{ fontFamily: 'Montserrat' }}>{step.title}</span>
-        <button onClick={onClose} className="text-white/70 hover:text-white transition-colors">
-          <X size={16} />
+    <div style={{ ...style, width: TW }} className="bg-white rounded-[18px] shadow-[0_8px_24px_rgba(0,0,0,0.12)] border border-slate-200/60 overflow-hidden">
+      <div className="bg-gradient-to-r from-[#0056b3] to-[#38BDF8] px-5 py-4 flex items-center justify-between">
+        <span className="text-white font-bold text-base">{step.title}</span>
+        <button onClick={onClose} className="text-white/80 hover:text-white transition-colors">
+          <X size={18} />
         </button>
       </div>
-      <div className="px-4 py-3">
-        <p className="text-slate-600 text-sm leading-relaxed">{step.content}</p>
+      <div className="px-5 py-4">
+        <p className="text-slate-700 text-[15px] leading-relaxed">{step.content}</p>
       </div>
-      <div className="px-4 pb-3 flex items-center justify-between">
-        <div className="flex gap-1">
+      <div className="px-5 pb-4 flex items-center justify-between">
+        <div className="flex gap-1.5">
           {Array.from({ length: total }).map((_, i) => (
-            <div
-              key={i}
-              className={`rounded-full transition-all duration-200 ${i === stepIndex ? 'w-4 h-1.5 bg-[#0056b3]' : 'w-1.5 h-1.5 bg-slate-200'}`}
-            />
+            <div key={i} className={`rounded-full transition-all duration-200 ${i === stepIndex ? 'w-5 h-2 bg-[#0056b3]' : 'w-2 h-2 bg-slate-200'}`} />
           ))}
         </div>
         <div className="flex gap-2">
           {stepIndex > 0 && (
-            <button
-              onClick={onPrev}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
-            >
-              <ChevronLeft size={12} /> Anterior
+            <button onClick={onPrev} className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
+              <ChevronLeft size={14} /> Anterior
             </button>
           )}
           {stepIndex < total - 1 ? (
-            <button
-              onClick={onNext}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#0056b3] hover:bg-[#0047a0] transition-colors"
-            >
-              Próximo <ChevronRight size={12} />
+            <button onClick={onNext} className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-white bg-[#0056b3] hover:bg-[#004494] transition-colors">
+              Próximo <ChevronRight size={14} />
             </button>
           ) : (
-            <button
-              onClick={onClose}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors"
-            >
+            <button onClick={onClose} className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors">
               Concluir ✓
             </button>
           )}
@@ -386,49 +187,139 @@ export interface ProductTourProps {
   onClose: () => void;
 }
 
+const TOUR_STORAGE_KEY = 'ortobolt-tour-completed';
+
 export default React.memo(function ProductTour({ page, active, onClose }: ProductTourProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
+  const rafRef = useRef<number | null>(null);
   const steps = TOUR_STEPS[page] || [];
   const currentStep = steps[stepIndex];
 
+  // Calcula a posição do elemento alvo
   const updateRect = useCallback(() => {
     if (!currentStep || currentStep.target === '__welcome__') {
       setRect(null);
       return;
     }
     const r = getRect(currentStep.target);
-    if (r) {
-      const el = document.querySelector(`[data-tour="${currentStep.target}"]`);
-      el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      setTimeout(() => setRect(getRect(currentStep.target)), 300);
-    } else {
-      setRect(null);
-    }
+    setRect(r);
   }, [currentStep]);
 
+  // Loop de atualização suave usando requestAnimationFrame
+  const startRafLoop = useCallback(() => {
+    const tick = () => {
+      updateRect();
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+  }, [updateRect]);
+
+  const stopRafLoop = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
+
+  // Resetar step quando página ou active mudar
   useEffect(() => {
     if (!active) return;
     setStepIndex(0);
   }, [active, page]);
 
+  // Atualizar rect imediatamente quando step mudar
   useEffect(() => {
     if (!active) return;
     updateRect();
   }, [active, stepIndex, updateRect]);
 
+  // 🔥 LISTENERS ROBUSTOS: scroll, resize, visibilitychange
   useEffect(() => {
     if (!active) return;
-    const onResize = () => updateRect();
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [active, updateRect]);
+
+    // Scroll listener em TODOS os possíveis containers de scroll
+    const scrollHandler = () => updateRect();
+    
+    // Adicionar listener no window (para scroll da página)
+    window.addEventListener('scroll', scrollHandler, { passive: true, capture: true });
+    
+    // Adicionar listener no document (fallback)
+    document.addEventListener('scroll', scrollHandler, { passive: true, capture: true });
+    
+    // Detectar todos os elementos com overflow scroll/auto e adicionar listeners
+    const scrollableElements = document.querySelectorAll<HTMLElement>('*');
+    scrollableElements.forEach(el => {
+      const style = window.getComputedStyle(el);
+      const overflowY = style.overflowY;
+      const overflowX = style.overflowX;
+      if (overflowY === 'auto' || overflowY === 'scroll' || overflowX === 'auto' || overflowX === 'scroll') {
+        el.addEventListener('scroll', scrollHandler, { passive: true });
+      }
+    });
+    
+    // Resize listener
+    const resizeHandler = () => updateRect();
+    window.addEventListener('resize', resizeHandler, { passive: true });
+    
+    // Visibility change (quando volta à aba)
+    const visibilityHandler = () => {
+      if (document.visibilityState === 'visible') {
+        updateRect();
+      }
+    };
+    document.addEventListener('visibilitychange', visibilityHandler);
+    
+    // Iniciar loop de requestAnimationFrame para atualização suave contínua
+    startRafLoop();
+    
+    // ResizeObserver no elemento alvo para detectar mudanças de tamanho
+    let resizeObserver: ResizeObserver | null = null;
+    if (currentStep && currentStep.target !== '__welcome__') {
+      const el = document.querySelector(`[data-tour="${currentStep.target}"]`);
+      if (el) {
+        resizeObserver = new ResizeObserver(() => {
+          updateRect();
+        });
+        resizeObserver.observe(el);
+      }
+    }
+    
+    // Atualização periódica de segurança (a cada 500ms)
+    const intervalId = setInterval(updateRect, 500);
+    
+    return () => {
+      window.removeEventListener('scroll', scrollHandler, true);
+      document.removeEventListener('scroll', scrollHandler, true);
+      window.removeEventListener('resize', resizeHandler);
+      document.removeEventListener('visibilitychange', visibilityHandler);
+      clearInterval(intervalId);
+      stopRafLoop();
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      scrollableElements.forEach(el => {
+        el.removeEventListener('scroll', scrollHandler);
+      });
+    };
+  }, [active, currentStep, updateRect, startRafLoop, stopRafLoop]);
 
   if (!active || steps.length === 0) return null;
 
+  const handleClose = () => {
+    try {
+      const completed = JSON.parse(localStorage.getItem(TOUR_STORAGE_KEY) || '{}');
+      completed[page] = true;
+      localStorage.setItem(TOUR_STORAGE_KEY, JSON.stringify(completed));
+    } catch (e) {
+      console.warn('Failed to save tour completion:', e);
+    }
+    onClose();
+  };
+
   const handleNext = () => {
     if (stepIndex < steps.length - 1) setStepIndex(s => s + 1);
-    else onClose();
+    else handleClose();
   };
 
   const handlePrev = () => setStepIndex(s => Math.max(0, s - 1));
@@ -438,17 +329,17 @@ export default React.memo(function ProductTour({ page, active, onClose }: Produc
       <style>{`
         @keyframes tourPulse {
           0%, 100% {
-            border-color: rgba(0,149,255,0.9);
-            box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 20px rgba(0,149,255,0.4);
+            border-color: rgba(0,86,179,0.9);
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 20px rgba(0,86,179,0.4);
           }
           50% {
-            border-color: rgba(0,200,255,1);
-            box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 30px rgba(0,200,255,0.6);
+            border-color: rgba(56,189,248,1);
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 30px rgba(56,189,248,0.6);
           }
         }
       `}</style>
       {(currentStep?.target === '__welcome__' || !rect) && (
-        <div className="fixed inset-0 bg-black/65 z-[9997]" onClick={onClose} />
+        <div className="fixed inset-0 bg-black/65 z-[9997]" onClick={handleClose} />
       )}
       {rect && currentStep?.target !== '__welcome__' && <Spotlight rect={rect} />}
       {currentStep && (
@@ -459,7 +350,7 @@ export default React.memo(function ProductTour({ page, active, onClose }: Produc
           total={steps.length}
           onNext={handleNext}
           onPrev={handlePrev}
-          onClose={onClose}
+          onClose={handleClose}
         />
       )}
     </>
