@@ -30,15 +30,15 @@ export default React.memo(function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-4 space-y-0.5 px-3 overflow-y-auto">
+      <nav className="flex-1 py-4 space-y-1 px-3 overflow-y-auto">
         {NAV.map(({ id, label, icon: Icon }) => {
           const active = currentPage === id || (id === 'gallery' && currentPage === 'case');
           return (
             <button
               key={id}
            onClick={() => setCurrentPage(id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                active ? 'bg-[#0056b3] text-white shadow-lg' : 'text-blue-200/80 hover:bg-white/10 hover:text-white'
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-[16px] font-medium transition-all ${
+                active ? 'bg-[#0056b3] text-white shadow-md shadow-blue-500/20' : 'text-blue-200/80 hover:bg-white/15 hover:text-white'
               }`}
             >
               <Icon className="flex-shrink-0" size={18} />
@@ -50,8 +50,8 @@ export default React.memo(function Sidebar() {
         <div className="pt-2 mt-2 border-t border-white/10">
           <button
             onClick={() => setCurrentPage('notifications')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              currentPage === 'notifications' ? 'bg-[#0056b3] text-white' : 'text-blue-200/80 hover:bg-white/10 hover:text-white'
+            className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-[16px] font-medium transition-all ${
+              currentPage === 'notifications' ? 'bg-[#0056b3] text-white' : 'text-blue-200/80 hover:bg-white/15 hover:text-white'
             }`}
           >
             <Bell size={18} />

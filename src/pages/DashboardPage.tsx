@@ -113,10 +113,10 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <Card className="p-5 bg-gradient-to-r from-[#0056b3] to-[#38BDF8] text-white">
+      <Card className="p-8 bg-gradient-to-br from-[#0056b3] via-[#0066cc] to-[#38BDF8] text-white">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-extrabold">{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Veterinário'}</h1>
+            <h1 className="text-[36px] font-bold">{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Veterinário'}</h1>
             <p className="text-white/80 text-sm mt-1">
               {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
             </p>
@@ -166,7 +166,7 @@ export default function DashboardPage() {
                 return (
                   <div key={i} className="bg-slate-50 rounded-xl p-4 text-center">
                     <m.icon size={18} className="mx-auto mb-2 text-[#0056b3]" />
-                    <p className="text-2xl font-extrabold text-slate-900">{m.today}</p>
+                    <p className="text-[36px] font-bold text-slate-900">{m.today}</p>
                     <p className="text-[10px] text-slate-500">{m.label}</p>
                     {typeof m.yesterday === 'number' && (
                       <p className="text-[10px] text-emerald-600 font-semibold mt-1">
@@ -211,7 +211,7 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          <Card className="p-5 bg-gradient-to-br from-[#0056b3]/5 to-[#38BDF8]/5 border-[#0056b3]/20">
+          <Card className="p-8 bg-gradient-to-br from-[#0056b3]/5 to-[#38BDF8]/5 border-[#0056b3]/20">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-[#0056b3] flex items-center justify-center flex-shrink-0">
                 <Pill size={16} className="text-white" />
@@ -232,3 +232,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+
