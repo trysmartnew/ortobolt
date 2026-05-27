@@ -182,7 +182,7 @@ export default function ReportsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card data-tour="tour-monthly-report" className="p-5">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-[#0056b3]/10 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#0056b3]/10 rounded-[18px] flex items-center justify-center shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
               <FileText className="h-5 w-5 text-[#0056b3]" />
             </div>
             <div>
@@ -205,7 +205,7 @@ export default function ReportsPage() {
 
         <Card data-tour="tour-case-report" className="p-5">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-emerald-50 rounded-[18px] flex items-center justify-center shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
               <CheckCircle className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
@@ -245,7 +245,7 @@ export default function ReportsPage() {
               <StatusIcon status={r.status} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-slate-900 truncate">{r.title}</p>
-                <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-500 font-mono">
+                <div className="flex items-center gap-2 mt-0.5 text-[13px] text-slate-500 font-mono leading-relaxed">
                   <Clock size={10} />
                   <span>
                     {new Date(r.generatedAt).toLocaleString('pt-BR', { 

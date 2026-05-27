@@ -180,7 +180,7 @@ export default function AnalysisPage() {
       )}
 
       {streamError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3 text-red-700 text-sm">
+        <div className="bg-red-50 border border-red-200 rounded-[18px] p-5 flex items-center gap-3 text-red-700 text-sm">
           <AlertCircle size={16} className="flex-shrink-0" />
           {streamError}
         </div>
@@ -189,7 +189,7 @@ export default function AnalysisPage() {
       {/* Camera view */}
       {mode === 'camera' && (
         <Card className="overflow-hidden">
-          <div className="relative bg-black rounded-xl overflow-hidden">
+          <div className="relative bg-black rounded-[18px] overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
             <video ref={videoRef} className="w-full max-h-[400px] object-cover" autoPlay muted playsInline />
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
               <div className="border-2 border-[#0056b3]/50 w-64 h-64 rounded-lg">
@@ -215,7 +215,7 @@ export default function AnalysisPage() {
         <div data-tour="tour-analysis-result" className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Card className="p-4">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Imagem Capturada</p>
-            <img src={imageData} alt="Análise" className="w-full rounded-xl border border-slate-100 object-contain max-h-80" />
+            <img src={imageData} alt="Análise" className="w-full rounded-[18px] border border-slate-200/60 shadow-[0_1px_3px_0_rgba(0,0,0,0.04)] object-contain max-h-80" />
           </Card>
           <Card className="p-5 flex flex-col justify-between">
             <div>
@@ -258,7 +258,7 @@ export default function AnalysisPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Card className="p-4">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Imagem Analisada</p>
-            {imageData && <img src={imageData} alt="Resultado" className="w-full rounded-xl border border-slate-100 object-contain max-h-80" />}
+            {imageData && <img src={imageData} alt="Resultado" className="w-full rounded-[18px] border border-slate-200/60 shadow-[0_1px_3px_0_rgba(0,0,0,0.04)] object-contain max-h-80" />}
           </Card>
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-4">
@@ -293,3 +293,4 @@ export default function AnalysisPage() {
     </div>
   );
 }
+
