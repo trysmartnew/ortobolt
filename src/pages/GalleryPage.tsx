@@ -18,10 +18,10 @@ const STATUS_FILTERS: { value: CaseStatus | 'all'; label: string }[] = [
 function CaseDetailModal({ c, onClose }: { c: ClinicalCase; onClose: () => void }) {
   return (
     <Modal open title={c.title} onClose={onClose}>
-      {c.imageUrl && <img src={c.imageUrl} alt={c.patientName} className="w-full h-48 object-cover rounded-xl" />}
+      {c.imageUrl && <img src={c.imageUrl} alt={c.patientName} className="w-full h-52 object-cover rounded-t-[18px]" />}
       
       {[['Paciente', c.patientName], ['Espécie', SPECIES_LABELS[c.species]], ['Raça', c.breed], ['Idade', `${c.ageYears} anos`], ['Peso', `${c.weightKg} kg`], ['Procedimento', PROCEDURE_LABELS[c.procedure]]].map(([k, v]) => (
-        <div key={k} className="bg-slate-50 rounded-lg p-3">
+        <div key={k} className="bg-slate-50/70 rounded-[14px] p-3.5">
           <span className="text-xs font-semibold text-slate-500">{k}</span>
           <p className="text-sm font-medium text-slate-900">{v}</p>
         </div>
@@ -33,7 +33,7 @@ function CaseDetailModal({ c, onClose }: { c: ClinicalCase; onClose: () => void 
       </div>
       
       {c.precisionScore && (
-        <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+        <div className="mt-3 p-3 bg-blue-50/60 rounded-[14px]">
           <PrecisionGauge value={c.precisionScore} size={48} />
           <p className="text-xs text-slate-500 mt-1">precisão IA</p>
         </div>
@@ -186,7 +186,7 @@ export default function GalleryPage() {
 
       {/* Filters */}
       <div data-tour="tour-gallery-filters" className="flex flex-wrap gap-3 items-center">
-        <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 flex-1 min-w-48">
+        <div className="flex items-center gap-2 bg-white border border-slate-200/60 rounded-[14px] px-3.5 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex-1 min-w-48">
           <Search size={14} className="text-slate-400" />
           <input
             value={search}
@@ -205,7 +205,7 @@ export default function GalleryPage() {
             <button
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+              className={`px-3.5 py-1.5 rounded-[12px] text-[13px] font-semibold transition-colors ${
                 statusFilter === f.value
                   ? 'bg-[#0056b3] text-white'
                   : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -225,9 +225,9 @@ export default function GalleryPage() {
           description="Ajuste os filtros ou adicione um novo caso clínico."
         />
       ) : (
-        <div data-tour="tour-gallery-grid" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div data-tour="tour-gallery-grid" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {filtered.map(c => (
-            <Card key={c.id} className="overflow-hidden hover:shadow-md transition-shadow group">
+            <Card key={c.id} className="overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 group rounded-[18px]">
               <div className="relative">
                 <img
                   src={c.imageUrl || 'https://picsum.photos/400/300'}
