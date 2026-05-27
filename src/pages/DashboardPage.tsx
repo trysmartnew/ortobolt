@@ -114,7 +114,7 @@ export default function DashboardPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <Card className="p-8 bg-gradient-to-br from-[#0056b3] via-[#0066cc] to-[#38BDF8] text-white">
-        <div data-tour="tour-dashboard-hero" className="flex items-center justify-between flex-wrap gap-3">
+        <div data-tour="tour-dashboard-hero" className="flex items-center justify-between flex-wrap gap-3 min-h-[120px]">
           <div>
             <h1 className="text-[36px] font-bold">{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Veterinário'}</h1>
             <p className="text-white/80 text-sm mt-1">
@@ -133,7 +133,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <Card className="p-5">
-            <div data-tour="tour-dashboard-surgeries" className="flex items-center justify-between mb-4">
+            <div data-tour="tour-dashboard-surgeries" className="flex items-center justify-between mb-4 min-h-[48px]">
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <span className="flex items-center gap-2"><Stethoscope size={16} /> Cirurgias de Hoje</span>
               </h2>
@@ -151,7 +151,7 @@ export default function DashboardPage() {
           </Card>
 
           <Card className="p-5">
-            <h2 data-tour="tour-dashboard-metrics" className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <h2 data-tour="tour-dashboard-metrics" className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2 min-h-[24px]">
               <span className="flex items-center gap-2"><Activity size={16} /> Métricas Operacionais</span> (hoje vs ontem)
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -182,7 +182,7 @@ export default function DashboardPage() {
 
         <div className="space-y-6">
           <Card className="p-5">
-            <div data-tour="tour-dashboard-triage" className="flex items-center justify-between mb-4">
+            <div data-tour="tour-dashboard-triage" className="flex items-center justify-between mb-4 min-h-[48px]">
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <span className="flex items-center gap-2"><AlertTriangle size={16} /> Triage Inteligente</span>
               </h2>
