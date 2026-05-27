@@ -38,7 +38,7 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
         {isUser ? <User size={14} /> : <Bot size={14} />}
       </div>
       <div className={`max-w-[78%] ${isUser ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
-        <div className={`rounded-2xl px-4 py-3 ${isUser ? 'bg-[#0056b3] text-white rounded-tr-sm' : 'bg-slate-50 text-slate-800 border border-slate-100 rounded-tl-sm'}`}>
+        <div className={`rounded-[20px] px-5 py-4 text-[16px] leading-relaxed ${isUser ? 'bg-[#0056b3] text-white rounded-tr-sm' : 'bg-slate-50 text-slate-800 border border-slate-100 rounded-tl-sm'}`}>
           {msg.isLoading ? (
             <div className="flex items-center gap-2 py-0.5">
               <Spinner size="sm" />
@@ -150,7 +150,7 @@ export default function ChatPage() {
       )}
 
       <div data-tour="tour-chat-input" className="flex-shrink-0 px-6 py-4 border-t border-slate-100 bg-white">
-        <div className="flex items-end gap-3 bg-slate-50 rounded-2xl border border-slate-200 focus-within:border-[#0056b3] focus-within:ring-2 focus-within:ring-[#0056b3]/20 transition-all px-4 py-3">
+        <div className="flex items-end gap-3 bg-slate-50 rounded-[20px] border border-slate-200/60 shadow-[0_1px_3px_0_rgba(0,0,0,0.04)] focus-within:border-[#0056b3] focus-within:ring-2 focus-within:ring-[#0056b3]/20 transition-all px-4 py-3">
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -175,3 +175,4 @@ export default function ChatPage() {
     </div>
   );
 }
+

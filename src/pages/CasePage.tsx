@@ -196,12 +196,12 @@ function EditCaseModal({ caseData, onClose, onSave }: { caseData: ClinicalCase; 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-[22px] shadow-[0_8px_24px_rgba(0,0,0,0.08)] max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Edit3 size={18} /> Editar Caso</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-700"><X size={20} /></button>
         </div>
-        <div className="p-5 space-y-4">
+        <div className="p-6 space-y-5">
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">Título do Caso</label>
             <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
@@ -259,7 +259,7 @@ function TutorGuideModal({ caseData, protocol, onClose }: { caseData: ClinicalCa
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-white rounded-[22px] shadow-[0_8px_24px_rgba(0,0,0,0.08)] max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
           <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Printer size={18} /> Orientações para o Tutor</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-700"><X size={20} /></button>
@@ -353,7 +353,7 @@ export default function CasePage() {
           <Button variant="secondary" size="sm" onClick={() => setShowEdit(true)}><Edit3 size={14} /> Editar</Button>
           <Button variant="secondary" size="sm" onClick={handleGoToReports}><FileText size={14} /> Gerar PDF</Button>
           <Button variant="secondary" size="sm" onClick={() => setShowGuide(true)}><Printer size={14} /> Guia Tutor</Button>
-          <button onClick={handleDelete} className="px-3 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-1">
+          <button onClick={handleDelete} className="px-4 py-2 text-[15px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-1">
             <Trash2 size={14} /> Excluir
           </button>
         </div>
@@ -541,5 +541,6 @@ export default function CasePage() {
     </div>
   );
 }
+
 
 
