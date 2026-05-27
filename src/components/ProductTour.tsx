@@ -69,7 +69,12 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   ],
 };
 
-interface Rect { top: number; left: number; width: number; height: number; }
+interface Rect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
 
 function getRect(target: string): Rect | null {
   const el = document.querySelector(`[data-tour="${target}"]`);
@@ -77,6 +82,17 @@ function getRect(target: string): Rect | null {
   const r = el.getBoundingClientRect();
   if (r.width === 0 || r.height === 0) return null;
   return { top: r.top, left: r.left, width: r.width, height: r.height };
+}
+
+// Detecta o container de scroll pai do elemento
+function getScrollParent(element: HTMLElement | null): HTMLElement | Window {
+  if (!element) return window;
+  const style = window.getComputedStyle(element);
+  const overflow = style.overflow + style.overflowX + style.overflowY;
+  if (/auto|scroll|overlay/.test(overflow)) {
+    return element;
+  }
+  return getScrollParent(element.parentElement);
 }
 
 function Spotlight({ rect }: { rect: Rect }) {
@@ -115,7 +131,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
   const TH = 200;
   const PAD = 16;
   let style: React.CSSProperties = {};
-  
+
   if (isCenter) {
     style = { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999 };
   } else if (rect) {
@@ -123,7 +139,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     let top = 0, left = 0;
-    
+
     if (placement === 'bottom') {
       top = rect.top + rect.height + PAD;
       left = Math.min(Math.max(rect.left + rect.width / 2 - TW / 2, 16), vw - TW - 16);
@@ -137,7 +153,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
       top = Math.min(Math.max(rect.top + rect.height / 2 - TH / 2, 16), vh - TH - 16);
       left = rect.left - TW - PAD;
     }
-    
+
     top = Math.max(16, Math.min(top, vh - TH - 16));
     left = Math.max(16, Math.min(left, vw - TW - 16));
     style = { position: 'fixed', top, left, zIndex: 9999, transition: 'top 0.2s ease-out, left 0.2s ease-out' };
@@ -157,21 +173,33 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
       <div className="px-5 pb-4 flex items-center justify-between">
         <div className="flex gap-1.5">
           {Array.from({ length: total }).map((_, i) => (
-            <div key={i} className={`rounded-full transition-all duration-200 ${i === stepIndex ? 'w-5 h-2 bg-[#0056b3]' : 'w-2 h-2 bg-slate-200'}`} />
+            <div
+              key={i}
+              className={`rounded-full transition-all duration-200 ${i === stepIndex ? 'w-5 h-2 bg-[#0056b3]' : 'w-2 h-2 bg-slate-200'}`}
+            />
           ))}
         </div>
         <div className="flex gap-2">
           {stepIndex > 0 && (
-            <button onClick={onPrev} className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
+            <button
+              onClick={onPrev}
+              className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+            >
               <ChevronLeft size={14} /> Anterior
             </button>
           )}
           {stepIndex < total - 1 ? (
-            <button onClick={onNext} className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-white bg-[#0056b3] hover:bg-[#004494] transition-colors">
+            <button
+              onClick={onNext}
+              className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-white bg-[#0056b3] hover:bg-[#004494] transition-colors"
+            >
               Próximo <ChevronRight size={14} />
             </button>
           ) : (
-            <button onClick={onClose} className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors">
+            <button
+              onClick={onClose}
+              className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors"
+            >
               Concluir ✓
             </button>
           )}
@@ -192,117 +220,60 @@ const TOUR_STORAGE_KEY = 'ortobolt-tour-completed';
 export default React.memo(function ProductTour({ page, active, onClose }: ProductTourProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
-  const rafRef = useRef<number | null>(null);
   const steps = TOUR_STEPS[page] || [];
   const currentStep = steps[stepIndex];
 
-  // Calcula a posição do elemento alvo
+  // Atualiza a posição do elemento alvo
   const updateRect = useCallback(() => {
     if (!currentStep || currentStep.target === '__welcome__') {
       setRect(null);
       return;
     }
-    const r = getRect(currentStep.target);
-    setRect(r);
+    setRect(getRect(currentStep.target));
   }, [currentStep]);
 
-  // Loop de atualização suave usando requestAnimationFrame
-  const startRafLoop = useCallback(() => {
-    const tick = () => {
-      updateRect();
-      rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-  }, [updateRect]);
-
-  const stopRafLoop = useCallback(() => {
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-  }, []);
-
-  // Resetar step quando página ou active mudar
+  // Reset do step quando página ou active mudar
   useEffect(() => {
     if (!active) return;
     setStepIndex(0);
   }, [active, page]);
 
-  // Atualizar rect imediatamente quando step mudar
+  // Atualiza imediatamente quando step mudar
   useEffect(() => {
     if (!active) return;
     updateRect();
   }, [active, stepIndex, updateRect]);
 
-  // 🔥 LISTENERS ROBUSTOS: scroll, resize, visibilitychange
+  // 🔥 OTIMIZADO: Apenas 3 listeners precisos (sem polling)
   useEffect(() => {
-    if (!active) return;
+    if (!active || !currentStep || currentStep.target === '__welcome__') return;
 
-    // Scroll listener em TODOS os possíveis containers de scroll
-    const scrollHandler = () => updateRect();
-    
-    // Adicionar listener no window (para scroll da página)
-    window.addEventListener('scroll', scrollHandler, { passive: true, capture: true });
-    
-    // Adicionar listener no document (fallback)
-    document.addEventListener('scroll', scrollHandler, { passive: true, capture: true });
-    
-    // Detectar todos os elementos com overflow scroll/auto e adicionar listeners
-    const scrollableElements = document.querySelectorAll<HTMLElement>('*');
-    scrollableElements.forEach(el => {
-      const style = window.getComputedStyle(el);
-      const overflowY = style.overflowY;
-      const overflowX = style.overflowX;
-      if (overflowY === 'auto' || overflowY === 'scroll' || overflowX === 'auto' || overflowX === 'scroll') {
-        el.addEventListener('scroll', scrollHandler, { passive: true });
-      }
-    });
-    
-    // Resize listener
-    const resizeHandler = () => updateRect();
-    window.addEventListener('resize', resizeHandler, { passive: true });
-    
-    // Visibility change (quando volta à aba)
-    const visibilityHandler = () => {
-      if (document.visibilityState === 'visible') {
-        updateRect();
-      }
-    };
-    document.addEventListener('visibilitychange', visibilityHandler);
-    
-    // Iniciar loop de requestAnimationFrame para atualização suave contínua
-    startRafLoop();
-    
-    // ResizeObserver no elemento alvo para detectar mudanças de tamanho
-    let resizeObserver: ResizeObserver | null = null;
-    if (currentStep && currentStep.target !== '__welcome__') {
-      const el = document.querySelector(`[data-tour="${currentStep.target}"]`);
-      if (el) {
-        resizeObserver = new ResizeObserver(() => {
-          updateRect();
-        });
-        resizeObserver.observe(el);
-      }
-    }
-    
-    // Atualização periódica de segurança (a cada 500ms)
-    const intervalId = setInterval(updateRect, 500);
-    
+    const el = document.querySelector(`[data-tour="${currentStep.target}"]`) as HTMLElement;
+    if (!el) return;
+
+    // Detecta o scroll parent correto (evita listeners em todos os elementos)
+    const scrollParent = getScrollParent(el);
+
+    // 1. Scroll listener (apenas no parent correto)
+    scrollParent.addEventListener('scroll', updateRect, { passive: true });
+
+    // 2. Resize listener (window)
+    window.addEventListener('resize', updateRect, { passive: true });
+
+    // 3. ResizeObserver (detecta mudanças de tamanho/posição do elemento)
+    const resizeObserver = new ResizeObserver(updateRect);
+    resizeObserver.observe(el);
+
+    // Atualização inicial
+    updateRect();
+
+    // Cleanup
     return () => {
-      window.removeEventListener('scroll', scrollHandler, true);
-      document.removeEventListener('scroll', scrollHandler, true);
-      window.removeEventListener('resize', resizeHandler);
-      document.removeEventListener('visibilitychange', visibilityHandler);
-      clearInterval(intervalId);
-      stopRafLoop();
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
-      scrollableElements.forEach(el => {
-        el.removeEventListener('scroll', scrollHandler);
-      });
+      scrollParent.removeEventListener('scroll', updateRect);
+      window.removeEventListener('resize', updateRect);
+      resizeObserver.disconnect();
     };
-  }, [active, currentStep, updateRect, startRafLoop, stopRafLoop]);
+  }, [active, currentStep, updateRect]);
 
   if (!active || steps.length === 0) return null;
 
