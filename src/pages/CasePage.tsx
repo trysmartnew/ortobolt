@@ -480,7 +480,7 @@ export default function CasePage() {
         {/* Coluna Direita: Plano de Ação */}
         <div className="lg:col-span-2 space-y-6">
           {/* Protocolo */}
-          <Card data-tour="tour-case-checklist" className="p-5"><div className="flex items-center justify-between mb-4"><h2><Pill size={16} /> Plano Pós-Operatório</h2>
+          <Card data-tour="tour-case-checklist" className="p-5"><div className="flex items-center justify-between mb-4"><h2 data-tour="tour-case-protocol"><Pill size={16} /> Plano Pós-Operatório</h2>
               <span className="text-xs font-mono font-bold text-[#0056b3] bg-blue-50 px-2 py-0.5 rounded">{protocol.name.split(' - ')[0]}</span>
             </div>
             <div className="mb-4">
@@ -539,6 +539,7 @@ export default function CasePage() {
     </div>
   );
 }
+
 
 
 
