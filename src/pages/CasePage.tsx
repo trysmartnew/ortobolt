@@ -452,7 +452,7 @@ export default function CasePage() {
           {/* Notas Clínicas */}
           <Card className="p-5">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2"><ClipboardList size={16} /> Notas Clínicas</h2>
+              <h2 data-tour="tour-case-notes" className="text-sm font-bold text-slate-900 flex items-center gap-2"><ClipboardList size={16} /> Notas Clínicas</h2>
               <Button size="sm" variant="secondary" onClick={() => setShowNoteInput(!showNoteInput)}>
                 <Plus size={14} /> {showNoteInput ? 'Cancelar' : 'Nova Nota'}
               </Button>
@@ -480,9 +480,7 @@ export default function CasePage() {
         {/* Coluna Direita: Plano de Ação */}
         <div className="lg:col-span-2 space-y-6">
           {/* Protocolo */}
-          <Card className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2"><Pill size={16} /> Plano Pós-Operatório</h2>
+          <Card data-tour="tour-case-checklist" className="p-5"><div className="flex items-center justify-between mb-4"><h2><Pill size={16} /> Plano Pós-Operatório</h2>
               <span className="text-xs font-mono font-bold text-[#0056b3] bg-blue-50 px-2 py-0.5 rounded">{protocol.name.split(' - ')[0]}</span>
             </div>
             <div className="mb-4">
@@ -541,6 +539,8 @@ export default function CasePage() {
     </div>
   );
 }
+
+
 
 
 
