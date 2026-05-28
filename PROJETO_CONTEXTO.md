@@ -1,6 +1,6 @@
 ﻿# OrtoBolt - Contexto do Projeto
 
-> Ultima atualizacao: 27/05/2026 22:28 (auto-gerado)
+> Ultima atualizacao: 27/05/2026 23:00 (auto-gerado)
 > Branch: ?
 > Repositorio: ?
 > Deploy: https://ortobolt.vercel.app
@@ -90,7 +90,7 @@
 
 ## Seguranca e IA
 
-- Modelo: Qwen3-VL-235B via OpenRouter — proxy /api/ai.ts
+- Modelo: string via OpenRouter — proxy /api/ai.ts
 - CORS: ortobolt.vercel.app | ALLOWED_MODELS | anonymizeCaseContext()
 - Cache IA: Map TTL 5min max 50 entradas
 - Rate-limit login: 5 tentativas -> bloqueio 15min
