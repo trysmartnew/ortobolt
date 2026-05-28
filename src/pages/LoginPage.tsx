@@ -156,10 +156,10 @@ export default function LoginPage() {
             <span style={{ color: '#38BDF8' }}>inteligência artificial</span>
           </h2>
           <p className="text-white/60 text-sm leading-relaxed mb-8">
-            Mais de 180 veterinários confiam no OrtoBolt para análise de imagens, protocolos cirúrgicos e colaboração em tempo real.
+            Mais de 180 veterinários confiam no OrtoBolt para análise de imagens, protocolos ortopédicos e clínicos.
           </p>
           <div className="space-y-3">
-            {['Análise de radiografias em menos de 60s','Protocolos TPLO, FHO, TTA com IA','Laudos PDF automáticos','Colaboração com especialistas'].map(item => (
+            {['Análise de radiografias em menos de 60s','Protocolos ortopédicos com IA','Laudos PDF automáticos','Checklist pós-operatório'].map(item => (
               <div key={item} className="flex items-center gap-2.5 text-sm text-white/80">
                 <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(56,189,248,0.2)' }}>
                   <svg viewBox="0 0 12 12" width="10" height="10"><polyline points="2,6 5,9 10,3" fill="none" stroke="#38BDF8" strokeWidth="1.5" strokeLinecap="round"/></svg>
@@ -294,5 +294,6 @@ export default function LoginPage() {
     </div>
   );
 }
+
 
 

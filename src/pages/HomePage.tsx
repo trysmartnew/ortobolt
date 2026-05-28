@@ -10,14 +10,14 @@ const FEATURES = [
   {
     icon: Brain,
     title: 'OrthoAI Avançado',
-    desc: 'Inteligência artificial especializada em ortopedia veterinária com protocolos TPLO, FHO, TTA e cálculos biomecânicos precisos.',
+    desc: 'Inteligência artificial especializada em medicina veterinária com protocolos ortopédicos e cálculos clínicos precisos.',
     color: '#0056b3',
     bg: '#EFF6FF',
   },
   {
     icon: Activity,
     title: 'Análise de Imagens',
-    desc: 'Upload de radiografias com detecção automática de landmarks anatômicos e score de precisão cirúrgica em segundos.',
+    desc: 'Upload de radiografias com detecção automática de landmarks anatômicos e score de precisão diagnóstica em segundos.',
     color: '#0891B2',
     bg: '#ECFEFF',
   },
@@ -38,7 +38,7 @@ const FEATURES = [
   {
     icon: TrendingUp,
     title: 'Dashboard de Métricas',
-    desc: 'Acompanhe taxa de sucesso cirúrgico, precisão média e evolução dos seus casos com gráficos interativos.',
+    desc: 'Acompanhe evolução clínica, precisão média e evolução dos seus casos com gráficos interativos.',
     color: '#D97706',
     bg: '#FFFBEB',
   },
@@ -48,7 +48,7 @@ const TESTIMONIALS = [
   {
     name: 'Dr. Marcus Andrade',
     role: 'Cirurgião Ortopédico · CRMV-SP 18.432',
-    text: 'O OrtoBolt transformou minha rotina cirúrgica. A análise de imagens com IA detecta landmarks que antes levavam 20 minutos manualmente. Hoje faço em menos de 1 minuto.',
+    text: 'O OrtoBolt transformou minha rotina clínica. A análise de imagens com IA detecta landmarks que antes levavam 20 minutos manualmente. Hoje faço em menos de 1 minuto.',
     rating: 5,
     avatar: 'MA',
     color: '#0056b3',
@@ -56,7 +56,7 @@ const TESTIMONIALS = [
   {
     name: 'Dr. Paulo Henrique',
     role: 'Residente em Cirurgia · CRMV-RJ 5.891',
-    text: 'Como residente, o OrthoAI é meu segundo cérebro. Os protocolos cirúrgicos e cálculos de dosagem me dão segurança nas decisões. Recomendo para qualquer profissional.',
+    text: 'Como residente, o OrthoAI é meu segundo cérebro. Os protocolos clínicos e cálculos de dosagem me dão segurança nas decisões. Recomendo para qualquer profissional.',
     rating: 5,
     avatar: 'PH',
     color: '#7C3AED',
@@ -203,7 +203,7 @@ export default function HomePage() {
 
           {/* H1 */}
           <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
-            Cirurgia veterinária mais
+            Medicina veterinária mais
             <span className="block" style={{ color: '#38BDF8' }}>
               precisa, rápida e segura
             </span>
@@ -391,7 +391,7 @@ export default function HomePage() {
       {/* ── FOOTER ─────────────────────────────────────────────────────── */}
       <footer className="py-8 bg-white border-t border-slate-100">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">          <p className="text-xs" style={{ color: '#94A3B8' }}>
-            © 2025 OrtoBolt · Ortopedia Veterinária Inteligente · LGPD Compliant
+            © 2025 OrtoBolt · Medicina Veterinária com IA · LGPD Compliant
           </p>
           <div className="flex items-center gap-2 text-xs" style={{ color: '#94A3B8' }}>
             <Shield size={12} className="text-emerald-500" />
@@ -402,6 +402,7 @@ export default function HomePage() {
     </div>
   );
 }
+
 
 
 
