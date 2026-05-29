@@ -2,7 +2,7 @@
 // ✅ C-05: useEffect com stale closure corrigido — useRef para handlers estáveis
 // ✅ U-02: ToastContainer renderizado no topo do layout
 
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { AppProvider, useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
 import HomePage      from '@/pages/HomePage';

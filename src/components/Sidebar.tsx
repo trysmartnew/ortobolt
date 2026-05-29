@@ -36,8 +36,7 @@ export default React.memo(function Sidebar() {
           return (
             <button
               key={id}
-           onClick={() => setCurrentPage(id)}
-              className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-[16px] font-medium transition-all ${
+           data-tour={`tour-sidebar-${id}`} onClick={() => setCurrentPage(id)} className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-[16px] font-medium transition-all ${
                 active ? 'bg-[#0056b3] text-white shadow-md shadow-blue-500/20' : 'text-blue-200/80 hover:bg-white/15 hover:text-white'
               }`}
             >
@@ -82,3 +81,4 @@ export default React.memo(function Sidebar() {
   );
 }
 )
+

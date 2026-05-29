@@ -1,7 +1,7 @@
 // src/pages/ProfilePage.tsx
 // ✅ U-02: InlineToast local substituído por addToast global
-import React, { useState } from 'react';
-import { Award, Star, BarChart3, Edit2, Check, X, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { Award, BarChart3, Edit2, Check, X, Plus } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, Badge, SectionHeader } from '@/components/ui';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';

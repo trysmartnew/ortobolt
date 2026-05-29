@@ -1,6 +1,6 @@
 // src/components/ErrorBoundary.tsx
 // ✅ Error Boundary global — previne crash total da UI
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;

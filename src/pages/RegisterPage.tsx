@@ -2,7 +2,7 @@
 // ✅ U-03: Senha fraca bloqueia envio — score mínimo 2 obrigatório
 // (restante do arquivo mantido igual ao original)
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Eye, EyeOff, ArrowLeft, Shield, CheckCircle } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';

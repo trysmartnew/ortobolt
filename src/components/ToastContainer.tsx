@@ -1,7 +1,6 @@
 // src/components/ToastContainer.tsx
 // ✅ U-02: Sistema de Toast global — feedback consistente para toda a aplicação
 
-import React from 'react';
 import { CheckCircle, XCircle, Info, AlertTriangle, X } from 'lucide-react';
 import type { Toast } from '@/contexts/AppContext';
 

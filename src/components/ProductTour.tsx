@@ -1,5 +1,5 @@
 // src/components/ProductTour.tsx
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 
 export interface TourStep {
@@ -217,7 +217,7 @@ export interface ProductTourProps {
 
 const TOUR_STORAGE_KEY = 'ortobolt-tour-completed';
 
-export default React.memo(function ProductTour({ page, active, onClose }: ProductTourProps) {
+export default memo(function ProductTour({ page, active, onClose }: ProductTourProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
   const steps = TOUR_STEPS[page] || [];

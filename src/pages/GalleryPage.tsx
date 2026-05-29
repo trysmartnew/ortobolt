@@ -1,6 +1,6 @@
 // ✅ U-02: addToast no handleAdd — feedback visual ao criar caso
 // ✅ D-01: veterinarianId usa user?.id em vez de hardcoded 'vet-001'
-import React, { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
@@ -114,12 +114,14 @@ export default function GalleryPage() {
   });
   const [formErrors, setFormErrors] = useState<string[]>([]);
 
-  const filtered = cases.filter(c => {
-    const q = search.toLowerCase();
-    const matchSearch = !q || c.title.toLowerCase().includes(q) || c.patientName.toLowerCase().includes(q) || c.tags.some(t => t.toLowerCase().includes(q));
-    const matchStatus = statusFilter === 'all' || c.status === statusFilter;
-    return matchSearch && matchStatus;
-  });
+  const filtered = useMemo(() => {
+    return cases.filter(c => {
+      const q = search.toLowerCase();
+      const matchSearch = !q || c.title.toLowerCase().includes(q) || c.patientName.toLowerCase().includes(q) || c.tags.some(t => t.toLowerCase().includes(q));
+      const matchStatus = statusFilter === 'all' || c.status === statusFilter;
+      return matchSearch && matchStatus;
+    });
+  }, [cases, search, statusFilter]);
 
   // ✅ CORREÇÃO: handleAdd com user?.id e tipagem correta
   const handleAdd = () => {
@@ -406,3 +408,4 @@ export default function GalleryPage() {
     </div>
   );
 }
+

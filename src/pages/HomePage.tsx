@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Activity, Brain, FileText, Users, Shield, Zap,
   ChevronRight, Star, ArrowRight, Check, Menu, X,

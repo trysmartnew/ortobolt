@@ -1,10 +1,10 @@
 // src/pages/DashboardPage.tsx
 // 🏥 Centro de Comando Cirúrgico — Foco em ações operacionais de HOJE
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, StatusBadge, RiskTag, Spinner } from '@/components/ui';
 import { AlertTriangle, Clock, CheckCircle2, Calendar, PawPrint, Stethoscope, Pill, Activity } from 'lucide-react';
-import type { CaseStatus } from '@/types/index';
+import type { CaseStatus, ClinicalCase } from '@/types/index';
 
 function formatDate(iso: string): string {
   try { return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }); }
@@ -25,7 +25,7 @@ function getClinicalPriority(status: CaseStatus): number {
   return 3;
 }
 
-function SurgeryCard({ c, onOpen }: { c: any; onOpen: () => void }) {
+function SurgeryCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
   const isDone = c.status === 'completed';
   const isNext = !isDone && c.procedure?.match(/tplo|fho|tta|lcp|fracture/i);
   return (
@@ -50,7 +50,7 @@ function SurgeryCard({ c, onOpen }: { c: any; onOpen: () => void }) {
   );
 }
 
-function TriageCard({ c, onOpen }: { c: any; onOpen: () => void }) {
+function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
   const urgencyIcon = c.status === 'critical' ? '🔴' : c.status === 'in_analysis' ? '🟡' : '🟢';
   return (
     <button onClick={onOpen} className="w-full text-left p-3 rounded-lg border border-slate-100 hover:border-[#0056b3]/30 hover:bg-blue-50/30 transition-all">

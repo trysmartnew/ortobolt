@@ -1,6 +1,6 @@
 // src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Activity } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, StatusBadge, RiskTag } from '@/components/ui';

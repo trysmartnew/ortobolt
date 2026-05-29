@@ -1,9 +1,9 @@
 // src/components/AIAssistant.tsx
 // 🤖 OrthoAI Copiloto Global — Widget flutuante com diretrizes veterinárias
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
 import { sendChatMessageStream } from '@/services/aiService';
-import { VET_SYSTEM_PROMPT, buildVetMessage } from '@/services/veterinaryPrompts';
+import { buildVetMessage } from '@/services/veterinaryPrompts';
 import { useApp } from '@/contexts/AppContext';
 
 interface Message {

@@ -1,6 +1,6 @@
 // src/pages/ChatPage.tsx
 // ✅ BUG-05 FIX: Modelo atualizado para OrthoVision v3.2
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, Trash2, Bot, User, Copy, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { sendChatMessage } from '@/services/aiService';

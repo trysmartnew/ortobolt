@@ -134,7 +134,7 @@ export default function ReportsPage() {
     }
     setGenerating('case');
     try {
-      await generateCaseReport(completedCase, user);
+      await generateCaseReport(completedCase);
     } finally {
       setGenerating(null);
     }
@@ -149,7 +149,7 @@ export default function ReportsPage() {
         await generateMonthlyReport(user, kpiMetrics, chartData, cases);
       } else if (r.type === 'case') {
         const caseData = cases.find(c => c.aiAnalysis);
-        if (caseData) await generateCaseReport(caseData, user);
+        if (caseData) await generateCaseReport(caseData);
       }
     } finally {
       setDownloadingId(null);

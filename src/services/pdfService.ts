@@ -159,7 +159,7 @@ export async function generateMonthlyReport(
   doc.save(`ortobolt-relatorio-${new Date().toISOString().slice(0, 7)}.pdf`);
 }
 
-export async function generateCaseReport(c: ClinicalCase, user: User): Promise<void> {
+export async function generateCaseReport(c: ClinicalCase): Promise<void> {
   const JsPDF = await getJsPDF();
   const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   addHeader(doc, 'Relatório de Caso Clínico', `${safe(c.patientName)} — ${new Date(c.createdAt).toLocaleDateString('pt-BR')}`);
