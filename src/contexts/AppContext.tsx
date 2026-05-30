@@ -29,6 +29,7 @@ import type {
   NotificationType,
 } from '@/types/index';
 import { supabase, fetchUserProfile } from '@/services/supabase';
+import { isAuthRetryableFetchError } from '@supabase/auth-js';
 
 export type Page =
   | 'dashboard' | 'chat' | 'analysis' | 'gallery'
@@ -209,6 +210,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      if (isAuthRetryableFetchError(error) || error?.name === 'AuthUnknownError') {
+        addToast('Serviço temporariamente indisponível. Verifique sua conexão e tente novamente.', 'error');
+        return false;
+      }
+    }
 
     if (error || !data.user) {
       const newAttempts = loginAttempts + 1;
