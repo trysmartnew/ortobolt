@@ -1,6 +1,6 @@
 ﻿# OrtoBolt - Contexto do Projeto
 
-> Ultima atualizacao: 27/05/2026 23:00 (auto-gerado)
+> Ultima atualizacao: 31/05/2026 11:49 (auto-gerado)
 > Branch: ?
 > Repositorio: ?
 > Deploy: https://ortobolt.vercel.app
@@ -30,9 +30,9 @@
 | CasePage.tsx | 548 |
 | ChatPage.tsx | 178 |
 | DashboardPage.tsx | 238 |
-| GalleryPage.tsx | 409 |
-| HomePage.tsx | 422 |
-| LoginPage.tsx | 298 |
+| GalleryPage.tsx | 411 |
+| HomePage.tsx | 423 |
+| LoginPage.tsx | 295 |
 | NotificationsPage.tsx | 66 |
 | ProfilePage.tsx | 190 |
 | RegisterPage.tsx | 323 |
@@ -48,10 +48,10 @@
 | ErrorBoundary.tsx | 57 |
 | ProductTour.tsx | 329 |
 | Sidebar.tsx | 84 |
-| ToastContainer.tsx | 61 |
+| ToastContainer.tsx | 60 |
 | TopBar.tsx | 84 |
 | ui.tsx | 162 |
-| **TOTAL** | **956** |
+| **TOTAL** | **955** |
 
 ## Protocolos (CasePage.tsx)
 

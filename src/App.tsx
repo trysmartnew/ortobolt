@@ -41,7 +41,7 @@ function AppInner() {
   const {
     currentView, authLoading,
     currentPage, tourActive, closeTour,
-    logout, setUserFromSession,
+    logout, setUserFromSession, setCurrentView,
     toasts, removeToast,
   } = useApp();
 
@@ -84,6 +84,10 @@ function AppInner() {
         }
       }
       // TRATAMENTO DE LOGOUT
+      if (event === 'PASSWORD_RECOVERY') {
+        setCurrentView('reset');
+        return;
+      }
       if (event === 'SIGNED_OUT') {
         logoutRef.current();
       }
@@ -118,6 +122,7 @@ function AppInner() {
   if (currentView === 'home')     return <><HomePage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
   if (currentView === 'login')    return <><LoginPage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
   if (currentView === 'register') return <><RegisterPage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
+  if (currentView === 'reset')    return <><ResetPasswordPage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
 
   // App principal (currentView === 'app')
   const PageComponent = PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
@@ -148,6 +153,10 @@ export default function App() {
     </AppProvider>
   );
 }
+
+
+
+
 
 
 

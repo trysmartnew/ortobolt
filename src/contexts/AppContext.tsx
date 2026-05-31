@@ -35,7 +35,7 @@ export type Page =
   | 'dashboard' | 'chat' | 'analysis' | 'gallery'
   | 'case' | 'profile' | 'reports' | 'settings' | 'notifications';
 
-export type AppView = 'home' | 'login' | 'register' | 'app';
+export type AppView = 'home' | 'login' | 'register' | 'app' | 'reset';
 
 export interface Toast {
   id: number;
@@ -437,4 +437,5 @@ export function useApp() {
   if (!ctx) throw new Error('useApp must be inside AppProvider');
   return ctx;
 }
+
 
