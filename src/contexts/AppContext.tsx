@@ -28,7 +28,7 @@ import type {
   CaseStatus,
   NotificationType,
 } from '@/types/index';
-import { supabase, fetchUserProfile } from '@/services/supabase';
+import { supabase, fetchUserProfile, upsertUserProfile } from '@/services/supabase';
 import { isAuthRetryableFetchError } from '@supabase/auth-js';
 
 export type Page =
@@ -292,12 +292,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [isLoggingOut, addToast]);
 
-  const setUserFromSession = useCallback(async (supaUser: { id: string }) => {
+  const setUserFromSession = useCallback(async (supaUser: { id: string; email?: string | null; user_metadata?: Record<string, string> }) => {
     if (!supaUser.id) {
       setAuthLoading(false);
       return;
     }
-    
+    await upsertUserProfile(supaUser);
     const profile = await fetchUserProfile(supaUser.id);
     if (profile) {
       setUser(profile);
