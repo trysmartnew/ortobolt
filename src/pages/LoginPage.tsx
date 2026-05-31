@@ -63,7 +63,7 @@ export default function LoginPage() {
     try {
       const { error: err } = await supabase.auth.signInWithOAuth({
         provider,
-        options: { redirectTo: `${window.location.origin}/reset-password` },
+        options: { redirectTo: `${window.location.origin}` },
       });
       if (err) setError(`Erro ao entrar com ${provider}: ${err.message}`);
     } catch {
@@ -79,7 +79,7 @@ export default function LoginPage() {
     setError('');
     try {
       const { error: err } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${window.location.origin}`,
       });
       if (err) setError(err.message);
       else setForgotSent(true);
@@ -290,6 +290,7 @@ export default function LoginPage() {
     </div>
   );
 }
+
 
 
 
