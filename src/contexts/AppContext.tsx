@@ -246,6 +246,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     sessionStorage.setItem('ortobolt_remember_me', rememberMe ? '1' : '0');
 
+    await upsertUserProfile(data.user);
     const profile = await fetchUserProfile(data.user.id);
     if (!profile) return false;
 
