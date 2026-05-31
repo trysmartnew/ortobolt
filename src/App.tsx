@@ -64,20 +64,33 @@ function AppInner() {
 
     // Listener de mudanças de auth — usa refs, nunca stale
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-  if (session?.user) {
-    setSessionRef.current(session.user);
-  }
-
-    // TRATAMENTO DE LOGOUT
-    if (event === 'SIGNED_OUT') {
-      logoutRef.current();
+      if (session?.user) {
+        setSessionRef.current(session.user);
+      }
+      // CONTROLE DE rememberMe — token já gravado aqui, timing correto
+      if (event === 'SIGNED_IN' && session?.user) {
+        const remember = sessionStorage.getItem('ortobolt_remember_me');
+        if (remember === '0') {
+          const projectRef = import.meta.env.VITE_SUPABASE_URL
+            .replace('https://', '').split('.')[0];
+          const key = `sb-${projectRef}-auth-token`;
+          const token = localStorage.getItem(key);
+          if (token) {
+            sessionStorage.setItem(key, token);
+            localStorage.removeItem(key);
+          }
+          sessionStorage.removeItem('ortobolt_remember_me');
+        }
+      }
+      // TRATAMENTO DE LOGOUT
+      if (event === 'SIGNED_OUT') {
+        logoutRef.current();
+      }
+      // ATUALIZAÇÃO DE TOKEN
+      if (event === 'TOKEN_REFRESHED' && session?.user) {
+        setSessionRef.current(session.user);
+      }
     }
-
-    // ATUALIZAÇÃO DE TOKEN
-    if (event === 'TOKEN_REFRESHED' && session?.user) {
-      setSessionRef.current(session.user);
-    }
-  }
 );
 
     return () => subscription.unsubscribe();

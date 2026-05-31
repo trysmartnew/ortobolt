@@ -244,16 +244,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setLoginAttempts(0);
     setLockedUntil(null);
 
-    if (!rememberMe) {
-      const projectRef = import.meta.env.VITE_SUPABASE_URL
-        .replace('https://', '').split('.')[0];
-      const key = `sb-${projectRef}-auth-token`;
-      const token = localStorage.getItem(key);
-      if (token) {
-        sessionStorage.setItem(key, token);
-        localStorage.removeItem(key);
-      }
-    }
+    sessionStorage.setItem('ortobolt_remember_me', rememberMe ? '1' : '0');
 
     const profile = await fetchUserProfile(data.user.id);
     if (!profile) return false;
