@@ -63,7 +63,7 @@ export default function LoginPage() {
     try {
       const { error: err } = await supabase.auth.signInWithOAuth({
         provider,
-        options: { redirectTo: window.location.origin },
+        options: { redirectTo: `${window.location.origin}/reset-password` },
       });
       if (err) setError(`Erro ao entrar com ${provider}: ${err.message}`);
     } catch {

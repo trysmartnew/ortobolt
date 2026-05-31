@@ -23,6 +23,7 @@ import ProductTour   from '@/components/ProductTour';
 import ToastContainer from '@/components/ToastContainer';
 import AIAssistant    from '@/components/AIAssistant';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import ResetPasswordPage from '@/pages/ResetPasswordPage';
 
 const PAGE_MAP = {
   dashboard:     DashboardPage,
@@ -95,6 +96,11 @@ function AppInner() {
 
     return () => subscription.unsubscribe();
   }, []); // ✅ Array vazio é seguro agora graças às refs
+
+    const isResetRoute = window.location.hash.includes('access_token');
+  if (isResetRoute) {
+    return <ResetPasswordPage />;
+  }
 
   // Loading enquanto verifica sessão
   if (authLoading) {
