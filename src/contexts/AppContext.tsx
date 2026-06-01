@@ -352,6 +352,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (updates.precisionScore !== undefined) dbUpdates.precision_score = updates.precisionScore;
     if (updates.notes         !== undefined) dbUpdates.notes           = updates.notes;
     if (updates.title         !== undefined) dbUpdates.title           = updates.title;
+    if (updates.imageUrl      !== undefined) dbUpdates.image_url      = updates.imageUrl;
     dbUpdates.updated_at = new Date().toISOString();
 
     supabase.from('clinical_cases').update(dbUpdates).eq('id', id)
