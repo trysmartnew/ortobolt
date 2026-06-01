@@ -346,6 +346,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const updateCase = useCallback((id: string, updates: Partial<ClinicalCase>) => {
     setCases((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
+    setActiveCase((prev) => (prev?.id === id ? { ...prev, ...updates } : prev));
     const dbUpdates: Record<string, unknown> = {};
     if (updates.status        !== undefined) dbUpdates.status          = updates.status;
     if (updates.riskLevel     !== undefined) dbUpdates.risk_level      = updates.riskLevel;
