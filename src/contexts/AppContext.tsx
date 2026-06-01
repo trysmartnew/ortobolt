@@ -99,6 +99,7 @@ function mapCaseFromDB(row: Record<string, unknown>): ClinicalCase {
     updatedAt:      String(row.updated_at      ?? row.updatedAt      ?? new Date().toISOString()),
     tags:           Array.isArray(row.tags) ? row.tags as string[] : [],
     imageUrl:       row.image_url != null ? String(row.image_url) : undefined,
+    avatarUrl:     row.avatar_url != null ? String(row.avatar_url) : undefined,
     notes:          row.notes != null ? String(row.notes) : undefined,
     veterinarianId: String(row.veterinarian_id ?? row.veterinarianId ?? ''),
     aiAnalysis:     undefined,
@@ -354,6 +355,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (updates.notes         !== undefined) dbUpdates.notes           = updates.notes;
     if (updates.title         !== undefined) dbUpdates.title           = updates.title;
     if (updates.imageUrl      !== undefined) dbUpdates.image_url      = updates.imageUrl;
+    if (updates.avatarUrl      !== undefined) dbUpdates.avatar_url      = updates.avatarUrl;
     dbUpdates.updated_at = new Date().toISOString();
 
     supabase.from('clinical_cases').update(dbUpdates).eq('id', id)

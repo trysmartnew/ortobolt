@@ -256,6 +256,7 @@ export default function GalleryPage() {
                     <span className="text-slate-400 text-sm">Sem imagem</span>
                   </div>
                 )}
+                {c.avatarUrl && <img src={c.avatarUrl} alt={`${c.patientName} avatar`} className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
                 {c.status === 'critical' && (
                   <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold">
                     <AlertTriangle size={10} /> CRÍTICO

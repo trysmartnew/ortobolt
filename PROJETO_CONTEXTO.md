@@ -1,6 +1,6 @@
 ﻿# OrtoBolt - Contexto do Projeto
 
-> Ultima atualizacao: 01/06/2026 11:10 (auto-gerado)
+> Ultima atualizacao: 01/06/2026 15:28 (auto-gerado)
 > Branch: ?
 > Repositorio: ?
 > Deploy: https://ortobolt.vercel.app
@@ -27,10 +27,10 @@
 | Arquivo | Linhas |
 |---------|--------|
 | AnalysisPage.tsx | 296 |
-| CasePage.tsx | 548 |
+| CasePage.tsx | 579 |
 | ChatPage.tsx | 178 |
 | DashboardPage.tsx | 238 |
-| GalleryPage.tsx | 411 |
+| GalleryPage.tsx | 446 |
 | HomePage.tsx | 423 |
 | LoginPage.tsx | 296 |
 | NotificationsPage.tsx | 66 |
@@ -39,7 +39,7 @@
 | ReportsPage.tsx | 290 |
 | ResetPasswordPage.tsx | 147 |
 | SettingsPage.tsx | 118 |
-| **TOTAL** | **3524** |
+| **TOTAL** | **3590** |
 
 ## Componentes src/components/
 
