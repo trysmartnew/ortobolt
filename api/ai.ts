@@ -126,6 +126,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     const maxTokens = Math.min(body.max_tokens ?? 1000, 1000);
+    const isStream = body.stream === true;
+
+    // Stream SSE — passa diretamente ao OpenRouter e faz pipe da resposta
+    if (isStream) {
+      const streamRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://ortobolt.vercel.app',
+          'X-Title': 'OrtoBolt - Veterinary Orthopedics',
+        },
+        body: JSON.stringify({ model: PRIMARY_MODEL, messages: sanitizedMessages, max_tokens: maxTokens, stream: true }),
+      });
+      if (!streamRes.ok) {
+        const errText = await streamRes.text();
+        return res.status(streamRes.status).json({ error: errText });
+      }
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('X-Accel-Buffering', 'no');
+      const reader = streamRes.body!.getReader();
+      const decoder = new TextDecoder();
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          res.write(decoder.decode(value, { stream: true }));
+        }
+      } finally {
+        reader.releaseLock();
+        res.end();
+      }
+      return;
+    }
 
     // 6. Primário
     let response: Response;

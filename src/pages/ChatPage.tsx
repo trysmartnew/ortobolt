@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, Trash2, Bot, User, Copy, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { sendChatMessage } from '@/services/aiService';
+import { sendChatMessageStream } from '@/services/aiService';
 import { Button, Spinner } from '@/components/ui';
 import type { ChatMessage } from '@/types/index';
 
