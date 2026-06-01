@@ -102,14 +102,19 @@ export default function ChatPage() {
     const history = chatHistory.filter(m => !m.isLoading).map(m => ({ role: m.role, content: m.content }));
 
     try {
-      const reply = await sendChatMessage(msg, history);
-      const aiMsg: ChatMessage = {
-        id: `ai-${Date.now()}`,
-        role: 'assistant',
-        content: reply,
-        timestamp: new Date().toISOString(),
-      };
-      setChatHistory(prev => [...prev.filter(m => m.id !== 'loading'), aiMsg]);
+      const streamingId = `ai-${Date.now()}`;
+      setChatHistory(prev => [
+        ...prev.filter(m => m.id !== 'loading'),
+        { id: streamingId, role: 'assistant', content: '', timestamp: new Date().toISOString(), isLoading: true },
+      ]);
+      const reply = await sendChatMessageStream(msg, history, (accumulated) => {
+        setChatHistory(prev => prev.map(m =>
+          m.id === streamingId ? { ...m, content: accumulated, isLoading: false } : m
+        ));
+      });
+      setChatHistory(prev => prev.map(m =>
+        m.id === streamingId ? { ...m, content: reply, isLoading: false } : m
+      ));
     } catch (err) {
       setChatHistory(prev => prev.filter(m => m.id !== 'loading'));
       addToast('Erro ao conectar com a IA. Verifique sua conexão e tente novamente.', 'error');
