@@ -135,7 +135,7 @@ export default function GalleryPage() {
     setFormErrors([]);
     
     addCase({
-      id: `case-${Date.now()}`,
+      id: crypto.randomUUID(),
       ...form,
       ageYears: Number(form.ageYears) || 0,
       weightKg: Number(form.weightKg) || 0,
