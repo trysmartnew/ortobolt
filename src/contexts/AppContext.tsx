@@ -252,7 +252,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     setUser(profile);
     setIsLoggedIn(true);
-    setCurrentView('app');
+    setCurrentView((prev) => prev === 'reset' ? 'reset' : 'app');
     setTimeout(() => setTourActive(true), 600);
     addToast(`Bem-vindo(a), ${profile.name.split(' ')[0]}!`, 'success');
     return true;
@@ -303,7 +303,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (profile) {
       setUser(profile);
       setIsLoggedIn(true);
-      setCurrentView('app');
+      setCurrentView((prev) => prev === 'reset' ? 'reset' : 'app');
     }
     setAuthLoading(false);
   }, []);
@@ -437,5 +437,7 @@ export function useApp() {
   if (!ctx) throw new Error('useApp must be inside AppProvider');
   return ctx;
 }
+
+
 
 
