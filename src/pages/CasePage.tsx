@@ -281,6 +281,7 @@ export default function CasePage() {
   const { activeCase, closeCase, deleteCase, updateCase, addToast, setCurrentPage } = useApp();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -291,7 +292,18 @@ export default function CasePage() {
       addToast('Radiografia atualizada.', 'success');
     };
     reader.readAsDataURL(file);
-  };  
+  };
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !activeCase) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      updateCase(activeCase.id, { avatarUrl: reader.result as string, updatedAt: new Date().toISOString() });
+      addToast('Avatar atualizado.', 'success');
+    };
+    reader.readAsDataURL(file);
+  };
 
   const [zoom, setZoom] = useState(100);
   const [showEdit, setShowEdit] = useState(false);
@@ -405,9 +417,14 @@ export default function CasePage() {
                   <Upload size={14} /> Upload
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
+                <button onClick={() => avatarInputRef.current?.click()} className="text-xs text-emerald-600 hover:text-emerald-800 px-2 flex items-center gap-1 font-medium">
+                  <Upload size={14} /> Avatar
+                </button>
+                <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
               </div>
             </div>
-            <div className="bg-slate-900 p-6 flex items-center justify-center min-h-[400px] overflow-auto">
+            <div className="bg-slate-900 p-6 flex items-center justify-center min-h-[400px] overflow-auto relative">`n              {activeCase.avatarUrl && <img src={activeCase.avatarUrl} alt="Avatar do paciente" className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
+              {activeCase.avatarUrl && <img src={activeCase.avatarUrl} alt="Avatar do paciente" className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
               {activeCase.imageUrl ? (
                 <img src={activeCase.imageUrl} alt={activeCase.patientName} style={{ width: `${zoom}%`, maxWidth: '100%', transition: 'width .2s' }} className="rounded-xl shadow-2xl object-contain" />
               ) : (
