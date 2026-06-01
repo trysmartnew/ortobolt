@@ -8,14 +8,14 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 // ── Modelos com Visão (Vision) ────────────────────────────────────────────────
 const PRIMARY_MODEL = 'google/gemma-4-31b-it:free';  // Google — Quality 65 (melhor visão)
 const FALLBACK_1    = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';  // NVIDIA — provider diferente
-const FALLBACK_2    = 'google/gemma-4-26b-a4b-it:free';  // Google MoE — menos congestionado
+const FALLBACK_2    = 'meta-llama/llama-4-maverick:free';  // Meta — visão 128K, provider diferente
 
 // Whitelist — aceita também modelos legados para não quebrar clientes antigos
 const ALLOWED_MODELS = [
   PRIMARY_MODEL,
   FALLBACK_1,
   FALLBACK_2,
-  'google/gemma-4-31b-it:free',  // legado (mesmo do primário)
+  'meta-llama/llama-4-maverick:free',  // legado visão
   'deepseek/deepseek-v4-flash:free',  // legado (texto)
   'meta-llama/llama-3.3-70b-instruct:free',  // legado (texto)
 ] as const;
@@ -65,7 +65,7 @@ async function callOpenRouter(
     }
 
     if (attempt < maxAttempts) {
-      await new Promise((r) => setTimeout(r, 1000 * attempt));
+      await new Promise((r) => setTimeout(r, 2000 * attempt));
     }
   }
 
