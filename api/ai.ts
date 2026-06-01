@@ -204,6 +204,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const data = await response.json();
+    // OpenRouter pode retornar HTTP 200 com body de erro — detectar e acionar fallback
+    if (data?.error?.code === '500' || data?.error?.code === 429 || data?.error?.type === 'error') {
+      console.warn('[AI Proxy] OpenRouter soft error:', JSON.stringify(data.error));
+      // Tentar fallback 1
+      let fbRes = await callOpenRouter(FALLBACK_1, sanitizedMessages, maxTokens, key).catch(() => null);
+      let fbData = fbRes?.ok ? await fbRes.json() : null;
+      if (!fbData?.choices?.[0]?.message?.content) {
+        // Tentar fallback 2
+        fbRes = await callOpenRouter(FALLBACK_2, sanitizedMessages, maxTokens, key).catch(() => null);
+        fbData = fbRes?.ok ? await fbRes.json() : null;
+      }
+      if (fbData?.choices?.[0]?.message?.content) {
+        return res.status(200).json(fbData);
+      }
+      return res.status(503).json({ error: 'All providers returned errors' });
+    }
     return res.status(200).json(data);
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Erro desconhecido';
