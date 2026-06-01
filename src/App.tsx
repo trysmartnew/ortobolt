@@ -34,6 +34,11 @@ const PAGE_MAP = {
 } as const;
 
 function AppInner() {
+  // Inicializar view reset se token de recovery foi detectado no main.tsx
+  useEffect(() => {
+    const raw = sessionStorage.getItem('ortobolt_recovery_token');
+    if (raw) setCurrentView('reset');
+  }, []);
   const {
     currentView, authLoading,
     currentPage, tourActive, closeTour,
@@ -144,3 +149,4 @@ export default function App() {
     </AppProvider>
   );
 }
+

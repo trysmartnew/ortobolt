@@ -143,16 +143,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [lockedUntil, setLockedUntil]     = useState<Date | null>(null);
   const [, setLockTick]                   = useState(0);
   
-  // Captura PASSWORD_RECOVERY no provider — antes do App.tsx montar
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setCurrentView('reset');
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, []);
-
   const loginLocked = !!(lockedUntil && new Date() < lockedUntil);
   const loginLockSecondsLeft = loginLocked && lockedUntil
     ? Math.ceil((lockedUntil.getTime() - Date.now()) / 1000)
@@ -447,6 +437,8 @@ export function useApp() {
   if (!ctx) throw new Error('useApp must be inside AppProvider');
   return ctx;
 }
+
+
 
 
 
