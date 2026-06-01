@@ -6,9 +6,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // ── Modelos com Visão (Vision) ────────────────────────────────────────────────
-const PRIMARY_MODEL = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';  // NVIDIA — estável
-const FALLBACK_1    = 'meta-llama/llama-4-maverick:free';  // Meta — visão 128K
-const FALLBACK_2    = 'google/gemma-4-31b-it:free';  // Google — último recurso
+const PRIMARY_MODEL = 'google/gemma-4-31b-it:free';  // Google — quality 65, melhor visão free
+const FALLBACK_1    = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';  // NVIDIA Omni — visão, estável
+const FALLBACK_2    = 'google/gemma-4-26b-a4b-it:free';  // Google MoE — visão, 262K ctx
 
 // Whitelist — aceita também modelos legados para não quebrar clientes antigos
 const ALLOWED_MODELS = [
