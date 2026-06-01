@@ -23,6 +23,14 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
   },
 });
 
+// Listener global — registrado imediatamente após criação do cliente
+// Captura PASSWORD_RECOVERY antes do React montar
+supabase.auth.onAuthStateChange((event) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    sessionStorage.setItem('ortobolt_recovery_pending', '1');
+  }
+});
+
 // ✅ C-03: Interface explícita — sem 'any'
 interface UserProfileRow {
   id: string;
@@ -137,3 +145,4 @@ export async function upsertUserProfile(supaUser: {
     { onConflict: 'id', ignoreDuplicates: true }
   );
 }
+
