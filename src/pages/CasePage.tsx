@@ -1,7 +1,7 @@
 // src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
-import { useState, useMemo } from 'react';
-import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Activity } from 'lucide-react';
+import { useState, useMemo, useRef } from 'react';
+import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, StatusBadge, RiskTag } from '@/components/ui';
 import type { ClinicalCase, ProcedureType } from '@/types/index';
@@ -279,7 +279,19 @@ function TutorGuideModal({ caseData, protocol, onClose }: { caseData: ClinicalCa
 // ── COMPONENTE PRINCIPAL ────────────────────────────────────────────────────
 export default function CasePage() {
   const { activeCase, closeCase, deleteCase, updateCase, addToast, setCurrentPage } = useApp();
-  const [zoom, setZoom] = useState(100);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !activeCase) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      updateCase(activeCase.id, { imageUrl: reader.result as string, updatedAt: new Date().toISOString() });
+      addToast('Radiografia atualizada.', 'success');
+    };
+    reader.readAsDataURL(file);
+  };  const [zoom, setZoom] = useState(100);
   const [showEdit, setShowEdit] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [newNote, setNewNote] = useState('');
@@ -387,10 +399,21 @@ export default function CasePage() {
                 <span className="text-xs font-mono text-slate-500 w-10 text-center">{zoom}%</span>
                 <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-bold">+</button>
                 <button onClick={() => setZoom(100)} className="text-xs text-slate-500 hover:text-[#0056b3] px-2">Reset</button>
+                <button onClick={() => fileInputRef.current?.click()} className="text-xs text-[#0056b3] hover:text-[#003d7a] px-2 flex items-center gap-1 font-medium">
+                  <Upload size={14} /> Upload
+                </button>
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
               </div>
             </div>
             <div className="bg-slate-900 p-6 flex items-center justify-center min-h-[400px] overflow-auto">
-              <img src={activeCase.imageUrl} alt={activeCase.patientName} style={{ width: `${zoom}%`, maxWidth: '100%', transition: 'width .2s' }} className="rounded-xl shadow-2xl object-contain" />
+              {activeCase.imageUrl ? (
+                <img src={activeCase.imageUrl} alt={activeCase.patientName} style={{ width: `${zoom}%`, maxWidth: '100%', transition: 'width .2s' }} className="rounded-xl shadow-2xl object-contain" />
+              ) : (
+                <div className="flex flex-col items-center gap-2 text-slate-500">
+                  <Upload size={32} />
+                  <p className="text-sm">Nenhuma radiografia</p>
+                </div>
+              )}
             </div>
           </Card>
 
