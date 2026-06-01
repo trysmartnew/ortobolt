@@ -14,3 +14,4 @@ aiService_debug.txt
 public/backups/
 *.backup-*.png
 *.backup
+*.bak-*
