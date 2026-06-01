@@ -291,7 +291,9 @@ export default function CasePage() {
       addToast('Radiografia atualizada.', 'success');
     };
     reader.readAsDataURL(file);
-  };  const [zoom, setZoom] = useState(100);
+  };  
+
+  const [zoom, setZoom] = useState(100);
   const [showEdit, setShowEdit] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [newNote, setNewNote] = useState('');
@@ -402,7 +404,7 @@ export default function CasePage() {
                 <button onClick={() => fileInputRef.current?.click()} className="text-xs text-[#0056b3] hover:text-[#003d7a] px-2 flex items-center gap-1 font-medium">
                   <Upload size={14} /> Upload
                 </button>
-                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
               </div>
             </div>
             <div className="bg-slate-900 p-6 flex items-center justify-center min-h-[400px] overflow-auto">
