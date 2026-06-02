@@ -122,43 +122,32 @@ function stripThinking(text: string): string {
 }
 
 // ── System Prompt ─────────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `Você é o OrthoAI, assistente especializado em ortopedia veterinária da plataforma OrtoBolt.
-=== AVISO IMPORTANTE ===
-Todos os cálculos fornecidos são ORIENTATIVOS e devem ser confirmados com instrumentação física e avaliação clínica presencial antes de qualquer procedimento cirúrgico.
-=== DOMÍNIO CLÍNICO ===
-Especialidades: TPLO, FHO, TTA, fixação de fraturas (DCP, LCP, pinos intramedulares), cirurgia espinhal (hemilaminectomia, fenestração), substituição articular, artroscopia.
+const SYSTEM_PROMPT = `Você é o OrthoAI, assistente clínico veterinário da plataforma OrtoBolt.
+Especialidade primária: ortopedia (TPLO, FHO, TTA, fixação de fraturas, cirurgia espinhal, artroscopia).
+Também analisa casos clínicos gerais: oftalmologia, dermatologia, neurologia, oncologia e outros.
 Espécies: caninos, felinos, equinos, bovinos.
-=== PROTOCOLOS DE CÁLCULO CIRÚRGICO ===
-ÂNGULO DE PLATEAU TIBIAL (TPA / APT):
-Normal canino: 18–25°; Indicação TPLO: TPA > 23–27°
-✅ FÓRMULA CORRETA (Slocum, 1993):
-avanço_mm = raio × [sin(TPA_atual) - sin(TPA_alvo)]
-Raio por peso: <15kg → 18mm; 15–30kg → 24mm; 30–50kg → 30mm; >50kg → 36mm
-TPA alvo pós-TPLO: 5–6°
-CÁLCULO TTA:
-Espaçador (mm) = sin(TPA – 90°) × comprimento LP (LP = 3× altura do plateau)
-Tamanhos: 3, 6, 9, 12, 15, 18, 21mm
-FHO:
-Ângulo de corte padrão: 110–115° em relação ao eixo diafisário
-Felinos: corte a 2–3mm; Caninos: corte a 3–5mm; clearance acetabular ≥2mm
-BIOMECÂNICA:
-FRS estimada = 0.6 × peso corporal
-DCP 4.5mm: ≤300Nm; DCP 3.5mm: ≤120Nm; LCP 5.0mm: ≤450Nm
-Equinos >400kg: SEMPRE LCP 5.0mm; mínimo 8 parafusos
-ÂNGULOS RADIOGRÁFICOS:
-Coxofemoral: Índice de Norberg ≥105° (normal)
-Joelho: femorotibial normal 135–145°
-DOSAGEM:
+=== PROTOCOLOS ORTOPÉDICOS ===
+TPA normal canino: 18–25°; TPLO indicado: TPA > 23–27°
+avanço_mm = raio × [sin(TPA_atual) - sin(TPA_alvo)] | TPA alvo: 5–6°
+Raio por peso: <15kg→18mm; 15–30kg→24mm; 30–50kg→30mm; >50kg→36mm
+TTA: espaçador = sin(TPA–90°) × LP (LP = 3× altura plateau) | Tamanhos: 3–21mm
+FHO: corte 110–115° | Felinos: 2–3mm; Caninos: 3–5mm; clearance ≥2mm
+FRS = 0.6 × peso | DCP 4.5mm: ≤300Nm; DCP 3.5mm: ≤120Nm; LCP 5.0mm: ≤450Nm
+Equinos >400kg: LCP 5.0mm obrigatório; mín. 8 parafusos
+Norberg ≥105° (normal) | Femorotibial: 135–145°
+=== DOSAGENS ===
 Meloxicam: cão 0.1mg/kg SID; gato 0.05mg/kg SID; equino 0.6mg/kg SID
 Tramadol: cão 2–5mg/kg TID; gato 1–2mg/kg BID
 Dexmedetomidina: cão 5–20mcg/kg IM; gato 10–40mcg/kg IM
 Cetamina: cão/gato 5–10mg/kg IV; equino 2.2mg/kg IV
 Morfina: cão 0.3–0.5mg/kg IM; gato 0.1–0.2mg/kg IM
-=== REGRAS GERAIS ===
-Responda sempre em português brasileiro técnico e preciso
-Nunca faça diagnóstico definitivo sem exame físico e imaginologia confirmada
-Sempre cite intervalo de normalidade ao reportar valores
-Para casos críticos, inclua urgência do procedimento`;
+=== REGRAS ===
+Responda em português brasileiro técnico e preciso.
+Seja conciso: respeite o teto de palavras indicado em cada solicitação.
+Nunca faça diagnóstico definitivo sem exame físico e imaginologia confirmada.
+Cite intervalo de normalidade ao reportar valores.
+Para casos críticos, indique urgência na primeira linha.
+Cálculos são ORIENTATIVOS — confirmar com instrumentação física antes de qualquer procedimento.`;
 
 // ── proxyRequest (modo JSON — analyzeImage, getCaseAISuggestion) ──────────────
 async function proxyRequest(body: {
@@ -307,7 +296,7 @@ export async function analyzeImage(
       : 'Paciente';
 
     const ctx = caseInfo
-      ? `Paciente: ${patientRef}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears}a, ${caseInfo.weightKg}kg. Procedimento: ${caseInfo.procedure}.`
+      ? `Paciente: ${patientRef}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears}a, ${caseInfo.weightKg}kg. Procedimento: ${caseInfo.procedure}. Status: ${caseInfo.status ?? 'pending'}.`
       : '';
 
     return await proxyRequest({
@@ -318,11 +307,11 @@ export async function analyzeImage(
           content: [
             {
               type: 'text',
-              text: `${SYSTEM_PROMPT}\n\n${ctx}\n\nAnalise esta imagem ortopédica veterinária com precisão máxima. Inclua:\n1. Identificação e qualidade das estruturas anatômicas\n2. Mensuração de ângulos articulares visíveis (com valores de referência)\n3. Cálculo de TPA se tíbia/joelho visível (raio × [sin(TPA) - sin(alvo)])\n4. Avaliação da espessura cortical e qualidade óssea\n5. Identificação de achados patológicos\n6. Recomendação de implante com tamanho específico\n7. Score de confiança para cada estrutura identificada`,
-            },
-            // ✅ USAR compressed NO LUGAR DE imageBase64
-            {
-              type: 'image_url',
+              text: caseInfo
+                ? (caseInfo.status === 'completed'
+                  ? `\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
+                  : `\n\n${ctx}\n\nAnalise esta imagem ortopédica. Máx. 150 palavras: estruturas e qualidade óssea, ângulos mensuráveis com valores de referência, achados patológicos e implante recomendado com dimensões.`)
+                : `\n\nAnalise esta imagem clínica veterinária. Identifique as estruturas visíveis, achados patológicos e condutas recomendadas. Máx. 150 palavras. Seja direto e objetivo.`,
               image_url: { url: `data:image/jpeg;base64,${compressed}` },
             },
           ],
@@ -335,6 +324,7 @@ export async function analyzeImage(
     return '⚠️ Erro na análise de imagem. Verifique o formato (JPG/PNG/WEBP, máx. 15MB) e tente novamente.';
   }
 }
+
 
 // ── getCaseAISuggestion ───────────────────────────────────────────────────────
 export async function getCaseAISuggestion(
@@ -356,22 +346,21 @@ export async function getCaseAISuggestion(
         { role: 'system', content: SYSTEM_PROMPT },
         {
           role: 'user',
-          content:
-            `${ctx}\n\nGere sugestão clínica estruturada com:\n` +
-            `1. Cálculo biomecânico (FRS estimada pelo peso)\n` +
-            `2. Seleção de implante com dimensões específicas\n` +
-            `3. Se joelho/TPLO: calcular avanço: raio × [sin(TPA) - sin(alvo)]\n` +
-            `4. Protocolo anestésico com doses pelo peso\n` +
-            `5. Plano de reabilitação pós-operatória`,
+          content: (
+            caseInfo.status === 'completed'
+              ? `${ctx}\n\nAvalie a evolução pós-operatória. Máx. 120 palavras: evolução clínica, achados atuais, prognóstico e condutas recomendadas.`
+              : caseInfo.status === 'critical'
+              ? `${ctx}\n\nUrgência clínica. Máx. 80 palavras: conduta imediata, estabilização e encaminhamento se necessário.`
+              : caseInfo.status === 'in_analysis'
+              ? `${ctx}\n\nAnalise o caso. Máx. 150 palavras: achados, diagnóstico diferencial, implante com dimensões e protocolo anestésico com doses pelo peso.`
+              : `${ctx}\n\nPlanejamento pré-cirúrgico. Máx. 150 palavras: implante com dimensões, cálculo cirúrgico se aplicável e protocolo anestésico com doses pelo peso.`
+          ),
         },
       ],
-      max_tokens: 800, // resposta concisa para sugestão rápida
+      max_tokens: 800,
     });
   } catch (err) {
     console.error('AI suggestion error:', err);
     return '⚠️ Erro ao gerar sugestão de IA. Tente novamente em alguns instantes.';
   }
 }
-
-
-
