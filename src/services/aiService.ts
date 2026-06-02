@@ -155,7 +155,7 @@ async function proxyRequest(body: {
   messages: ProxyMessage[];
   max_tokens?: number;
 }): Promise<string> {
-  const cacheKey = getCacheKey(body.model, body.messages); // agora inclui tamanho total
+  const cacheKey = getCacheKey(body.model, body.messages);
   const cached = getCachedResponse(cacheKey);
   if (cached) {
     if (import.meta.env.DEV) console.log('📦 Cache hit:', cacheKey.slice(0, 40));
@@ -310,8 +310,8 @@ export async function analyzeImage(
               text: caseInfo
                 ? (caseInfo.status === 'completed'
                   ? `\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
-                  : `\n\n${ctx}\n\nAnalise esta imagem ortopédica. Máx. 150 palavras: estruturas e qualidade óssea, ângulos mensuráveis com valores de referência, achados patológicos e implante recomendado com dimensões.`)
-                : `\n\nAnalise esta imagem clínica veterinária. Identifique as estruturas visíveis, achados patológicos e condutas recomendadas. Máx. 150 palavras. Seja direto e objetivo.`,
+                  : `\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.`)
+                : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.`,
               image_url: { url: `data:image/jpeg;base64,${compressed}` },
             },
           ],
