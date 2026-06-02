@@ -11,6 +11,7 @@ import {
   buildClinicalCopilotSystemMessage,
   REFINE_ANALYSIS_PROMPT,
 } from '@/services/veterinaryPrompts';
+import { getSupabaseAccessToken } from '@/services/supabase';
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
 interface CacheEntry {
@@ -122,6 +123,28 @@ export async function compressImageBase64(
 const AI_PROXY = '/api/ai';
 const PRIMARY_MODEL = 'gemini-2.5-flash-lite';  // Gemini API direta
 
+const AUTH_ERROR_MESSAGE =
+  '⚠️ Sessão expirada ou não autenticada. Faça login novamente para usar a IA.';
+
+async function buildAiProxyHeaders(): Promise<Record<string, string>> {
+  const token = await getSupabaseAccessToken();
+  if (!token) {
+    throw new Error('AUTH_REQUIRED');
+  }
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+}
+
+function mapAiProxyError(err: unknown, fallback: string): string {
+  if (err instanceof Error) {
+    if (err.message === 'AUTH_REQUIRED') return AUTH_ERROR_MESSAGE;
+    if (err.message.includes('AI proxy 401')) return AUTH_ERROR_MESSAGE;
+  }
+  return fallback;
+}
+
 function stripThinking(text: string): string {
   return text.replace(/<think>[\s\S]*?<\/think>|<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
 }
@@ -183,7 +206,7 @@ async function proxyRequest(body: {
 
   const res = await fetch(AI_PROXY, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await buildAiProxyHeaders(),
     body: JSON.stringify(body),
   });
 
@@ -229,7 +252,10 @@ export async function sendChatMessage(
     });
   } catch (err) {
     console.error('AI chat error:', err);
-    return '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.';
+    return mapAiProxyError(
+      err,
+      '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.'
+    );
   }
 }
 
@@ -248,57 +274,67 @@ export async function sendChatMessageStream(
     { role: 'user', content: userMessage },
   ];
 
-  const res = await fetch(AI_PROXY, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: PRIMARY_MODEL,
-      messages,
-      max_tokens: 1000,
-      stream: true,
-    }),
-  });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`AI proxy ${res.status}: ${errText}`);
-  }
-
-  const reader = res.body!.getReader();
-  const decoder = new TextDecoder();
-  let accumulated = '';
-  let buffer = '';
-
   try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() ?? '';
+    const res = await fetch(AI_PROXY, {
+      method: 'POST',
+      headers: await buildAiProxyHeaders(),
+      body: JSON.stringify({
+        model: PRIMARY_MODEL,
+        messages,
+        max_tokens: 1000,
+        stream: true,
+      }),
+    });
 
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed.startsWith('data: ')) continue;
-        const data = trimmed.slice(6);
-        if (data === '[DONE]') continue;
-        try {
-          const parsed = JSON.parse(data);
-          const token = parsed.choices?.[0]?.delta?.content ?? '';
-          if (token) {
-            accumulated += token;
-            onChunk(stripThinking(accumulated));
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`AI proxy ${res.status}: ${errText}`);
+    }
+
+    const reader = res.body!.getReader();
+    const decoder = new TextDecoder();
+    let accumulated = '';
+    let buffer = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data: ')) continue;
+          const data = trimmed.slice(6);
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            const token = parsed.choices?.[0]?.delta?.content ?? '';
+            if (token) {
+              accumulated += token;
+              onChunk(stripThinking(accumulated));
+            }
+          } catch {
+            /* chunk SSE inválido — ignorar */
           }
-        } catch {
-          /* chunk SSE inválido — ignorar */
         }
       }
+    } finally {
+      reader.releaseLock();
     }
-  } finally {
-    reader.releaseLock();
-  }
 
-  return stripThinking(accumulated) || 'Resposta não disponível.';
+    return stripThinking(accumulated) || 'Resposta não disponível.';
+  } catch (err) {
+    console.error('AI chat stream error:', err);
+    const msg = mapAiProxyError(
+      err,
+      '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.'
+    );
+    onChunk(msg);
+    return msg;
+  }
 }
 
 // ── analyzeImage — ✅ COM COMPRESSÃO DE IMAGEM ───────────────────────────────
@@ -339,7 +375,10 @@ export async function analyzeImage(
     });
   } catch (err) {
     console.error('Vision error:', err);
-    return '⚠️ Erro na análise de imagem. Verifique o formato (JPG/PNG/WEBP, máx. 15MB) e tente novamente.';
+    return mapAiProxyError(
+      err,
+      '⚠️ Erro na análise de imagem. Verifique o formato (JPG/PNG/WEBP, máx. 15MB) e tente novamente.'
+    );
   }
 }
 
@@ -412,57 +451,64 @@ export async function sendClinicalCopilotStream(
     },
   ];
 
-  const res = await fetch(AI_PROXY, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: PRIMARY_MODEL,
-      messages,
-      max_tokens: 1200,
-      stream: true,
-    }),
-  });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`AI proxy ${res.status}: ${errText}`);
-  }
-
-  const reader = res.body!.getReader();
-  const decoder = new TextDecoder();
-  let accumulated = '';
-  let buffer = '';
-
   try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() ?? '';
+    const res = await fetch(AI_PROXY, {
+      method: 'POST',
+      headers: await buildAiProxyHeaders(),
+      body: JSON.stringify({
+        model: PRIMARY_MODEL,
+        messages,
+        max_tokens: 1200,
+        stream: true,
+      }),
+    });
 
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed.startsWith('data: ')) continue;
-        const data = trimmed.slice(6);
-        if (data === '[DONE]') continue;
-        try {
-          const parsed = JSON.parse(data);
-          const token = parsed.choices?.[0]?.delta?.content ?? '';
-          if (token) {
-            accumulated += token;
-            onChunk(stripThinking(accumulated));
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`AI proxy ${res.status}: ${errText}`);
+    }
+
+    const reader = res.body!.getReader();
+    const decoder = new TextDecoder();
+    let accumulated = '';
+    let buffer = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data: ')) continue;
+          const data = trimmed.slice(6);
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            const token = parsed.choices?.[0]?.delta?.content ?? '';
+            if (token) {
+              accumulated += token;
+              onChunk(stripThinking(accumulated));
+            }
+          } catch {
+            /* chunk inválido */
           }
-        } catch {
-          /* chunk inválido */
         }
       }
+    } finally {
+      reader.releaseLock();
     }
-  } finally {
-    reader.releaseLock();
-  }
 
-  return stripThinking(accumulated) || 'Resposta não disponível.';
+    return stripThinking(accumulated) || 'Resposta não disponível.';
+  } catch (err) {
+    console.error('Clinical copilot stream error:', err);
+    const msg = mapAiProxyError(err, 'Erro ao conectar com o copiloto.');
+    onChunk(msg);
+    throw new Error(msg);
+  }
 }
 
 /** Consolida chat + contexto em análise visual refinada (multimodal) */

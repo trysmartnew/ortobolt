@@ -23,6 +23,16 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
   },
 });
 
+/** Access token da sessão atual — obrigatório para /api/ai */
+export async function getSupabaseAccessToken(): Promise<string | null> {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) {
+    console.error('getSupabaseAccessToken:', error.message);
+    return null;
+  }
+  return data.session?.access_token ?? null;
+}
+
 // Listener global — registrado imediatamente após criação do cliente
 // Captura PASSWORD_RECOVERY antes do React montar
 supabase.auth.onAuthStateChange((event) => {

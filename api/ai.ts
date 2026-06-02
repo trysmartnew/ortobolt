@@ -5,6 +5,7 @@
 // ✅ GEMINI_API_KEY apenas no servidor
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { verifySupabaseBearer } from './lib/verifySupabaseJwt';
 
 // ── Modelos Gemini (OpenAI-compatible) ───────────────────────────────────────
 const GEMINI_BASE    = 'https://generativelanguage.googleapis.com/v1beta/openai';
@@ -79,14 +80,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // 2. Chave
+  // 2. Autenticação Supabase (JWT obrigatório)
+  const auth = await verifySupabaseBearer(req.headers.authorization);
+  if (!auth.ok) {
+    return res.status(auth.status).json({ error: auth.error });
+  }
+
+  // 3. Chave Gemini
   const key = process.env.GEMINI_API_KEY;
   if (!key) {
     console.error('[AI Proxy] GEMINI_API_KEY não configurada');
@@ -101,12 +108,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       stream?: boolean;
     };
 
-    // 3. Payload size
+    // 4. Payload size
     if (JSON.stringify(body).length > 5 * 1024 * 1024) {
       return res.status(413).json({ error: 'Payload too large (max 5MB)' });
     }
 
-    // 4. LGPD
+    // 5. LGPD
     const sanitizedMessages = body.messages.map((msg) => {
       if (msg.role === 'user' && typeof msg.content === 'string') {
         return { ...msg, content: anonymizeCaseContext(msg.content) };
@@ -117,7 +124,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const maxTokens = Math.min(body.max_tokens ?? 1000, 1000);
     const isStream  = body.stream === true;
 
-    // 5. Stream SSE
+    // 6. Stream SSE
     if (isStream) {
       let streamRes = await callGemini(PRIMARY_MODEL, sanitizedMessages, maxTokens, key, true).catch(
         () => new Response(null, { status: 503 })
@@ -153,7 +160,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
-    // 6. Request normal — Primary
+    // 7. Request normal — Primary
     let response: Response;
     try {
       response = await callGemini(PRIMARY_MODEL, sanitizedMessages, maxTokens, key);
@@ -162,7 +169,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       response = new Response(null, { status: 503 });
     }
 
-    // 7. Fallback
+    // 8. Fallback
     if (!response.ok && [429, 503, 500].includes(response.status)) {
       console.warn(`[AI Proxy] Primary failed (${response.status}). Fallback → ${FALLBACK_MODEL}`);
       try {
