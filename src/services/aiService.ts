@@ -155,7 +155,7 @@ async function proxyRequest(body: {
   messages: ProxyMessage[];
   max_tokens?: number;
 }): Promise<string> {
-  const cacheKey = getCacheKey(body.model, body.messages);
+  const cacheKey = getCacheKey(body.model, body.messages); // agora inclui tamanho total
   const cached = getCachedResponse(cacheKey);
   if (cached) {
     if (import.meta.env.DEV) console.log('📦 Cache hit:', cacheKey.slice(0, 40));
