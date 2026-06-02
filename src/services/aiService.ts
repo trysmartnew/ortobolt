@@ -115,7 +115,7 @@ export async function compressImageBase64(
 }
 
 const AI_PROXY = '/api/ai';
-const PRIMARY_MODEL = 'google/gemma-4-31b-it:free';
+const PRIMARY_MODEL = 'gemini-2.5-flash-lite';  // Gemini API direta
 
 function stripThinking(text: string): string {
   return text.replace(/<think>[\s\S]*?<\/think>|<thinking>[\s\S]*?<\/thinking>/gi, '').trim();

@@ -1,25 +1,15 @@
 // api/ai.ts — Vercel Serverless Function (Node.js Runtime)
-// ✅ Fallback automático em cascata: 3 modelos com visão (Vision)
-// ✅ Retry 3x por modelo (total até 9 tentativas)
-// ✅ OPENROUTER_API_KEY apenas no servidor (process.env)
+// ✅ Gemini API direta — 1.500 req/dia free, sem OpenRouter
+// ✅ Cascade: gemini-2.5-flash-lite (primary) → gemini-2.5-flash (fallback)
+// ✅ OpenAI-compatible endpoint do Google
+// ✅ GEMINI_API_KEY apenas no servidor
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// ── Modelos com Visão (Vision) ────────────────────────────────────────────────
-const PRIMARY_MODEL = 'google/gemma-4-31b-it:free';  // Google — quality 65, melhor visão free
-const FALLBACK_1    = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';  // NVIDIA Omni — visão, estável
-const FALLBACK_2    = 'google/gemma-4-26b-a4b-it:free';  // Google MoE — visão, 262K ctx
-
-// Whitelist — aceita também modelos legados para não quebrar clientes antigos
-const ALLOWED_MODELS = [
-  PRIMARY_MODEL,
-  FALLBACK_1,
-  FALLBACK_2,
-  'meta-llama/llama-4-maverick:free',  // legado visão
-  'deepseek/deepseek-v4-flash:free',  // legado (texto)
-  'meta-llama/llama-3.3-70b-instruct:free',  // legado (texto)
-] as const;
-type AllowedModel = typeof ALLOWED_MODELS[number];
+// ── Modelos Gemini (OpenAI-compatible) ───────────────────────────────────────
+const GEMINI_BASE    = 'https://generativelanguage.googleapis.com/v1beta/openai';
+const PRIMARY_MODEL  = 'gemini-2.5-flash-lite';
+const FALLBACK_MODEL = 'gemini-2.5-flash';
 
 // ── Anonimizador LGPD ────────────────────────────────────────────────────────
 function anonymizeCaseContext(ctx: string): string {
@@ -31,12 +21,13 @@ function anonymizeCaseContext(ctx: string): string {
     .replace(/\d{3}\.?\d{3}\.?\d{3}-?\d{2}/g, '[CPF]');
 }
 
-// ── Chamada OpenRouter com retry ──────────────────────────────────────────────
-async function callOpenRouter(
+// ── Chamada Gemini com retry ──────────────────────────────────────────────────
+async function callGemini(
   model: string,
   messages: Array<{ role: string; content: unknown }>,
   maxTokens: number,
-  key: string
+  key: string,
+  stream = false
 ): Promise<Response> {
   const maxAttempts = 3;
   let lastResponse: Response | null = null;
@@ -44,18 +35,20 @@ async function callOpenRouter(
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const response = await fetch(`${GEMINI_BASE}/chat/completions`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${key}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://ortobolt.vercel.app',
-          'X-Title': 'OrtoBolt - Veterinary Orthopedics',
         },
-        body: JSON.stringify({ model, messages, max_tokens: maxTokens }),
+        body: JSON.stringify({
+          model,
+          messages,
+          max_tokens: maxTokens,
+          ...(stream && { stream: true }),
+        }),
       });
 
-      // Sucesso ou erro não-retryable → retorna imediatamente
       if (response.status !== 429 && response.status !== 503 && response.status !== 500) {
         return response;
       }
@@ -70,7 +63,7 @@ async function callOpenRouter(
   }
 
   if (lastResponse) return lastResponse;
-  throw lastError ?? new Error('OpenRouter unreachable');
+  throw lastError ?? new Error('Gemini unreachable');
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────────
@@ -94,30 +87,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // 2. Chave
-  const key = process.env.OPENROUTER_API_KEY;
+  const key = process.env.GEMINI_API_KEY;
   if (!key) {
-    console.error('[AI Proxy] OPENROUTER_API_KEY não configurada');
-    return res.status(500).json({ error: 'OpenRouter API key not configured on server' });
+    console.error('[AI Proxy] GEMINI_API_KEY não configurada');
+    return res.status(500).json({ error: 'Gemini API key not configured on server' });
   }
 
   try {
     const body = req.body as {
-      model: string;
+      model?: string;
       messages: { role: string; content: unknown }[];
       max_tokens?: number;
+      stream?: boolean;
     };
 
-    // 3. Whitelist
-    if (!ALLOWED_MODELS.includes(body.model as AllowedModel)) {
-      return res.status(400).json({ error: `Modelo não permitido: ${body.model}` });
-    }
-
-    // 4. Payload size
+    // 3. Payload size
     if (JSON.stringify(body).length > 5 * 1024 * 1024) {
       return res.status(413).json({ error: 'Payload too large (max 5MB)' });
     }
 
-    // 5. LGPD
+    // 4. LGPD
     const sanitizedMessages = body.messages.map((msg) => {
       if (msg.role === 'user' && typeof msg.content === 'string') {
         return { ...msg, content: anonymizeCaseContext(msg.content) };
@@ -126,24 +115,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     const maxTokens = Math.min(body.max_tokens ?? 1000, 1000);
-    const isStream = body.stream === true;
+    const isStream  = body.stream === true;
 
-    // Stream SSE — passa diretamente ao OpenRouter e faz pipe da resposta
+    // 5. Stream SSE
     if (isStream) {
-      const streamRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${key}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://ortobolt.vercel.app',
-          'X-Title': 'OrtoBolt - Veterinary Orthopedics',
-        },
-        body: JSON.stringify({ model: PRIMARY_MODEL, messages: sanitizedMessages, max_tokens: maxTokens, stream: true }),
-      });
+      let streamRes = await callGemini(PRIMARY_MODEL, sanitizedMessages, maxTokens, key, true).catch(
+        () => new Response(null, { status: 503 })
+      );
+
+      if (!streamRes.ok && [429, 503, 500].includes(streamRes.status)) {
+        console.warn(`[AI Proxy] Stream primary failed (${streamRes.status}). Fallback → ${FALLBACK_MODEL}`);
+        streamRes = await callGemini(FALLBACK_MODEL, sanitizedMessages, maxTokens, key, true).catch(
+          () => new Response(null, { status: 503 })
+        );
+      }
+
       if (!streamRes.ok) {
         const errText = await streamRes.text();
         return res.status(streamRes.status).json({ error: errText });
       }
+
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('X-Accel-Buffering', 'no');
@@ -162,38 +153,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
-    // 6. Primário
+    // 6. Request normal — Primary
     let response: Response;
     try {
-      response = await callOpenRouter(PRIMARY_MODEL, sanitizedMessages, maxTokens, key);
+      response = await callGemini(PRIMARY_MODEL, sanitizedMessages, maxTokens, key);
     } catch (err) {
       console.error('[AI Proxy] Primary network error:', err);
       response = new Response(null, { status: 503 });
     }
 
-    // 7. Fallback 1 (429, 503, 500 ou erro de rede)
+    // 7. Fallback
     if (!response.ok && [429, 503, 500].includes(response.status)) {
-      console.warn(
-        `[AI Proxy] Primary ${PRIMARY_MODEL} failed (${response.status}). Fallback 1 → ${FALLBACK_1}`
-      );
+      console.warn(`[AI Proxy] Primary failed (${response.status}). Fallback → ${FALLBACK_MODEL}`);
       try {
-        response = await callOpenRouter(FALLBACK_1, sanitizedMessages, maxTokens, key);
+        response = await callGemini(FALLBACK_MODEL, sanitizedMessages, maxTokens, key);
       } catch (err) {
-        console.error('[AI Proxy] Fallback 1 network error:', err);
-        response = new Response(null, { status: 503 });
-      }
-    }
-
-    // 8. Fallback 2 (se Fallback 1 também falhou)
-    if (!response.ok && [429, 503, 500].includes(response.status)) {
-      console.warn(
-        `[AI Proxy] Fallback 1 ${FALLBACK_1} failed (${response.status}). Fallback 2 → ${FALLBACK_2}`
-      );
-      try {
-        response = await callOpenRouter(FALLBACK_2, sanitizedMessages, maxTokens, key);
-      } catch (err) {
-        console.error('[AI Proxy] Fallback 2 network error:', err);
-        return res.status(503).json({ error: 'All providers unreachable' });
+        console.error('[AI Proxy] Fallback network error:', err);
+        return res.status(503).json({ error: 'All Gemini providers unreachable' });
       }
     }
 
@@ -204,23 +180,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const data = await response.json();
-    // OpenRouter pode retornar HTTP 200 com body de erro — detectar e acionar fallback
-    if (data?.error?.code === '500' || data?.error?.code === 429 || data?.error?.type === 'error') {
-      console.warn('[AI Proxy] OpenRouter soft error:', JSON.stringify(data.error));
-      // Tentar fallback 1
-      let fbRes = await callOpenRouter(FALLBACK_1, sanitizedMessages, maxTokens, key).catch(() => null);
-      let fbData = fbRes?.ok ? await fbRes.json() : null;
-      if (!fbData?.choices?.[0]?.message?.content) {
-        // Tentar fallback 2
-        fbRes = await callOpenRouter(FALLBACK_2, sanitizedMessages, maxTokens, key).catch(() => null);
-        fbData = fbRes?.ok ? await fbRes.json() : null;
-      }
-      if (fbData?.choices?.[0]?.message?.content) {
-        return res.status(200).json(fbData);
-      }
-      return res.status(503).json({ error: 'All providers returned errors' });
-    }
     return res.status(200).json(data);
+
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Erro desconhecido';
     console.error('[AI Proxy] Internal error:', msg);
