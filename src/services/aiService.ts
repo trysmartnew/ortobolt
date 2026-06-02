@@ -6,6 +6,11 @@
 // ✅ CACHE: getCacheKey usa msgCount:lastContent (não SYSTEM_PROMPT)
 
 import type { ClinicalCase } from '@/types/index';
+import type { ClinicalCopilotPayload } from '@/types/clinicalCopilot';
+import {
+  buildClinicalCopilotSystemMessage,
+  REFINE_ANALYSIS_PROMPT,
+} from '@/services/veterinaryPrompts';
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
 interface CacheEntry {
@@ -119,6 +124,20 @@ const PRIMARY_MODEL = 'gemini-2.5-flash-lite';  // Gemini API direta
 
 function stripThinking(text: string): string {
   return text.replace(/<think>[\s\S]*?<\/think>|<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
+}
+
+function buildImageDataUrl(compressedBase64: string): string {
+  return `data:image/jpeg;base64,${compressedBase64}`;
+}
+
+function buildMultimodalUserContent(
+  text: string,
+  imageDataUrl: string
+): Array<{ type: 'text' | 'image_url'; text?: string; image_url?: { url: string } }> {
+  return [
+    { type: 'text', text },
+    { type: 'image_url', image_url: { url: imageDataUrl } },
+  ];
 }
 
 // ── System Prompt ─────────────────────────────────────────────────────────────
@@ -299,22 +318,21 @@ export async function analyzeImage(
       ? `Paciente: ${patientRef}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears}a, ${caseInfo.weightKg}kg. Procedimento: ${caseInfo.procedure}. Status: ${caseInfo.status ?? 'pending'}.`
       : '';
 
+    const promptText = caseInfo
+      ? caseInfo.status === 'completed'
+        ? `\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
+        : `\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.`
+      : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.`;
+
     return await proxyRequest({
       model: PRIMARY_MODEL,
       messages: [
         {
           role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: caseInfo
-                ? (caseInfo.status === 'completed'
-                  ? `\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
-                  : `\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.`)
-                : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.`,
-              image_url: { url: `data:image/jpeg;base64,${compressed}` },
-            },
-          ],
+          content: buildMultimodalUserContent(
+            promptText,
+            buildImageDataUrl(compressed)
+          ),
         },
       ],
       max_tokens: 1000,
@@ -362,5 +380,125 @@ export async function getCaseAISuggestion(
   } catch (err) {
     console.error('AI suggestion error:', err);
     return '⚠️ Erro ao gerar sugestão de IA. Tente novamente em alguns instantes.';
+  }
+}
+
+// ── Copiloto Clínico — radiografia + contexto + histórico ─────────────────────
+
+export async function sendClinicalCopilotStream(
+  payload: ClinicalCopilotPayload,
+  onChunk: (accumulatedText: string) => void
+): Promise<string> {
+  const compressed = await compressImageBase64(payload.imageBase64);
+  const imageDataUrl = buildImageDataUrl(compressed);
+
+  const systemContent = buildClinicalCopilotSystemMessage({
+    visionAnalysis: payload.visionAnalysis,
+    refinedAnalysis: payload.refinedAnalysis,
+    clinicalContext: payload.clinicalContext,
+  });
+
+  const userText = `[Radiografia anexada]\n\nPergunta do veterinário:\n${payload.userMessage}`;
+
+  const messages: ProxyMessage[] = [
+    { role: 'system', content: systemContent },
+    ...payload.history.map((m) => ({
+      role: m.role as 'user' | 'assistant',
+      content: m.content,
+    })),
+    {
+      role: 'user',
+      content: buildMultimodalUserContent(userText, imageDataUrl),
+    },
+  ];
+
+  const res = await fetch(AI_PROXY, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: PRIMARY_MODEL,
+      messages,
+      max_tokens: 1200,
+      stream: true,
+    }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`AI proxy ${res.status}: ${errText}`);
+  }
+
+  const reader = res.body!.getReader();
+  const decoder = new TextDecoder();
+  let accumulated = '';
+  let buffer = '';
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data: ')) continue;
+        const data = trimmed.slice(6);
+        if (data === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(data);
+          const token = parsed.choices?.[0]?.delta?.content ?? '';
+          if (token) {
+            accumulated += token;
+            onChunk(stripThinking(accumulated));
+          }
+        } catch {
+          /* chunk inválido */
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  return stripThinking(accumulated) || 'Resposta não disponível.';
+}
+
+/** Consolida chat + contexto em análise visual refinada (multimodal) */
+export async function refineClinicalAnalysis(
+  payload: ClinicalCopilotPayload
+): Promise<string> {
+  const compressed = await compressImageBase64(payload.imageBase64);
+  const imageDataUrl = buildImageDataUrl(compressed);
+
+  const chatBlock = payload.history.length
+    ? payload.history
+        .map((m) => `${m.role === 'user' ? 'Veterinário' : 'Copiloto'}: ${m.content}`)
+        .join('\n\n')
+    : '(Sem mensagens no copiloto ainda.)';
+
+  const contextBlock = buildClinicalCopilotSystemMessage({
+    visionAnalysis: payload.visionAnalysis,
+    refinedAnalysis: payload.refinedAnalysis,
+    clinicalContext: payload.clinicalContext,
+  });
+
+  const prompt = `${REFINE_ANALYSIS_PROMPT}${chatBlock}\n\n---\n${contextBlock}`;
+
+  try {
+    return await proxyRequest({
+      model: PRIMARY_MODEL,
+      messages: [
+        {
+          role: 'user',
+          content: buildMultimodalUserContent(prompt, imageDataUrl),
+        },
+      ],
+      max_tokens: 1200,
+    });
+  } catch (err) {
+    console.error('Refine analysis error:', err);
+    throw err;
   }
 }

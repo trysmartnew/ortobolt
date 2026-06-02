@@ -26,9 +26,10 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   ],
   analysis: [
     { target: '__welcome__', title: '🔬 Análise Visual com IA', content: 'Analise radiografias e fotos clínicas com visão computacional. Detecta landmarks anatômicos, mede ângulos e sugere diagnósticos.', placement: 'center' },
-    { target: 'tour-webcam', title: '📷 Captura ao Vivo', content: 'Ative a câmera para capturar imagens. O crosshair central ajuda no alinhamento. Clique em "Capturar" para fotografar.', placement: 'right', highlight: true },
-    { target: 'tour-upload', title: '📁 Upload de Imagem', content: 'Arraste ou clique para fazer upload de radiografias, fotos cirúrgicas ou imagens de RM. Suporta JPG, PNG e WEBP.', placement: 'left', highlight: true },
+    { target: 'tour-upload', title: '📁 Upload de Imagem', content: 'Clique para fazer upload de radiografias, fotos cirúrgicas ou imagens de RM. Suporta JPG, PNG e WEBP.', placement: 'bottom', highlight: true },
     { target: 'tour-analysis-result', title: '🧠 Resultado da Análise', content: 'O OrthoVision AI identifica estruturas anatômicas, mede ângulos articulares e sugere diagnósticos diferenciais com score de confiança.', placement: 'top', highlight: true },
+    { target: 'tour-clinical-copilot', title: '💬 Copiloto Clínico', content: 'Chat contextual com memória de sessão: a IA usa a radiografia, o contexto clínico e o histórico para refinar a interpretação. Use "Refinar análise" para consolidar o chat.', placement: 'left', highlight: true },
+    { target: 'tour-approve-case', title: '✅ Caso Completo', content: 'Ao aprovar, o caso preenche automaticamente Galeria, Caso, Dashboard e Relatórios — sem retrabalho manual.', placement: 'top', highlight: true },
   ],
   gallery: [
     { target: '__welcome__', title: '🗂️ Galeria de Casos Clínicos', content: 'Acervo completo dos seus casos ortopédicos com filtros avançados por espécie, procedimento, status e data.', placement: 'center' },

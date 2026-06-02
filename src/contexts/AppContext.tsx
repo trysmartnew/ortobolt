@@ -30,6 +30,14 @@ import type {
 } from '@/types/index';
 import { supabase, fetchUserProfile, upsertUserProfile } from '@/services/supabase';
 import { isAuthRetryableFetchError } from '@supabase/auth-js';
+import type { ApproveCompleteCaseInput } from '@/types/casePipeline';
+import {
+  buildIntegratedClinicalCase,
+  enrichCaseWithPersistedAi,
+  loadPersistedAiAnalysis,
+  persistCaseAiAnalysis,
+  setLastIntegratedCaseId,
+} from '@/services/clinicalCaseIntegrationService';
 
 export type Page =
   | 'dashboard' | 'chat' | 'analysis' | 'gallery'
@@ -57,6 +65,7 @@ interface AppContextType {
   setCurrentPage: (p: Page) => void;
   cases: ClinicalCase[];
   addCase: (c: ClinicalCase) => void;
+  approveAndIntegrateCase: (input: ApproveCompleteCaseInput) => ClinicalCase;
   updateCase: (id: string, updates: Partial<ClinicalCase>) => void;
   deleteCase: (id: string) => void;
   activeCase: ClinicalCase | null;
@@ -102,8 +111,23 @@ function mapCaseFromDB(row: Record<string, unknown>): ClinicalCase {
     avatarUrl:     row.avatar_url != null ? String(row.avatar_url) : undefined,
     notes:          row.notes != null ? String(row.notes) : undefined,
     veterinarianId: String(row.veterinarian_id ?? row.veterinarianId ?? ''),
-    aiAnalysis:     undefined,
+    aiAnalysis:     loadAiAnalysisFromRow(row),
   };
+}
+
+function loadAiAnalysisFromRow(row: Record<string, unknown>) {
+  const id = String(row.id ?? '');
+  if (row.ai_analysis != null && typeof row.ai_analysis === 'object') {
+    return row.ai_analysis as ClinicalCase['aiAnalysis'];
+  }
+  if (typeof row.ai_analysis === 'string') {
+    try {
+      return JSON.parse(row.ai_analysis) as ClinicalCase['aiAnalysis'];
+    } catch {
+      /* fallback local */
+    }
+  }
+  return loadPersistedAiAnalysis(id);
 }
 
 
@@ -178,7 +202,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
           return;
         }
         if (data) {
-          setCases(data.map(row => mapCaseFromDB(row as Record<string, unknown>)));
+          setCases(
+            data
+              .map((row) => mapCaseFromDB(row as Record<string, unknown>))
+              .map(enrichCaseWithPersistedAi)
+          );
         }
       });
   }, [user]);
@@ -320,34 +348,66 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addCase = useCallback((c: ClinicalCase) => {
-    setCases((prev) => [c, ...prev]);
+    const enriched = enrichCaseWithPersistedAi(c);
+    setCases((prev) => [enriched, ...prev]);
+    if (enriched.aiAnalysis) {
+      persistCaseAiAnalysis(enriched.id, enriched.aiAnalysis);
+    }
     supabase.from('clinical_cases').insert({
-      id:              c.id,
-      title:           c.title,
-      patient_name:    c.patientName,
-      species:         c.species,
-      breed:           c.breed,
-      age_years:       c.ageYears,
-      weight_kg:       c.weightKg,
-      procedure:       c.procedure,
-      status:          c.status,
-      risk_level:      c.riskLevel,
-      tags:            c.tags,
-      notes:           c.notes ?? null,
-      veterinarian_id: c.veterinarianId,
-      created_at:      c.createdAt,
-      updated_at:      c.updatedAt,
+      id:              enriched.id,
+      title:           enriched.title,
+      patient_name:    enriched.patientName,
+      species:         enriched.species,
+      breed:           enriched.breed,
+      age_years:       enriched.ageYears,
+      weight_kg:       enriched.weightKg,
+      procedure:       enriched.procedure,
+      status:          enriched.status,
+      risk_level:      enriched.riskLevel,
+      precision_score: enriched.precisionScore ?? null,
+      tags:            enriched.tags,
+      notes:           enriched.notes ?? null,
+      image_url:       enriched.imageUrl ?? null,
+      veterinarian_id: enriched.veterinarianId,
+      created_at:      enriched.createdAt,
+      updated_at:      enriched.updatedAt,
     }).then(({ error }) => {
       if (error) {
         console.error('addCase Supabase error:', error.message);
-        setCases((prev) => prev.filter((cas) => cas.id !== c.id));
+        setCases((prev) => prev.filter((cas) => cas.id !== enriched.id));
       }
     });
   }, []);
 
+  const approveAndIntegrateCase = useCallback(
+    (input: ApproveCompleteCaseInput): ClinicalCase => {
+      const clinicalCase = buildIntegratedClinicalCase(input);
+      persistCaseAiAnalysis(clinicalCase.id, clinicalCase.aiAnalysis);
+      setLastIntegratedCaseId(clinicalCase.id);
+      addCase(clinicalCase);
+      setNotifications((prev) => [
+        {
+          id: `n-pipeline-${Date.now()}`,
+          type: 'success',
+          title: 'Caso completo integrado',
+          message: `${clinicalCase.patientName} foi registrado na galeria, dashboard e relatórios.`,
+          timestamp: new Date().toISOString(),
+          read: false,
+          caseId: clinicalCase.id,
+        },
+        ...prev,
+      ]);
+      return clinicalCase;
+    },
+    [addCase]
+  );
+
   const updateCase = useCallback((id: string, updates: Partial<ClinicalCase>) => {
-    setCases((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
-    setActiveCase((prev) => (prev?.id === id ? { ...prev, ...updates } : prev));
+    const merge = (c: ClinicalCase) =>
+      enrichCaseWithPersistedAi({ ...c, ...updates, updatedAt: new Date().toISOString() });
+
+    setCases((prev) => prev.map((c) => (c.id === id ? merge(c) : c)));
+    setActiveCase((prev) => (prev?.id === id && prev ? merge(prev) : prev));
     const dbUpdates: Record<string, unknown> = {};
     if (updates.status        !== undefined) dbUpdates.status          = updates.status;
     if (updates.riskLevel     !== undefined) dbUpdates.risk_level      = updates.riskLevel;
@@ -356,6 +416,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (updates.title         !== undefined) dbUpdates.title           = updates.title;
     if (updates.imageUrl      !== undefined) dbUpdates.image_url      = updates.imageUrl;
     if (updates.avatarUrl      !== undefined) dbUpdates.avatar_url      = updates.avatarUrl;
+    if (updates.aiAnalysis !== undefined) {
+      persistCaseAiAnalysis(id, updates.aiAnalysis);
+    }
     dbUpdates.updated_at = new Date().toISOString();
 
     supabase.from('clinical_cases').update(dbUpdates).eq('id', id)
@@ -423,7 +486,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       user, isLoggedIn, authLoading, currentView, setCurrentView,
       login, logout, setUserFromSession,
       currentPage, setCurrentPage,
-      cases, addCase, updateCase, deleteCase,
+      cases, addCase, approveAndIntegrateCase, updateCase, deleteCase,
       activeCase, openCase, closeCase,
       notifications, unreadCount, markAllRead, markRead, addNotification,
       chatHistory, setChatHistory,

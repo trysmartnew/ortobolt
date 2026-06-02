@@ -78,8 +78,12 @@ export default function DashboardPage() {
     const today = cases.filter(c => new Date(c.createdAt) >= todayStart);
     const yesterday = cases.filter(c => new Date(c.createdAt) >= yesterdayStart && new Date(c.createdAt) < todayStart);
     
-    const surgicalProcedures = ['tplo','fho','tta','lcp_repair','fracture_fixation','joint_replacement','spinal_surgery'];
-    const surgeries = today.filter(c => surgicalProcedures.includes(c.procedure?.toLowerCase() || ''));
+    const surgicalProcedures = ['TPLO','FHO','TTA','LCP_repair','fracture_fixation','joint_replacement','spinal_surgery','tplo','fho','tta'];
+    const surgeries = today.filter((c) =>
+      surgicalProcedures.some(
+        (p) => p.toLowerCase() === (c.procedure ?? '').toLowerCase()
+      )
+    );
     
     const triage = [...cases].sort((a,b) => getClinicalPriority(a.status) - getClinicalPriority(b.status)).slice(0,4);
     

@@ -1,5 +1,6 @@
 // ✅ Produção Real — Dados do Supabase (SEM MOCKS)
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { pickCaseForReport } from '@/services/clinicalCaseIntegrationService';
 import { supabase } from '@/services/supabase';
 import type { Report, KPIMetric, ChartDataPoint } from '@/types/index';
 import { Download, FileText, Clock, CheckCircle, AlertCircle } from 'lucide-react';
@@ -22,7 +23,12 @@ const TYPE_COLORS: Record<string, 'blue'|'success'|'warning'|'info'> = {
 };
 
 export default function ReportsPage() {
-  const { user, cases } = useApp();
+  const { user, cases, activeCase } = useApp();
+
+  const reportableCase = useMemo(
+    () => pickCaseForReport(cases, activeCase),
+    [cases, activeCase]
+  );
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState<string | null>(null);
@@ -126,15 +132,14 @@ export default function ReportsPage() {
 
   const downloadCase = async () => {
     if (!user) return;
-    const completedCase = cases.find(c => c.aiAnalysis);
-    if (!completedCase) {
+    if (!reportableCase) {
       setNoCaseToast(true);
       setTimeout(() => setNoCaseToast(false), 3000);
       return;
     }
     setGenerating('case');
     try {
-      await generateCaseReport(completedCase);
+      await generateCaseReport(reportableCase);
     } finally {
       setGenerating(null);
     }
@@ -147,9 +152,8 @@ export default function ReportsPage() {
       if (r.type === 'monthly') {
         // ✅ Usar dados REAIS (não mocks)
         await generateMonthlyReport(user, kpiMetrics, chartData, cases);
-      } else if (r.type === 'case') {
-        const caseData = cases.find(c => c.aiAnalysis);
-        if (caseData) await generateCaseReport(caseData);
+      } else if (r.type === 'case' && reportableCase) {
+        await generateCaseReport(reportableCase);
       }
     } finally {
       setDownloadingId(null);
@@ -210,11 +214,15 @@ export default function ReportsPage() {
             </div>
             <div>
               <p className="font-bold text-slate-900 text-sm">Relatório de Caso</p>
-              <p className="text-xs text-slate-500">Análise IA detalhada de um procedimento</p>
+              <p className="text-xs text-slate-500">
+                {reportableCase
+                  ? `${reportableCase.patientName} · ${reportableCase.procedure}`
+                  : 'Aprove um caso na Análise'}
+              </p>
             </div>
           </div>
           <p className="text-xs text-slate-500 mb-4 font-mono">
-            Exibe dados do paciente, landmarks detectados, score de precisão, fatores de risco e recomendações do OrthoVision.
+            Usa o último caso integrado (Análise → Aprovar) ou o caso aberto em Caso.
           </p>
           <Button 
             className="w-full" 

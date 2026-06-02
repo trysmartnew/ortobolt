@@ -363,7 +363,12 @@ export default function CasePage() {
 
   const handleGoToReports = () => {
     setCurrentPage('reports');
-    addToast('Abrindo relatórios — selecione o caso para gerar PDF.', 'info');
+    addToast(
+      activeCase.aiAnalysis
+        ? 'Relatórios: o PDF usará este caso integrado.'
+        : 'Aprove um caso na Análise para gerar PDF com laudo IA.',
+      'info'
+    );
   };
 
   const progress = protocol.steps.length > 0 ? Math.round((completedSteps.length / protocol.steps.length) * 100) : 0;
@@ -490,6 +495,37 @@ export default function CasePage() {
               </div>
             )}
           </Card>
+
+          {activeCase.aiAnalysis && (
+            <Card className="p-5">
+              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-3">
+                <Activity size={16} /> Análise IA Integrada
+              </h2>
+              <p className="text-xs text-slate-500 mb-3 font-mono">
+                Confiança {(activeCase.aiAnalysis.confidence * 100).toFixed(0)}% ·{' '}
+                {activeCase.aiAnalysis.recommendations.length} recomendações
+              </p>
+              <ul className="space-y-1 mb-3">
+                {activeCase.aiAnalysis.recommendations.slice(0, 5).map((r, i) => (
+                  <li key={i} className="text-xs text-slate-700 flex gap-2">
+                    <span className="text-[#0056b3]">›</span> {r}
+                  </li>
+                ))}
+              </ul>
+              {activeCase.aiAnalysis.anatomicalLandmarks.length > 0 && (
+                <div className="border-t border-slate-100 pt-3 space-y-1">
+                  {activeCase.aiAnalysis.anatomicalLandmarks.map((l) => (
+                    <div key={l.name} className="flex justify-between text-xs">
+                      <span className="text-slate-600">{l.name}</span>
+                      <span className="font-mono text-emerald-600">
+                        {l.detected ? `${(l.confidence * 100).toFixed(0)}%` : '—'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          )}
 
           {/* Notas Clínicas */}
           <Card className="p-5">
