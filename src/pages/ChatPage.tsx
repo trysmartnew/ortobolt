@@ -129,7 +129,7 @@ export default function ChatPage() {
       <div className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 flex-shrink-0">
         <div>
           <h1 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>OrthoAI Assistant</h1>
-          <p className="text-xs text-slate-400 font-mono">Ativo · OpenRouter · OrthoVision v3.2</p>
+          <p className="text-xs text-slate-400 font-mono">Ativo · Gemini 2.5 Flash · Assistente IA</p>
         </div>
         <button
           onClick={() => setChatHistory(h => h.length > 0 ? [h[0]] : h)}
