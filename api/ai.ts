@@ -5,8 +5,72 @@
 // ✅ GEMINI_API_KEY apenas no servidor
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifySupabaseBearer } from './lib/verifySupabaseJwt';
+// [Incorporado] verifySupabaseBearer – import removido (função inline abaixo)
 
+
+// ── Função verifySupabaseBearer (incorporada de api/lib/verifySupabaseJwt.ts) ─
+import { createClient, type User } from '@supabase/supabase-js';
+
+type VerifyAuthResult =
+  | { ok: true; user: User }
+  | { ok: false; status: 401 | 500; error: string };
+
+function createAuthClient() {
+  const url =
+    process.env.SUPABASE_URL ??
+    process.env.VITE_SUPABASE_URL;
+  const anonKey =
+    process.env.SUPABASE_ANON_KEY ??
+    process.env.VITE_SUPABASE_ANON_KEY;
+
+  if (!url || !anonKey) {
+    return null;
+  }
+
+  return createClient(url, anonKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+
+async function verifySupabaseBearer(
+  authHeader: string | string[] | undefined
+): Promise<VerifyAuthResult> {
+  const raw =
+    typeof authHeader === 'string'
+      ? authHeader
+      : Array.isArray(authHeader)
+      ? authHeader[0]
+      : undefined;
+
+  if (!raw?.trim()) {
+    return { ok: false, status: 401, error: 'Authentication required' };
+  }
+
+  const match = raw.match(/^Bearer\s+(\S+)$/i);
+  if (!match?.[1]) {
+    return { ok: false, status: 401, error: 'Invalid Authorization header' };
+  }
+
+  const token = match[1];
+  const supabase = createAuthClient();
+
+  if (!supabase) {
+    console.error('[AI Proxy] SUPABASE_URL / SUPABASE_ANON_KEY not configured');
+    return {
+      ok: false,
+      status: 500,
+      error: 'Authentication service not configured',
+    };
+  }
+
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error || !data.user) {
+    return { ok: false, status: 401, error: 'Invalid or expired token' };
+  }
+
+  return { ok: true, user: data.user };
+}
 // ── Rate Limiter in-memory (por userId, 30 req/min) ─────────────────────────
 const RL_WINDOW_MS = 60_000;
 const RL_MAX       = 30;
@@ -132,16 +196,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  // 2b. Rate limiting por usuário
-  const userId = userIdFromToken(req.headers.authorization);
-  const rl     = checkRateLimit(userId);
-  if (!rl.allowed) {
-    res.setHeader('Retry-After', String(rl.retryAfter));
-    return res.status(429).json({
-      error: `Taxa de requisicoes excedida. Aguarde ${rl.retryAfter}s.`,
-    });
-  }
-
   // 3. Chave Gemini
   const key = process.env.GEMINI_API_KEY;
   if (!key) {
@@ -244,4 +298,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
+
+
 

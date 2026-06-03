@@ -1,8 +1,14 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
   "functions": {
     "api/ai.ts": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "api/lib/**"
     }
   },
   "headers": [
@@ -33,5 +39,3 @@
     }
   ]
 }
-
-
