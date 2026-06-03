@@ -156,3 +156,32 @@ export async function upsertUserProfile(supaUser: {
   );
 }
 
+
+/** P0.1 — Upload de radiografia para bucket radiografias; retorna publicUrl ou null */
+export async function uploadRadiografia(
+  dataUrl: string,
+  storagePath: string
+): Promise<string | null> {
+  const sep    = dataUrl.indexOf(',');
+  const header = sep >= 0 ? dataUrl.slice(0, sep) : 'data:image/jpeg;base64';
+  const b64    = sep >= 0 ? dataUrl.slice(sep + 1) : dataUrl;
+  const mime   = header.match(/:(.*?);/)?.[1] ?? 'image/jpeg';
+  const ext    = mime.split('/')[1] ?? 'jpg';
+  const filePath = `${storagePath}.${ext}`;
+
+  const raw  = atob(b64);
+  const ab   = new ArrayBuffer(raw.length);
+  const view = new Uint8Array(ab);
+  for (let i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
+
+  const { error } = await supabase.storage
+    .from('radiografias')
+    .upload(filePath, new Blob([ab], { type: mime }), { contentType: mime, upsert: true });
+
+  if (error) {
+    console.error('[uploadRadiografia]', error.message);
+    return null;
+  }
+  const { data } = supabase.storage.from('radiografias').getPublicUrl(filePath);
+  return data.publicUrl;
+}

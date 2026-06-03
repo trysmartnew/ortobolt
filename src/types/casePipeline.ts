@@ -5,6 +5,7 @@ import type { ClinicalContextDraft } from '@/types/clinicalCopilot';
 export interface ApproveCompleteCaseInput {
   veterinarianId: string;
   imageDataUrl: string;
+  imageStorageUrl?: string;
   analysisText: string;
   clinicalContext: ClinicalContextDraft;
   copilotMessages?: ChatMessage[];

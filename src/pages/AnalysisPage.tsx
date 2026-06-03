@@ -4,6 +4,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
 import { analyzeImage } from '@/services/aiService';
+import { uploadRadiografia } from '@/services/supabase';
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
 import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
 import ApproveCompleteCaseBar from '@/components/analysis/ApproveCompleteCaseBar';
@@ -117,9 +118,12 @@ export default function AnalysisPage() {
     }
     setApproving(true);
     try {
+      const storagePath = `${user.id}-${Date.now()}`;
+      const imageStorageUrl = await uploadRadiografia(imageData, storagePath).catch(() => null) ?? undefined;
       const clinicalCase = approveAndIntegrateCase({
         veterinarianId: user.id,
         imageDataUrl: imageData,
+        imageStorageUrl,
         analysisText,
         clinicalContext: ctx,
         copilotMessages: session?.messages,

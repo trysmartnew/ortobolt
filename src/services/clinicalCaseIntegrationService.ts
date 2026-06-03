@@ -194,7 +194,7 @@ export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): Cl
     createdAt: now,
     updatedAt: now,
     tags: [procedure, species, PIPELINE_TAG_ANALYSIS, PIPELINE_TAG_INTEGRATED],
-    imageUrl: input.imageDataUrl,
+    imageUrl: input.imageStorageUrl ?? input.imageDataUrl,
     notes: formatIntegratedNotes(input.analysisText, input.copilotMessages),
     veterinarianId: input.veterinarianId,
     aiAnalysis,

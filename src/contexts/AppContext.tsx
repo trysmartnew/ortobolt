@@ -368,6 +368,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       tags:            enriched.tags,
       notes:           enriched.notes ?? null,
       image_url:       enriched.imageUrl ?? null,
+      ai_analysis:     enriched.aiAnalysis ?? null,
       veterinarian_id: enriched.veterinarianId,
       created_at:      enriched.createdAt,
       updated_at:      enriched.updatedAt,
@@ -417,6 +418,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (updates.imageUrl      !== undefined) dbUpdates.image_url      = updates.imageUrl;
     if (updates.avatarUrl      !== undefined) dbUpdates.avatar_url      = updates.avatarUrl;
     if (updates.aiAnalysis !== undefined) {
+      dbUpdates.ai_analysis = updates.aiAnalysis;
       persistCaseAiAnalysis(id, updates.aiAnalysis);
     }
     dbUpdates.updated_at = new Date().toISOString();
