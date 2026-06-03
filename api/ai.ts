@@ -34,6 +34,33 @@ function userIdFromToken(authHeader: string | undefined): string {
   } catch { return 'anon'; }
 }
 
+// ── Rate Limiter in-memory (por userId, 30 req/min) ─────────────────────────
+const RL_WINDOW_MS = 60_000;
+const RL_MAX       = 30;
+const rlMap        = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(uid: string): { allowed: boolean; retryAfter: number } {
+  const now = Date.now();
+  const rec = rlMap.get(uid);
+  if (!rec || now >= rec.resetAt) {
+    rlMap.set(uid, { count: 1, resetAt: now + RL_WINDOW_MS });
+    return { allowed: true, retryAfter: 0 };
+  }
+  if (rec.count >= RL_MAX) {
+    return { allowed: false, retryAfter: Math.ceil((rec.resetAt - now) / 1000) };
+  }
+  rec.count++;
+  return { allowed: true, retryAfter: 0 };
+}
+
+function userIdFromToken(authHeader: string | undefined): string {
+  if (!authHeader?.startsWith('Bearer ')) return 'anon';
+  try {
+    const payload = JSON.parse(Buffer.from(authHeader.slice(7).split('.')[1], 'base64').toString());
+    return (payload.sub as string) ?? 'anon';
+  } catch { return 'anon'; }
+}
+
 // ── Modelos Gemini (OpenAI-compatible) ───────────────────────────────────────
 const GEMINI_BASE    = 'https://generativelanguage.googleapis.com/v1beta/openai';
 const PRIMARY_MODEL  = 'gemini-2.5-flash-lite';
@@ -118,6 +145,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const auth = await verifySupabaseBearer(req.headers.authorization);
   if (!auth.ok) {
     return res.status(auth.status).json({ error: auth.error });
+  }
+
+  // 2b. Rate limiting por usuário
+  const userId = userIdFromToken(req.headers.authorization);
+  const rl     = checkRateLimit(userId);
+  if (!rl.allowed) {
+    res.setHeader('Retry-After', String(rl.retryAfter));
+    return res.status(429).json({
+      error: `Taxa de requisicoes excedida. Aguarde ${rl.retryAfter}s.`,
+    });
   }
 
   // 2b. Rate limiting por usuário
