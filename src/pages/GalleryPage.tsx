@@ -194,7 +194,7 @@ export default function GalleryPage() {
         title="Galeria de Casos Clínicos"
         subtitle={`${cases.length} casos no sistema`}
         action={
-          <Button size="sm" onClick={() => setShowAdd(true)}>
+          <Button size="sm" data-tour="tour-add-case" onClick={() => setShowAdd(true)}>
             <Plus size={14} /> Novo Caso
           </Button>
         }

@@ -221,7 +221,7 @@ export default function AnalysisPage() {
       )}
 
       {(mode === 'preview' || mode === 'analyzing') && imageData && (
-        <div data-tour="tour-analysis-result" className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div data-tour="tour-analysis-preview" className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Card className="p-4">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
               Imagem Capturada

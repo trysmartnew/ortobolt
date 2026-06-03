@@ -11,62 +11,72 @@ export interface TourStep {
 }
 
 export const TOUR_STEPS: Record<string, TourStep[]> = {
+  // ── Dashboard (inclui onboarding da Sidebar) ──────────────────────────────
   dashboard: [
-    { target: '__welcome__', title: '👋 Bem-vindo ao Centro de Comando Cirúrgico', content: 'Esta é sua central operacional. Aqui você vê suas cirurgias de hoje, casos críticos e métricas em tempo real — tudo focado no que importa AGORA.', placement: 'center' },
-    { target: 'tour-dashboard-hero', title: '☀️ Saudação Personalizada', content: 'Veja seu nome, data atual e resumo do dia: número de cirurgias, casos críticos e análises pendentes. Comece o dia com clareza.', placement: 'bottom', highlight: true },
-    { target: 'tour-dashboard-surgeries', title: '🏥 Cirurgias de Hoje', content: 'Suas cirurgias agendadas com status (concluída, próxima, agendada). Clique em qualquer cirurgia para ver o caso completo e protocolo.', placement: 'bottom', highlight: true },
-    { target: 'tour-dashboard-triage', title: '⚡ Triage Inteligente', content: 'Casos ordenados por prioridade clínica: críticos (🔴), em análise (🟡) e estáveis (🟢). Atenção imediata aos casos urgentes.', placement: 'left', highlight: true },
-    { target: 'tour-dashboard-metrics', title: '📊 Métricas Operacionais', content: 'Comparação hoje vs ontem: casos novos, análises feitas, laudos emitidos. Acompanhe sua produtividade em tempo real.', placement: 'top', highlight: true },
+    { target: '__welcome__', title: '👋 Bem-vindo ao OrtoBolt', content: 'Seu centro de comando para ortopedia veterinária. Este tour apresenta todos os módulos da plataforma — leva menos de 2 minutos.', placement: 'center' },
+    { target: 'tour-sidebar-analysis', title: '🔬 Análise Visual com IA', content: 'Faça upload de radiografias e imagens clínicas. A IA descreve achados, sugere diagnósticos diferenciais e integra o resultado ao caso clínico em 1 clique.', placement: 'right', highlight: true },
+    { target: 'tour-sidebar-chat', title: '🤖 OrthoAI — Assistente de Texto', content: 'Converse com a IA especializada em ortopedia veterinária para tirar dúvidas sobre protocolos, dosagens e diagnósticos diferenciais.', placement: 'right', highlight: true },
+    { target: 'tour-sidebar-gallery', title: '🗂️ Galeria de Casos', content: 'Acervo completo de casos clínicos com filtros por status, espécie e procedimento. Casos aprovados via Análise chegam aqui automaticamente.', placement: 'right', highlight: true },
+    { target: 'tour-sidebar-reports', title: '📄 Relatórios em PDF', content: 'Gere relatórios profissionais: mensal com métricas consolidadas ou individual por caso cirúrgico. Download em 1 clique.', placement: 'right', highlight: true },
+    { target: 'tour-sidebar-profile', title: '👤 Perfil Profissional', content: 'Estatísticas de carreira, certificações e radar de competências por área de especialização.', placement: 'right', highlight: true },
+    { target: 'tour-sidebar-settings', title: '⚙️ Configurações', content: 'Preferências de notificação, análise automática, idioma e formato de relatório.', placement: 'right', highlight: true },
+    { target: 'tour-sidebar-notifications', title: '🔔 Notificações', content: 'Alertas de casos críticos, integrações de pipeline e atualizações ficam aqui. O badge vermelho indica itens não lidos.', placement: 'right', highlight: true },
+    { target: 'tour-dashboard-hero', title: '☀️ Saudação Personalizada', content: 'Veja seu nome, data atual e resumo do dia: cirurgias, casos críticos e análises em andamento.', placement: 'bottom', highlight: true },
+    { target: 'tour-dashboard-surgeries', title: '🏥 Cirurgias de Hoje', content: 'Procedimentos registrados hoje com status em tempo real. Clique em qualquer cirurgia para abrir o caso completo e o protocolo.', placement: 'bottom', highlight: true },
+    { target: 'tour-dashboard-triage', title: '⚡ Triage Inteligente', content: 'Casos ordenados por prioridade clínica: críticos 🔴, em análise 🟡, estáveis 🟢. Clique para atendimento imediato.', placement: 'left', highlight: true },
+    { target: 'tour-dashboard-metrics', title: '📊 Métricas Operacionais', content: 'Comparativo hoje vs ontem: casos novos, em análise e concluídos. Acesse Relatórios para o histórico mensal completo.', placement: 'top', highlight: true },
   ],
+  // ── OrthoAI Chat ──────────────────────────────────────────────────────────
   chat: [
-    { target: '__welcome__', title: '🤖 OrthoAI — Seu Copiloto Veterinário', content: 'Converse com a IA especializada em ortopedia veterinária. Tire dúvidas sobre protocolos, dosagens, cálculos biomecânicos e diagnósticos diferenciais.', placement: 'center' },
+    { target: '__welcome__', title: '🤖 OrthoAI — Assistente de Texto', content: 'Converse com a IA especializada em ortopedia veterinária. Diferente do Copiloto Clínico (aba Análise), o OrthoAI responde dúvidas textuais sem vínculo a imagem ou caso específico.', placement: 'center' },
     { target: 'tour-chat-suggestions', title: '💡 Perguntas Sugeridas', content: 'Clique em qualquer sugestão para iniciar rapidamente: protocolos TPLO/FHO, cálculos de dosagem, diagnóstico diferencial.', placement: 'bottom', highlight: true },
-    { target: 'tour-chat-messages', title: '💬 Histórico da Conversa', content: 'O OrthoAI mantém contexto ao longo da conversa. Respostas estruturadas com análise, possíveis causas e recomendação de ação.', placement: 'bottom', highlight: true },
-    { target: 'tour-chat-input', title: '✍️ Envie sua Pergunta', content: 'Digite qualquer dúvida clínica. Use linguagem técnica ou simples. Pressione Enter para enviar.', placement: 'top', highlight: true },
+    { target: 'tour-chat-messages', title: '💬 Histórico da Conversa', content: 'O OrthoAI mantém contexto ao longo da sessão. Respostas estruturadas com análise, possíveis causas e recomendação de ação.', placement: 'bottom', highlight: true },
+    { target: 'tour-chat-input', title: '✍️ Envie sua Pergunta', content: 'Digite qualquer dúvida clínica em linguagem técnica ou simples. Pressione Enter ou clique no botão de envio.', placement: 'top', highlight: true },
   ],
+  // ── Análise Visual ────────────────────────────────────────────────────────
   analysis: [
-    { target: '__welcome__', title: '🔬 Análise Visual com IA', content: 'Analise radiografias e fotos clínicas com visão computacional. Detecta landmarks anatômicos, mede ângulos e sugere diagnósticos.', placement: 'center' },
-    { target: 'tour-upload', title: '📁 Upload de Imagem', content: 'Clique para fazer upload de radiografias, fotos cirúrgicas ou imagens de RM. Suporta JPG, PNG e WEBP.', placement: 'bottom', highlight: true },
-    { target: 'tour-analysis-result', title: '🧠 Resultado da Análise', content: 'O OrthoVision AI identifica estruturas anatômicas, mede ângulos articulares e sugere diagnósticos diferenciais com score de confiança.', placement: 'top', highlight: true },
-    { target: 'tour-clinical-copilot', title: '💬 Copiloto Clínico', content: 'Chat contextual com memória de sessão: a IA usa a radiografia, o contexto clínico e o histórico para refinar a interpretação. Use "Refinar análise" para consolidar o chat.', placement: 'left', highlight: true },
-    { target: 'tour-approve-case', title: '✅ Caso Completo', content: 'Ao aprovar, o caso preenche automaticamente Galeria, Caso, Dashboard e Relatórios — sem retrabalho manual.', placement: 'top', highlight: true },
+    { target: '__welcome__', title: '🔬 Análise de Imagem com IA', content: 'Analise radiografias, fotos cirúrgicas e imagens clínicas com IA multimodal. A IA descreve achados, sugere diagnósticos diferenciais e integra o resultado ao fluxo clínico em 1 clique.', placement: 'center' },
+    { target: 'tour-upload', title: '📁 Upload de Imagem', content: 'Clique para selecionar a imagem. Suporta JPG, PNG e WEBP até 15MB. Após o upload, clique em "Iniciar Análise IA" para gerar o laudo.', placement: 'bottom', highlight: true },
+    { target: 'tour-analysis-result', title: '🧠 Laudo da Análise', content: 'A IA descreve os achados da imagem e sugere diagnósticos diferenciais. Use o Copiloto ao lado para aprofundar a interpretação com contexto clínico do paciente.', placement: 'top', highlight: true },
+    { target: 'tour-clinical-copilot', title: '💬 Copiloto Clínico', content: 'Chat contextual com memória de sessão: usa a imagem, o contexto clínico e o histórico da conversa. Clique "Refinar análise" para consolidar o chat no laudo principal.', placement: 'left', highlight: true },
+    { target: 'tour-approve-case', title: '✅ Aprovar Caso Completo', content: 'Escolha o destino: "Caso" abre o protocolo pós-operatório, "Galeria" salva no acervo. O caso preenche automaticamente Dashboard, Galeria e Relatórios — sem retrabalho.', placement: 'top', highlight: true },
   ],
+  // ── Galeria ───────────────────────────────────────────────────────────────
   gallery: [
-    { target: '__welcome__', title: '🗂️ Galeria de Casos Clínicos', content: 'Acervo completo dos seus casos ortopédicos com filtros avançados por espécie, procedimento, status e data.', placement: 'center' },
-    { target: 'tour-gallery-filters', title: '🔍 Filtros Avançados', content: 'Filtre por status (pendente, em análise, concluído, crítico), espécie, procedimento e nível de risco.', placement: 'bottom', highlight: true },
-    { target: 'tour-gallery-grid', title: '🐕 Cards de Casos', content: 'Cada card mostra paciente, procedimento, score de precisão e nível de risco. Clique para abrir o caso completo.', placement: 'bottom', highlight: true },
-    { target: 'tour-add-case', title: '➕ Adicionar Caso', content: 'Registre um novo caso clínico com dados do paciente, procedimento e imagens. Disponível para análise futura.', placement: 'left', highlight: true },
+    { target: '__welcome__', title: '🗂️ Galeria de Casos Clínicos', content: 'Acervo completo dos seus casos ortopédicos. Casos aprovados via Análise chegam aqui automaticamente com badge "IA integrada". Filtre, colabore e gerencie registros.', placement: 'center' },
+    { target: 'tour-gallery-filters', title: '🔍 Busca e Filtros', content: 'Busque por nome do paciente ou tag. Filtre por status (pendente, em análise, concluído, crítico). Os filtros combinam em tempo real.', placement: 'bottom', highlight: true },
+    { target: 'tour-gallery-grid', title: '🐕 Cards de Casos', content: 'Cada card exibe paciente, procedimento, score de precisão e risco. Use "Ver detalhes" para o resumo ou "Colaborar" para abrir o protocolo pós-operatório completo.', placement: 'bottom', highlight: true },
+    { target: 'tour-add-case', title: '➕ Novo Caso Manual', content: 'Registre um caso sem passar pela Análise Visual: preencha dados do paciente, procedimento e imagem. Disponível para análise futura e colaboração.', placement: 'left', highlight: true },
   ],
+  // ── Caso Clínico (ordem corrigida para refletir layout visual) ─────────────
   case: [
-    { target: '__welcome__', title: '🏥 Detalhe do Caso + Protocolo Pós-Operatório', content: 'Veja todos os dados do paciente, análise da IA e o protocolo pós-operatório completo com calculadora de dosagem e checklist interativo.', placement: 'center' },
-    { target: 'tour-case-protocol', title: '📋 Protocolo Pós-Operatório', content: 'Protocolo específico para o procedimento (TPLO, FHO, TTA, etc.) com etapas de medicação, restrição, cuidado e retorno.', placement: 'bottom', highlight: true },
-    { target: 'tour-case-checklist', title: '✅ Checklist Interativo', content: 'Marque as etapas conforme o paciente evolui. O progresso é salvo automaticamente no seu navegador.', placement: 'bottom', highlight: true },
-    { target: 'tour-case-notes', title: '📝 Notas Clínicas', content: 'Adicione anotações livres com timestamp. Histórico completo de observações do caso.', placement: 'top', highlight: true },
+    { target: '__welcome__', title: '🏥 Caso Clínico + Protocolo Pós-Operatório', content: 'Visualize dados do paciente, o laudo da IA e o protocolo pós-operatório para o procedimento realizado. Adicione notas e acompanhe o checklist de evolução.', placement: 'center' },
+    { target: 'tour-case-notes', title: '📝 Notas Clínicas', content: 'Adicione anotações livres com timestamp automático. Histórico completo de observações e evolução do caso, visível para toda a equipe.', placement: 'top', highlight: true },
+    { target: 'tour-case-protocol', title: '💊 Plano Pós-Operatório', content: 'Protocolo específico para o procedimento (TPLO, FHO, TTA, etc.) com etapas de medicação, restrição de movimento, cuidados e data de retorno.', placement: 'bottom', highlight: true },
+    { target: 'tour-case-checklist', title: '✅ Checklist Interativo', content: 'Marque as etapas conforme o paciente evolui. O progresso é sincronizado com a nuvem e disponível em qualquer dispositivo.', placement: 'bottom', highlight: true },
   ],
+  // ── Relatórios ────────────────────────────────────────────────────────────
   reports: [
-    { target: '__welcome__', title: '📄 Central de Relatórios', content: 'Gere relatórios profissionais em PDF automaticamente — relatório mensal completo ou relatório individual por caso cirúrgico.', placement: 'center' },
-    { target: 'tour-monthly-report', title: '📅 Relatório Mensal', content: 'PDF completo com métricas do mês: volume de casos, taxa de precisão, procedimentos por tipo e comparativo com o mês anterior.', placement: 'bottom', highlight: true },
-    { target: 'tour-case-report', title: '🔖 Relatório de Caso', content: 'Relatório individual de um caso específico com dados do paciente, diagnóstico, procedimento e análise pós-operatória.', placement: 'bottom', highlight: true },
-    { target: 'tour-report-history', title: '📂 Histórico de Relatórios', content: 'Todos os relatórios gerados ficam listados aqui com data e tipo. Baixe novamente qualquer relatório anterior.', placement: 'top', highlight: true },
+    { target: '__welcome__', title: '📄 Central de Relatórios', content: 'Gere relatórios profissionais em PDF automaticamente — mensal com métricas consolidadas ou individual por caso cirúrgico.', placement: 'center' },
+    { target: 'tour-monthly-report', title: '📅 Relatório Mensal', content: 'PDF com volume de casos, taxa de precisão, procedimentos por tipo e comparativo com o mês anterior. Ideal para reuniões e auditorias.', placement: 'bottom', highlight: true },
+    { target: 'tour-case-report', title: '🔖 Relatório de Caso', content: 'Relatório individual com dados do paciente, diagnóstico, procedimento e análise da IA. Selecione o caso mais recente ou qualquer caso do histórico.', placement: 'bottom', highlight: true },
+    { target: 'tour-report-history', title: '📂 Histórico de Relatórios', content: 'Todos os PDFs gerados ficam listados com data e tipo. Baixe novamente qualquer relatório anterior sem precisar regerar.', placement: 'top', highlight: true },
   ],
+  // ── Perfil ────────────────────────────────────────────────────────────────
   profile: [
-    { target: '__welcome__', title: '👨‍⚕️ Perfil Profissional', content: 'Seu perfil clínico completo com estatísticas de desempenho, certificações e gráfico de competências por área de especialização.', placement: 'center' },
-    { target: 'tour-profile-stats', title: '📊 Estatísticas de Carreira', content: 'Resumo do seu histórico: total de cirurgias, anos de experiência, taxa de sucesso geral e certificações ativas.', placement: 'bottom', highlight: true },
-    { target: 'tour-competency-chart', title: '🕸️ Radar de Competências', content: 'Gráfico radar que visualiza seu nível em cada área: Cirurgia, Diagnóstico, Reabilitação, Emergência, Anestesia e Oncologia.', placement: 'top', highlight: true },
+    { target: '__welcome__', title: '👨‍⚕️ Perfil Profissional', content: 'Perfil clínico completo com estatísticas de desempenho, certificações e radar de competências por área de especialização.', placement: 'center' },
+    { target: 'tour-profile-stats', title: '📊 Estatísticas de Carreira', content: 'Total de cirurgias, taxa de sucesso e certificações ativas. Dados atualizados automaticamente com cada caso concluído na plataforma.', placement: 'bottom', highlight: true },
+    { target: 'tour-competency-chart', title: '🕸️ Radar de Competências', content: 'Gráfico radar com seu nível em cada área: Cirurgia, Diagnóstico, Reabilitação, Emergência, Anestesia e Oncologia.', placement: 'top', highlight: true },
   ],
+  // ── Notificações ──────────────────────────────────────────────────────────
   notifications: [
-    { target: '__welcome__', title: '🔔 Central de Notificações', content: 'Alertas de casos críticos, lembretes de retorno, atualizações do sistema e notificações do OrthoAI ficam centralizados aqui.', placement: 'center' },
-    { target: 'tour-unread-notifications', title: '🔴 Não Lidas', content: 'Notificações que ainda não foram vistas aparecem destacadas. Clique em "Marcar como lida" ou use o botão de marcar todas.', placement: 'bottom', highlight: true },
+    { target: '__welcome__', title: '🔔 Central de Notificações', content: 'Alertas de casos críticos, integrações de pipeline (casos aprovados via Análise) e atualizações do sistema ficam centralizados aqui.', placement: 'center' },
+    { target: 'tour-unread-notifications', title: '🔴 Notificações Não Lidas', content: 'Notificações ainda não vistas ficam destacadas. Clique em "Marcar como lida" individualmente ou use "Marcar todas" para limpar de uma vez.', placement: 'bottom', highlight: true },
   ],
+  // ── Configurações ─────────────────────────────────────────────────────────
   settings: [
-    { target: '__welcome__', title: '⚙️ Configurações do Sistema', content: 'Personalize notificações, preferências de análise, idioma e privacidade. Suas configurações ficam salvas automaticamente.', placement: 'center' },
-    { target: 'tour-settings-toggles', title: '🔧 Preferências', content: 'Ative ou desative notificações, análise automática, idioma e salvamento automático de relatórios.', placement: 'bottom', highlight: true },
-  ],
-  sidebar: [
-    { target: '__welcome__', title: '🧭 Navegação Lateral', content: 'Acesse todas as funcionalidades do OrtoBolt pela sidebar. Cada ícone leva a uma área específica da plataforma.', placement: 'center' },
-    { target: 'tour-sidebar-dashboard', title: '📊 Dashboard', content: 'Centro de comando cirúrgico com suas cirurgias de hoje, casos críticos e métricas operacionais.', placement: 'right', highlight: true },
-    { target: 'tour-sidebar-chat', title: '🤖 Chat IA', content: 'OrthoAI — seu copiloto veterinário especializado em ortopedia, protocolos e cálculos biomecânicos.', placement: 'right', highlight: true },
-    { target: 'tour-sidebar-gallery', title: '🗂️ Galeria', content: 'Acervo completo dos seus casos clínicos com filtros avançados e busca inteligente.', placement: 'right', highlight: true },
+    { target: '__welcome__', title: '⚙️ Configurações do Sistema', content: 'Personalize notificações, preferências de análise, idioma e privacidade. Suas configurações são salvas automaticamente.', placement: 'center' },
+    { target: 'tour-settings-toggles', title: '🔧 Preferências da Plataforma', content: 'Ative ou desative: notificações push, análise automática ao upload, idioma da interface e salvamento automático de relatórios.', placement: 'bottom', highlight: true },
   ],
 };
 

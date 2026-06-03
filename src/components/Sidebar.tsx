@@ -48,6 +48,7 @@ export default React.memo(function Sidebar() {
 
         <div className="pt-2 mt-2 border-t border-white/10">
           <button
+            data-tour="tour-sidebar-notifications"
             onClick={() => setCurrentPage('notifications')}
             className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-[16px] font-medium transition-all ${
               currentPage === 'notifications' ? 'bg-[#0056b3] text-white' : 'text-blue-200/80 hover:bg-white/15 hover:text-white'
