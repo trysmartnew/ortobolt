@@ -31,35 +31,6 @@ function userIdFromToken(authHeader: string | undefined): string {
   try {
     const payload = JSON.parse(Buffer.from(authHeader.slice(7).split('.')[1], 'base64').toString());
     return (payload.sub as string) ?? 'anon';
-  } catch { return 'anon'; }
-}
-
-// ── Rate Limiter in-memory (por userId, 30 req/min) ─────────────────────────
-const RL_WINDOW_MS = 60_000;
-const RL_MAX       = 30;
-const rlMap        = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(uid: string): { allowed: boolean; retryAfter: number } {
-  const now = Date.now();
-  const rec = rlMap.get(uid);
-  if (!rec || now >= rec.resetAt) {
-    rlMap.set(uid, { count: 1, resetAt: now + RL_WINDOW_MS });
-    return { allowed: true, retryAfter: 0 };
-  }
-  if (rec.count >= RL_MAX) {
-    return { allowed: false, retryAfter: Math.ceil((rec.resetAt - now) / 1000) };
-  }
-  rec.count++;
-  return { allowed: true, retryAfter: 0 };
-}
-
-function userIdFromToken(authHeader: string | undefined): string {
-  if (!authHeader?.startsWith('Bearer ')) return 'anon';
-  try {
-    const payload = JSON.parse(Buffer.from(authHeader.slice(7).split('.')[1], 'base64').toString());
-    return (payload.sub as string) ?? 'anon';
-  } catch { return 'anon'; }
-}
 
 // ── Modelos Gemini (OpenAI-compatible) ───────────────────────────────────────
 const GEMINI_BASE    = 'https://generativelanguage.googleapis.com/v1beta/openai';
