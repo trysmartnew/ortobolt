@@ -31,6 +31,10 @@ function userIdFromToken(authHeader: string | undefined): string {
   try {
     const payload = JSON.parse(Buffer.from(authHeader.slice(7).split('.')[1], 'base64').toString());
     return (payload.sub as string) ?? 'anon';
+  } catch {
+    return 'anon';
+  }
+}
 
 // ── Modelos Gemini (OpenAI-compatible) ───────────────────────────────────────
 const GEMINI_BASE    = 'https://generativelanguage.googleapis.com/v1beta/openai';
@@ -240,3 +244,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
+
