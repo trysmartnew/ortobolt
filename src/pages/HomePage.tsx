@@ -128,6 +128,19 @@ export default function HomePage() {
             >
               Entrar <ChevronRight size={15} />
             </button>
+            <button
+              onClick={() => setCurrentView('register')}
+              className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200"
+              style={{
+                background: scrolled ? '#0056b3' : 'rgba(255,255,255,0.15)',
+                color: '#fff',
+                border: scrolled ? 'none' : '1.5px solid rgba(255,255,255,0.5)',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#004494'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = scrolled ? '#0056b3' : 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'none'; }}
+            >
+              Cadastre-se gratuitamente
+            </button>
 
             {/* Mobile menu */}
             <button
