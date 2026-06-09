@@ -36,18 +36,18 @@ const FEATURES = [
     bg: '#ECFDF5',
   },
   {
-    icon: Shield,
-    title: 'Segurança LGPD',
-    desc: 'Dados clínicos protegidos com criptografia AES-256, backups automáticos e total conformidade com a LGPD.',
-    color: '#DC2626',
-    bg: '#FEF2F2',
-  },
-  {
     icon: TrendingUp,
     title: 'Dashboard de Métricas',
     desc: 'Acompanhe evolução clínica, precisão média e evolução dos seus casos com gráficos interativos.',
     color: '#D97706',
     bg: '#FFFBEB',
+  },
+  {
+    icon: Shield,
+    title: 'Segurança LGPD',
+    desc: 'Dados clínicos protegidos com criptografia AES-256, backups automáticos e total conformidade com a LGPD.',
+    color: '#DC2626',
+    bg: '#FEF2F2',
   },
 ];
 
