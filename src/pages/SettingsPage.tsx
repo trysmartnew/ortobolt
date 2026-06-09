@@ -1,8 +1,9 @@
-// src/pages/SettingsPage.tsx
+﻿// src/pages/SettingsPage.tsx
 // ✅ U-02: InlineToast local substituído por addToast global
 import React, { useState } from 'react';
-import { Bell, Globe, FileDown, Zap, Shield, Database, RefreshCw, Check } from 'lucide-react';
+import { Bell, Globe, FileDown, Zap, Shield, Database, RefreshCw, Check, Download } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
+import { exportUserData } from '@/services/backupService';
 import { Card, Button, SectionHeader } from '@/components/ui';
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -35,6 +36,14 @@ export default function SettingsPage() {
     catch { return { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' }; }
   });
   const [saving, setSaving] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const handleExport = async () => {
+    if (!user?.id) return;
+    setExporting(true);
+    try { await exportUserData(user.id); addToast('Backup exportado com sucesso!', 'success'); }
+    catch { addToast('Erro ao exportar dados.', 'error'); }
+    finally { setExporting(false); }
+  };
 
   const save = async () => {
     setSaving(true);
@@ -95,6 +104,17 @@ export default function SettingsPage() {
           </SettingRow>
           <SettingRow icon={RefreshCw} title="Cache e Dados Locais" description="Limpar dados temporários do sistema">
             <Button variant="secondary" size="sm" onClick={clearCache}>Limpar Cache</Button>
+          </SettingRow>
+        </div>
+      </Card>
+
+      <Card className="p-5">
+        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Meus Dados</p>
+        <div>
+          <SettingRow icon={Download} title="Exportar Backup" description="Baixar todos os seus casos e dados em formato JSON">
+            <Button variant="secondary" size="sm" onClick={handleExport} loading={exporting}>
+              {exporting ? 'Exportando...' : 'Exportar (.json)'}
+            </Button>
           </SettingRow>
         </div>
       </Card>
