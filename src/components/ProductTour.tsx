@@ -55,8 +55,8 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-case-image', title: '📷 Imagens e Radiografias', content: 'Analise os exames de imagem do caso diretamente na plataforma.', placement: 'bottom', highlight: true },
     { target: 'tour-case-ai-result', title: '🤖 Análise da OrthoAI', content: 'Confira o laudo gerado pela inteligência artificial com suporte à decisão clínica.', placement: 'bottom', highlight: true },
     { target: 'tour-case-notes', title: '📝 Notas Clínicas', content: 'Adicione anotações livres com timestamp automático. Histórico completo de observações e evolução do caso, visível para toda a equipe.', placement: 'top', highlight: true },
-
     { target: 'tour-case-checklist', title: '✅ Checklist Interativo', content: 'Marque as etapas conforme o paciente evolui. O progresso é sincronizado com a nuvem e disponível em qualquer dispositivo.', placement: 'bottom', highlight: true },
+    { target: 'tour-case-actions', title: '⚡ Ações Rápidas', content: 'Edite o caso, adicione notas, imprima o guia para o tutor ou gere o laudo em PDF.', placement: 'left', highlight: true },
   ],
   // ── Relatórios ────────────────────────────────────────────────────────────
   reports: [
