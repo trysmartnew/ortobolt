@@ -1,0 +1,13 @@
+{
+  "metadata": {
+    "data": "2026-06-09 01:56:42",
+    "objetivo": "Auditoria de segurança: localização de service_role",
+    "padrao_busca": "(?i)\\bservice_role\\b"
+  },
+  "resumo": {
+    "total_ocorrencias": 0,
+    "frontend_ocorrencias": 0,
+    "backend_ocorrencias": 0
+  },
+  "ocorrencias": []
+}

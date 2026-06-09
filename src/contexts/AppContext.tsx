@@ -1,4 +1,4 @@
-// src/contexts/AppContext.tsx
+﻿// src/contexts/AppContext.tsx
 // ✅ C-02: Rate limiting — 5 tentativas → bloqueio 15 min
 // ✅ A-05: useMemo para unreadCount
 // ✅ U-02: Sistema de Toast global
@@ -282,7 +282,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setUser(profile);
     setIsLoggedIn(true);
     setCurrentView((prev) => prev === 'reset' ? 'reset' : 'app');
-    setTimeout(() => setTourActive(true), 600);
+    const hasSeenTour = localStorage.getItem(`ortobolt_tour_v1_${profile.id}`);
+    if (!hasSeenTour) {
+      setTimeout(() => setTourActive(true), 600);
+    }
     addToast(`Bem-vindo(a), ${profile.name.split(' ')[0]}!`, 'success');
     return true;
   }, [loginAttempts, lockedUntil, addToast]);

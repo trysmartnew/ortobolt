@@ -1,4 +1,4 @@
-// src/components/ProductTour.tsx
+﻿// src/components/ProductTour.tsx
 import { useState, useEffect, useCallback, memo } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 
@@ -51,8 +51,11 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   // ── Caso Clínico (ordem corrigida para refletir layout visual) ─────────────
   case: [
     { target: '__welcome__', title: '🏥 Caso Clínico + Protocolo Pós-Operatório', content: 'Visualize dados do paciente, o laudo da IA e o protocolo pós-operatório para o procedimento realizado. Adicione notas e acompanhe o checklist de evolução.', placement: 'center' },
+    { target: 'tour-case-patient', title: '🩺 Dados do Paciente', content: 'Visualize informações do pet e status do atendimento de forma rápida.', placement: 'bottom', highlight: true },
+    { target: 'tour-case-image', title: '📷 Imagens e Radiografias', content: 'Analise os exames de imagem do caso diretamente na plataforma.', placement: 'bottom', highlight: true },
+    { target: 'tour-case-ai-result', title: '🤖 Análise da OrthoAI', content: 'Confira o laudo gerado pela inteligência artificial com suporte à decisão clínica.', placement: 'bottom', highlight: true },
     { target: 'tour-case-notes', title: '📝 Notas Clínicas', content: 'Adicione anotações livres com timestamp automático. Histórico completo de observações e evolução do caso, visível para toda a equipe.', placement: 'top', highlight: true },
-    { target: 'tour-case-protocol', title: '💊 Plano Pós-Operatório', content: 'Protocolo específico para o procedimento (TPLO, FHO, TTA, etc.) com etapas de medicação, restrição de movimento, cuidados e data de retorno.', placement: 'bottom', highlight: true },
+
     { target: 'tour-case-checklist', title: '✅ Checklist Interativo', content: 'Marque as etapas conforme o paciente evolui. O progresso é sincronizado com a nuvem e disponível em qualquer dispositivo.', placement: 'bottom', highlight: true },
   ],
   // ── Relatórios ────────────────────────────────────────────────────────────
