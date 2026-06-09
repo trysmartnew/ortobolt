@@ -1,4 +1,4 @@
-// src/pages/CasePage.tsx
+﻿// src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
 import { useState, useMemo, useRef } from 'react';
 import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity } from 'lucide-react';
@@ -278,7 +278,7 @@ function TutorGuideModal({ caseData, protocol, onClose }: { caseData: ClinicalCa
 
 // ── COMPONENTE PRINCIPAL ────────────────────────────────────────────────────
 export default function CasePage() {
-  const { activeCase, closeCase, deleteCase, updateCase, addToast, setCurrentPage } = useApp();
+  const { activeCase, closeCase, deleteCase, updateCase, addToast, setCurrentPage, user } = useApp();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -382,7 +382,7 @@ export default function CasePage() {
         </button>
         <div className="flex gap-2">
           <Button variant="secondary" size="sm" onClick={() => setShowEdit(true)}><Edit3 size={14} /> Editar</Button>
-          <Button variant="secondary" size="sm" onClick={handleGoToReports}><FileText size={14} /> Gerar PDF</Button>
+          <Button variant="secondary" size="sm" onClick={handleGoToReports} disabled={user?.role === 'student'} title={user?.role === 'student' ? 'Exclusivo para profissionais com CRMV verificado' : ''}><FileText size={14} /> Gerar PDF</Button>
           <Button variant="secondary" size="sm" onClick={() => setShowGuide(true)}><Printer size={14} /> Guia Tutor</Button>
           <button onClick={handleDelete} className="px-4 py-2 text-[15px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-1">
             <Trash2 size={14} /> Excluir
@@ -605,7 +605,7 @@ export default function CasePage() {
               <Button onClick={() => setShowEdit(true)} variant="secondary" className="w-full justify-start"><Edit3 size={14} /> Editar dados do caso</Button>
               <Button onClick={() => setShowNoteInput(true)} variant="secondary" className="w-full justify-start"><Plus size={14} /> Adicionar nota clínica</Button>
               <Button onClick={() => setShowGuide(true)} variant="secondary" className="w-full justify-start"><Printer size={14} /> Imprimir guia para tutor</Button>
-              <Button onClick={handleGoToReports} variant="secondary" className="w-full justify-start"><FileText size={14} /> Gerar laudo em PDF</Button>
+              <Button onClick={handleGoToReports} variant="secondary" className="w-full justify-start" disabled={user?.role === 'student'} title={user?.role === 'student' ? 'Exclusivo para profissionais com CRMV verificado' : ''}><FileText size={14} /> Gerar laudo em PDF</Button>
             </div>
           </Card>
         </div>

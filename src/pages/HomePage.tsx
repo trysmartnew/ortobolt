@@ -205,7 +205,7 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-24 pb-20">
-          <img src="/logo-inicio.png" alt="OrtoBolt" className="h-60 w-auto object-contain mx-auto mb-8"/>
+          <div className="flex items-center justify-center gap-8"><img src="/logo-inicio.png" alt="OrtoBolt" className="h-60 w-auto object-contain"/><div className="text-center"><h2 className="text-3xl md:text-4xl font-extrabold mb-4 text-white">Comece hoje, sem compromisso</h2><p className="text-lg md:text-xl text-white/70">Crie sua conta gratuitamente e experimente todas as funcionalidades por 14 dias. Sem cartão de crédito.</p></div></div>
 
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 text-xs font-semibold"

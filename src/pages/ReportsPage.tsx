@@ -120,7 +120,7 @@ export default function ReportsPage() {
   }, [user]);
 
   const downloadMonthly = async () => {
-    if (!user) return;
+    if (!user || user.role === 'student') { alert('Funcionalidade exclusiva para profissionais com CRMV verificado.'); return; }
     setGenerating('monthly');
     try {
       // ✅ Usar dados REAIS (não mocks)
@@ -131,7 +131,7 @@ export default function ReportsPage() {
   };
 
   const downloadCase = async () => {
-    if (!user) return;
+    if (!user || user.role === 'student') { alert('Funcionalidade exclusiva para profissionais com CRMV verificado.'); return; }
     if (!reportableCase) {
       setNoCaseToast(true);
       setTimeout(() => setNoCaseToast(false), 3000);
@@ -146,7 +146,7 @@ export default function ReportsPage() {
   };
 
   const downloadHistoryReport = async (r: Report) => {
-    if (!user || downloadingId) return;
+    if (!user || user.role === 'student' || downloadingId) { if (user?.role === 'student') alert('Funcionalidade exclusiva para profissionais com CRMV verificado.'); return; }
     setDownloadingId(r.id);
     try {
       if (r.type === 'monthly') {
@@ -200,7 +200,7 @@ export default function ReportsPage() {
           <Button 
             className="w-full" 
             loading={generating === 'monthly' || metricsLoading} 
-            onClick={downloadMonthly}
+            onClick={downloadMonthly} disabled={user?.role === 'student'} title={user?.role === 'student' ? 'Exclusivo para profissionais' : ''}
           >
             <Download size={14} /> 
             {generating === 'monthly' ? 'Gerando...' : metricsLoading ? 'Carregando dados...' : 'Gerar e Baixar PDF'}
@@ -228,7 +228,7 @@ export default function ReportsPage() {
             className="w-full" 
             variant="secondary" 
             loading={generating === 'case'} 
-            onClick={downloadCase}
+            onClick={downloadCase} disabled={user?.role === 'student'} title={user?.role === 'student' ? 'Exclusivo para profissionais' : ''}
           >
             <Download size={14} /> 
             {generating === 'case' ? 'Gerando...' : 'Gerar Relatório de Caso'}

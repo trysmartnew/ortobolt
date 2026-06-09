@@ -1,0 +1,12 @@
+﻿# Contexto do projeto (gerado automaticamente - não versionar)
+ORTOBOLT_CONTEXT.md
+ORTOBOLT_CONTEXT.md.*
+
+# Backups de patches
+*.ortobak
+
+# Logs de auditoria (opcionais - remova se quiser versionar)
+ortobolt-audit.log
+
+# Node modules (redundância)
+node_modules/

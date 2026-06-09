@@ -1,5 +1,5 @@
 $env:PYTHONUTF8 = "1"
-$md = "PROJETO_CONTEXTO.md"
+$md = "ai-router/ORTOBOLT_CONTEXT.md"
 if (Test-Path $md) { Copy-Item $md "$md.bak-$(Get-Date -f 'yyyyMMdd-HHmm')" -Force }
 
 $R = Get-Location
@@ -102,3 +102,4 @@ $L.Add("- Rate-limit login: 5 tentativas -> bloqueio 15min")
 
 [IO.File]::WriteAllLines("$R\$md", $L, [Text.Encoding]::UTF8)
 Write-Host "PROJETO_CONTEXTO.md atualizado com dados reais." -ForegroundColor Green
+

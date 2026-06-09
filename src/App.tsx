@@ -20,6 +20,7 @@ import ProductTour       from '@/components/ProductTour';
 import ToastContainer    from '@/components/ToastContainer';
 import AIAssistant       from '@/components/AIAssistant';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import AcademicDisclaimer from '@/components/AcademicDisclaimer';
 
 const PAGE_MAP = {
   dashboard:     DashboardPage,
@@ -104,6 +105,7 @@ function AppInner() {
     });
 
     return () => subscription.unsubscribe();
+      <AcademicDisclaimer />
   }, []);
 
   if (authLoading) {

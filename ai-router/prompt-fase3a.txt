@@ -1,0 +1,9 @@
+﻿Modifique src/pages/RegisterPage.tsx adicionando 2 novos campos ao formulário, ambos exibidos condicionalmente apenas quando role for 'veterinarian' ou 'resident' (mesma condição do campo crmv atual):
+
+1) Campo 'Estado do CRMV' (select): posicione IMEDIATAMENTE APÓS o campo CRMV existente. Deve conter as 27 UFs brasileiras como options (AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO). Use mesmo padrão visual do campo de Especialidade existente.
+
+2) Checkbox 'Declaro que possuo registro ativo no CRMV informado': posicione LOGO APÓS o checkbox de Consentimento para análise por IA. Deve ser obrigatório apenas quando role for 'veterinarian' ou 'resident'. Use mesmo padrão visual dos checkboxes existentes (Termos de Uso e Consentimento IA).
+
+Adicione também os estados necessários no componente (crmvState, crmvDeclaration) e inclua-os no objeto de submissão do Supabase como crmv_state e crmv_verified (true se checkbox marcado).
+
+NÃO altere campos existentes, NÃO modifique layout, NÃO altere fluxo de validação existente. Use apenas elementos HTML personalizados seguindo o padrão já estabelecido no arquivo.

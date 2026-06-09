@@ -46,7 +46,7 @@ interface UserProfileRow {
   id: string;
   name: string | null;
   email: string | null;
-  role: 'veterinarian' | 'resident' | 'admin' | null;
+  role: 'veterinarian' | 'resident' | 'admin' | 'student' | null;
   specialty: string | null;
   crmv: string | null;
   institution: string | null;

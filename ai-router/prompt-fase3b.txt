@@ -1,0 +1,11 @@
+﻿Modifique src/pages/RegisterPage.tsx adicionando APENAS o botão 'Entrar como Aluno / Ambiente Acadêmico'. Requisitos:
+
+1) Adicione função handleStudentSubmit que reutiliza o fluxo de signUp do Supabase com role='student' e dados mínimos (name, email, password).
+
+2) Adicione o botão posicionado LOGO ABAIXO do botão submit principal (após o </button> principal do formulário).
+
+3) Use mesmo padrão visual dos botões existentes, com estilo secundário/ghost.
+
+4) Ao clicar, deve chamar handleStudentSubmit diretamente.
+
+IMPORTANTE: O campo 'search' do patch DEVE ser cópia LITERAL do arquivo. Leia o arquivo primeiro para encontrar o botão submit principal e use o trecho exato como âncora. NÃO altere campos existentes, NÃO modifique interface FormData, NÃO adicione novos estados além do necessário.

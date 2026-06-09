@@ -30,6 +30,7 @@ interface FormData {
   confirmPassword: string;
   acceptTerms: boolean;
   acceptAiConsent: boolean; // ✅ C-04: consentimento IA
+  role: 'veterinarian' | 'resident' | 'student';
 }
 
 const SPECIALTIES = [
@@ -48,8 +49,10 @@ export default function RegisterPage() {
   const { setCurrentView } = useApp();
   const [form, setForm] = useState<FormData>({
     name: '', email: '', crmv: '', specialty: '', password: '', confirmPassword: '',
-    acceptTerms: false, acceptAiConsent: false,
+    acceptTerms: false, acceptAiConsent: false, role: 'veterinarian',
   });
+  const [crmvState, setCrmvState] = useState('');
+  const [crmvDeclaration, setCrmvDeclaration] = useState(false);
   const [showPass, setShowPass]     = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError]           = useState('');
@@ -67,7 +70,16 @@ export default function RegisterPage() {
     // Validações básicas
     if (!form.name.trim())     { setError('Informe seu nome completo.'); return; }
     if (!form.email.trim())    { setError('Informe seu e-mail.'); return; }
-    if (!form.crmv.trim())     { setError('Informe seu CRMV.'); return; }
+    
+    // Lógica de validação do CRMV
+    if (form.role === 'veterinarian' || form.role === 'resident') {
+      if (!form.crmv.trim())     { setError('Informe seu CRMV.'); return; }
+      if (!/^\d+\/[A-Z]{2}$/.test(form.crmv.trim())) {
+        setError('Formato inválido. Use: 12345/SP');
+        return;
+      }
+    }
+
     if (!form.specialty)       { setError('Selecione sua especialidade.'); return; }
     if (!form.password)        { setError('Crie uma senha.'); return; }
 
@@ -105,9 +117,11 @@ export default function RegisterPage() {
         id:          data.user.id,
         name:        form.name.trim(),
         email:       form.email.trim(),
-        crmv:        form.crmv.trim(),
+        crmv:        (form.role === 'veterinarian' || form.role === 'resident') ? form.crmv.trim() : '',
         specialty:   form.specialty,
-        role:        'veterinarian',
+        crmv_state:  (form.role === 'veterinarian' || form.role === 'resident') ? crmvState : '',
+        crmv_verified: (form.role === 'veterinarian' || form.role === 'resident') ? crmvDeclaration : false,
+        role:        form.role,
         institution: '',
         preferences: {
           notifications: true,
@@ -187,6 +201,17 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-4">
+            {/* Tipo de usuário */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Tipo de usuário</label>
+              <select value={form.role} onChange={e => update('role', e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
+                <option value="veterinarian">Médico-veterinário (com CRMV)</option>
+                <option value="resident">Residente</option>
+                <option value="student">Estudante</option>
+              </select>
+            </div>
+
             {/* Nome */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Nome completo</label>
@@ -204,12 +229,25 @@ export default function RegisterPage() {
             </div>
 
             {/* CRMV */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">CRMV</label>
-              <input type="text" value={form.crmv} onChange={e => update('crmv', e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
-                placeholder="CRMV-SP 00.000" />
-            </div>
+            {(form.role === 'veterinarian' || form.role === 'resident') && (
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5">CRMV</label>
+                <input type="text" value={form.crmv} onChange={e => update('crmv', e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
+                  placeholder="CRMV-SP 00.000" />
+              </div>
+            )}
+
+            {(form.role === 'veterinarian' || form.role === 'resident') && (
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Estado do CRMV</label>
+                <select value={crmvState} onChange={e => setCrmvState(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
+                  <option value="">Selecione...</option>
+                  {['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'].map(uf => <option key={uf} value={uf}>{uf}</option>)}
+                </select>
+              </div>
+            )}
 
             {/* Especialidade */}
             <div>
@@ -296,6 +334,21 @@ export default function RegisterPage() {
               </span>
             </label>
 
+            {(form.role === 'veterinarian' || form.role === 'resident') && (
+              <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                <div className="relative mt-0.5 flex-shrink-0">
+                  <input type="checkbox" className="sr-only" checked={crmvDeclaration} onChange={e => setCrmvDeclaration(e.target.checked)} />
+                  <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
+                    style={{ borderColor: crmvDeclaration ? '#0056b3' : '#CBD5E1', background: crmvDeclaration ? '#0056b3' : '#fff' }}>
+                    {crmvDeclaration && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
+                  </div>
+                </div>
+                <span className="text-xs text-slate-500 leading-relaxed">
+                  Declaro que possuo registro ativo no CRMV informado.
+                </span>
+              </label>
+            )}
+
             {error && (
               <div className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</div>
             )}
@@ -314,6 +367,48 @@ export default function RegisterPage() {
             <button onClick={() => setCurrentView('home')}
               className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1">
               <ArrowLeft size={11} /> Página inicial
+            </button>
+
+            <button
+              type="button"
+              onClick={async () => {
+                if (!form.name.trim() || !form.email.trim() || !form.password) {
+                  setError('Preencha nome, e-mail e senha.');
+                  return;
+                }
+                setLoading(true);
+                setError('');
+                try {
+                  const { data, error } = await supabase.auth.signUp({
+                    email: form.email.trim(),
+                    password: form.password,
+                    options: { data: { name: form.name.trim() } }
+                  });
+                  if (error) throw error;
+                  if (!data.user) throw new Error('Erro ao criar conta.');
+                  
+                  await supabase.from('users').upsert({
+                    id: data.user.id,
+                    name: form.name.trim(),
+                    email: form.email.trim(),
+                    role: 'student',
+                    crmv: '',
+                    specialty: '',
+                    crmv_state: '',
+                    crmv_verified: false
+                  });
+                  
+                  setSuccess(true);
+                } catch (err: any) {
+                  setError(err.message || 'Erro ao criar conta.');
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              disabled={loading}
+              className="w-full mt-4 py-3 px-4 rounded-lg font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Criando...' : 'Entrar como Aluno / Ambiente Acadêmico'}
             </button>
           </div>
         </div>
