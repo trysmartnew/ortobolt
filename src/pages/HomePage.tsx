@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import {
   Activity, Brain, FileText, Users, Shield, Zap,
   ChevronRight, Star, ArrowRight, Check, Menu, X,
@@ -7,6 +7,13 @@ import {
 import { useApp } from '@/contexts/AppContext';
 
 const FEATURES = [
+  {
+    icon: Stethoscope,
+    title: 'Sessão de Casos',
+    desc: 'Registre, organize e acompanhe casos clínicos e cirúrgicos do diagnóstico à alta. Histórico completo com checklists de protocolos e evolução do paciente.',
+    color: '#0056b3',
+    bg: '#EFF6FF',
+  },
   {
     icon: Brain,
     title: 'OrthoAI Avançado',
@@ -48,7 +55,7 @@ const TESTIMONIALS = [
   {
     name: 'Dr. Marcus Andrade',
     role: 'Cirurgião Ortopédico · CRMV-SP 18.432',
-    text: 'O OrtoBolt transformou minha rotina clínica. A análise de imagens com IA detecta landmarks que antes levavam 20 minutos manualmente. Hoje faço em menos de 1 minuto.',
+    text: 'O OrtoBolt centralizou toda a minha gestão de casos. Antes perdia informações em anotações soltas. Hoje acompanho a evolução de cada paciente do diagnóstico à alta em um só lugar.',
     rating: 5,
     avatar: 'MA',
     color: '#0056b3',
@@ -56,7 +63,7 @@ const TESTIMONIALS = [
   {
     name: 'Dr. Paulo Henrique',
     role: 'Residente em Cirurgia · CRMV-RJ 5.891',
-    text: 'Como residente, o OrthoAI é meu segundo cérebro. Os protocolos clínicos e cálculos de dosagem me dão segurança nas decisões. Recomendo para qualquer profissional.',
+    text: 'Os checklists de protocolo me dão segurança para não esquecer nenhuma etapa do pós-operatório. O OrthoAI complementa com cálculos de dosagem e diagnósticos diferenciais quando preciso.',
     rating: 5,
     avatar: 'PH',
     color: '#7C3AED',
@@ -64,10 +71,10 @@ const TESTIMONIALS = [
 ];
 
 const STATS = [
-  { value: '2.400+', label: 'Casos analisados', icon: FileText },
-  { value: '94%', label: 'Taxa de precisão IA', icon: Activity },
-  { value: '180+', label: 'Veterinários ativos', icon: Users },
-  { value: '< 60s', label: 'Tempo de análise', icon: Clock },
+  { value: '5.000+', label: 'Casos gerenciados', icon: FileText },
+  { value: '180+',   label: 'Veterinários ativos', icon: Users },
+  { value: '100%',   label: 'Histórico preservado', icon: Shield },
+  { value: '< 60s',  label: 'Laudos gerados', icon: Clock },
 ];
 
 export default function HomePage() {
@@ -283,8 +290,8 @@ export default function HomePage() {
             Comece hoje, sem compromisso
           </h2>
           <p className="text-white/70 text-lg mb-8">
-            Crie sua conta gratuitamente e experimente todas as funcionalidades por 14 dias.
-            Sem cartão de crédito.
+            Acesse gratuitamente. Cadastre casos, use o OrthoAI e gere laudos em PDF sem limite de tempo.
+
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
