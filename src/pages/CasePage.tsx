@@ -391,7 +391,7 @@ export default function CasePage() {
       </div>
 
       {/* Título + Status */}
-      <Card className="p-5">
+      <Card data-tour="tour-case-patient" className="p-5">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-extrabold text-slate-900 mb-1">{activeCase.title}</h1>
@@ -410,7 +410,7 @@ export default function CasePage() {
         {/* Coluna Esquerda: Imagem + Dados */}
         <div className="lg:col-span-3 space-y-6">
           {/* Imagem */}
-          <Card className="overflow-hidden">
+          <Card data-tour="tour-case-image" className="overflow-hidden">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2"><Activity size={16} /> Imagem Radiográfica</h2>
               <div className="flex items-center gap-2">
@@ -497,7 +497,7 @@ export default function CasePage() {
           </Card>
 
           {activeCase.aiAnalysis && (
-            <Card className="p-5">
+            <Card data-tour="tour-case-ai-result" className="p-5">
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-3">
                 <Activity size={16} /> Análise IA Integrada
               </h2>
@@ -599,7 +599,7 @@ export default function CasePage() {
           </Card>
 
           {/* Ações Rápidas */}
-          <Card className="p-5">
+          <Card data-tour="tour-case-actions" className="p-5">
             <h2 className="text-sm font-bold text-slate-900 mb-3">Ações Rápidas</h2>
             <div className="space-y-2">
               <Button onClick={() => setShowEdit(true)} variant="secondary" className="w-full justify-start"><Edit3 size={14} /> Editar dados do caso</Button>
