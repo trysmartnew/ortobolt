@@ -212,26 +212,26 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-24 pb-20">
-          <div className="flex items-center justify-center gap-8"><img src="/logo-inicio.png" alt="OrtoBolt" className="h-60 w-auto object-contain"/><div className="text-center"><h2 className="text-3xl md:text-4xl font-extrabold mb-4 text-white">Comece hoje, sem compromisso</h2><p className="text-lg md:text-xl text-white/70">Crie sua conta gratuitamente e experimente todas as funcionalidades por 14 dias. Sem cartão de crédito.</p></div></div>
+          <div className="flex items-center justify-center mb-6"><img src="/logo-inicio.png" alt="OrtoBolt" className="h-32 md:h-40 w-auto object-contain"/></div>
 
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 text-xs font-semibold"
             style={{ background: 'rgba(255,255,255,0.1)', color: '#7DD3FC', border: '1px solid rgba(125,211,252,0.3)' }}>
             <Zap size={12} />
-            Plataforma com IA especializada em ortopedia veterinária
+            Gestão clínica completa para ortopedia veterinária
           </div>
 
           {/* H1 */}
           <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
-            Medicina veterinária mais
+            Gerencie seus casos clínicos
             <span className="block" style={{ color: '#38BDF8' }}>
-              precisa, rápida e segura
+              com eficiência e segurança
             </span>
           </h1>
 
           <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed">
-            O OrtoBolt une inteligência artificial e análise de imagens
-            para elevar o padrão da ortopedia veterinária no Brasil.
+            Registre, organize e acompanhe casos ortopédicos do diagnóstico
+            à alta — com IA integrada para apoio à decisão clínica.
           </p>
 
           {/* CTAs */}
