@@ -15,3 +15,6 @@ public/backups/
 *.backup-*.png
 *.backup
 *.bak-*
+audit_*.json
+tour-real-data.json
+product-tour-audit-report.json
