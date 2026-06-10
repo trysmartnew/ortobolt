@@ -57,7 +57,8 @@ export default function RegisterPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError]           = useState('');
   const [loading, setLoading]       = useState(false);
-  const [success, setSuccess]       = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [showLoginButton, setShowLoginButton] = useState(false);
 
   const update = (field: keyof FormData, value: string | boolean) =>
     setForm(prev => ({ ...prev, [field]: value }));
@@ -66,6 +67,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async () => {
     setError('');
+    setShowLoginButton(false);
 
     // Validações básicas
     if (!form.name.trim())     { setError('Informe seu nome completo.'); return; }
@@ -109,7 +111,15 @@ export default function RegisterPage() {
         },
       });
 
-      if (signUpErr) { setError(signUpErr.message); return; }
+      if (signUpErr) {
+      if (signUpErr.message.includes('already registered') || signUpErr.message.includes('User already registered')) {
+        setError('Você já tem cadastro, Entre');
+        setShowLoginButton(true);
+      } else {
+        setError(signUpErr.message);
+      }
+      return;
+    }
       if (!data.user) { setError('Erro ao criar conta. Tente novamente.'); return; }
 
       // 2. Salvar perfil na tabela users
@@ -234,7 +244,7 @@ export default function RegisterPage() {
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">CRMV</label>
                 <input type="text" value={form.crmv} onChange={e => update('crmv', e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
-                  placeholder="CRMV-SP 00.000" />
+                  placeholder="Ex: 12345/SP" />
               </div>
             )}
 
@@ -358,6 +368,11 @@ export default function RegisterPage() {
               style={{ background: '#0056b3', boxShadow: '0 4px 14px rgba(0,86,179,0.3)' }}>
               {loading ? 'Criando conta...' : 'Criar minha conta'}
             </button>
+            {showLoginButton && (
+              <button onClick={() => setCurrentView('login')} className="w-full mt-3 py-3 rounded-xl text-sm font-bold text-white transition-all" style={{ background: '#0056b3', boxShadow: '0 4px 14px rgba(0,86,179,0.3)' }}>
+                Entrar
+              </button>
+            )}
           </div>
 
           <div className="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between">
@@ -378,6 +393,7 @@ export default function RegisterPage() {
                 }
                 setLoading(true);
                 setError('');
+    setShowLoginButton(false);
                 try {
                   const { data, error } = await supabase.auth.signUp({
                     email: form.email.trim(),
