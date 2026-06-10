@@ -116,7 +116,8 @@ export default function RegisterPage() {
         setError('Não foi possível concluir o cadastro. Caso já possua uma conta, utilize a opção Entrar.');
         setShowLoginButton(true);
       } else {
-        setError(signUpErr.message);
+        console.error('SignUp error:', signUpErr.message);
+        setError('Não foi possível concluir o cadastro. Verifique os dados e tente novamente.');
       }
       return;
     }
@@ -420,7 +421,12 @@ export default function RegisterPage() {
                   
                   setSuccess(true);
                 } catch (err: any) {
-                  setError(err.message || 'Erro ao criar conta.');
+                  if (err.message?.includes('already registered') || err.message?.includes('User already registered')) {
+                    setError('Não foi possível concluir o cadastro. Caso já possua uma conta, utilize a opção Entrar.');
+                    setShowLoginButton(true);
+                  } else {
+                    setError('Não foi possível concluir o cadastro. Tente novamente.');
+                  }
                 } finally {
                   setLoading(false);
                 }

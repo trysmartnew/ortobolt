@@ -41,7 +41,8 @@ export default function ResetPasswordPage() {
     const { error: err } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (err) {
-      setError(err.message);
+      console.error('UpdateUser error:', err.message);
+      setError('Não foi possível redefinir a senha. O link pode estar expirado. Solicite uma nova recuperação.');
       addToast('Erro ao atualizar senha.', 'error');
     } else {
       await supabase.auth.signOut();
