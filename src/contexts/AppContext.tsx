@@ -336,6 +336,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setUser(profile);
       setIsLoggedIn(true);
       setCurrentView((prev) => prev === 'reset' ? 'reset' : 'app');
+      const hasSeenTourSession = localStorage.getItem(`ortobolt_tour_v1_${profile.id}`);
+      if (!hasSeenTourSession) {
+        setTimeout(() => setTourActive(true), 600);
+      }
     }
     setAuthLoading(false);
   }, []);
