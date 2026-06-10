@@ -113,7 +113,7 @@ export default function RegisterPage() {
 
       if (signUpErr) {
       if (signUpErr.message.includes('already registered') || signUpErr.message.includes('User already registered')) {
-        setError('Você já tem cadastro, Entre');
+        setError('Não foi possível concluir o cadastro. Caso já possua uma conta, utilize a opção Entrar.');
         setShowLoginButton(true);
       } else {
         setError(signUpErr.message);
@@ -143,8 +143,12 @@ export default function RegisterPage() {
       });
 
       if (profileErr) {
-        console.error('Profile upsert error:', profileErr.message);
-        // Não impede o cadastro — o trigger do Supabase geralmente já cria o perfil
+        if (profileErr.message.includes('duplicate key') || profileErr.message.includes('unique constraint') || profileErr.message.includes('users_crmv_unique')) {
+          setError('Não foi possível concluir o cadastro com os dados informados. Caso já possua uma conta, utilize a opção Entrar.');
+          setShowLoginButton(true);
+        } else {
+          console.error('Profile upsert error:', profileErr.message);
+        }
       }
 
       setSuccess(true);
@@ -242,7 +246,7 @@ export default function RegisterPage() {
             {(form.role === 'veterinarian' || form.role === 'resident') && (
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">CRMV</label>
-                <input type="text" value={form.crmv} onChange={e => update('crmv', e.target.value)}
+                <input type="text" value={form.crmv} onChange={e => update('crmv', e.target.value.toUpperCase().replace(/\s/g, ''))}
                   className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
                   placeholder="Ex: 12345/SP" />
               </div>
