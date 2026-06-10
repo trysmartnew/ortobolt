@@ -278,44 +278,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── PRICING TEASER ─────────────────────────────────────────────── */}
-      <section id="planos" className="py-20"
-        style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)' }}>
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-6"
-            style={{ background: 'rgba(255,255,255,0.1)', color: '#7DD3FC' }}>
-            <Award size={12} /> Plano gratuito disponível
-          </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-            Comece hoje, sem compromisso
-          </h2>
-          <p className="text-white/70 text-lg mb-8">
-            Acesse gratuitamente. Cadastre casos, use o OrthoAI e gere laudos em PDF sem limite de tempo.
-
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => setCurrentView('register')}
-              className="px-8 py-4 rounded-2xl font-bold text-base transition-all duration-200"
-              style={{ background: '#0056b3', color: '#fff', boxShadow: '0 8px 32px rgba(0,86,179,0.4)' }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#004494'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#0056b3'; e.currentTarget.style.transform = 'none'; }}
-            >
-              Criar conta gratuita →
-            </button>
-            <button
-              onClick={() => setCurrentView('login')}
-              className="px-8 py-4 rounded-2xl font-semibold text-base transition-all"
-              style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1.5px solid rgba(255,255,255,0.25)' }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.18)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-            >
-              Já tenho conta
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* ── STATS ──────────────────────────────────────────────────────── */}
       <section className="py-16 bg-white">
         <div className="max-w-5xl mx-auto px-6">
@@ -364,6 +326,44 @@ export default function HomePage() {
                 <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>{desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRICING TEASER ─────────────────────────────────────────────── */}
+      <section id="planos" className="py-20"
+        style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)' }}>
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-6"
+            style={{ background: 'rgba(255,255,255,0.1)', color: '#7DD3FC' }}>
+            <Award size={12} /> Plano gratuito disponível
+          </div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+            Comece hoje, sem compromisso
+          </h2>
+          <p className="text-white/70 text-lg mb-8">
+            Acesse gratuitamente. Cadastre casos, use o OrthoAI e gere laudos em PDF sem limite de tempo.
+
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => setCurrentView('register')}
+              className="px-8 py-4 rounded-2xl font-bold text-base transition-all duration-200"
+              style={{ background: '#0056b3', color: '#fff', boxShadow: '0 8px 32px rgba(0,86,179,0.4)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#004494'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#0056b3'; e.currentTarget.style.transform = 'none'; }}
+            >
+              Criar conta gratuita →
+            </button>
+            <button
+              onClick={() => setCurrentView('login')}
+              className="px-8 py-4 rounded-2xl font-semibold text-base transition-all"
+              style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1.5px solid rgba(255,255,255,0.25)' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.18)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+            >
+              Já tenho conta
+            </button>
           </div>
         </div>
       </section>
