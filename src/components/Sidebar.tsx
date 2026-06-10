@@ -1,4 +1,5 @@
-﻿import { 
+﻿import { useMemo } from 'react';
+import { 
   ClipboardList, Scan, Activity, BarChart3,
   Bot, Bell, User, Settings, LogOut 
 } from 'lucide-react';
@@ -10,6 +11,7 @@ interface MenuItem {
   icon: React.ComponentType<{ className?: string }>;
   page: Page;
   badge?: number;
+  dynamicBadge?: 'activeCases';
 }
 
 interface MenuSection {
@@ -21,7 +23,7 @@ const MENU_SECTIONS: MenuSection[] = [
   {
     title: 'CLÍNICO',
     items: [
-      { label: 'Casos', icon: ClipboardList, page: 'gallery', badge: 2 },
+      { label: 'Casos', icon: ClipboardList, page: 'gallery', dynamicBadge: 'activeCases' },
       { label: 'Análise de Imagens', icon: Scan, page: 'analysis' },
       { label: 'Dashboard', icon: Activity, page: 'dashboard' },
       { label: 'Relatórios', icon: BarChart3, page: 'reports' },
@@ -44,7 +46,25 @@ const MENU_SECTIONS: MenuSection[] = [
 ];
 
 export default function Sidebar() {
-  const { currentPage, setCurrentPage, user, logout } = useApp();
+  const { currentPage, setCurrentPage, user, logout, cases, unreadCount } = useApp();
+
+  const activeCasesCount = useMemo(() => {
+    return cases.filter(c => 
+      c.status === 'pending' || 
+      c.status === 'in_analysis' || 
+      c.status === 'critical'
+    ).length;
+  }, [cases]);
+
+  const getBadge = (item: MenuItem): number | null => {
+    if (item.dynamicBadge === 'activeCases') {
+      return activeCasesCount > 0 ? activeCasesCount : null;
+    }
+    if (item.label === 'Notificações') {
+      return unreadCount > 0 ? unreadCount : null;
+    }
+    return item.badge ?? null;
+  };
 
   return (
     <aside className="w-64 bg-slate-900 text-white h-screen flex flex-col">
@@ -69,6 +89,7 @@ export default function Sidebar() {
             {section.items.map((item) => {
               const Icon = item.icon;
               const isActive = currentPage === item.page;
+              const badgeValue = getBadge(item);
               
               return (
                 <button
@@ -82,9 +103,9 @@ export default function Sidebar() {
                 >
                   <Icon className="w-5 h-5" />
                   <span className="flex-1 text-left">{item.label}</span>
-                  {item.badge && (
+                  {badgeValue !== null && badgeValue > 0 && (
                     <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
-                      {item.badge}
+                      {badgeValue}
                     </span>
                   )}
                 </button>
