@@ -1,0 +1,114 @@
+{
+  "implementedTargets": {
+    "ReportsPage.tsx": [
+      "tour-monthly-report",
+      "tour-case-report",
+      "tour-report-history"
+    ],
+    "ProductTour.tsx": [
+      "${target}",
+      "${currentStep.target}"
+    ],
+    "GalleryPage.tsx": [
+      "tour-add-case",
+      "tour-gallery-filters",
+      "tour-gallery-grid"
+    ],
+    "SettingsPage.tsx": "tour-settings-toggles",
+    "DashboardPage.tsx": [
+      "tour-dashboard-hero",
+      "tour-dashboard-surgeries",
+      "tour-dashboard-metrics",
+      "tour-dashboard-triage"
+    ],
+    "NotificationsPage.tsx": "tour-unread-notifications",
+    "ChatPage.tsx": [
+      "tour-chat-messages",
+      "tour-chat-suggestions",
+      "tour-chat-input"
+    ],
+    "ProfilePage.tsx": [
+      "tour-profile-stats",
+      "tour-competency-chart"
+    ],
+    "CasePage.tsx": [
+      "tour-case-patient",
+      "tour-case-image",
+      "tour-case-ai-result",
+      "tour-case-notes",
+      "tour-case-checklist",
+      "tour-case-protocol",
+      "tour-case-actions"
+    ],
+    "ClinicalCopilotPanel.tsx": "tour-clinical-copilot",
+    "ApproveCompleteCaseBar.tsx": "tour-approve-case",
+    "AnalysisPage.tsx": [
+      "tour-upload",
+      "tour-analysis-preview",
+      "tour-analysis-result"
+    ]
+  },
+  "actualSteps": {
+    "profile": [
+      "__welcome__",
+      "tour-profile-stats",
+      "tour-competency-chart"
+    ],
+    "case": [
+      "__welcome__",
+      "tour-case-patient",
+      "tour-case-image",
+      "tour-case-ai-result",
+      "tour-case-notes",
+      "tour-case-checklist",
+      "tour-case-actions"
+    ],
+    "dashboard": [
+      "__welcome__",
+      "tour-sidebar-analysis",
+      "tour-sidebar-chat",
+      "tour-sidebar-gallery",
+      "tour-sidebar-reports",
+      "tour-sidebar-profile",
+      "tour-sidebar-settings",
+      "tour-sidebar-notifications",
+      "tour-dashboard-hero",
+      "tour-dashboard-surgeries",
+      "tour-dashboard-triage",
+      "tour-dashboard-metrics"
+    ],
+    "analysis": [
+      "__welcome__",
+      "tour-upload",
+      "tour-analysis-result",
+      "tour-clinical-copilot",
+      "tour-approve-case"
+    ],
+    "reports": [
+      "__welcome__",
+      "tour-monthly-report",
+      "tour-case-report",
+      "tour-report-history"
+    ],
+    "gallery": [
+      "__welcome__",
+      "tour-gallery-filters",
+      "tour-gallery-grid",
+      "tour-add-case"
+    ],
+    "settings": [
+      "__welcome__",
+      "tour-settings-toggles"
+    ],
+    "notifications": [
+      "__welcome__",
+      "tour-unread-notifications"
+    ],
+    "chat": [
+      "__welcome__",
+      "tour-chat-suggestions",
+      "tour-chat-messages",
+      "tour-chat-input"
+    ]
+  }
+}

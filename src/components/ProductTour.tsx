@@ -14,17 +14,11 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   // ── Dashboard (inclui onboarding da Sidebar) ──────────────────────────────
   dashboard: [
     { target: '__welcome__', title: '👋 Bem-vindo ao OrtoBolt', content: 'Seu centro de comando para ortopedia veterinária. Este tour apresenta todos os módulos da plataforma — leva menos de 2 minutos.', placement: 'center' },
-    { target: 'tour-sidebar-analysis', title: '🔬 Análise Visual com IA', content: 'Faça upload de radiografias e imagens clínicas. A IA descreve achados, sugere diagnósticos diferenciais e integra o resultado ao caso clínico em 1 clique.', placement: 'right', highlight: true },
-    { target: 'tour-sidebar-chat', title: '🤖 OrthoAI — Assistente de Texto', content: 'Converse com a IA especializada em ortopedia veterinária para tirar dúvidas sobre protocolos, dosagens e diagnósticos diferenciais.', placement: 'right', highlight: true },
-    { target: 'tour-sidebar-gallery', title: '🗂️ Galeria de Casos', content: 'Acervo completo de casos clínicos com filtros por status, espécie e procedimento. Casos aprovados via Análise chegam aqui automaticamente.', placement: 'right', highlight: true },
-    { target: 'tour-sidebar-reports', title: '📄 Relatórios em PDF', content: 'Gere relatórios profissionais: mensal com métricas consolidadas ou individual por caso cirúrgico. Download em 1 clique.', placement: 'right', highlight: true },
-    { target: 'tour-sidebar-profile', title: '👤 Perfil Profissional', content: 'Estatísticas de carreira, certificações e radar de competências por área de especialização.', placement: 'right', highlight: true },
-    { target: 'tour-sidebar-settings', title: '⚙️ Configurações', content: 'Preferências de notificação, análise automática, idioma e formato de relatório.', placement: 'right', highlight: true },
-    { target: 'tour-sidebar-notifications', title: '🔔 Notificações', content: 'Alertas de casos críticos, integrações de pipeline e atualizações ficam aqui. O badge vermelho indica itens não lidos.', placement: 'right', highlight: true },
     { target: 'tour-dashboard-hero', title: '☀️ Saudação Personalizada', content: 'Veja seu nome, data atual e resumo do dia: cirurgias, casos críticos e análises em andamento.', placement: 'bottom', highlight: true },
     { target: 'tour-dashboard-surgeries', title: '🏥 Cirurgias de Hoje', content: 'Procedimentos registrados hoje com status em tempo real. Clique em qualquer cirurgia para abrir o caso completo e o protocolo.', placement: 'bottom', highlight: true },
     { target: 'tour-dashboard-triage', title: '⚡ Triage Inteligente', content: 'Casos ordenados por prioridade clínica: críticos 🔴, em análise 🟡, estáveis 🟢. Clique para atendimento imediato.', placement: 'left', highlight: true },
     { target: 'tour-dashboard-metrics', title: '📊 Métricas Operacionais', content: 'Comparativo hoje vs ontem: casos novos, em análise e concluídos. Acesse Relatórios para o histórico mensal completo.', placement: 'top', highlight: true },
+    { target: 'tour-ai-widget', title: '🤖 OrthoAI Rápido', content: 'Acesse o assistente de IA a qualquer momento, em qualquer página, com perguntas sugeridas e contexto de conversa.', placement: 'left', highlight: true },
   ],
   // ── OrthoAI Chat ──────────────────────────────────────────────────────────
   chat: [

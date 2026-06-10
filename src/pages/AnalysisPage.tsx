@@ -1,4 +1,4 @@
-// src/pages/AnalysisPage.tsx
+﻿// src/pages/AnalysisPage.tsx
 // Upload → Análise → Copiloto → Aprovar Caso Completo → pipeline integrado
 
 import React, { useState, useRef, useMemo } from 'react';
@@ -307,6 +307,7 @@ export default function AnalysisPage() {
               </div>
             </Card>
 
+            <div data-tour="tour-clinical-copilot">
             <ClinicalCopilotPanel
               enabled={Boolean(session && imageBase64)}
               messages={session?.messages ?? []}
@@ -318,8 +319,10 @@ export default function AnalysisPage() {
               onSend={sendMessage}
               onRefineAnalysis={handleRefine}
             />
+            </div>
           </div>
 
+          <div data-tour="tour-approve-case">
           <ApproveCompleteCaseBar
             disabled={approving || streaming || refining || !user}
             defaultTitle={defaultCaseTitle}
@@ -327,6 +330,7 @@ export default function AnalysisPage() {
               void handleApprove(title, dest);
             }}
           />
+          </div>
         </div>
       )}
 

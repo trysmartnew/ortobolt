@@ -1,4 +1,4 @@
-// src/components/AIAssistant.tsx
+﻿// src/components/AIAssistant.tsx
 // 🤖 OrthoAI Copiloto Global — Widget flutuante com diretrizes veterinárias
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
@@ -86,6 +86,7 @@ export default function AIAssistant() {
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-gradient-to-br from-[#0056b3] to-[#38BDF8] text-white rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group"
           aria-label="Abrir OrthoAI"
+          data-tour="tour-ai-widget"
         >
           <MessageCircle size={24} />
           <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse" />
