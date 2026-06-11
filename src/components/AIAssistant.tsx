@@ -1,10 +1,13 @@
-﻿// src/components/AIAssistant.tsx
+// src/components/AIAssistant.tsx
 // 🤖 OrthoAI Copiloto Global — Widget flutuante com diretrizes veterinárias
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
 import { sendChatMessageStream } from '@/services/aiService';
 import { buildVetMessage } from '@/services/veterinaryPrompts';
 import { useApp } from '@/contexts/AppContext';
+import OrthoDeepAnalysis from './OrthoDeepAnalysis';
+import { getStructuredOrthopedicAnalysis } from '@/services/aiService';
+import type { RespostaOrtopedica } from '@/services/ortoboltEngine';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -19,12 +22,27 @@ export default function AIAssistant() {
   ]);
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
+  const [deepAnalysis, setDeepAnalysis] = useState<RespostaOrtopedica | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
 
   useEffect(() => { scrollToBottom(); }, [messages]);
+
+    const handleDeepAnalysis = async () => {
+    if (!activeCase) { alert('Selecione um caso clínico primeiro.'); return; }
+    setIsAnalyzing(true);
+    try {
+      const ctx = `Paciente: ${activeCase.patientName}, ${activeCase.species}, ${activeCase.breed}, ${activeCase.ageYears}a, ${activeCase.weightKg}kg. Procedimento: ${activeCase.procedure}. Status: ${activeCase.status}.`;
+      const result = await getStructuredOrthopedicAnalysis(ctx);
+      setDeepAnalysis(result);
+    } catch (err) {
+      console.error('Erro análise profunda:', err);
+      alert('Erro ao gerar análise profunda.');
+    } finally { setIsAnalyzing(false); }
+  };
 
   const handleSend = async () => {
     const text = input.trim();
@@ -74,6 +92,7 @@ export default function AIAssistant() {
   };
 
   const quickActions = [
+    { label: '🩺 Análise Profunda (RAG)', action: 'deep' },
     { label: '🩺 Analisar caso atual', prompt: `Analise o caso ${activeCase?.patientName || 'atual'} e sugira próximos passos clínicos.` },
     { label: '💊 Calcular dosagem', prompt: 'Preciso calcular a dosagem de um medicamento. Me ajude a coletar os dados necessários.' },
     { label: '🔍 Diagnóstico diferencial', prompt: 'Preciso de ajuda com diagnóstico diferencial. Me faça perguntas sobre o caso.' },
@@ -139,7 +158,7 @@ export default function AIAssistant() {
                 {quickActions.map((a, i) => (
                   <button
                     key={i}
-                    onClick={() => { setInput(a.prompt); textareaRef.current?.focus(); }}
+                    onClick={() => { if (a.action === 'deep') { handleDeepAnalysis(); } else if (a.prompt) { setInput(a.prompt); textareaRef.current?.focus(); } }}
                     className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg transition-colors"
                   >
                     {a.label}
@@ -174,6 +193,13 @@ export default function AIAssistant() {
             </p>
           </div>
         </div>
+      )}
+      {deepAnalysis && activeCase && (
+        <OrthoDeepAnalysis
+          analysis={deepAnalysis}
+          casoClinico={`Paciente: ${activeCase.patientName}, ${activeCase.species}, ${activeCase.breed}, ${activeCase.ageYears}a, ${activeCase.weightKg}kg.`}
+          onClose={() => setDeepAnalysis(null)}
+        />
       )}
     </>
   );

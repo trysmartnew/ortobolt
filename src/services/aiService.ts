@@ -12,6 +12,7 @@ import {
   REFINE_ANALYSIS_PROMPT,
 } from '@/services/veterinaryPrompts';
 import { getSupabaseAccessToken } from '@/services/supabase';
+import { RespostaOrtopedicaSchema, validarRespostaMedica, ORTOBOLT_STRUCTURED_PROMPT, buscarContextoRAG, type RespostaOrtopedica } from './ortoboltEngine';
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
 interface CacheEntry {
@@ -192,7 +193,7 @@ Para casos críticos, indique urgência na primeira linha.
 Cálculos são ORIENTATIVOS — confirmar com instrumentação física antes de qualquer procedimento.`;
 
 // ── proxyRequest (modo JSON — analyzeImage, getCaseAISuggestion) ──────────────
-async function proxyRequest(body: {
+export async function proxyRequest(body: {
   model: string;
   messages: ProxyMessage[];
   max_tokens?: number;
@@ -546,5 +547,34 @@ export async function refineClinicalAnalysis(
   } catch (err) {
     console.error('Refine analysis error:', err);
     throw err;
+  }
+}
+
+// ── ✅ NOVO: Análise Ortopédica Estruturada (JSON + Validação em Camadas) ──
+export async function getStructuredOrthopedicAnalysis(caseDescription: string): Promise<RespostaOrtopedica> {
+  try {
+    const contextoRAG = await buscarContextoRAG(caseDescription);
+    const promptFinal = contextoRAG 
+      ? `${ORTOBOLT_STRUCTURED_PROMPT}\n\nCONTEXTO DE LITERATURA/CASOS SIMILARES (Use estritamente se aplicável):\n${contextoRAG}`
+      : ORTOBOLT_STRUCTURED_PROMPT;
+
+    const response = await proxyRequest({
+      model: PRIMARY_MODEL,
+      messages: [
+        { role: 'system', content: promptFinal },
+        { role: 'user', content: caseDescription }
+      ],
+      max_tokens: 800,
+    });
+
+    // Limpeza de markdown caso a IA insira `json ... `
+    const cleanJson = response.replace(/^\\\json\s*|\s*\\\$/g, '').trim();
+    
+    // Parse e Validação em Camadas (Zod + Regras Clínicas)
+    const parsed = JSON.parse(cleanJson);
+    return validarRespostaMedica(parsed);
+  } catch (err) {
+    console.error('Erro na análise estruturada:', err);
+    throw new Error('Falha ao gerar análise estruturada. Verifique os dados do caso.');
   }
 }
