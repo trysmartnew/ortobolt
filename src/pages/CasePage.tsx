@@ -1,4 +1,4 @@
-﻿// src/pages/CasePage.tsx
+// src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
 import { useState, useMemo, useRef } from 'react';
 import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity } from 'lucide-react';
@@ -429,7 +429,6 @@ export default function CasePage() {
               </div>
             </div>
             <div className="bg-slate-900 p-6 flex items-center justify-center min-h-[400px] overflow-auto relative">`n              {activeCase.avatarUrl && <img src={activeCase.avatarUrl} alt="Avatar do paciente" className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
-              {activeCase.avatarUrl && <img src={activeCase.avatarUrl} alt="Avatar do paciente" className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
               {activeCase.imageUrl ? (
                 <img src={activeCase.imageUrl} alt={activeCase.patientName} style={{ width: `${zoom}%`, maxWidth: '100%', transition: 'width .2s' }} className="rounded-xl shadow-2xl object-contain" />
               ) : (

@@ -1,7 +1,7 @@
 // ✅ U-02: addToast no handleAdd — feedback visual ao criar caso
 // ✅ D-01: veterinarianId usa user?.id em vez de hardcoded 'vet-001'
-import { useState, useMemo } from 'react';
-import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2 } from 'lucide-react';
+import { useState, useMemo, useRef } from 'react';
+import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2, Upload } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/data/mockData';
@@ -96,7 +96,22 @@ function validateCaseForm(form: { title: string; patientName: string; ageYears: 
 
 export default function GalleryPage() {
   // ✅ CORREÇÃO: Adicionar 'user' ao destructure
-  const { cases, addCase, openCase, deleteCase, addToast, user } = useApp();
+  const { cases, addCase, openCase, deleteCase, addToast, user, updateCase } = useApp();
+
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [avatarCaseId, setAvatarCaseId] = useState<string | null>(null);
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !avatarCaseId) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      updateCase(avatarCaseId, { avatarUrl: reader.result as string, updatedAt: new Date().toISOString() });
+      addToast("Avatar atualizado.", "success");
+      setAvatarCaseId(null);
+    };
+    reader.readAsDataURL(file);
+  };
   
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
@@ -308,6 +323,16 @@ export default function GalleryPage() {
                   </button>
                   <button
                     onClick={() => {
+                      setAvatarCaseId(c.id);
+                      avatarInputRef.current?.click();
+                    }}
+                    title="Upload Avatar"
+                    className="p-1.5 rounded-lg text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                  >
+                    <Upload size={13} />
+                  </button>
+                  <button
+                    onClick={() => {
                       if (window.confirm(`Excluir o caso "${c.title}"? Esta ação não pode ser desfeita.`)) {
                         deleteCase(c.id);
                         addToast(`Caso "${c.title}" excluído.`, 'info');
@@ -325,6 +350,7 @@ export default function GalleryPage() {
         </div>
       )}
 
+      <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
       {selected && <CaseDetailModal c={selected} onClose={() => setSelected(null)} />}
 
       <Modal open={showAdd} onClose={handleCloseAdd} title="Novo Caso Clínico">
