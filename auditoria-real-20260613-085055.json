@@ -1,0 +1,146 @@
+{
+  "project": {
+    "name": "OrtoBolt",
+    "tech_stack": {
+      "frontend": "React 19, Vite 6.2.0, TypeScript 5.8.2, Tailwind CSS 4.1.14",
+      "backend": "Supabase, Vercel Serverless Functions",
+      "ai": "Gemini/Claude (via custom proxy), Zod for validation",
+      "testing": "Vitest 3.2.4"
+    },
+    "description": "A sophisticated AI-powered clinical tool for veterinary orthopedics, combining an advanced frontend with serverless AI routing and a Supabase backend for case management and RAG."
+  },
+  "inventory": {
+    "components": [
+      "src/services/ortoboltEngine.ts",
+      "src/services/clinicalCopilotService.ts",
+      "src/services/aiService.ts",
+      "src/contexts/AppContext.tsx",
+      "src/pages/DashboardPage.tsx",
+      "src/pages/CasePage.tsx",
+      "api/ai.ts",
+      "api/embeddings.ts"
+    ],
+    "configs": [
+      "package.json",
+      "tsconfig.json",
+      "vite.config.ts",
+      "vercel.json",
+      "vitest.config.ts"
+    ]
+  },
+  "health": {
+    "maintainability": "5",
+    "stability": "8",
+    "comments": "The project uses a bleeding-edge stack and is stable in build, but suffers from a 'God Object' context and fragmented AI orchestration that will hinder long-term maintenance."
+  },
+  "security": {
+    "score": "6",
+    "findings": [
+      {
+        "issue": "Missing Authentication in /api/embeddings.ts",
+        "severity": "Critical",
+        "impact": "Publicly accessible endpoint allowing unauthorized use of GEMINI_API_KEY."
+      },
+      {
+        "issue": "In-Memory Rate Limiting",
+        "severity": "Medium",
+        "impact": "Bypasable rate limits due to Vercel serverless cold starts."
+      },
+      {
+        "issue": "Broad CORS Policy",
+        "severity": "Low",
+        "impact": "Localhost origins allowed in production config."
+      }
+    ]
+  },
+  "performance": {
+    "score": "7",
+    "findings": [
+      {
+        "issue": "Missing API Pagination",
+        "severity": "Medium",
+        "impact": "Full table fetches (.select('*')) will degrade as data grows."
+      },
+      {
+        "issue": "Global Context Re-renders",
+        "severity": "Medium",
+        "impact": "Any state change in AppContext triggers app-wide re-renders."
+      },
+      {
+        "issue": "Redundant Dashboard Filtering",
+        "severity": "Low",
+        "impact": "O(N) operations in render path causing potential UI lag."
+      }
+    ]
+  },
+  "architecture": {
+    "score": "7",
+    "findings": [
+      {
+        "issue": "Fragmented AI Orchestration",
+        "severity": "Medium",
+        "impact": "Logic split between aiService and ortoboltEngine makes maintenance difficult."
+      },
+      {
+        "issue": "Client-Side Heavy RAG",
+        "severity": "Medium",
+        "impact": "Frontend triggers embeddings, increasing latency and round-trips."
+      },
+      {
+        "issue": "Hardcoded Prompts",
+        "severity": "Low",
+        "impact": "Prompt engineering requires full redeployments."
+      }
+    ]
+  },
+  "critical_issues": [
+    "Unprotected /api/embeddings.ts endpoint exposing API keys."
+  ],
+  "high_priority": [
+    "Refactor AppContext.tsx to remove 'God Object' pattern.",
+    "Implement pagination for Supabase case and notification fetches."
+  ],
+  "medium_priority": [
+    "Unify AI orchestration into a single module/class.",
+    "Move RAG embedding and retrieval logic to the backend proxy.",
+    "Implement a distributed rate limiter (e.g., Upstash Redis)."
+  ],
+  "low_priority": [
+    "Extract common SSE streaming logic into a helper function.",
+    "Move system prompts to external configuration files.",
+    "Replace simple Map cache with an LRU cache."
+  ],
+  "recommendations": [
+    "Immediately secure the embeddings API with JWT verification.",
+    "Decompose the global AppContext into specialized contexts (Auth, Case, UI).",
+    "Optimize DashboardPage by reducing the case list into buckets in a single pass."
+  ],
+  "roadmap": [
+    "Phase 1: Security Hardening (Auth on all API endpoints, CORS cleanup).",
+    "Phase 2: State & Performance Optimization (Context splitting, API pagination).",
+    "Phase 3: AI Architectural Refinement (Backend RAG, Unified Orchestrator, External Prompts).",
+    "Phase 4: DX Improvements (DRY streaming logic, LRU caching)."
+  ],
+  "overall_score": 6.5,
+  "production_readiness": "Warning",
+  "generated_at": "2026-06-13",
+  "commands_executed": [
+    "npx tsc --noEmit",
+    "npm run build"
+  ],
+  "build_results": "Success",
+  "bundle_sizes": {
+    "index_html": "3.14 kB",
+    "css": "54.96 kB",
+    "js_index": "452.79 kB",
+    "others": "vendor-core: 176.36 kB, vendor-pdf: 391.64 kB, vendor-charts: 367.64 kB"
+  },
+  "evidence_files": [
+    "api/ai.ts",
+    "api/embeddings.ts",
+    "src/contexts/AppContext.tsx",
+    "src/services/aiService.ts",
+    "src/services/ortoboltEngine.ts",
+    "src/pages/DashboardPage.tsx"
+  ]
+}

@@ -1,4 +1,4 @@
-// src/components/ProductTour.tsx
+﻿// src/components/ProductTour.tsx
 import { useState, useEffect, useCallback, memo } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 
@@ -37,7 +37,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   ],
   // ── Galeria ───────────────────────────────────────────────────────────────
   gallery: [
-    { target: '__welcome__', title: '🗂️ Galeria de Casos Clínicos', content: 'Acervo completo dos seus casos ortopédicos. Casos aprovados via Análise chegam aqui automaticamente Filtre, colabore e gerencie registros.', placement: 'center' },
+    { target: '__welcome__', title: '🗂️ Galeria de Casos Clínicos', content: 'Acervo completo dos seus casos ortopédicos. Casos aprovados via Análise chegam aqui automaticamente com badge "IA integrada". Filtre, colabore e gerencie registros.', placement: 'center' },
     { target: 'tour-gallery-filters', title: '🔍 Busca e Filtros', content: 'Busque por nome do paciente ou tag. Filtre por status (pendente, em análise, concluído, crítico). Os filtros combinam em tempo real.', placement: 'bottom', highlight: true },
     { target: 'tour-gallery-grid', title: '🐕 Cards de Casos', content: 'Cada card exibe paciente, procedimento, score de precisão e risco. Use "Ver detalhes" para o resumo ou "Colaborar" para abrir o protocolo pós-operatório completo.', placement: 'bottom', highlight: true },
     { target: 'tour-add-case', title: '➕ Novo Caso Manual', content: 'Registre um caso sem passar pela Análise Visual: preencha dados do paciente, procedimento e imagem. Disponível para análise futura e colaboração.', placement: 'left', highlight: true },
