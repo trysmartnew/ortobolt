@@ -45,15 +45,30 @@ function addHeader(
   title: string,
   subtitle: string
 ) {
+  const clinicName = localStorage.getItem('ortobolt_pdf_clinic_name') || 'OrtoBolt';
+  const clinicSubtitle = localStorage.getItem('ortobolt_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente';
+  const logoData = localStorage.getItem('ortobolt_pdf_logo');
+
   doc.setFillColor(0, 86, 179);
   doc.rect(0, 0, 210, 22, 'F');
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.text('OrtoBolt', 14, 10);
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'normal');
-  doc.text('Ortopedia Veterinária Inteligente', 14, 16);
+  
+  if (logoData) {
+    try { doc.addImage(logoData, 'PNG', 14, 5, 12, 12); } catch (e) { console.warn('Erro ao adicionar logo:', e); }
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text(safe(clinicName), 30, 10);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text(safe(clinicSubtitle), 30, 16);
+  } else {
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text(safe(clinicName), 14, 10);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text(safe(clinicSubtitle), 14, 16);
+  }
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
@@ -75,7 +90,8 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.setFont('helvetica', 'normal');
-    doc.text('OrtoBolt — Plataforma de Ortopedia Veterinária com IA', 14, 290);
+    const clinicNameF = localStorage.getItem('ortobolt_pdf_clinic_name') || 'OrtoBolt';
+    doc.text(safe(clinicNameF) + ' — Plataforma de Ortopedia Veterinária com IA', 14, 290);
     doc.text(`Página ${i} de ${pageCount}`, 185, 290, { align: 'right' });
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 290, { align: 'center' });
   }

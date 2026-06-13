@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { pickCaseForReport } from '@/services/clinicalCaseIntegrationService';
 import { supabase } from '@/services/supabase';
 import type { Report, KPIMetric, ChartDataPoint } from '@/types/index';
-import { Download, FileText, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Download, FileText, Clock, CheckCircle, AlertCircle, Upload, Image as ImageIcon, Settings } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Button, Card, Badge, SectionHeader, Spinner, InlineToast } from '@/components/ui';
 import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
@@ -23,12 +23,43 @@ const TYPE_COLORS: Record<string, 'blue'|'success'|'warning'|'info'> = {
 };
 
 export default function ReportsPage() {
-  const { user, cases, activeCase } = useApp();
+  const { user, cases, activeCase, addToast } = useApp();
 
   const reportableCase = useMemo(
     () => pickCaseForReport(cases, activeCase),
     [cases, activeCase]
   );
+
+  // ── Personalização de Laudos (Logo e Cabeçalho) ──
+  const [clinicName, setClinicName] = useState(localStorage.getItem('ortobolt_pdf_clinic_name') || 'OrtoBolt');
+  const [clinicSubtitle, setClinicSubtitle] = useState(localStorage.getItem('ortobolt_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente');
+  const [logoPreview, setLogoPreview] = useState<string | null>(localStorage.getItem('ortobolt_pdf_logo'));
+  
+  const handleSavePrefs = () => {
+    localStorage.setItem('ortobolt_pdf_clinic_name', clinicName);
+    localStorage.setItem('ortobolt_pdf_clinic_subtitle', clinicSubtitle);
+    addToast('Preferências de Laudo salvas.', 'success');
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setLogoPreview(base64);
+      localStorage.setItem('ortobolt_pdf_logo', base64);
+      addToast('Logo atualizada.', 'success');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveLogo = () => {
+    setLogoPreview(null);
+    localStorage.removeItem('ortobolt_pdf_logo');
+    addToast('Logo removida.', 'info');
+  };
+
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState<string | null>(null);
@@ -213,7 +244,7 @@ export default function ReportsPage() {
               <CheckCircle className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
-              <p className="font-bold text-slate-900 text-sm">Relatório de Caso</p>
+              <p className="font-bold text-slate-900 text-sm">Laudo Clínico</p>
               <p className="text-xs text-slate-500">
                 {reportableCase
                   ? `${reportableCase.patientName} · ${reportableCase.procedure}`
@@ -231,7 +262,7 @@ export default function ReportsPage() {
             onClick={downloadCase} disabled={user?.role === 'student'} title={user?.role === 'student' ? 'Exclusivo para profissionais' : ''}
           >
             <Download size={14} /> 
-            {generating === 'case' ? 'Gerando...' : 'Gerar Relatório de Caso'}
+            {generating === 'case' ? 'Gerando...' : 'Gerar Laudo Clínico'}
           </Button>
         </Card>
       </div>
