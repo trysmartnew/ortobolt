@@ -18,3 +18,7 @@ public/backups/
 audit_*.json
 tour-real-data.json
 product-tour-audit-report.json
+
+# Auditorias locais
+supabase-audit.json
+tour-audit.json
