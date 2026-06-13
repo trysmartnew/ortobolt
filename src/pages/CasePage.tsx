@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef } from 'react';
 import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
+import { uploadCaseImage } from '@/services/supabase';
 import { Card, Button, StatusBadge, RiskTag } from '@/components/ui';
 import type { ClinicalCase, ProcedureType } from '@/types/index';
 
@@ -283,24 +284,26 @@ export default function CasePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !activeCase) return;
     const reader = new FileReader();
-    reader.onload = () => {
-      updateCase(activeCase.id, { imageUrl: reader.result as string, updatedAt: new Date().toISOString() });
-      addToast('Radiografia atualizada.', 'success');
+    reader.onload = async () => {
+      const url = await uploadCaseImage(reader.result as string, activeCase.id, 'xray');
+      updateCase(activeCase.id, { imageUrl: url || reader.result as string, updatedAt: new Date().toISOString() });
+      addToast(url ? 'Radiografia salva na nuvem.' : 'Apenas cache local (falha no upload).', 'success');
     };
     reader.readAsDataURL(file);
   };
 
-  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !activeCase) return;
     const reader = new FileReader();
-    reader.onload = () => {
-      updateCase(activeCase.id, { avatarUrl: reader.result as string, updatedAt: new Date().toISOString() });
-      addToast('Avatar atualizado.', 'success');
+    reader.onload = async () => {
+      const url = await uploadCaseImage(reader.result as string, activeCase.id, 'avatar');
+      updateCase(activeCase.id, { avatarUrl: url || reader.result as string, updatedAt: new Date().toISOString() });
+      addToast(url ? 'Avatar salvo na nuvem.' : 'Apenas cache local (falha no upload).', 'success');
     };
     reader.readAsDataURL(file);
   };

@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef } from 'react';
 import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2, Upload } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
+import { uploadCaseImage } from '@/services/supabase';
 import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/data/mockData';
 import type { ClinicalCase, CaseStatus, ProcedureType, AnimalSpecies } from '@/types/index';
@@ -101,13 +102,15 @@ export default function GalleryPage() {
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [avatarCaseId, setAvatarCaseId] = useState<string | null>(null);
 
-  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!avatarCaseId) return;
     const file = e.target.files?.[0];
-    if (!file || !avatarCaseId) return;
+    if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
-      updateCase(avatarCaseId, { avatarUrl: reader.result as string, updatedAt: new Date().toISOString() });
-      addToast("Avatar atualizado.", "success");
+    reader.onload = async () => {
+      const url = await uploadCaseImage(reader.result as string, avatarCaseId, 'avatar');
+      updateCase(avatarCaseId, { avatarUrl: url || reader.result as string, updatedAt: new Date().toISOString() });
+      addToast(url ? 'Avatar salvo na nuvem.' : 'Apenas cache local (falha no upload).', 'success');
       setAvatarCaseId(null);
     };
     reader.readAsDataURL(file);
