@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { pickCaseForReport } from '@/services/clinicalCaseIntegrationService';
 import { supabase } from '@/services/supabase';
 import type { Report, KPIMetric, ChartDataPoint } from '@/types/index';
-import { Download, FileText, Clock, CheckCircle, AlertCircle, Upload, Image as ImageIcon, Settings } from 'lucide-react';
+import { Download, FileText, Clock, CheckCircle, AlertCircle, Upload, Image as ImageIcon, Settings, Search, Calendar, User, X } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Button, Card, Badge, SectionHeader, Spinner, InlineToast } from '@/components/ui';
 import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
@@ -59,6 +59,40 @@ export default function ReportsPage() {
     localStorage.removeItem('ortobolt_pdf_logo');
     addToast('Logo removida.', 'info');
   };
+
+  // ── Seletor de Caso para Laudo ──
+  const [showCaseSelector, setShowCaseSelector] = useState(false);
+  const [caseSearch, setCaseSearch] = useState('');
+  const [caseSortBy, setCaseSortBy] = useState<'date' | 'name'>('date');
+
+  const filteredAndSortedCases = useMemo(() => {
+    let result = [...(cases || [])];
+    result = result.filter(c => c.patientName);
+    if (caseSearch) {
+      const searchLower = caseSearch.toLowerCase();
+      result = result.filter(c => 
+        c.patientName.toLowerCase().includes(searchLower) ||
+        (c.procedure && c.procedure.toLowerCase().includes(searchLower))
+      );
+    }
+    if (caseSortBy === 'date') {
+      result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    } else {
+      result.sort((a, b) => a.patientName.localeCompare(b.patientName));
+    }
+    return result;
+  }, [cases, caseSearch, caseSortBy]);
+
+  const handleGenerateSpecificCase = async (c: any) => {
+    setShowCaseSelector(false);
+    setGenerating('case');
+    try {
+      await generateCaseReport(c);
+    } finally {
+      setGenerating(null);
+    }
+  };
+
 
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
@@ -272,7 +306,7 @@ export default function ReportsPage() {
           </Button>
         </Card>
 
-        <Card data-tour="tour-case-report" className="p-5">
+                <Card data-tour="tour-case-report" className="p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-emerald-50 rounded-[18px] flex items-center justify-center shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
               <CheckCircle className="h-5 w-5 text-emerald-600" />
@@ -280,23 +314,23 @@ export default function ReportsPage() {
             <div>
               <p className="font-bold text-slate-900 text-sm">Laudo Clínico</p>
               <p className="text-xs text-slate-500">
-                {reportableCase
-                  ? `${reportableCase.patientName} · ${reportableCase.procedure}`
-                  : 'Aprove um caso na Análise'}
+                {cases && cases.length > 0 ? `${cases.length} casos disponíveis para laudo` : 'Nenhum caso registrado'}
               </p>
             </div>
           </div>
           <p className="text-xs text-slate-500 mb-4 font-mono">
-            Usa o último caso integrado (Análise → Aprovar) ou o caso aberto em Caso.
+            Selecione um caso específico na lista para gerar o Laudo Clínico (Guia para o Tutor) personalizado.
           </p>
-          <Button 
+          <Button
             className="w-full" 
-            variant="secondary" 
-            loading={generating === 'case'} 
-            onClick={downloadCase} disabled={user?.role === 'student'} title={user?.role === 'student' ? 'Exclusivo para profissionais' : ''}
+            variant="secondary"
+            loading={generating === 'case'}
+            onClick={() => setShowCaseSelector(true)} 
+            disabled={!cases || cases.length === 0 || user?.role === 'student'} 
+            title={user?.role === 'student' ? 'Exclusivo para profissionais' : 'Selecionar caso e gerar laudo'}
           >
-            <Download size={14} /> 
-            {generating === 'case' ? 'Gerando...' : 'Gerar Laudo Clínico'}
+            <FileText size={14} />
+            {generating === 'case' ? 'Gerando...' : 'Selecionar Caso e Gerar Laudo'}
           </Button>
         </Card>
       </div>
@@ -358,6 +392,89 @@ export default function ReportsPage() {
           ))}
         </div>
       </Card>
+      {/* Modal de Seleção de Caso */}
+      {showCaseSelector && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-slate-900 text-lg">Selecionar Caso para Laudo</h3>
+                <p className="text-sm text-slate-500">Escolha o caso clínico para gerar o PDF personalizado.</p>
+              </div>
+              <button onClick={() => setShowCaseSelector(false)} className="p-2 hover:bg-slate-100 rounded-full transition">
+                <X size={20} className="text-slate-500" />
+              </button>
+            </div>
+            
+            <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <input 
+                  type="text" 
+                  placeholder="Buscar por nome do paciente ou procedimento..." 
+                  value={caseSearch}
+                  onChange={(e) => setCaseSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#0056b3]/20 focus:border-[#0056b3] outline-none transition"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setCaseSortBy('date')}
+                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'date' ? 'bg-[#0056b3] text-white border-[#0056b3]' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                >
+                  <Calendar size={14} /> Mais Recente
+                </button>
+                <button 
+                  onClick={() => setCaseSortBy('name')}
+                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'name' ? 'bg-[#0056b3] text-white border-[#0056b3]' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                >
+                  <User size={14} /> Nome (A-Z)
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-2">
+              {filteredAndSortedCases.length === 0 ? (
+                <div className="text-center py-8 text-slate-500">
+                  <p>Nenhum caso encontrado com os filtros atuais.</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {filteredAndSortedCases.map((c: any) => (
+                    <button
+                      key={c.id}
+                      onClick={() => handleGenerateSpecificCase(c)}
+                      className="w-full flex items-center gap-4 p-3 rounded-xl border border-slate-100 hover:border-[#0056b3] hover:bg-blue-50/50 transition text-left group"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs overflow-hidden shrink-0">
+                        {c.patientAvatar ? (
+                          <img src={c.patientAvatar} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          c.patientName.charAt(0).toUpperCase()
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-slate-900 text-sm truncate">{c.patientName}</p>
+                        <p className="text-xs text-slate-500 truncate">{c.procedure || 'Procedimento não especificado'}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-xs text-slate-400">{new Date(c.createdAt).toLocaleDateString('pt-BR')}</p>
+                        {c.aiAnalysis && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 mt-1">
+                            IA: {c.aiAnalysis.precisionScore}%
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 }

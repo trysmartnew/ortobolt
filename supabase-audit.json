@@ -1,0 +1,117 @@
+[
+  {
+    "audit": {
+      "tables": [
+        "case_collaborators",
+        "case_images",
+        "case_messages",
+        "casos_reais_validados",
+        "certifications",
+        "clinical_cases",
+        "documentos_ortopedia",
+        "feedback_ia",
+        "keepalive",
+        "kpi_metrics",
+        "notifications",
+        "ortho_records",
+        "reports",
+        "users",
+        "weekly_stats"
+      ],
+      "rls_enabled": [
+        "case_collaborators",
+        "case_images",
+        "case_messages",
+        "casos_reais_validados",
+        "certifications",
+        "clinical_cases",
+        "documentos_ortopedia",
+        "feedback_ia",
+        "keepalive",
+        "kpi_metrics",
+        "notifications",
+        "ortho_records",
+        "reports",
+        "users",
+        "weekly_stats"
+      ],
+      "users_table_columns": [
+        {
+          "type": "uuid",
+          "column": "id",
+          "nullable": "NO"
+        },
+        {
+          "type": "text",
+          "column": "name",
+          "nullable": "NO"
+        },
+        {
+          "type": "text",
+          "column": "email",
+          "nullable": "NO"
+        },
+        {
+          "type": "text",
+          "column": "role",
+          "nullable": "NO"
+        },
+        {
+          "type": "text",
+          "column": "specialty",
+          "nullable": "NO"
+        },
+        {
+          "type": "text",
+          "column": "crmv",
+          "nullable": "NO"
+        },
+        {
+          "type": "text",
+          "column": "institution",
+          "nullable": "NO"
+        },
+        {
+          "type": "text",
+          "column": "avatar",
+          "nullable": "YES"
+        },
+        {
+          "type": "integer",
+          "column": "total_cases",
+          "nullable": "NO"
+        },
+        {
+          "type": "double precision",
+          "column": "success_rate",
+          "nullable": "NO"
+        },
+        {
+          "type": "double precision",
+          "column": "avg_precision",
+          "nullable": "NO"
+        },
+        {
+          "type": "integer",
+          "column": "monthly_procedures",
+          "nullable": "NO"
+        },
+        {
+          "type": "jsonb",
+          "column": "preferences",
+          "nullable": "NO"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "created_at",
+          "nullable": "NO"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "updated_at",
+          "nullable": "NO"
+        }
+      ]
+    }
+  }
+]
