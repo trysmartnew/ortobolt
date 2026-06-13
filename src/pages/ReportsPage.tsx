@@ -213,6 +213,40 @@ export default function ReportsPage() {
         <InlineToast message="Nenhum caso com análise IA disponível para gerar relatório de caso." type="info" />
       )}
 
+      {/* Personalização de Laudos */}
+      <Card className="p-5 mb-4 border-l-4 border-l-[#0056b3]">
+        <div className="flex items-center gap-2 mb-4">
+          <Settings size={18} className="text-[#0056b3]" />
+          <h3 className="font-bold text-slate-900 text-sm">Personalização de Laudos e Relatórios</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div>
+            <label className="text-xs font-semibold text-slate-600 mb-1 block">Nome da Clínica</label>
+            <input type="text" value={clinicName} onChange={e => setClinicName(e.target.value)} onBlur={handleSavePrefs} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#0056b3]/20 focus:border-[#0056b3] outline-none transition" />
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-slate-600 mb-1 block">Subtítulo / Especialidade</label>
+            <input type="text" value={clinicSubtitle} onChange={e => setClinicSubtitle(e.target.value)} onBlur={handleSavePrefs} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#0056b3]/20 focus:border-[#0056b3] outline-none transition" />
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-slate-600 mb-1 block">Logo da Clínica</label>
+            <div className="flex items-center gap-2">
+              {logoPreview ? (
+                <div className="relative">
+                  <img src={logoPreview} alt="Logo" className="w-10 h-10 object-contain rounded border border-slate-200 bg-white p-1" />
+                  <button onClick={handleRemoveLogo} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-600">×</button>
+                </div>
+              ) : (
+                <label className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#0056b3] bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer transition">
+                  <Upload size={14} /> Upload
+                  <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+                </label>
+              )}
+            </div>
+          </div>
+        </div>
+      </Card>
+
       {/* Generate section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card data-tour="tour-monthly-report" className="p-5">
