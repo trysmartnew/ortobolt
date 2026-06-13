@@ -433,7 +433,21 @@ export default function CasePage() {
             </div>
             <div className="bg-slate-900 p-6 flex items-center justify-center min-h-[400px] overflow-auto relative">`n              {activeCase.avatarUrl && <img src={activeCase.avatarUrl} alt="Avatar do paciente" className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
               {activeCase.imageUrl ? (
-                <img src={activeCase.imageUrl} alt={activeCase.patientName} style={{ width: `${zoom}%`, maxWidth: '100%', transition: 'width .2s' }} className="rounded-xl shadow-2xl object-contain" />
+                <div className="relative inline-block" style={{ width: `${zoom}%`, maxWidth: '100%', transition: 'width .2s' }}>
+                  <img src={activeCase.imageUrl} alt={activeCase.patientName} className="w-full h-auto rounded-xl shadow-2xl object-contain block" />
+                  {activeCase.aiAnalysis && activeCase.aiAnalysis.anatomicalLandmarks.filter(l => l.detected && l.coordinates).map((l, i) => (
+                    <div key={i} className="absolute z-20" style={{ top: `${l.coordinates?.y ?? 0}%`, left: `${l.coordinates?.x ?? 0}%`, transform: 'translate(-50%, -50%)' }}>
+                      <div className="w-3 h-3 bg-emerald-400 rounded-full border-2 border-white shadow-lg ring-2 ring-emerald-400/50"></div>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/80 text-white text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap font-bold shadow-md">{l.name}</span>
+                    </div>
+                  ))}
+                  {activeCase.precisionScore !== undefined && (
+                    <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 z-30 shadow-lg border border-white/20">
+                      <Activity size={12} className="text-emerald-400" />
+                      Score: {activeCase.precisionScore}%
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div className="flex flex-col items-center gap-2 text-slate-500">
                   <Upload size={32} />
