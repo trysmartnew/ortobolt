@@ -262,7 +262,11 @@ export default function GalleryPage() {
         <div data-tour="tour-gallery-grid" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {filtered.map(c => (
             <Card key={c.id} className="overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 group rounded-[18px]">
-              <div className="relative">
+              <div
+                className="relative cursor-pointer"
+                onClick={() => openCase(c)}
+                title="Abrir Colaboração Clínica"
+              >
                 {c.imageUrl ? (
                   <img
                     src={c.imageUrl}
