@@ -124,15 +124,20 @@ export default function ClinicalCopilotPanel({
           </div>
         </div>
         <Button
-          size="sm"
-          variant="secondary"
-          onClick={onRefineAnalysis}
-          disabled={refining || streaming}
-          loading={refining}
-          title="Consolidar chat e contexto na análise visual"
-        >
-          <RefreshCw size={13} /> Refinar análise
-        </Button>
+            size="sm"
+            variant="secondary"
+            onClick={onRefineAnalysis}
+            disabled={refining || streaming}
+            loading={refining}
+            title="Consolidar chat e contexto na análise visual"
+            className="relative overflow-hidden"
+          >
+            {!refining && !streaming && messages.length > 0 && (
+              <span className="absolute inset-0 rounded-md bg-[#0056b3] opacity-10 animate-pulse" />
+            )}
+            <RefreshCw size={13} className="relative z-10" />
+            <span className="relative z-10 ml-1.5">Refinar análise</span>
+          </Button>
       </div>
 
       <div className="px-4 py-3 border-b border-slate-100 bg-white grid grid-cols-2 gap-2">
