@@ -1,0 +1,39 @@
+const fs = require('fs');
+const path = 'src/components/ProductTour.tsx';
+
+let content = fs.readFileSync(path, 'utf8');
+const isCRLF = content.includes('\r\n');
+content = content.replace(/\r\n/g, '\n');
+
+// 1. Galeria
+const galRegex = /(gallery:\s*\[)([\s\S]*?)(\n\s{2}\],\s*\n\s{2}case:)/;
+const newGal = `
+    { target: '__welcome__', title: '🗂️ Memória Clínica Centralizada', content: 'Aqui fica o histórico completo de cada paciente. Acompanhe a evolução, reconsultas e protocolos em um só lugar.', placement: 'center' },
+    { target: 'tour-gallery-filters', title: '⚡ Triagem Rápida', content: 'Encontre casos urgentes ou recorrentes em segundos. Filtre por status para focar no que precisa de atenção agora.', placement: 'bottom', highlight: true },
+    { target: 'tour-gallery-grid', title: '🔍 Visão 360° do Paciente', content: 'Clique em qualquer card e acesse instantaneamente o laudo da IA, imagens, checklist pós-op e geração de PDF.', placement: 'bottom', highlight: true },
+    { target: 'tour-add-case', title: '📝 Registro Flexível', content: 'Adicione casos manuais ou provenientes de outras clínicas. A IA pode ser aplicada a qualquer momento depois.', placement: 'left', highlight: true },`;
+
+if (galRegex.test(content)) {
+  content = content.replace(galRegex, `$1${newGal}$3`);
+  console.log('✅ 1. Galeria atualizada.');
+} else {
+  console.error('❌ 1. Galeria não encontrada.');
+  process.exit(1);
+}
+
+// 2. Reports
+const repRegex = /(\{ target: 'tour-case-report'[\s\S]*?\},)\n/;
+const newRep = `
+    { target: 'tour-report-customize', title: '🎨 Personalização de Marca', content: 'Configure a identidade visual da sua clínica (logo, cores, cabeçalho) para que todos os PDFs saiam profissionais e padronizados.', placement: 'right', highlight: true },`;
+
+if (repRegex.test(content)) {
+  content = content.replace(repRegex, `$1${newRep}\n`);
+  console.log('✅ 2. Personalização adicionada.');
+} else {
+  console.error('❌ 2. Laudo Clínico não encontrado.');
+  process.exit(1);
+}
+
+const final = isCRLF ? content.replace(/\n/g, '\r\n') : content;
+fs.writeFileSync(path, final, 'utf8');
+console.log('💾 Arquivo salvo com sucesso.');

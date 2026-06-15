@@ -34,10 +34,10 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-approve-case', title: '✅ Integrar ao Caso', content: 'Salve o laudo na Galeria de Casos ou abra diretamente o Protocolo Pós-Operatório.', placement: 'top', highlight: true },
   ],
   gallery: [
-    { target: '__welcome__', title: '🗂️ Galeria de Casos', content: 'Seu acervo clínico. Todos os casos aprovados e registrados estão aqui.', placement: 'center' },
-    { target: 'tour-gallery-filters', title: '🔍 Busca e Filtros', content: 'Localize casos rapidamente pelo nome do paciente ou filtre por status.', placement: 'bottom', highlight: true },
-    { target: 'tour-gallery-grid', title: '🐕 Seus Casos', content: 'Clique no card para abrir os detalhes do paciente, o laudo da IA e o protocolo.', placement: 'bottom', highlight: true },
-    { target: 'tour-add-case', title: '➕ Novo Caso', content: 'Cadastre um paciente manualmente, sem precisar enviar uma imagem para análise.', placement: 'left', highlight: true },
+    { target: '__welcome__', title: '🗂️ Memória Clínica Centralizada', content: 'Aqui fica o histórico completo de cada paciente. Acompanhe a evolução, reconsultas e protocolos em um só lugar.', placement: 'center' },
+    { target: 'tour-gallery-filters', title: '⚡ Triagem Rápida', content: 'Encontre casos urgentes ou recorrentes em segundos. Filtre por status para focar no que precisa de atenção agora.', placement: 'bottom', highlight: true },
+    { target: 'tour-gallery-grid', title: '🔍 Visão 360° do Paciente', content: 'Clique em qualquer card e acesse instantaneamente o laudo da IA, imagens, checklist pós-op e geração de PDF.', placement: 'bottom', highlight: true },
+    { target: 'tour-add-case', title: '📝 Registro Flexível', content: 'Adicione casos manuais ou provenientes de outras clínicas. A IA pode ser aplicada a qualquer momento depois.', placement: 'left', highlight: true },
   ],
   case: [
     { target: '__welcome__', title: '🏥 Caso Clínico', content: 'Aqui você gerencia o paciente, visualiza a análise da IA e aplica o protocolo pós-operatório.', placement: 'center' },
@@ -52,6 +52,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: '__welcome__', title: '📄 Relatórios', content: 'Gere laudos em PDF para tutores ou relatórios gerenciais da sua clínica.', placement: 'center' },
     { target: 'tour-monthly-report', title: '📅 Relatório Mensal', content: 'Gere o PDF com métricas, volume de casos e comparativos do período.', placement: 'bottom', highlight: true },
     { target: 'tour-case-report', title: '🔖 Laudo Clínico', content: 'Selecione um caso e gere o PDF completo (Guia para o Tutor) com a logo da sua clínica.', placement: 'bottom', highlight: true },
+    { target: 'tour-report-customize', title: '🎨 Personalização de Marca', content: 'Configure a identidade visual da sua clínica (logo, cores, cabeçalho) para que todos os PDFs saiam profissionais e padronizados.', placement: 'right', highlight: true },
     { target: 'tour-report-history', title: '📂 Histórico', content: 'Baixe novamente qualquer PDF gerado anteriormente.', placement: 'top', highlight: true },
   ],
   profile: [

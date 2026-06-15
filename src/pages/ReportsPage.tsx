@@ -267,7 +267,7 @@ export default function ReportsPage() {
       )}
 
       {/* Personalização de Laudos */}
-      <Card className="p-5 mb-4 border-l-4 border-l-[#0056b3]">
+      <Card data-tour="tour-report-customize" className="p-5 mb-4 border-l-4 border-l-[#0056b3]">
         <div className="flex items-center gap-2 mb-4">
           <Settings size={18} className="text-[#0056b3]" />
           <h3 className="font-bold text-slate-900 text-sm">Personalização de Laudos e Relatórios</h3>
