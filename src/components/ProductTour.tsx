@@ -276,9 +276,7 @@ export default memo(function ProductTour({ page, active, onClose }: ProductTourP
     };
   }, [active, currentStep, updateRect]);
 
-  if (!active || steps.length === 0) return null;
-
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     try {
       const completed = JSON.parse(localStorage.getItem(TOUR_STORAGE_KEY) || '{}');
       completed[page] = true;
@@ -287,7 +285,16 @@ export default memo(function ProductTour({ page, active, onClose }: ProductTourP
       console.warn('Failed to save tour completion:', e);
     }
     onClose();
-  };
+  }, [page, onClose]);
+
+  useEffect(() => {
+    if (!active) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [active, handleClose]);
+
+  if (!active || steps.length === 0) return null;
 
   const handleNext = () => {
     if (stepIndex < steps.length - 1) setStepIndex(s => s + 1);
