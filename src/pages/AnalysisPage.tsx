@@ -25,6 +25,7 @@ export default function AnalysisPage() {
   const [result, setResult] = useState<string | null>(null);
   const [streamError, setStreamError] = useState('');
   const [approving, setApproving] = useState(false);
+  const [analysisMode, setAnalysisMode] = useState<'analysis' | 'compare'>('analysis');
   const fileRef = useRef<HTMLInputElement>(null);
 
   const imageBase64 = useMemo(
@@ -179,6 +180,31 @@ export default function AnalysisPage() {
         title="Análise de Imagem Ortopédica"
         subtitle="Análise → Copiloto → Caso completo integrado na plataforma"
       />
+
+      {/* Segmented Control - Modo de Análise */}
+      <div className="flex items-center justify-center mb-6">
+        <div className="inline-flex items-center bg-slate-100 rounded-full p-1 gap-1">
+          <button
+            onClick={() => setAnalysisMode('analysis')}
+            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+              analysisMode === 'analysis' ? 'bg-white text-[#0056b3] shadow-sm' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Análise
+          </button>
+          <button
+            onClick={() => setAnalysisMode('compare')}
+            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+              analysisMode === 'compare' ? 'bg-white text-[#0056b3] shadow-sm' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Comparar
+          </button>
+        </div>
+      </div>
+
+      {analysisMode === 'analysis' && (
+        <>
 
       {mode === 'idle' && (
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 w-fit">
@@ -347,6 +373,16 @@ export default function AnalysisPage() {
               <p className="text-[10px] text-slate-400 font-mono">{sub}</p>
             </Card>
           ))}
+        </div>
+      )}
+
+        </>
+      )}
+
+      {analysisMode === 'compare' && (
+        <div className="text-center py-20 text-slate-500 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+          <p className="text-lg font-semibold text-slate-700 mb-2">Modo Comparação Pré/Pós-Operatória</p>
+          <p className="text-sm">Em desenvolvimento. Selecione "Análise" para o fluxo padrão de imagem única.</p>
         </div>
       )}
     </div>
