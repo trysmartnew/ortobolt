@@ -558,17 +558,47 @@ export default function CasePage() {
               </div>
             )}
             {activeCase.notes ? (
-              <div className="space-y-2">
-                {activeCase.notes.split('\n\n').reverse().map((note, i) => (
-                  <div key={i} className="text-xs text-slate-700 bg-slate-50 border-l-2 border-[#0056b3] px-3 py-2 rounded-r font-mono whitespace-pre-wrap">
-                    {note}
+                <div className="relative pl-6">
+                  <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#0056b3] to-[#0056b3]/20"></div>
+                  <div className="space-y-4">
+                    {activeCase.notes.split('\n\n').reverse().map((note, i) => {
+                      const timestampMatch = note.match(/^\[(\d{2}\/\d{2}\/\d{4},?\s*\d{2}:\d{2}:\d{2})\]/);
+                      const timestamp = timestampMatch ? timestampMatch[1] : null;
+                      const cleanNote = timestampMatch ? note.replace(/^\[.*?\]\s*/, '') : note;
+                      
+                      return (
+                        <div key={i} className="relative">
+                          <div className="absolute -left-4 top-1.5 w-3 h-3 rounded-full bg-[#0056b3] border-2 border-white shadow-sm"></div>
+                          <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+                            {timestamp && (
+                              <div className="flex items-center gap-1.5 mb-2 text-[10px] text-slate-500 font-semibold">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {timestamp}
+                              </div>
+                            )}
+                            <div className="text-xs text-slate-700 font-mono whitespace-pre-wrap leading-relaxed">
+                              {cleanNote}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-xs text-slate-400 italic">Nenhuma nota clínica registrada ainda.</p>
-            )}
-          </Card>
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-2">
+                    <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-xs text-slate-400 italic">Nenhuma nota clínica registrada ainda.</p>
+                  <p className="text-[10px] text-slate-400 mt-1">Clique em "Nova Nota" para começar</p>
+                </div>
+              )}
+            </Card>
         </div>
 
         {/* Coluna Direita: Plano de Ação */}

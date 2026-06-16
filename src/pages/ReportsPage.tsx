@@ -36,6 +36,7 @@ export default function ReportsPage() {
   const [clinicName, setClinicName] = useState(localStorage.getItem('ortobolt_pdf_clinic_name') || 'OrtoBolt');
   const [clinicSubtitle, setClinicSubtitle] = useState(localStorage.getItem('ortobolt_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente');
   const [logoPreview, setLogoPreview] = useState<string | null>(localStorage.getItem('ortobolt_pdf_logo'));
+  const [tutorMode, setTutorMode] = useState(false);
 
   const handleSavePrefs = () => {
     localStorage.setItem('ortobolt_pdf_clinic_name', clinicName);
