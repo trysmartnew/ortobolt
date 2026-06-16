@@ -352,23 +352,34 @@ export default function ReportsPage() {
             <div>
               <p className="font-bold text-slate-900 text-sm">Laudo Clínico</p>
               <p className="text-xs text-slate-500">
-                {cases && cases.length > 0 ? `${cases.length} casos disponíveis para laudo` : 'Nenhum caso registrado'}
+                {cases && cases.length > 0 ? `${cases.length} casos disponíveis` : 'Nenhum caso registrado'}
               </p>
             </div>
           </div>
-          <p className="text-xs text-slate-500 mb-4 font-mono">
-            Selecione um caso específico na lista para gerar o Laudo Clínico (Guia para o Tutor) personalizado.
+          <p className="text-xs text-slate-500 mb-3 font-mono">
+            {tutorMode 
+              ? "Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao proprietário do pet." 
+              : "Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco."}
           </p>
+          <label className="flex items-center gap-2 mb-4 cursor-pointer select-none">
+            <input 
+              type="checkbox" 
+              checked={tutorMode} 
+              onChange={(e) => setTutorMode(e.target.checked)} 
+              className="w-4 h-4 text-[#0056b3] border-slate-300 rounded focus:ring-[#0056b3]" 
+            />
+            <span className="text-sm font-medium text-slate-700">Ativar Modo Tutor (Linguagem simplificada)</span>
+          </label>
           <Button
             className="w-full"
-            variant="secondary"
+            variant={tutorMode ? "primary" : "secondary"}
             loading={generating === 'case'}
             onClick={() => setShowCaseSelector(true)}
             disabled={!cases || cases.length === 0 || user?.role === 'student'}
             title={user?.role === 'student' ? 'Exclusivo para profissionais' : 'Selecionar caso e gerar laudo'}
           >
             <FileText size={14} />
-            {generating === 'case' ? 'Gerando...' : 'Selecionar Caso e Gerar Laudo'}
+            {generating === 'case' ? 'Gerando...' : (tutorMode ? 'Selecionar Caso e Gerar Guia para o Tutor' : 'Selecionar Caso e Gerar Laudo Técnico')}
           </Button>
         </Card>
       </div>

@@ -175,7 +175,7 @@ export async function generateMonthlyReport(
   doc.save(`ortobolt-relatorio-${new Date().toISOString().slice(0, 7)}.pdf`);
 }
 
-export async function generateCaseReport(c: ClinicalCase): Promise<void> {
+export async function generateCaseReport(c: ClinicalCase, tutorMode = false): Promise<void> {
   const JsPDF = await getJsPDF();
   const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   addHeader(doc, 'Relatório de Caso Clínico', `${safe(c.patientName)} — ${new Date(c.createdAt).toLocaleDateString('pt-BR')}`);
@@ -214,40 +214,70 @@ export async function generateCaseReport(c: ClinicalCase): Promise<void> {
   // AI Analysis
   if (c.aiAnalysis) {
     if (y > 220) { doc.addPage(); y = 30; }
-    doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-    doc.text('Análise IA — OrthoVision', 14, y); y += 7;
-    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
-    doc.text(`Pontuação de Precisão: ${c.aiAnalysis.precisionScore}%`, 14, y); y += 5;
-    doc.text(`Confiança do Modelo: ${(c.aiAnalysis.confidence * 100).toFixed(0)}%`, 14, y); y += 5;
-    doc.text(`Tempo de Processamento: ${c.aiAnalysis.processingTimeMs}ms`, 14, y); y += 8;
+    
+    if (tutorMode) {
+      // ── MODO TUTOR (Simplificado para o proprietário do pet) ──
+      doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
+      doc.text('Orientações para o Tutor', 14, y); y += 7;
+      doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
+      y = addWrappedText(doc, 'Este documento foi preparado pela equipe veterinária para orientar os cuidados com seu pet após o procedimento.', 14, y, 182, 5);
+      y += 8;
 
-    // Landmarks
-    doc.setFont('helvetica', 'bold'); doc.text('Landmarks Anatômicos Detectados:', 14, y); y += 6;
-    doc.setFont('helvetica', 'normal');
-    c.aiAnalysis.anatomicalLandmarks.forEach(l => {
-      if (y > 270) { doc.addPage(); y = 30; }
-      const status = l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗ Não detectado';
-      doc.text(`• ${safe(l.name)}: ${status}`, 14, y); y += 5;
-    });
-    y += 5;
-
-    // Recommendations — ✅ A-03: wrapping para recomendações longas da IA
-    if (y > 240) { doc.addPage(); y = 30; }
-    doc.setFont('helvetica', 'bold'); doc.text('Recomendações:', 14, y); y += 6;
-    doc.setFont('helvetica', 'normal');
-    c.aiAnalysis.recommendations.forEach(r => {
-      y = addWrappedText(doc, `• ${safe(r)}`, 14, y, 182, 5);
-    });
-
-    // Risk factors
-    if (c.aiAnalysis.riskFactors.length > 0) {
+      // Recommendations
       if (y > 240) { doc.addPage(); y = 30; }
-      y += 3;
-      doc.setFont('helvetica', 'bold'); doc.text('Fatores de Risco:', 14, y); y += 6;
+      doc.setFont('helvetica', 'bold'); doc.text('Cuidados Importantes:', 14, y); y += 6;
       doc.setFont('helvetica', 'normal');
-      c.aiAnalysis.riskFactors.forEach(rf => {
-        y = addWrappedText(doc, `• [${safe(rf.severity).toUpperCase()}] ${safe(rf.category)}: ${safe(rf.description)}`, 14, y, 182, 5);
+      c.aiAnalysis.recommendations.forEach(r => {
+        y = addWrappedText(doc, `• ${safe(r)}`, 14, y, 182, 5);
       });
+
+      // Risk factors (simplified)
+      if (c.aiAnalysis.riskFactors.length > 0) {
+        if (y > 240) { doc.addPage(); y = 30; }
+        y += 5;
+        doc.setFont('helvetica', 'bold'); doc.text('Pontos de Atenção:', 14, y); y += 6;
+        doc.setFont('helvetica', 'normal');
+        c.aiAnalysis.riskFactors.forEach(rf => {
+          y = addWrappedText(doc, `• ${safe(rf.description)}`, 14, y, 182, 5);
+        });
+      }
+    } else {
+      // ── MODO VETERINÁRIO (Técnico Completo) ──
+      doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
+      doc.text('Análise IA — OrthoVision', 14, y); y += 7;
+      doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
+      doc.text(`Pontuação de Precisão: ${c.aiAnalysis.precisionScore}%`, 14, y); y += 5;
+      doc.text(`Confiança do Modelo: ${(c.aiAnalysis.confidence * 100).toFixed(0)}%`, 14, y); y += 5;
+      doc.text(`Tempo de Processamento: ${c.aiAnalysis.processingTimeMs}ms`, 14, y); y += 8;
+
+      // Landmarks
+      doc.setFont('helvetica', 'bold'); doc.text('Landmarks Anatômicos Detectados:', 14, y); y += 6;
+      doc.setFont('helvetica', 'normal');
+      c.aiAnalysis.anatomicalLandmarks.forEach(l => {
+        if (y > 270) { doc.addPage(); y = 30; }
+        const status = l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗ Não detectado';
+        doc.text(`• ${safe(l.name)}: ${status}`, 14, y); y += 5;
+      });
+      y += 5;
+
+      // Recommendations
+      if (y > 240) { doc.addPage(); y = 30; }
+      doc.setFont('helvetica', 'bold'); doc.text('Recomendações:', 14, y); y += 6;
+      doc.setFont('helvetica', 'normal');
+      c.aiAnalysis.recommendations.forEach(r => {
+        y = addWrappedText(doc, `• ${safe(r)}`, 14, y, 182, 5);
+      });
+
+      // Risk factors
+      if (c.aiAnalysis.riskFactors.length > 0) {
+        if (y > 240) { doc.addPage(); y = 30; }
+        y += 3;
+        doc.setFont('helvetica', 'bold'); doc.text('Fatores de Risco:', 14, y); y += 6;
+        doc.setFont('helvetica', 'normal');
+        c.aiAnalysis.riskFactors.forEach(rf => {
+          y = addWrappedText(doc, `• [${safe(rf.severity).toUpperCase()}] ${safe(rf.category)}: ${safe(rf.description)}`, 14, y, 182, 5);
+        });
+      }
     }
   }
 
