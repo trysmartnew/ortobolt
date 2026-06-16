@@ -118,6 +118,9 @@ export default function GalleryPage() {
   
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
+  const [filterProcedure, setFilterProcedure] = useState<ProcedureType | 'all'>('all');
+  const [filterSpecies, setFilterSpecies] = useState<AnimalSpecies | 'all'>('all');
+  const [filterPeriod, setFilterPeriod] = useState<'all' | '7days' | '30days' | '90days'>('all');
   const [selected, setSelected] = useState<ClinicalCase | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({
@@ -138,9 +141,20 @@ export default function GalleryPage() {
       const q = search.toLowerCase();
       const matchSearch = !q || c.title.toLowerCase().includes(q) || c.patientName.toLowerCase().includes(q) || c.tags.some(t => t.toLowerCase().includes(q));
       const matchStatus = statusFilter === 'all' || c.status === statusFilter;
-      return matchSearch && matchStatus;
+      const matchProcedure = filterProcedure === 'all' || c.procedure === filterProcedure;
+      const matchSpecies = filterSpecies === 'all' || c.species === filterSpecies;
+      
+      let matchPeriod = true;
+      if (filterPeriod !== 'all') {
+        const days = filterPeriod === '7days' ? 7 : filterPeriod === '30days' ? 30 : 90;
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - days);
+        matchPeriod = new Date(c.createdAt) >= cutoff;
+      }
+      
+      return matchSearch && matchStatus && matchProcedure && matchSpecies && matchPeriod;
     });
-  }, [cases, search, statusFilter]);
+  }, [cases, search, statusFilter, filterProcedure, filterSpecies, filterPeriod]);
 
   // ✅ CORREÇÃO: handleAdd com user?.id e tipagem correta
   const handleAdd = () => {
@@ -248,6 +262,46 @@ export default function GalleryPage() {
               {f.label}
             </button>
           ))}
+              <div className="flex gap-2 flex-wrap">
+                <select
+                  value={filterProcedure}
+                  onChange={e => setFilterProcedure(e.target.value as ProcedureType | 'all')}
+                  className="px-3 py-1.5 rounded-[12px] text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0056b3]"
+                >
+                  <option value="all">Todos os Procedimentos</option>
+                  {Object.entries(PROCEDURE_LABELS).map(([k, v]) => (
+                    <option key={k} value={k}>{v}</option>
+                  ))}
+                </select>
+                <select
+                  value={filterSpecies}
+                  onChange={e => setFilterSpecies(e.target.value as AnimalSpecies | 'all')}
+                  className="px-3 py-1.5 rounded-[12px] text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0056b3]"
+                >
+                  <option value="all">Todas as Espécies</option>
+                  {Object.entries(SPECIES_LABELS).map(([k, v]) => (
+                    <option key={k} value={k}>{v}</option>
+                  ))}
+                </select>
+                <select
+                  value={filterPeriod}
+                  onChange={e => setFilterPeriod(e.target.value as 'all' | '7days' | '30days' | '90days')}
+                  className="px-3 py-1.5 rounded-[12px] text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0056b3]"
+                >
+                  <option value="all">Todo o Período</option>
+                  <option value="7days">Últimos 7 dias</option>
+                  <option value="30days">Últimos 30 dias</option>
+                  <option value="90days">Últimos 90 dias</option>
+                </select>
+                {(filterProcedure !== 'all' || filterSpecies !== 'all' || filterPeriod !== 'all') && (
+                  <button
+                    onClick={() => { setFilterProcedure('all'); setFilterSpecies('all'); setFilterPeriod('all'); }}
+                    className="px-3 py-1.5 rounded-[12px] text-[13px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
+                  >
+                    Limpar Filtros
+                  </button>
+                )}
+              </div>
         </div>
       </div>
 

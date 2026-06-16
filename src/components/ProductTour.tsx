@@ -172,7 +172,13 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
         <p className="text-slate-700 text-[15px] leading-relaxed">{step.content}</p>
       </div>
       <div className="px-5 pb-4 flex items-center justify-between">
-        <div className="flex gap-1.5">
+        <button
+            onClick={onClose}
+            className="text-xs font-medium text-slate-500 hover:text-red-600 transition-colors"
+          >
+            Pular
+          </button>
+          <div className="flex gap-1.5">
           {Array.from({ length: total }).map((_, i) => (
             <div
               key={i}
