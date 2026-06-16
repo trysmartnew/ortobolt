@@ -8,6 +8,7 @@ import { uploadRadiografia } from '@/services/supabase';
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
 import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
 import ApproveCompleteCaseBar from '@/components/analysis/ApproveCompleteCaseBar';
+import PrePostComparison from '@/components/analysis/PrePostComparison';
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import { useApp } from '@/contexts/AppContext';
 import { buildCaseTitle } from '@/services/clinicalCaseIntegrationService';
@@ -380,10 +381,7 @@ export default function AnalysisPage() {
       )}
 
       {analysisMode === 'compare' && (
-        <div className="text-center py-20 text-slate-500 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-          <p className="text-lg font-semibold text-slate-700 mb-2">Modo Comparação Pré/Pós-Operatória</p>
-          <p className="text-sm">Em desenvolvimento. Selecione "Análise" para o fluxo padrão de imagem única.</p>
-        </div>
+        <PrePostComparison />
       )}
     </div>
   );
