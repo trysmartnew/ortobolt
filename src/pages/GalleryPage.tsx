@@ -16,7 +16,7 @@ const STATUS_FILTERS: { value: CaseStatus | 'all'; label: string }[] = [
   { value: 'critical', label: 'Críticos' },
 ];
 
-function CaseDetailModal({ c, onClose }: { c: ClinicalCase; onClose: () => void }) {
+function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: () => void; allCases: ClinicalCase[] }) {
   return (
     <Modal open title={c.title} onClose={onClose}>
       {c.imageUrl && <img src={c.imageUrl} alt={c.patientName} className="w-full h-52 object-cover rounded-t-[18px]" />}
@@ -79,6 +79,63 @@ function CaseDetailModal({ c, onClose }: { c: ClinicalCase; onClose: () => void 
           {c.tags.map(t => <Badge key={t} variant="blue">#{t}</Badge>)}
         </div>
       )}
+
+      {/* Casos Similares */}
+      {(() => {
+        const similarCases = allCases
+          .filter(x => x.id !== c.id)
+          .filter(x => x.procedure === c.procedure || x.species === c.species)
+          .sort((a, b) => {
+            let scoreA = 0, scoreB = 0;
+            if (a.procedure === c.procedure) scoreA += 2;
+            if (a.species === c.species) scoreA += 1;
+            if (b.procedure === c.procedure) scoreB += 2;
+            if (b.species === c.species) scoreB += 1;
+            return scoreB - scoreA;
+          })
+          .slice(0, 3);
+
+        if (similarCases.length === 0) return null;
+
+        return (
+          <div className="mt-6 pt-4 border-t border-slate-200">
+            <p className="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Casos Similares Sugeridos
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {similarCases.map(sim => (
+                <button
+                  key={sim.id}
+                  onClick={() => { onClose(); setTimeout(() => window.location.hash = `#/case/${sim.id}`, 100); }}
+                  className="text-left bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-[#0056b3] rounded-xl p-3 transition-all group"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
+                      {sim.patientName.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-slate-900 truncate">{sim.patientName}</p>
+                      <p className="text-[10px] text-slate-500 truncate">{sim.species === 'canine' ? 'Cão' : sim.species === 'feline' ? 'Gato' : sim.species} · {sim.procedure}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                      sim.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
+                      sim.status === 'critical' ? 'bg-red-100 text-red-700' :
+                      'bg-blue-100 text-blue-700'
+                    }`}>
+                      {sim.status === 'completed' ? 'Concluído' : sim.status === 'critical' ? 'Crítico' : 'Em Análise'}
+                    </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-[#0056b3] transition-colors"><path d="m9 18 6-6-6-6"/></svg>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
     </Modal>
   );
 }
@@ -408,7 +465,7 @@ export default function GalleryPage() {
       )}
 
       <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
-      {selected && <CaseDetailModal c={selected} onClose={() => setSelected(null)} />}
+      {selected && <CaseDetailModal c={selected} onClose={() => setSelected(null)} allCases={cases} />}
 
       <Modal open={showAdd} onClose={handleCloseAdd} title="Novo Caso Clínico">
         <div className="space-y-4">
