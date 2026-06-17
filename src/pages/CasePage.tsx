@@ -1,9 +1,10 @@
 // src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
 import { useState, useMemo, useRef } from 'react';
+import CaseAnalysisTab from '@/components/CaseAnalysisTab';
+import { useAnalysis } from '@/contexts/AnalysisContext';
 import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import CaseAnalysisTab from '@/components/CaseAnalysisTab';
 import { uploadCaseImage } from '@/services/supabase';
 import { Card, Button, StatusBadge, RiskTag } from '@/components/ui';
 import type { ClinicalCase, ProcedureType } from '@/types/index';
@@ -664,6 +665,7 @@ export default function CasePage() {
     </div>
   );
 }
+
 
 
 
