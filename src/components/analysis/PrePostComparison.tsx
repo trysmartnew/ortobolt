@@ -1,6 +1,8 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
-import { Upload, X, Columns, Layers, AlertCircle, RefreshCw, Eye, Brain, Save } from 'lucide-react';
+import { Upload, X, Columns, Layers, AlertCircle, RefreshCw, Eye, Brain, Save, Download } from 'lucide-react';
 import { Button } from '@/components/ui';
+import jsPDF from 'jspdf';
+import { analyzeImagesComparison } from '@/services/aiService';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_MB = 15;
@@ -27,6 +29,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
     recommendation: string;
   } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [workflowStatus, setWorkflowStatus] = useState(existingApprovalStatus);
 
   const refBefore = useRef<HTMLInputElement>(null);
@@ -83,20 +86,126 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
     setSliderValue(percentage);
   };
 
-  // Processamento Seguro da IA OrtoBolt
-  const runAIAnalysis = () => {
+  // Processamento da IA OrtoBolt com Análise Comparativa Real
+  const runAIAnalysis = async () => {
     if (!imageBefore || !imageAfter) return;
     setIsAnalyzing(true);
     setError('');
 
-    setTimeout(() => {
+    try {
+      const beforeBase64 = imageBefore.split(',')[1] || imageBefore;
+      const afterBase64 = imageAfter.split(',')[1] || imageAfter;
+
+      const result = await analyzeImagesComparison(beforeBase64, afterBase64);
+
       setAiAnalysisResult({
-        alignment: 'Alinhamento do Eixo Sagital: 94.8% de precisão anatômica calculada.',
-        boneDensity: 'Zona de interface estável. Boa distribuição de carga e densidade óssea preservada.',
-        recommendation: 'Fixação rígida ideal demonstrada. Compatível com protocolo pós-cirúrgico OrtoBolt.'
+        alignment: result.alignment,
+        boneDensity: result.boneDensity,
+        recommendation: result.recommendation,
       });
+    } catch (err) {
+      setError('Erro na análise comparativa de IA. Verifique sua conexão e tente novamente.');
+      console.error('AI comparison error:', err);
+    } finally {
       setIsAnalyzing(false);
-    }, 1200);
+    }
+  };
+
+  // Export de Relatório em PDF com jsPDF puro (sem html2canvas)
+  const handleExportPDF = () => {
+    if (!imageBefore || !imageAfter || !aiAnalysisResult) return;
+    setIsExportingPDF(true);
+    setError('');
+
+    try {
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 15;
+      let yPos = margin;
+
+      // Cabeçalho
+      doc.setFillColor(0, 25, 65);
+      doc.rect(0, 0, pageWidth, 30, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Relatório de Comparação Ortopédica', pageWidth / 2, 12, { align: 'center' });
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('OrtoBolt — Plataforma de Ortopedia Veterinária Inteligente', pageWidth / 2, 20, { align: 'center' });
+
+      yPos = 40;
+      doc.setTextColor(0, 0, 0);
+
+      const now = new Date();
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'italic');
+      doc.text(`Data da Análise: ${now.toLocaleDateString('pt-BR')} às ${now.toLocaleTimeString('pt-BR')}`, margin, yPos);
+      yPos += 8;
+
+      // Imagem Pré-Operatória
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0, 25, 65);
+      doc.text('Exame Pré-Operatório (Baseline)', margin, yPos);
+      yPos += 5;
+      doc.addImage(imageBefore, 'JPEG', margin, yPos, 80, 60);
+      yPos += 65;
+
+      // Imagem Pós-Operatória
+      doc.setFont('helvetica', 'bold');
+      doc.text('Exame Pós-Operatório (Resultado)', margin, yPos);
+      yPos += 5;
+      doc.addImage(imageAfter, 'JPEG', margin, yPos, 80, 60);
+      yPos += 70;
+
+      // Análise IA
+      doc.setFontSize(12);
+      doc.setTextColor(0, 25, 65);
+      doc.text('Análise Comparativa por IA', margin, yPos);
+      yPos += 8;
+
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
+
+      doc.setFont('helvetica', 'bold');
+      doc.text('Alinhamento e Geometria:', margin, yPos);
+      yPos += 5;
+      doc.setFont('helvetica', 'normal');
+      const alignmentLines = doc.splitTextToSize(aiAnalysisResult.alignment, pageWidth - 2 * margin);
+      doc.text(alignmentLines, margin, yPos);
+      yPos += alignmentLines.length * 5 + 5;
+
+      doc.setFont('helvetica', 'bold');
+      doc.text('Densidade Óssea e Zona de Interface:', margin, yPos);
+      yPos += 5;
+      doc.setFont('helvetica', 'normal');
+      const boneLines = doc.splitTextToSize(aiAnalysisResult.boneDensity, pageWidth - 2 * margin);
+      doc.text(boneLines, margin, yPos);
+      yPos += boneLines.length * 5 + 5;
+
+      doc.setFont('helvetica', 'bold');
+      doc.text('Recomendação Clínica:', margin, yPos);
+      yPos += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(0, 100, 0);
+      const recLines = doc.splitTextToSize(aiAnalysisResult.recommendation, pageWidth - 2 * margin);
+      doc.text(recLines, margin, yPos);
+
+      const pageHeight = doc.internal.pageSize.getHeight();
+      doc.setFontSize(8);
+      doc.setTextColor(128, 128, 128);
+      doc.setFont('helvetica', 'italic');
+      doc.text('Gerado por OrtoBolt — Este documento é auxiliar à decisão clínica e não substitui avaliação profissional.', pageWidth / 2, pageHeight - 10, { align: 'center' });
+
+      const filename = `comparacao-ortopedica-${now.getTime()}.pdf`;
+      doc.save(filename);
+    } catch (err) {
+      setError('Erro ao gerar PDF. Tente novamente.');
+      console.error('PDF export error:', err);
+    } finally {
+      setIsExportingPDF(false);
+    }
   };
 
   // Salvamento Dinâmico criando Caso Clínico com ambas as imagens
@@ -185,6 +294,19 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                 <Brain className={`w-3.5 h-3.5 text-cyan-400 ${isAnalyzing ? 'animate-pulse' : ''}`} />
                 {isAnalyzing ? 'Analisando...' : 'Análise de IA'}
               </Button>
+
+              {aiAnalysisResult && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleExportPDF}
+                  disabled={isExportingPDF}
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs gap-1.5 border border-slate-700"
+                >
+                  <Download className={`w-3.5 h-3.5 text-emerald-400 ${isExportingPDF ? 'animate-pulse' : ''}`} />
+                  {isExportingPDF ? 'Exportando...' : 'Exportar PDF'}
+                </Button>
+              )}
 
               <Button
                 variant="primary"
