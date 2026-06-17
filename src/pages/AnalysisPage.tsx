@@ -25,6 +25,42 @@ export default function AnalysisPage() {
   const [imageData, setImageData] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [streamError, setStreamError] = useState('');
+
+  const handleSaveComparisonCase = async (beforeImage: string, afterImage: string, aiReport: any): Promise<void> => {
+    try {
+      if (!user) {
+        addToast('Médico-veterinário não autenticado no sistema.', 'error');
+        return;
+      }
+      
+      const currentCtx = session?.clinicalContext ?? {};
+      const caseTitle = buildCaseTitle(
+        currentCtx.patientName,
+        currentCtx.procedure ?? 'other'
+      );
+
+      const reportText = typeof aiReport === 'string' 
+        ? aiReport 
+        : (aiReport?.text || aiReport?.analysis || 'Análise comparativa de Mesa de Luz.');
+
+      // Acoplamento estrito e seguro com o pipeline nativo
+      const clinicalCase = approveAndIntegrateCase({
+        veterinarianId: user.id,
+        imageDataUrl: afterImage || beforeImage || '',
+        analysisText: `[Mesa de Luz - Comparativo Antes/Depois]\n\n${reportText}`,
+        clinicalContext: currentCtx,
+        copilotMessages: session?.messages,
+        copilotSessionId: session?.sessionId,
+        titleOverride: caseTitle,
+        status: 'completed',
+      });
+      
+      addToast(`Caso do paciente "${clinicalCase.patientName || 'Não Identificado'}" salvo com sucesso!`, 'success');
+    } catch (err: any) {
+      addToast(`Falha na persistência dos dados clínicos: ${err.message || err}`, 'error');
+      throw err;
+    }
+  };
   const [approving, setApproving] = useState(false);
   const [analysisMode, setAnalysisMode] = useState<'analysis' | 'compare'>('analysis');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -385,7 +421,7 @@ export default function AnalysisPage() {
       )}
 
       {analysisMode === 'compare' && (
-        <PrePostComparison />
+        <PrePostComparison onSaveCase={handleSaveComparisonCase} />
       )}
     </div>
   );
