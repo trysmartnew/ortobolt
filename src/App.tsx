@@ -20,6 +20,7 @@ import ProductTour       from '@/components/ProductTour';
 import ToastContainer    from '@/components/ToastContainer';
 import AIAssistant       from '@/components/AIAssistant';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { AnalysisProvider } from '@/contexts/AnalysisContext';
 import AcademicDisclaimer from '@/components/AcademicDisclaimer';
 
 const PAGE_MAP = {
@@ -145,10 +146,13 @@ function AppInner() {
 export default function App() {
   return (
     <AppProvider>
-      <ErrorBoundary>
+      <AnalysisProvider>
+                    <ErrorBoundary>
         <AppInner />
       </ErrorBoundary>
+                </AnalysisProvider>
     </AppProvider>
   );
 }
+
 
