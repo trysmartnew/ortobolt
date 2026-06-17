@@ -5,7 +5,7 @@ import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2, Up
 import { useApp } from '@/contexts/AppContext';
 import { uploadCaseImage } from '@/services/supabase';
 import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
-import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/data/mockData';
+import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/constants/labels';
 import type { ClinicalCase, CaseStatus, ProcedureType, AnimalSpecies } from '@/types/index';
 
 const STATUS_FILTERS: { value: CaseStatus | 'all'; label: string }[] = [

@@ -4,7 +4,7 @@ import type { ChatMessage } from '@/types/index';
 import type { ClinicalContextDraft } from '@/types/clinicalCopilot';
 import type { AnimalSpecies, ProcedureType } from '@/types/index';
 import { Button, Spinner } from '@/components/ui';
-import { SPECIES_LABELS, PROCEDURE_LABELS } from '@/data/mockData';
+import { SPECIES_LABELS, PROCEDURE_LABELS } from '@/constants/labels';
 
 const COPILOT_SUGGESTIONS = [
   'Confirme a região anatômica e achados principais.',
