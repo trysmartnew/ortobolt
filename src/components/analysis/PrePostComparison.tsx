@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Upload, X, Image as ImageIcon, Columns, Layers } from 'lucide-react';
+﻿import React, { useState, useRef, useEffect } from 'react';
+import { Upload, X, Columns, Layers, AlertCircle, RefreshCw, Eye } from 'lucide-react';
 import { Button } from '@/components/ui';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -12,7 +12,8 @@ export default function PrePostComparison() {
   const [error, setError] = useState('');
   const [viewMode, setViewMode] = useState<'side' | 'slider'>('side');
   const [sliderValue, setSliderValue] = useState(50);
-  
+  const [isDragging, setIsDragging] = useState(false);
+
   const refBefore = useRef<HTMLInputElement>(null);
   const refAfter = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -27,9 +28,12 @@ export default function PrePostComparison() {
       observer.observe(containerRef.current);
       return () => observer.disconnect();
     }
-  }, [imageBefore, imageAfter]);
+  }, [imageBefore, imageAfter, viewMode]);
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
+  const handleFile = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<string | null>>
+  ) => {
     const f = e.target.files?.[0];
     if (!f) return;
 
@@ -40,158 +44,224 @@ export default function PrePostComparison() {
     }
 
     if (f.size > MAX_FILE_SIZE_BYTES) {
-      setError(`Arquivo muito grande: ${(f.size / 1024 / 1024).toFixed(1)}MB. Máx: ${MAX_FILE_SIZE_MB}MB.`);
+      setError(`Arquivo muito grande. O limite máximo é de ${MAX_FILE_SIZE_MB}MB.`);
       if (e.target) e.target.value = '';
       return;
     }
 
     setError('');
     const reader = new FileReader();
-    reader.onload = (ev) => setter(ev.target?.result as string);
+    reader.onload = (ev) => {
+      setter(ev.target?.result as string);
+    };
     reader.readAsDataURL(f);
   };
 
-  const clearImage = (type: 'before' | 'after') => {
-    if (type === 'before') {
-      setImageBefore(null);
-      if (refBefore.current) refBefore.current.value = '';
-    } else {
-      setImageAfter(null);
-      if (refAfter.current) refAfter.current.value = '';
-    }
-    setSliderValue(50);
+  const clearImages = () => {
+    setImageBefore(null);
+    setImageAfter(null);
+    setError('');
+    if (refBefore.current) refBefore.current.value = '';
+    if (refAfter.current) refAfter.current.value = '';
   };
 
-  const UploadBox = ({ label, image, ref, setter }: any) => (
-    <div className="flex flex-col gap-2">
-      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">{label}</p>
-      {image ? (
-        <div className="relative group">
-          <img src={image} alt={label} className="w-full h-64 object-contain rounded-xl border border-slate-200 bg-slate-50" />
-          <button
-            onClick={() => clearImage(label === 'Pré-Operatório' ? 'before' : 'after')}
-            className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
-          >
-            <X size={16} />
-          </button>
-        </div>
-      ) : (
-        <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-blue-50/50 hover:border-[#0056b3] cursor-pointer transition-all">
-          <input type="file" ref={ref} className="hidden" accept="image/*" onChange={(e) => handleFile(e, setter)} />
-          <Upload className="w-8 h-8 text-slate-400 mb-2" />
-          <span className="text-xs text-slate-500 font-medium">Clique para enviar</span>
-        </label>
-      )}
-    </div>
-  );
-
-  const hasBothImages = imageBefore && imageAfter;
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    setSliderValue(percentage);
+  };
 
   return (
-    <div className="space-y-6">
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
-          <X size={16} className="flex-shrink-0" /> {error}
+    <div className="w-full bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in">
+      {/* Topbar do Visualizador Médico */}
+      <div className="bg-slate-900 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-slate-800 rounded-lg border border-slate-700">
+            <Eye className="w-5 h-5 text-emerald-400" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-white tracking-wide uppercase">Mesa de Luz Digital</h3>
+            <p className="text-xs text-slate-400">Estudo evolutivo e alinhamento de imagens radiográficas</p>
+          </div>
         </div>
-      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <UploadBox label="Pré-Operatório" image={imageBefore} ref={refBefore} setter={setImageBefore} />
-        <UploadBox label="Pós-Operatório" image={imageAfter} ref={refAfter} setter={setImageAfter} />
-      </div>
-
-      {hasBothImages && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-center gap-2 bg-slate-100 p-1 rounded-full w-fit mx-auto">
+        {imageBefore && imageAfter && (
+          <div className="flex items-center bg-slate-800 p-1 rounded-lg border border-slate-700 gap-1">
             <button
               onClick={() => setViewMode('side')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                viewMode === 'side' ? 'bg-white text-[#0056b3] shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                viewMode === 'side'
+                  ? 'bg-[#001941] text-white shadow-sm'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
-              <Columns size={16} /> Lado a Lado
+              <Columns className="w-3.5 h-3.5" />
+              Lado a Lado
             </button>
             <button
               onClick={() => setViewMode('slider')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                viewMode === 'slider' ? 'bg-white text-[#0056b3] shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                viewMode === 'slider'
+                  ? 'bg-[#001941] text-white shadow-sm'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
-              <Layers size={16} /> Slider (Sobreposição)
+              <Layers className="w-3.5 h-3.5" />
+              Superposição
             </button>
           </div>
+        )}
 
-          {viewMode === 'side' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-50 aspect-[4/3]">
-                <img src={imageBefore} alt="Pré" className="w-full h-full object-contain" />
-                <span className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded font-medium">Pré-Operatório</span>
-              </div>
-              <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-50 aspect-[4/3]">
-                <img src={imageAfter} alt="Pós" className="w-full h-full object-contain" />
-                <span className="absolute top-2 left-2 bg-[#0056b3]/80 text-white text-xs px-2 py-1 rounded font-medium">Pós-Operatório</span>
-              </div>
-            </div>
-          ) : (
-            <div 
-              ref={containerRef}
-              className="relative w-full max-w-3xl mx-auto aspect-[4/3] bg-slate-900 rounded-xl overflow-hidden border border-slate-200 select-none shadow-lg"
-            >
-              {/* Imagem de Fundo (Pré) */}
-              <img src={imageBefore} alt="Pré" className="absolute inset-0 w-full h-full object-contain" />
-              
-              {/* Imagem Sobreposta (Pós) */}
-              <div 
-                className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-white shadow-[0_0_15px_rgba(0,0,0,0.5)]"
-                style={{ width: `${sliderValue}%` }}
-              >
-                <img 
-                  src={imageAfter} 
-                  alt="Pós" 
-                  className="absolute inset-0 h-full object-contain" 
-                  style={{ width: containerWidth ? `${containerWidth}px` : '100%' }} 
-                />
-              </div>
+        {(imageBefore || imageAfter) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearImages}
+            className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white text-xs gap-1.5"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Limpar Painel
+          </Button>
+        )}
+      </div>
 
-              {/* Handle do Slider */}
-              <div 
-                className="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize z-10"
-                style={{ left: `${sliderValue}%` }}
-              >
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-slate-700">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/><path d="m15 18-6-6 6-6"/></svg>
-                </div>
-              </div>
-              
-              {/* Input Range Invisível para Controle */}
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
-                value={sliderValue} 
-                onChange={(e) => setSliderValue(Number(e.target.value))}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
-              />
-              
-              <span className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded font-medium z-0">Pré-Operatório</span>
-              <span className="absolute top-2 right-2 bg-[#0056b3]/80 text-white text-xs px-2 py-1 rounded font-medium z-0">Pós-Operatório</span>
-            </div>
-          )}
-
-          <div className="flex justify-center pt-2">
-            <Button variant="primary" size="lg" className="w-full md:w-auto">
-              <ImageIcon size={16} className="mr-2" />
-              Salvar Comparação no Prontuário
-            </Button>
-          </div>
+      {error && (
+        <div className="p-4 bg-rose-50 border-b border-rose-100 flex items-center gap-2 text-rose-700 text-xs">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>{error}</span>
         </div>
       )}
 
-      {!imageBefore && !imageAfter && (
-        <p className="text-center text-xs text-slate-400 mt-4">
-          Envie as radiografias para visualizar a comparação.
-        </p>
-      )}
+      {/* Canvas Principal */}
+      <div className="p-6 bg-slate-950">
+        <input type="file" ref={refBefore} accept="image/*" onChange={(e) => handleFile(e, setImageBefore)} className="hidden" />
+        <input type="file" ref={refAfter} accept="image/*" onChange={(e) => handleFile(e, setImageAfter)} className="hidden" />
+
+        {(!imageBefore || !imageAfter) ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Slot Pré */}
+            <div 
+              onClick={() => !imageBefore && refBefore.current?.click()}
+              className={`relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center border-2 border-dashed transition-all ${
+                imageBefore 
+                  ? 'border-slate-800 bg-slate-900' 
+                  : 'border-slate-800 bg-slate-900/40 hover:bg-slate-900/70 hover:border-slate-700 cursor-pointer'
+              }`}
+            >
+              {imageBefore ? (
+                <>
+                  <img src={imageBefore} alt="Pré-operatório" className="w-full h-full object-contain p-2 rounded-xl" />
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setImageBefore(null); }}
+                    className="absolute top-3 right-3 p-1.5 bg-slate-950/80 hover:bg-rose-600 text-white rounded-full transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                  <div className="absolute bottom-3 left-3 bg-slate-950/85 border border-slate-800 px-2.5 py-1 rounded text-[10px] font-mono tracking-wider text-slate-300">
+                    EXAME INICIAL / PRÉ
+                  </div>
+                </>
+              ) : (
+                <div className="text-center p-6">
+                  <div className="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center mx-auto mb-3 border border-slate-700/50">
+                    <Upload className="w-5 h-5 text-slate-400" />
+                  </div>
+                  <p className="text-xs font-medium text-slate-300">Carregar Imagem Base</p>
+                  <p className="text-[11px] text-slate-500 mt-1">Exame Inicial / Pré-operatório</p>
+                </div>
+              )}
+            </div>
+
+            {/* Slot Pós */}
+            <div 
+              onClick={() => !imageAfter && refAfter.current?.click()}
+              className={`relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center border-2 border-dashed transition-all ${
+                imageAfter 
+                  ? 'border-slate-800 bg-slate-900' 
+                  : 'border-slate-800 bg-slate-900/40 hover:bg-slate-900/70 hover:border-slate-700 cursor-pointer'
+              }`}
+            >
+              {imageAfter ? (
+                <>
+                  <img src={imageAfter} alt="Pós-operatório" className="w-full h-full object-contain p-2 rounded-xl" />
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setImageAfter(null); }}
+                    className="absolute top-3 right-3 p-1.5 bg-slate-950/80 hover:bg-rose-600 text-white rounded-full transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                  <div className="absolute bottom-3 left-3 bg-slate-950/85 border border-slate-800 px-2.5 py-1 rounded text-[10px] font-mono tracking-wider text-slate-300">
+                    EXAME EVOLUTIVO / PÓS
+                  </div>
+                </>
+              ) : (
+                <div className="text-center p-6">
+                  <div className="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center mx-auto mb-3 border border-slate-700/50">
+                    <Upload className="w-5 h-5 text-slate-400" />
+                  </div>
+                  <p className="text-xs font-medium text-slate-300">Carregar Imagem Evolutiva</p>
+                  <p className="text-[11px] text-slate-500 mt-1">Exame Evolutivo / Pós-operatório</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* Visualização Ativa */
+          <div 
+            ref={containerRef}
+            className="relative w-full overflow-hidden rounded-xl bg-slate-900 border border-slate-800 select-none"
+            onMouseMove={handleMouseMove}
+            onMouseUp={() => setIsDragging(false)}
+            onMouseLeave={() => setIsDragging(false)}
+          >
+            {viewMode === 'side' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-800">
+                <div className="relative aspect-[4/3] bg-slate-950 flex items-center justify-center p-2">
+                  <img src={imageBefore} alt="Pré" className="max-w-full max-h-full object-contain" />
+                  <div className="absolute bottom-3 left-3 bg-slate-950/90 px-2.5 py-1 rounded text-[10px] font-semibold text-slate-300 border border-slate-800 uppercase tracking-wider">
+                    EXAME INICIAL
+                  </div>
+                </div>
+                <div className="relative aspect-[4/3] bg-slate-950 flex items-center justify-center p-2">
+                  <img src={imageAfter} alt="Pós" className="max-w-full max-h-full object-contain" />
+                  <div className="absolute bottom-3 right-3 bg-slate-950/90 px-2.5 py-1 rounded text-[10px] font-semibold text-emerald-400 border border-slate-800 uppercase tracking-wider">
+                    ESTUDO EVOLUTIVO
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="relative aspect-[4/3] w-full bg-slate-950 flex items-center justify-center overflow-hidden">
+                <img src={imageBefore} alt="Base" className="absolute max-w-full max-h-full object-contain pointer-events-none p-2" />
+                <div className="absolute bottom-3 left-3 z-10 bg-slate-950/80 px-2 py-1 rounded text-[10px] text-slate-400 border border-slate-800 font-medium">
+                  &larr; EXAME INICIAL
+                </div>
+
+                <div 
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                  style={{ clipPath: `polygon(0 0, \${sliderValue}% 0, \${sliderValue}% 100%, 0 100%)` }}
+                >
+                  <img src={imageAfter} alt="Evolutivo" className="absolute max-w-full max-h-full object-contain p-2" />
+                </div>
+                <div className="absolute bottom-3 right-3 z-10 bg-slate-950/80 px-2 py-1 rounded text-[10px] text-emerald-400 border border-slate-800 font-medium">
+                  ESTUDO EVOLUTIVO &rarr;
+                </div>
+
+                <div 
+                  className="absolute top-0 bottom-0 w-1 bg-emerald-500 cursor-ew-resize z-20 flex items-center justify-center touch-none"
+                  style={{ left: `\${sliderValue}%` }}
+                  onMouseDown={(e) => { e.preventDefault(); setIsDragging(true); }}
+                >
+                  <div className="w-7 h-7 rounded-full bg-emerald-500 text-slate-950 shadow-lg flex items-center justify-center border-2 border-slate-950 text-xs font-bold font-mono">
+                    &harr;
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

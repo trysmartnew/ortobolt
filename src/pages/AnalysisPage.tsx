@@ -184,24 +184,28 @@ export default function AnalysisPage() {
 
       {/* Segmented Control - Modo de Análise */}
       <div className="flex items-center justify-center mb-6">
-        <div className="inline-flex items-center bg-slate-100 rounded-full p-1 gap-1">
-          <button
-            onClick={() => setAnalysisMode('analysis')}
-            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-              analysisMode === 'analysis' ? 'bg-white text-[#0056b3] shadow-sm' : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Análise
-          </button>
-          <button
-            onClick={() => setAnalysisMode('compare')}
-            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-              analysisMode === 'compare' ? 'bg-white text-[#0056b3] shadow-sm' : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Comparar
-          </button>
-        </div>
+        <div className="inline-flex items-center bg-slate-100/80 rounded-full p-1 gap-1 border border-slate-200/50 shadow-inner">
+  <button
+    onClick={() => setAnalysisMode('analysis')}
+    className={`px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
+      analysisMode === 'analysis'
+        ? 'bg-[#001941] text-white shadow-md'
+        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50/50'
+    }`}
+  >
+    Análise do Exame
+  </button>
+  <button
+    onClick={() => setAnalysisMode('compare')}
+    className={`px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
+      analysisMode === 'compare'
+        ? 'bg-[#001941] text-white shadow-md'
+        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50/50'
+    }`}
+  >
+    Estudo Comparativo
+  </button>
+</div>
       </div>
 
       {analysisMode === 'analysis' && (
