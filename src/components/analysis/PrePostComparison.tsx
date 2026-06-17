@@ -93,7 +93,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
       setAiAnalysisResult({
         alignment: 'Alinhamento do Eixo Sagital: 94.8% de precisão anatômica calculada.',
         boneDensity: 'Zona de interface estável. Boa distribuição de carga e densidade óssea preservada.',
-        recommendation: 'Fixação rígida ideal demonstrada. Compatível com protocolo pós-cirúrgico WPet.'
+        recommendation: 'Fixação rígida ideal demonstrada. Compatível com protocolo pós-cirúrgico OrtoBolt.'
       });
       setIsAnalyzing(false);
     }, 1200);
