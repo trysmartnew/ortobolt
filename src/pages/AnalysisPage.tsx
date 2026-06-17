@@ -4,7 +4,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
-import { analyzeImage } from '@/services/aiService';
+import { analyzeImage, PRIMARY_MODEL } from '@/services/aiService';
 import { uploadRadiografia } from '@/services/supabase';
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
 import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
@@ -55,6 +55,21 @@ export default function AnalysisPage() {
         copilotSessionId: session?.sessionId,
         titleOverride: caseTitle,
         status: 'completed',
+      });
+
+      addAnalysisToHistory({
+        id: `analysis-${clinicalCase.id}`,
+        caseId: clinicalCase.id,
+        imageData: afterImage || beforeImage || '',
+        analysisResult: reportText,
+        createdAt: new Date().toISOString(),
+        model: PRIMARY_MODEL,
+        context: {
+          patientName: currentCtx.patientName,
+          species: currentCtx.species,
+          breed: currentCtx.breed,
+          procedure: currentCtx.procedure,
+        },
       });
       
       addToast(`Caso do paciente "${clinicalCase.patientName || 'Não Identificado'}" salvo com sucesso!`, 'success');
@@ -170,6 +185,21 @@ export default function AnalysisPage() {
         copilotSessionId: session?.sessionId,
         titleOverride: title,
         status: 'completed',
+      });
+
+      addAnalysisToHistory({
+        id: `analysis-${clinicalCase.id}`,
+        caseId: clinicalCase.id,
+        imageData,
+        analysisResult: analysisText,
+        createdAt: new Date().toISOString(),
+        model: PRIMARY_MODEL,
+        context: {
+          patientName: ctx.patientName,
+          species: ctx.species,
+          breed: ctx.breed,
+          procedure: ctx.procedure,
+        },
       });
 
       addToast(

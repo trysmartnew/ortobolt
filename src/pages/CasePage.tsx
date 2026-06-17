@@ -411,6 +411,12 @@ export default function CasePage() {
         </div>
       </Card>
 
+            {/* ═══════════════════════════════════════════════════════════ */}
+      {/* Seção de Análise Visual & Refinamento IA (CopilotClinical)  */}
+      {/* Aparece apenas quando há análise vinculada ao caso ativo    */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <CaseAnalysisTab />
+
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Coluna Esquerda: Imagem + Dados */}
         <div className="lg:col-span-3 space-y-6">

@@ -122,7 +122,7 @@ export async function compressImageBase64(
 }
 
 const AI_PROXY = '/api/ai';
-const PRIMARY_MODEL = 'gemini-2.5-flash-lite';  // Gemini API direta
+export const PRIMARY_MODEL = 'gemini-2.5-flash-lite';  // Gemini API direta
 
 const AUTH_ERROR_MESSAGE =
   '⚠️ Sessão expirada ou não autenticada. Faça login novamente para usar a IA.';
