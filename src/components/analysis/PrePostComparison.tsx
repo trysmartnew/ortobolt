@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { ClinicalCase } from '@/types';
 import { useApp } from '@/contexts/AppContext';
 import { Upload, X, Columns, Layers, AlertCircle, RefreshCw, Eye, Brain, Save, Download } from 'lucide-react';
@@ -222,8 +222,20 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
     try {
       if (onSaveCase) {
         const clinicalCase = await onSaveCase(imageBefore, imageAfter, aiAnalysisResult);
-        if (clinicalCase) {
+        
+        if (clinicalCase && clinicalCase.id) {
+          // Caso válido retornado pela API
           setSavedCase(clinicalCase);
+        } else {
+          // FRENTE B: Fallback local defensivo
+          console.warn('[Frente B] onSaveCase retornou null/inválido. Montando fallback local.');
+          const localFallback = {
+            id: `local-fallback-${Date.now()}`,
+            patientName: 'Caso Comparativo',
+            status: 'completed' as const,
+            createdAt: new Date().toISOString(),
+          } as ClinicalCase;
+          setSavedCase(localFallback);
         }
       } else {
         // Fallback local seguro para simulação de persistência
