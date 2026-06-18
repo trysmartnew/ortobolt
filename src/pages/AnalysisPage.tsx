@@ -43,7 +43,11 @@ export default function AnalysisPage() {
 
       const reportText = typeof aiReport === 'string' 
         ? aiReport 
-        : (aiReport?.text || aiReport?.analysis || 'Análise comparativa de Mesa de Luz.');
+        : (aiReport?.fullAnalysis
+            || [aiReport?.alignment, aiReport?.boneDensity, aiReport?.recommendation]
+                .filter(Boolean)
+                .join('\n\n')
+            || 'Análise comparativa de Mesa de Luz — dados não disponíveis.');
 
       // Acoplamento estrito e seguro com o pipeline nativo
       const clinicalCase = approveAndIntegrateCase({

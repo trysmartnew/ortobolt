@@ -27,6 +27,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
     alignment: string;
     boneDensity: string;
     recommendation: string;
+    fullAnalysis: string;
   } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
@@ -102,6 +103,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
         alignment: result.alignment,
         boneDensity: result.boneDensity,
         recommendation: result.recommendation,
+        fullAnalysis: result.fullAnalysis,
       });
     } catch (err) {
       setError('Erro na análise comparativa de IA. Verifique sua conexão e tente novamente.');
