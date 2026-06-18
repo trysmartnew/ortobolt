@@ -1,4 +1,6 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
+import type { ClinicalCase } from '@/types';
+import { useApp } from '@/contexts/AppContext';
 import { Upload, X, Columns, Layers, AlertCircle, RefreshCw, Eye, Brain, Save, Download } from 'lucide-react';
 import { Button } from '@/components/ui';
 import jsPDF from 'jspdf';
@@ -9,7 +11,7 @@ const MAX_FILE_SIZE_MB = 15;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 interface PrePostComparisonProps {
-  onSaveCase?: (beforeImage: string, afterImage: string, aiReport: any) => Promise<void>;
+  onSaveCase?: (beforeImage: string, afterImage: string, aiReport: any) => Promise<ClinicalCase | null>;
   existingApprovalStatus?: 'draft' | 'pending_approval' | 'approved';
 }
 
@@ -32,6 +34,8 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
   const [isSaving, setIsSaving] = useState(false);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [workflowStatus, setWorkflowStatus] = useState(existingApprovalStatus);
+  const [savedCase, setSavedCase] = useState<ClinicalCase | null>(null);
+  const { openCase } = useApp();
 
   const refBefore = useRef<HTMLInputElement>(null);
   const refAfter = useRef<HTMLInputElement>(null);
@@ -217,7 +221,10 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
     setError('');
     try {
       if (onSaveCase) {
-        await onSaveCase(imageBefore, imageAfter, aiAnalysisResult);
+        const clinicalCase = await onSaveCase(imageBefore, imageAfter, aiAnalysisResult);
+        if (clinicalCase) {
+          setSavedCase(clinicalCase);
+        }
       } else {
         // Fallback local seguro para simulação de persistência
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -241,10 +248,14 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-semibold text-white tracking-wide uppercase">Mesa de Luz Digital</h3>
-              {workflowStatus === 'pending_approval' && (
-                <span className="inline-flex items-center bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">
-                  Aguardando Aprovação
-                </span>
+              {workflowStatus === 'pending_approval' && savedCase && (
+                <button
+                  onClick={() => openCase(savedCase)}
+                  className="inline-flex items-center bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full hover:bg-amber-500/20 transition-colors cursor-pointer"
+                  title="Abrir caso em Colaboração Clínica"
+                >
+                  Abrir Caso
+                </button>
               )}
               {workflowStatus === 'approved' && (
                 <span className="inline-flex items-center bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">

@@ -14,6 +14,8 @@ import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import { useApp } from '@/contexts/AppContext';
 import { buildCaseTitle } from '@/services/clinicalCaseIntegrationService';
 
+import type { ClinicalCase } from '@/types';
+
 type Mode = 'idle' | 'preview' | 'analyzing' | 'result';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -28,11 +30,11 @@ export default function AnalysisPage() {
   const [result, setResult] = useState<string | null>(null);
   const [streamError, setStreamError] = useState('');
 
-  const handleSaveComparisonCase = async (beforeImage: string, afterImage: string, aiReport: any): Promise<void> => {
+  const handleSaveComparisonCase = async (beforeImage: string, afterImage: string, aiReport: any): Promise<ClinicalCase | null> => {
     try {
       if (!user) {
         addToast('Médico-veterinário não autenticado no sistema.', 'error');
-        return;
+        return null;
       }
       
       const currentCtx = session?.clinicalContext ?? {};
@@ -77,6 +79,7 @@ export default function AnalysisPage() {
       });
       
       addToast(`Caso do paciente "${clinicalCase.patientName || 'Não Identificado'}" salvo com sucesso!`, 'success');
+      return clinicalCase;
     } catch (err: any) {
       addToast(`Falha na persistência dos dados clínicos: ${err.message || err}`, 'error');
       throw err;
