@@ -1,5 +1,5 @@
 // src/components/ProductTour.tsx
-import { useState, useEffect, useCallback, memo } from 'react';
+import { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 
 export interface TourStep {
@@ -85,7 +85,6 @@ function getRect(target: string): Rect | null {
   return { top: r.top, left: r.left, width: r.width, height: r.height };
 }
 
-// Detecta o container de scroll pai do elemento
 function getScrollParent(element: HTMLElement | null): HTMLElement | Window {
   if (!element) return window;
   const style = window.getComputedStyle(element);
@@ -96,7 +95,37 @@ function getScrollParent(element: HTMLElement | null): HTMLElement | Window {
   return getScrollParent(element.parentElement);
 }
 
-function Spotlight({ rect }: { rect: Rect }) {
+function scrollToElement(target: string): void {
+  const el = document.querySelector(`[data-tour="${target}"]`) as HTMLElement;
+  if (!el) return;
+  
+  const rect = el.getBoundingClientRect();
+  const isInViewport = (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+  
+  if (!isInViewport) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+  }
+}
+
+function debounce<T extends (...args: any[]) => any>(fn: T, delay: number): T {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return ((...args: any[]) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  }) as T;
+}
+
+interface SpotlightProps {
+  rect: Rect;
+  visible: boolean;
+}
+
+function Spotlight({ rect, visible }: SpotlightProps) {
   const PAD = 10;
   return (
     <div
@@ -108,9 +137,10 @@ function Spotlight({ rect }: { rect: Rect }) {
         height: rect.height + PAD * 2,
         borderRadius: 18,
         boxShadow: '0 0 0 9999px rgba(0,0,0,0.65)',
-        border: '2px solid rgba(0,86,179,0.9)',
+        border: '2px solid var(--color-primary)',
         animation: 'tourPulse 2s ease-in-out infinite',
-        transition: 'top 0.2s ease-out, left 0.2s ease-out, width 0.2s ease-out, height 0.2s ease-out',
+        transition: 'top 0.3s ease-out, left 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out, opacity 0.3s ease-out',
+        opacity: visible ? 1 : 0,
       }}
     />
   );
@@ -124,22 +154,26 @@ interface TooltipBoxProps {
   onNext: () => void;
   onPrev: () => void;
   onClose: () => void;
+  onStepChange?: (stepIndex: number, step: TourStep) => void;
 }
 
-function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: TooltipBoxProps) {
+function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onStepChange }: TooltipBoxProps) {
+  const tooltipRef = useRef<HTMLDivElement>(null);
   const isCenter = step.placement === 'center' || !rect;
-  const TW = 360;
-  const TH = 200;
   const PAD = 16;
+  
+  const vw = typeof window !== 'undefined' ? window.innerWidth : 1024;
+  const TW = vw < 480 ? Math.min(320, vw - 32) : 360;
+  const TH = 220;
+  
   let style: React.CSSProperties = {};
 
   if (isCenter) {
     style = { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999 };
   } else if (rect) {
-    const placement = step.placement || 'bottom';
-    const vw = window.innerWidth;
     const vh = window.innerHeight;
     let top = 0, left = 0;
+    const placement = step.placement || 'bottom';
 
     if (placement === 'bottom') {
       top = rect.top + rect.height + PAD;
@@ -150,39 +184,94 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
     } else if (placement === 'right') {
       top = Math.min(Math.max(rect.top + rect.height / 2 - TH / 2, 16), vh - TH - 16);
       left = rect.left + rect.width + PAD;
+      if (left + TW > vw - 16) {
+        left = rect.left - TW - PAD;
+      }
     } else if (placement === 'left') {
       top = Math.min(Math.max(rect.top + rect.height / 2 - TH / 2, 16), vh - TH - 16);
       left = rect.left - TW - PAD;
+      if (left < 16) {
+        left = rect.left + rect.width + PAD;
+      }
     }
 
     top = Math.max(16, Math.min(top, vh - TH - 16));
     left = Math.max(16, Math.min(left, vw - TW - 16));
-    style = { position: 'fixed', top, left, zIndex: 9999, transition: 'top 0.2s ease-out, left 0.2s ease-out' };
+    style = { position: 'fixed', top, left, zIndex: 9999, transition: 'top 0.3s ease-out, left 0.3s ease-out, opacity 0.3s ease-out' };
   }
 
+  useEffect(() => {
+    if (!tooltipRef.current) return;
+    
+    const focusableElements = tooltipRef.current.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0] as HTMLElement;
+    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+    
+    firstElement?.focus();
+    
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    };
+    
+    tooltipRef.current.addEventListener('keydown', handleTab);
+    return () => tooltipRef.current?.removeEventListener('keydown', handleTab);
+  }, [stepIndex]);
+
+  useEffect(() => {
+    onStepChange?.(stepIndex, step);
+  }, [stepIndex, step, onStepChange]);
+
   return (
-    <div style={{ ...style, width: TW }} className="bg-white rounded-2xl shadow-lg border border-slate-200/60 overflow-hidden">
+    <div
+      ref={tooltipRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tour-title"
+      aria-describedby="tour-content"
+      style={{ ...style, width: TW }}
+      className="bg-white rounded-2xl shadow-2xl border border-slate-200/60 overflow-hidden animate-in fade-in zoom-in-95 duration-300"
+    >
       <div className="bg-gradient-to-r from-primary to-accent px-5 py-4 flex items-center justify-between">
-        <span className="text-white font-bold text-base">{step.title}</span>
-        <button onClick={onClose} className="text-white/80 hover:text-white transition-colors">
+        <span id="tour-title" className="text-white font-bold text-base">{step.title}</span>
+        <button
+          onClick={onClose}
+          aria-label="Fechar tour"
+          className="text-white/80 hover:text-white transition-colors rounded-lg p-1 hover:bg-white/10"
+        >
           <X size={18} />
         </button>
       </div>
       <div className="px-5 py-4">
-        <p className="text-slate-700 text-[15px] leading-relaxed">{step.content}</p>
+        <p id="tour-content" className="text-slate-700 text-[15px] leading-relaxed">{step.content}</p>
       </div>
-      <div className="px-5 pb-4 flex items-center justify-between">
+      <div className="px-5 pb-4 flex items-center justify-between flex-wrap gap-2">
         <button
-            onClick={onClose}
-            className="text-xs font-medium text-slate-500 hover:text-red-600 transition-colors"
-          >
-            Pular
-          </button>
-          <div className="flex gap-1.5">
+          onClick={onClose}
+          aria-label="Pular tour"
+          className="text-xs font-medium text-slate-500 hover:text-red-600 transition-colors"
+        >
+          Pular
+        </button>
+        <div className="flex gap-1.5" role="progressbar" aria-valuenow={stepIndex + 1} aria-valuemin={1} aria-valuemax={total}>
           {Array.from({ length: total }).map((_, i) => (
             <div
               key={i}
-              className={`rounded-full transition-all duration-200 ${i === stepIndex ? 'w-5 h-2 bg-primary' : 'w-2 h-2 bg-slate-200'}`}
+              className={`rounded-full transition-all duration-300 ${i === stepIndex ? 'w-5 h-2 bg-primary' : 'w-2 h-2 bg-slate-200'}`}
+              aria-label={`Passo ${i + 1} de ${total}`}
             />
           ))}
         </div>
@@ -190,6 +279,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
           {stepIndex > 0 && (
             <button
               onClick={onPrev}
+              aria-label="Passo anterior"
               className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
             >
               <ChevronLeft size={14} /> Anterior
@@ -198,6 +288,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
           {stepIndex < total - 1 ? (
             <button
               onClick={onNext}
+              aria-label="Próximo passo"
               className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-white bg-primary hover:bg-primary-dark transition-colors"
             >
               Próximo <ChevronRight size={14} />
@@ -205,7 +296,8 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
           ) : (
             <button
               onClick={onClose}
-              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors"
+              aria-label="Concluir tour"
+              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-white bg-accent hover:bg-accent/90 transition-colors"
             >
               Concluir ✓
             </button>
@@ -220,67 +312,93 @@ export interface ProductTourProps {
   page: string;
   active: boolean;
   onClose: () => void;
+  forceShow?: boolean;
+  onStepChange?: (stepIndex: number, step: TourStep) => void;
 }
 
 const TOUR_STORAGE_KEY = 'ortobolt-tour-completed';
 
-export default memo(function ProductTour({ page, active, onClose }: ProductTourProps) {
+export default memo(function ProductTour({ page, active, onClose, forceShow = false, onStepChange }: ProductTourProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
+  const [spotlightVisible, setSpotlightVisible] = useState(false);
+  const [targetMissing, setTargetMissing] = useState(false);
   const steps = TOUR_STEPS[page] || [];
   const currentStep = steps[stepIndex];
 
-  // Atualiza a posição do elemento alvo
+  useEffect(() => {
+    if (!active || forceShow) return;
+    try {
+      const completed = JSON.parse(localStorage.getItem(TOUR_STORAGE_KEY) || '{}');
+      if (completed[page]) {
+        onClose();
+      }
+    } catch (e) {
+      console.warn('Failed to read tour completion:', e);
+    }
+  }, [active, page, forceShow, onClose]);
+
   const updateRect = useCallback(() => {
     if (!currentStep || currentStep.target === '__welcome__') {
       setRect(null);
+      setTargetMissing(false);
       return;
     }
-    setRect(getRect(currentStep.target));
+    const newRect = getRect(currentStep.target);
+    if (!newRect) {
+      setTargetMissing(true);
+      setRect(null);
+    } else {
+      setTargetMissing(false);
+      setRect(newRect);
+    }
   }, [currentStep]);
 
-  // Reset do step quando página ou active mudar
+  const debouncedUpdateRect = useCallback(debounce(updateRect, 50), [updateRect]);
+
   useEffect(() => {
     if (!active) return;
     setStepIndex(0);
+    setSpotlightVisible(false);
   }, [active, page]);
 
-  // Atualiza imediatamente quando step mudar
   useEffect(() => {
-    if (!active) return;
-    updateRect();
-  }, [active, stepIndex, updateRect]);
+    if (!active || !currentStep) return;
+    
+    if (currentStep.target !== '__welcome__') {
+      scrollToElement(currentStep.target);
+      const timeout = setTimeout(() => {
+        updateRect();
+        setSpotlightVisible(true);
+      }, 300);
+      return () => clearTimeout(timeout);
+    } else {
+      setRect(null);
+      setSpotlightVisible(true);
+    }
+  }, [active, stepIndex, currentStep, updateRect]);
 
-  // 🔥 OTIMIZADO: Apenas 3 listeners precisos (sem polling)
   useEffect(() => {
     if (!active || !currentStep || currentStep.target === '__welcome__') return;
 
     const el = document.querySelector(`[data-tour="${currentStep.target}"]`) as HTMLElement;
     if (!el) return;
 
-    // Detecta o scroll parent correto (evita listeners em todos os elementos)
     const scrollParent = getScrollParent(el);
+    scrollParent.addEventListener('scroll', debouncedUpdateRect, { passive: true });
+    window.addEventListener('resize', debouncedUpdateRect, { passive: true });
 
-    // 1. Scroll listener (apenas no parent correto)
-    scrollParent.addEventListener('scroll', updateRect, { passive: true });
-
-    // 2. Resize listener (window)
-    window.addEventListener('resize', updateRect, { passive: true });
-
-    // 3. ResizeObserver (detecta mudanças de tamanho/posição do elemento)
-    const resizeObserver = new ResizeObserver(updateRect);
+    const resizeObserver = new ResizeObserver(debouncedUpdateRect);
     resizeObserver.observe(el);
 
-    // Atualização inicial
     updateRect();
 
-    // Cleanup
     return () => {
-      scrollParent.removeEventListener('scroll', updateRect);
-      window.removeEventListener('resize', updateRect);
+      scrollParent.removeEventListener('scroll', debouncedUpdateRect);
+      window.removeEventListener('resize', debouncedUpdateRect);
       resizeObserver.disconnect();
     };
-  }, [active, currentStep, updateRect]);
+  }, [active, currentStep, debouncedUpdateRect, updateRect]);
 
   const handleClose = useCallback(() => {
     try {
@@ -295,7 +413,12 @@ export default memo(function ProductTour({ page, active, onClose }: ProductTourP
 
   useEffect(() => {
     if (!active) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose(); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleClose();
+      }
+    };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [active, handleClose]);
@@ -303,30 +426,55 @@ export default memo(function ProductTour({ page, active, onClose }: ProductTourP
   if (!active || steps.length === 0) return null;
 
   const handleNext = () => {
-    if (stepIndex < steps.length - 1) setStepIndex(s => s + 1);
-    else handleClose();
+    if (stepIndex < steps.length - 1) {
+      setSpotlightVisible(false);
+      setTimeout(() => setStepIndex(s => s + 1), 150);
+    } else {
+      handleClose();
+    }
   };
 
-  const handlePrev = () => setStepIndex(s => Math.max(0, s - 1));
+  const handlePrev = () => {
+    if (stepIndex > 0) {
+      setSpotlightVisible(false);
+      setTimeout(() => setStepIndex(s => Math.max(0, s - 1)), 150);
+    }
+  };
 
   return (
     <>
       <style>{`
         @keyframes tourPulse {
           0%, 100% {
-            border-color: rgba(0,86,179,0.9);
-            box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 20px rgba(0,86,179,0.4);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 20px rgba(10,61,143,0.4);
           }
           50% {
-            border-color: rgba(56,189,248,1);
-            box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 30px rgba(56,189,248,0.6);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.65), 0 0 30px rgba(0,179,166,0.6);
           }
         }
+        @keyframes fadeZoomIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .animate-in { animation: fadeZoomIn 0.3s ease-out; }
       `}</style>
       {(currentStep?.target === '__welcome__' || !rect) && (
-        <div className="fixed inset-0 bg-black/65 z-[9997]" onClick={handleClose} />
+        <div
+          className="fixed inset-0 bg-black/65 z-[9997] transition-opacity duration-300"
+          onClick={handleClose}
+          aria-hidden="true"
+        />
       )}
-      {rect && currentStep?.target !== '__welcome__' && <Spotlight rect={rect} />}
+      {rect && currentStep?.target !== '__welcome__' && (
+        <Spotlight rect={rect} visible={spotlightVisible} />
+      )}
+      {targetMissing && currentStep?.target !== '__welcome__' && (
+        <div className="fixed top-4 right-4 z-[10000] bg-warning text-white px-4 py-2 rounded-xl shadow-lg" role="alert">
+          ⚠️ Elemento do tour não encontrado: <code>{currentStep.target}</code>
+        </div>
+      )}
       {currentStep && (
         <TooltipBox
           step={currentStep}
@@ -336,6 +484,7 @@ export default memo(function ProductTour({ page, active, onClose }: ProductTourP
           onNext={handleNext}
           onPrev={handlePrev}
           onClose={handleClose}
+          onStepChange={onStepChange}
         />
       )}
     </>
