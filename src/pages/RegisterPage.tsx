@@ -165,7 +165,7 @@ export default function RegisterPage() {
       <div className="min-h-screen flex items-center justify-center p-4"
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)', fontFamily: 'Montserrat, sans-serif' }}>
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#ECFDF5' }}>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-success-bg)' }}>
             <CheckCircle size={32} className="text-emerald-500" />
           </div>
           <h2 className="font-bold text-slate-800 text-xl mb-2">Cadastro realizado!</h2>
@@ -293,7 +293,7 @@ export default function RegisterPage() {
                   <div className="flex gap-1 mb-1">
                     {[1,2,3,4].map(i => (
                       <div key={i} className="h-1 flex-1 rounded-full transition-all"
-                        style={{ background: i <= passwordStrength ? STRENGTH_COLORS[passwordStrength] : '#E2E8F0' }} />
+                        style={{ background: i <= passwordStrength ? STRENGTH_COLORS[passwordStrength] : 'var(--color-border)' }} />
                     ))}
                   </div>
                   <p className="text-xs" style={{ color: STRENGTH_COLORS[passwordStrength] }}>
@@ -324,7 +324,7 @@ export default function RegisterPage() {
               <div className="relative mt-0.5 flex-shrink-0">
                 <input type="checkbox" className="sr-only" checked={form.acceptTerms} onChange={e => update('acceptTerms', e.target.checked)} />
                 <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
-                  style={{ borderColor: form.acceptTerms ? 'var(--color-primary)' : '#CBD5E1', background: form.acceptTerms ? 'var(--color-primary)' : '#fff' }}>
+                  style={{ borderColor: form.acceptTerms ? 'var(--color-primary)' : 'var(--color-border)', background: form.acceptTerms ? 'var(--color-primary)' : '#fff' }}>
                   {form.acceptTerms && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
                 </div>
               </div>
@@ -339,7 +339,7 @@ export default function RegisterPage() {
               <div className="relative mt-0.5 flex-shrink-0">
                 <input type="checkbox" className="sr-only" checked={form.acceptAiConsent} onChange={e => update('acceptAiConsent', e.target.checked)} />
                 <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
-                  style={{ borderColor: form.acceptAiConsent ? 'var(--color-primary)' : '#CBD5E1', background: form.acceptAiConsent ? 'var(--color-primary)' : '#fff' }}>
+                  style={{ borderColor: form.acceptAiConsent ? 'var(--color-primary)' : 'var(--color-border)', background: form.acceptAiConsent ? 'var(--color-primary)' : '#fff' }}>
                   {form.acceptAiConsent && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
                 </div>
               </div>
@@ -354,7 +354,7 @@ export default function RegisterPage() {
                 <div className="relative mt-0.5 flex-shrink-0">
                   <input type="checkbox" className="sr-only" checked={crmvDeclaration} onChange={e => setCrmvDeclaration(e.target.checked)} />
                   <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
-                    style={{ borderColor: crmvDeclaration ? 'var(--color-primary)' : '#CBD5E1', background: crmvDeclaration ? 'var(--color-primary)' : '#fff' }}>
+                    style={{ borderColor: crmvDeclaration ? 'var(--color-primary)' : 'var(--color-border)', background: crmvDeclaration ? 'var(--color-primary)' : '#fff' }}>
                     {crmvDeclaration && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
                   </div>
                 </div>

@@ -1,0 +1,21 @@
+{
+  "name": "OrtoBolt - Ortopedia Veterinária Inteligente",
+  "short_name": "OrtoBolt",
+  "description": "Plataforma SaaS de Ortopedia Veterinária assistida por IA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0056b3",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

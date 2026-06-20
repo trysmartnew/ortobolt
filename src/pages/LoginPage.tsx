@@ -158,7 +158,7 @@ export default function LoginPage() {
             {['Análise de radiografias em menos de 60s','Protocolos ortopédicos com IA','Laudos PDF automáticos','Checklist pós-operatório'].map(item => (
               <div key={item} className="flex items-center gap-2.5 text-sm text-white/80">
                 <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(56,189,248,0.2)' }}>
-                  <svg viewBox="0 0 12 12" width="10" height="10"><polyline points="2,6 5,9 10,3" fill="none" stroke="#38BDF8" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                  <svg viewBox="0 0 12 12" width="10" height="10"><polyline points="2,6 5,9 10,3" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"/></svg>
                 </div>
                 {item}
               </div>
@@ -270,8 +270,8 @@ export default function LoginPage() {
             <button onClick={handleSubmit} disabled={loading || loginLocked}
               className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
               style={{ background: 'var(--color-primary)', boxShadow: '0 4px 14px rgba(0,86,179,0.3)' }}
-              onMouseEnter={e => { if (!loading && !loginLocked) e.currentTarget.style.background = '#004494'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#0056b3'; }}>
+              onMouseEnter={e => { if (!loading && !loginLocked) e.currentTarget.style.background = 'var(--color-primary-dark)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--color-primary)'; }}>
               {loading ? 'Entrando...' : loginLocked ? `Bloqueado (${loginLockSecondsLeft}s)` : 'Entrar na plataforma'}
             </button>
           </div>

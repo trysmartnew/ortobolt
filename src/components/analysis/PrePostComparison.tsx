@@ -338,7 +338,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                 size="sm"
                 onClick={handleSaveComparison}
                 disabled={isSaving || workflowStatus === 'pending_approval'}
-                className="bg-navy hover:bg-[#002868] text-white text-xs gap-1.5"
+                className="bg-navy hover:bg-[var(--color-navy-gradient)] text-white text-xs gap-1.5"
               >
                 <Save className="w-3.5 h-3.5" />
                 {isSaving ? 'Salvando...' : workflowStatus === 'pending_approval' ? 'Caso Salvo' : 'Salvar Comparação'}
