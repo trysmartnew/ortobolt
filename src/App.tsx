@@ -43,7 +43,7 @@ function AppInner() {
   }, []);
   const {
     currentView, authLoading,
-    currentPage, tourActive, closeTour,
+    currentPage, tourActive, tourForceShow, closeTour,
     logout, setUserFromSession, setCurrentView,
     toasts, removeToast,
   } = useApp();
@@ -136,7 +136,7 @@ function AppInner() {
           <PageComponent />
         </main>
       </div>
-      <ProductTour page={currentPage} active={tourActive} onClose={closeTour} />
+      <ProductTour page={currentPage} active={tourActive} onClose={closeTour} forceShow={tourForceShow} />
       <ToastContainer toasts={toasts} onRemove={removeToast} />
       {currentPage !== 'chat' && <AIAssistant />}
     </div>

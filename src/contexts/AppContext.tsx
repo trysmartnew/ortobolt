@@ -79,6 +79,7 @@ interface AppContextType {
   chatHistory: ChatMessage[];
   setChatHistory: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
   tourActive: boolean;
+  tourForceShow: boolean;
   startTour: () => void;
   closeTour: () => void;
   toasts: Toast[];
@@ -161,6 +162,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     timestamp: new Date().toISOString(),
   }]);
   const [tourActive, setTourActive]       = useState(false);
+  const [tourForceShow, setTourForceShow] = useState(false);
   const [toasts, setToasts]               = useState<Toast[]>([]);
   
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -475,10 +477,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       ...prev,
     ]), []);
 
-  const startTour = useCallback(() => setTourActive(true), []);
+  const startTour = useCallback(() => {
+    setTourForceShow(true);
+    setTourActive(true);
+  }, []);
   
   const closeTour = useCallback(() => {
     setTourActive(false);
+    setTourForceShow(false);
     if (user?.id) {
       localStorage.setItem(`ortobolt_tour_v1_${user.id}`, '1');
     }
@@ -499,7 +505,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       activeCase, openCase, closeCase,
       notifications, unreadCount, markAllRead, markRead, addNotification,
       chatHistory, setChatHistory,
-      tourActive, startTour, closeTour,
+      tourActive, tourForceShow, startTour, closeTour,
       toasts, addToast, removeToast,
       loginLocked, loginLockSecondsLeft,
     }}>
