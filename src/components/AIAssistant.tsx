@@ -103,7 +103,7 @@ export default function AIAssistant() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-gradient-to-br from-[#0056b3] to-[#38BDF8] text-white rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group"
+          className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-gradient-to-br from-primary to-accent text-white rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group"
           aria-label="Abrir OrthoAI"
           data-tour="tour-ai-widget"
         >
@@ -117,7 +117,7 @@ export default function AIAssistant() {
 
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
-          <div className="bg-gradient-to-r from-[#0056b3] to-[#38BDF8] text-white p-4 flex items-center justify-between flex-shrink-0">
+          <div className="bg-gradient-to-r from-primary to-accent text-white p-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
               <Sparkles size={20} />
               <div>
@@ -137,7 +137,7 @@ export default function AIAssistant() {
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
                   msg.role === 'user'
-                    ? 'bg-[#0056b3] text-white rounded-br-sm'
+                    ? 'bg-primary text-white rounded-br-sm'
                     : 'bg-white text-slate-800 border border-slate-200 rounded-bl-sm shadow-sm'
                 }`}>
                   {msg.content || (isStreaming && i === messages.length - 1 && (
@@ -183,7 +183,7 @@ export default function AIAssistant() {
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || isStreaming}
-                className="w-9 h-9 bg-[#0056b3] hover:bg-[#004494] disabled:bg-slate-300 text-white rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+                className="w-9 h-9 bg-primary hover:bg-primary-dark disabled:bg-slate-300 text-white rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
               >
                 {isStreaming ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
               </button>

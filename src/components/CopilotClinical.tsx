@@ -92,7 +92,7 @@ export default function CopilotClinical({
         return <li key={i} className="ml-4 text-sm list-disc">{line.slice(2)}</li>;
       }
       if (line.startsWith('#')) {
-        return <h3 key={i} className="font-bold text-[#0056b3] text-sm mt-2 mb-1">{line.replace(/^#+\s/, '')}</h3>;
+        return <h3 key={i} className="font-bold text-primary text-sm mt-2 mb-1">{line.replace(/^#+\s/, '')}</h3>;
       }
       if (line === '') return <br key={i} />;
       return <p key={i} className="text-sm">{line}</p>;
@@ -141,7 +141,7 @@ export default function CopilotClinical({
                 <button
                   key={i}
                   onClick={() => setInput(s)}
-                  className="text-[10px] text-[#0056b3] bg-blue-50 border border-blue-100 px-2 py-1 rounded-full hover:bg-blue-100 transition-colors"
+                  className="text-[10px] text-primary bg-blue-50 border border-blue-100 px-2 py-1 rounded-full hover:bg-blue-100 transition-colors"
                 >
                   {s}
                 </button>
@@ -156,7 +156,7 @@ export default function CopilotClinical({
           >
             <div className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold ${
               msg.role === 'user' 
-                ? 'bg-[#0056b3] text-white' 
+                ? 'bg-primary text-white' 
                 : 'bg-gradient-to-br from-blue-500 to-violet-500 text-white'
             }`}>
               {msg.role === 'user' ? 'V' : <Bot size={12} />}
@@ -164,7 +164,7 @@ export default function CopilotClinical({
             <div className={`flex-1 max-w-[85%] flex flex-col gap-1 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
               <div className={`rounded-2xl px-3 py-2 ${
                 msg.role === 'user' 
-                  ? 'bg-[#0056b3] text-white rounded-tr-sm' 
+                  ? 'bg-primary text-white rounded-tr-sm' 
                   : 'bg-slate-50 text-slate-800 border border-slate-100 rounded-tl-sm'
               }`}>
                 {msg.role === 'assistant' ? (
@@ -176,7 +176,7 @@ export default function CopilotClinical({
               {msg.role === 'assistant' && (
                 <button
                   onClick={() => handleCopy(msg.content, i)}
-                  className="text-[10px] text-slate-400 hover:text-[#0056b3] transition-colors flex items-center gap-1"
+                  className="text-[10px] text-slate-400 hover:text-primary transition-colors flex items-center gap-1"
                 >
                   {copiedId === i ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
                   {copiedId === i ? 'Copiado' : 'Copiar'}
@@ -207,12 +207,12 @@ export default function CopilotClinical({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
             placeholder="Refinar análise..."
-            className="flex-1 text-xs border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0056b3]/30 focus:border-[#0056b3]"
+            className="flex-1 text-xs border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
           />
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            className="flex-shrink-0 w-9 h-9 rounded-lg bg-[#0056b3] flex items-center justify-center hover:bg-[#004494] transition-colors disabled:opacity-40 shadow-sm"
+            className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary flex items-center justify-center hover:bg-primary-dark transition-colors disabled:opacity-40 shadow-sm"
           >
             <Send size={14} className="text-white" />
           </button>

@@ -71,7 +71,7 @@ export default React.memo(function TopBar() {
           <button
             onClick={startTour}
             title="Tour desta página"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#0056b3]/10 text-[#0056b3] text-xs font-semibold hover:bg-[#0056b3]/20 transition-colors group"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors group"
             style={{ fontFamily: 'Montserrat' }}
           >
             <MapPin size={12} className="group-hover:animate-bounce" />

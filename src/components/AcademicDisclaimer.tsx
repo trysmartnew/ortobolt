@@ -55,7 +55,7 @@ export default function AcademicDisclaimer() {
           <button
             onClick={handleAccept}
             disabled={loading}
-            className="w-full py-3 px-4 rounded-lg font-semibold text-white bg-[#0056b3] hover:bg-[#004494] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 rounded-lg font-semibold text-white bg-primary hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Confirmando...' : 'Entendi e continuar'}
           </button>

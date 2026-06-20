@@ -52,7 +52,7 @@ export function Button({ children, variant='primary', size='md', loading, classN
 // ── Card — BUG-01 FIX: forward all HTML div attrs so data-tour reaches DOM ───
 export function Card({ children, className='', ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={`bg-white rounded-[18px] border border-slate-200/60 shadow-[0_1px_3px_0_rgba(0,0,0,0.04),0_1px_2px_-1px_rgba(0,0,0,0.04)] ${className}`} {...props}>
+    <div className={`bg-white rounded-2xl border border-slate-200/60 shadow-[0_1px_3px_0_rgba(0,0,0,0.04),0_1px_2px_-1px_rgba(0,0,0,0.04)] ${className}`} {...props}>
       {children}
     </div>
   );

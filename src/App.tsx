@@ -111,7 +111,7 @@ function AppInner() {
 
   if (authLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#001a40]">
+      <div className="flex h-screen items-center justify-center bg-navy">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4" />
           <p className="text-white/60 text-sm font-mono">Verificando sessão...</p>

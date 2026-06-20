@@ -22,7 +22,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
       {c.imageUrl && <img src={c.imageUrl} alt={c.patientName} className="w-full h-52 object-cover rounded-t-[18px]" />}
       
       {[['Paciente', c.patientName], ['Espécie', SPECIES_LABELS[c.species]], ['Raça', c.breed], ['Idade', `${c.ageYears} anos`], ['Peso', `${c.weightKg} kg`], ['Procedimento', PROCEDURE_LABELS[c.procedure]]].map(([k, v]) => (
-        <div key={k} className="bg-slate-50/70 rounded-[14px] p-3.5">
+        <div key={k} className="bg-slate-50/70 rounded-xl p-3.5">
           <span className="text-xs font-semibold text-slate-500">{k}</span>
           <p className="text-sm font-medium text-slate-900">{v}</p>
         </div>
@@ -34,7 +34,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
       </div>
       
       {c.precisionScore && (
-        <div className="mt-3 p-3 bg-blue-50/60 rounded-[14px]">
+        <div className="mt-3 p-3 bg-blue-50/60 rounded-xl">
           <PrecisionGauge value={c.precisionScore} size={48} />
           <p className="text-xs text-slate-500 mt-1">precisão IA</p>
         </div>
@@ -108,7 +108,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
                 <button
                   key={sim.id}
                   onClick={() => { onClose(); setTimeout(() => window.location.hash = `#/case/${sim.id}`, 100); }}
-                  className="text-left bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-[#0056b3] rounded-xl p-3 transition-all group"
+                  className="text-left bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-primary rounded-xl p-3 transition-all group"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
@@ -127,7 +127,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
                     }`}>
                       {sim.status === 'completed' ? 'Concluído' : sim.status === 'critical' ? 'Crítico' : 'Em Análise'}
                     </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-[#0056b3] transition-colors"><path d="m9 18 6-6-6-6"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-primary transition-colors"><path d="m9 18 6-6-6-6"/></svg>
                   </div>
                 </button>
               ))}
@@ -291,7 +291,7 @@ export default function GalleryPage() {
 
       {/* Filters */}
       <div data-tour="tour-gallery-filters" className="flex flex-wrap gap-3 items-center">
-        <div className="flex items-center gap-2 bg-white border border-slate-200/60 rounded-[14px] px-3.5 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex-1 min-w-48">
+        <div className="flex items-center gap-2 bg-white border border-slate-200/60 rounded-xl px-3.5 py-2.5 shadow-sm flex-1 min-w-48">
           <Search size={14} className="text-slate-400" />
           <input
             value={search}
@@ -310,9 +310,9 @@ export default function GalleryPage() {
             <button
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
-              className={`px-3.5 py-1.5 rounded-[12px] text-[13px] font-semibold transition-colors ${
+              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition-colors ${
                 statusFilter === f.value
-                  ? 'bg-[#0056b3] text-white'
+                  ? 'bg-primary text-white'
                   : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -323,7 +323,7 @@ export default function GalleryPage() {
                 <select
                   value={filterProcedure}
                   onChange={e => setFilterProcedure(e.target.value as ProcedureType | 'all')}
-                  className="px-3 py-1.5 rounded-[12px] text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0056b3]"
+                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="all">Todos os Procedimentos</option>
                   {Object.entries(PROCEDURE_LABELS).map(([k, v]) => (
@@ -333,7 +333,7 @@ export default function GalleryPage() {
                 <select
                   value={filterSpecies}
                   onChange={e => setFilterSpecies(e.target.value as AnimalSpecies | 'all')}
-                  className="px-3 py-1.5 rounded-[12px] text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0056b3]"
+                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="all">Todas as Espécies</option>
                   {Object.entries(SPECIES_LABELS).map(([k, v]) => (
@@ -343,7 +343,7 @@ export default function GalleryPage() {
                 <select
                   value={filterPeriod}
                   onChange={e => setFilterPeriod(e.target.value as 'all' | '7days' | '30days' | '90days')}
-                  className="px-3 py-1.5 rounded-[12px] text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0056b3]"
+                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="all">Todo o Período</option>
                   <option value="7days">Últimos 7 dias</option>
@@ -353,7 +353,7 @@ export default function GalleryPage() {
                 {(filterProcedure !== 'all' || filterSpecies !== 'all' || filterPeriod !== 'all') && (
                   <button
                     onClick={() => { setFilterProcedure('all'); setFilterSpecies('all'); setFilterPeriod('all'); }}
-                    className="px-3 py-1.5 rounded-[12px] text-[13px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
+                    className="px-3 py-1.5 rounded-xl text-[13px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
                   >
                     Limpar Filtros
                   </button>
@@ -372,7 +372,7 @@ export default function GalleryPage() {
       ) : (
         <div data-tour="tour-gallery-grid" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {filtered.map(c => (
-            <Card key={c.id} className="overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 group rounded-[18px]">
+            <Card key={c.id} className="overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group rounded-2xl">
               <div
                 className="relative cursor-pointer"
                 onClick={() => openCase(c)}
@@ -431,7 +431,7 @@ export default function GalleryPage() {
                   </button>
                   <button
                     onClick={() => openCase(c)}
-                    className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-[#0056b3] hover:bg-[#004494] py-1.5 rounded-lg transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-primary hover:bg-primary-dark py-1.5 rounded-lg transition-colors"
                   >
                     <Users size={12} /> Colaborar <ChevronRight size={11} />
                   </button>
@@ -490,7 +490,7 @@ export default function GalleryPage() {
                       setFormErrors([]);
                     }}
                     placeholder={placeholder}
-                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] font-mono ${
+                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono ${
                       !form[key] && formErrors.length > 0 ? 'border-red-300 bg-red-50' : 'border-slate-200'
                     }`}
                   />
@@ -502,7 +502,7 @@ export default function GalleryPage() {
               <select
                 value={form.species}
                 onChange={e => setForm(f => ({ ...f, species: e.target.value as AnimalSpecies }))}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {Object.entries(SPECIES_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>{v}</option>
@@ -514,7 +514,7 @@ export default function GalleryPage() {
               <select
                 value={form.procedure}
                 onChange={e => setForm(f => ({ ...f, procedure: e.target.value as ProcedureType }))}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {Object.entries(PROCEDURE_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>{v}</option>
@@ -534,7 +534,7 @@ export default function GalleryPage() {
                   setFormErrors([]);
                 }}
                 placeholder="Ex: 4"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] font-mono"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono"
               />
             </div>
             <div>
@@ -550,7 +550,7 @@ export default function GalleryPage() {
                   setFormErrors([]);
                 }}
                 placeholder="Ex: 32.5"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] font-mono"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono"
               />
             </div>
           </div>
@@ -561,7 +561,7 @@ export default function GalleryPage() {
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
               placeholder="Notas clínicas, achados, intercorrências..."
               rows={3}
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] font-mono resize-none"
+              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono resize-none"
             />
           </div>
   
@@ -574,7 +574,7 @@ export default function GalleryPage() {
                 const file = e.target.files?.[0] || null;
                 setForm(f => ({ ...f, imageFile: file }));
               }}
-              className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#0056b3] file:text-white hover:file:bg-[#003d7a] cursor-pointer"
+              className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[#003d7a] cursor-pointer"
             />
             {form.imageFile && (
               <p className="text-xs text-green-600 mt-1">Imagem selecionada: {form.imageFile.name}</p>

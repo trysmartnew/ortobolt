@@ -62,7 +62,7 @@ export default function ProfilePage() {
       {/* Profile header */}
       <Card className="p-6">
         <div className="flex items-start gap-5">
-          <div className="w-20 h-20 rounded-2xl bg-[#0056b3] flex items-center justify-center text-white text-3xl font-bold flex-shrink-0">
+          <div className="w-20 h-20 rounded-2xl bg-primary flex items-center justify-center text-white text-3xl font-bold flex-shrink-0">
             {displayName.charAt(0)}
           </div>
           <div className="flex-1 min-w-0">
@@ -71,12 +71,12 @@ export default function ProfilePage() {
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 mb-1">Nome completo</label>
                   <input value={editName} onChange={e => setEditName(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 mb-1">Especialidade</label>
                   <input value={editSpec} onChange={e => setEditSpec(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
                 {!editName.trim() && <p className="text-xs text-red-500 font-semibold">Nome não pode estar vazio.</p>}
                 <div className="flex gap-2">
@@ -89,7 +89,7 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-3">
                   <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>{displayName}</h2>
                   <button onClick={() => { setEditName(displayName); setEditSpec(displaySpec); setEditMode(true); }}
-                    className="text-slate-400 hover:text-[#0056b3] transition-colors"><Edit2 size={14} /></button>
+                    className="text-slate-400 hover:text-primary transition-colors"><Edit2 size={14} /></button>
                 </div>
                 <p className="text-sm text-slate-500 mt-0.5">{displaySpec}</p>
                 <div className="flex flex-wrap gap-2 mt-3">
@@ -125,8 +125,8 @@ export default function ProfilePage() {
           <div className="space-y-3">
             {certifications.map(cert => (
               <div key={cert.id} className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
-                <div className="w-8 h-8 rounded-lg bg-[#0056b3]/10 flex items-center justify-center flex-shrink-0">
-                  <Award className="h-4 w-4 text-[#0056b3]" />
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Award className="h-4 w-4 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-slate-900 leading-tight">{cert.title}</p>
@@ -147,7 +147,7 @@ export default function ProfilePage() {
               ].map(({ label, key, ph }) => (
                 <div key={key}>
                   <label className="block text-xs font-semibold text-slate-500 mb-1">{label}</label>
-                  <input value={certForm[key as keyof typeof certForm]} onChange={e => setCertForm(f => ({ ...f, [key]: e.target.value }))} placeholder={ph} className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
+                  <input value={certForm[key as keyof typeof certForm]} onChange={e => setCertForm(f => ({ ...f, [key]: e.target.value }))} placeholder={ph} className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
               ))}
               <div className="flex gap-2">

@@ -25,10 +25,10 @@ function NotifRow({ n, onRead }: { n: Notification; onRead: (id: string) => void
         </div>
         <div className="flex items-center gap-3 mt-2">
           <span className="text-[10px] text-slate-400 font-mono">{new Date(n.timestamp).toLocaleString('pt-BR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })}</span>
-          {!n.read && <button onClick={() => onRead(n.id)} className="text-[10px] text-[#0056b3] font-semibold hover:underline flex items-center gap-1"><Check size={9} />Marcar como lida</button>}
+          {!n.read && <button onClick={() => onRead(n.id)} className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1"><Check size={9} />Marcar como lida</button>}
         </div>
       </div>
-      {!n.read && <div className="w-2 h-2 rounded-full bg-[#0056b3] flex-shrink-0 mt-1.5" />}
+      {!n.read && <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />}
     </div>
   );
 }

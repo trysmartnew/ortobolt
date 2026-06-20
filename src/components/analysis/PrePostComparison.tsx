@@ -285,7 +285,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
               onClick={() => setViewMode('side')}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 viewMode === 'side'
-                  ? 'bg-[#001941] text-white shadow-sm'
+                  ? 'bg-navy text-white shadow-sm'
                   : 'text-slate-300 hover:text-white'
               }`}
             >
@@ -296,7 +296,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
               onClick={() => setViewMode('slider')}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 viewMode === 'slider'
-                  ? 'bg-[#001941] text-white shadow-sm'
+                  ? 'bg-navy text-white shadow-sm'
                   : 'text-slate-300 hover:text-white'
               }`}
             >
@@ -338,7 +338,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                 size="sm"
                 onClick={handleSaveComparison}
                 disabled={isSaving || workflowStatus === 'pending_approval'}
-                className="bg-[#001941] hover:bg-[#002868] text-white text-xs gap-1.5"
+                className="bg-navy hover:bg-[#002868] text-white text-xs gap-1.5"
               >
                 <Save className="w-3.5 h-3.5" />
                 {isSaving ? 'Salvando...' : workflowStatus === 'pending_approval' ? 'Caso Salvo' : 'Salvar Comparação'}

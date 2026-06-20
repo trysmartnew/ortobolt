@@ -262,7 +262,7 @@ export default function AnalysisPage() {
         );
       if (line.startsWith('#'))
         return (
-          <h3 key={i} className="font-bold text-[#0056b3] text-base mt-4 mb-2">
+          <h3 key={i} className="font-bold text-primary text-base mt-4 mb-2">
             {line.replace(/^#+\s/, '')}
           </h3>
         );
@@ -284,7 +284,7 @@ export default function AnalysisPage() {
     onClick={() => setAnalysisMode('analysis')}
     className={`px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
       analysisMode === 'analysis'
-        ? 'bg-[#001941] text-white shadow-md'
+        ? 'bg-navy text-white shadow-md'
         : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50/50'
     }`}
   >
@@ -294,7 +294,7 @@ export default function AnalysisPage() {
     onClick={() => setAnalysisMode('compare')}
     className={`px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
       analysisMode === 'compare'
-        ? 'bg-[#001941] text-white shadow-md'
+        ? 'bg-navy text-white shadow-md'
         : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50/50'
     }`}
   >
@@ -319,10 +319,10 @@ export default function AnalysisPage() {
             data-tour="tour-upload"
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="w-full flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-[#0056b3] hover:bg-blue-50/50 transition-all group"
+            className="w-full flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-primary hover:bg-blue-50/50 transition-all group"
           >
-            <div className="w-14 h-14 rounded-2xl bg-[#0056b3]/10 flex items-center justify-center group-hover:bg-[#0056b3]/20 transition-colors">
-              <Upload className="h-7 w-7 text-[#0056b3]" />
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <Upload className="h-7 w-7 text-primary" />
             </div>
             <div className="text-center">
               <p className="font-bold text-slate-900">Upload de Imagem</p>
@@ -340,7 +340,7 @@ export default function AnalysisPage() {
       )}
 
       {streamError && (
-        <div className="bg-red-50 border border-red-200 rounded-[18px] p-5 flex items-center gap-3 text-red-700 text-sm">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-5 flex items-center gap-3 text-red-700 text-sm">
           <AlertCircle size={16} className="flex-shrink-0" />
           {streamError}
         </div>
@@ -355,7 +355,7 @@ export default function AnalysisPage() {
             <img
               src={imageData}
               alt="Análise"
-              className="w-full rounded-[18px] border border-slate-200/60 object-contain max-h-80"
+              className="w-full rounded-2xl border border-slate-200/60 object-contain max-h-80"
             />
           </Card>
           <Card className="p-5 flex flex-col justify-between">
@@ -370,7 +370,7 @@ export default function AnalysisPage() {
                   ['3', 'Aprovar → Galeria / Caso / Dashboard / PDF'],
                 ].map(([step, label]) => (
                   <div key={step} className="flex gap-2">
-                    <span className="font-mono text-[#0056b3] font-bold">{step}</span>
+                    <span className="font-mono text-primary font-bold">{step}</span>
                     <span className="text-slate-700">{label}</span>
                   </div>
                 ))}
@@ -406,7 +406,7 @@ export default function AnalysisPage() {
                 <img
                   src={imageData}
                   alt="Resultado"
-                  className="w-full rounded-[18px] border object-contain max-h-80"
+                  className="w-full rounded-2xl border object-contain max-h-80"
                 />
               )}
             </Card>
@@ -418,7 +418,7 @@ export default function AnalysisPage() {
                   {session?.refinedAnalysis ? 'Análise Refinada' : 'Análise Concluída'}
                 </p>
                 {session?.refinedAnalysis && (
-                  <span className="text-[10px] font-mono bg-blue-50 text-[#0056b3] px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <span className="text-[10px] font-mono bg-blue-50 text-primary px-2 py-0.5 rounded-full flex items-center gap-1">
                     <Sparkles size={10} /> Copiloto
                   </span>
                 )}
@@ -468,7 +468,7 @@ export default function AnalysisPage() {
             { title: 'Aprovação', value: '1 clique', sub: 'Preenche módulos' },
           ].map(({ title, value, sub }) => (
             <Card key={title} className="p-4 text-center">
-              <p className="text-2xl font-bold font-mono text-[#0056b3]">{value}</p>
+              <p className="text-2xl font-bold font-mono text-primary">{value}</p>
               <p className="text-xs font-semibold text-slate-700 mt-1">{title}</p>
               <p className="text-[10px] text-slate-400 font-mono">{sub}</p>
             </Card>

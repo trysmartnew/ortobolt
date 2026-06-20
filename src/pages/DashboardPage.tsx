@@ -39,7 +39,7 @@ function SurgeryCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
           </div>
           <p className="text-sm font-semibold text-slate-900 truncate">{c.patientName}</p>
           <p className="text-xs text-slate-500 capitalize">{c.species} · {c.breed} · {c.weightKg}kg</p>
-          <p className="text-xs font-mono text-[#0056b3] mt-1 uppercase">{c.procedure}</p>
+          <p className="text-xs font-mono text-primary mt-1 uppercase">{c.procedure}</p>
         </div>
         <div className="flex flex-col items-end gap-2 flex-shrink-0">
           <StatusBadge status={c.status} />
@@ -53,7 +53,7 @@ function SurgeryCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
 function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
   const urgencyIcon = c.status === 'critical' ? '🔴' : c.status === 'in_analysis' ? '🟡' : '🟢';
   return (
-    <button onClick={onOpen} className="w-full text-left p-3 rounded-lg border border-slate-100 hover:border-[#0056b3]/30 hover:bg-blue-50/30 transition-all">
+    <button onClick={onOpen} className="w-full text-left p-3 rounded-lg border border-slate-100 hover:border-primary/30 hover:bg-blue-50/30 transition-all">
       <div className="flex items-start gap-3">
         <span className="text-lg">{urgencyIcon}</span>
         <div className="flex-1 min-w-0">
@@ -61,7 +61,7 @@ function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
           <p className="text-xs text-slate-500 capitalize">{c.species} · {c.procedure}</p>
           <p className="text-[10px] text-slate-400 mt-0.5">Risco: {c.riskLevel}</p>
         </div>
-        <span className="text-xs font-semibold text-[#0056b3]">Ver →</span>
+        <span className="text-xs font-semibold text-primary">Ver →</span>
       </div>
     </button>
   );
@@ -117,7 +117,7 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <Card className="p-8 bg-gradient-to-br from-[#0056b3] via-[#0066cc] to-[#38BDF8] text-white">
+      <Card className="p-8 bg-gradient-to-br from-primary via-primary-mid to-accent text-white">
         <div data-tour="tour-dashboard-hero" className="flex items-center justify-between flex-wrap gap-3 min-h-[120px]">
           <div>
             <h1 className="text-[36px] font-bold">{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Veterinário'}</h1>
@@ -169,7 +169,7 @@ export default function DashboardPage() {
                 const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
                 return (
                   <div key={i} className="bg-slate-50 rounded-xl p-4 text-center">
-                    <m.icon size={18} className="mx-auto mb-2 text-[#0056b3]" />
+                    <m.icon size={18} className="mx-auto mb-2 text-primary" />
                     <p className="text-[36px] font-bold text-slate-900">{m.today}</p>
                     <p className="text-[10px] text-slate-500">{m.label}</p>
                     {typeof m.yesterday === 'number' && (
@@ -215,9 +215,9 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          <Card className="p-8 bg-gradient-to-br from-[#0056b3]/5 to-[#38BDF8]/5 border-[#0056b3]/20">
+          <Card className="p-8 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#0056b3] flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                 <Pill size={16} className="text-white" />
               </div>
               <div className="flex-1">
@@ -227,7 +227,7 @@ export default function DashboardPage() {
                     ? `Caso crítico: ${triageList[0]?.patientName}. Recomendo revisão imediata do protocolo.` 
                     : 'Nenhum caso crítico no momento. Revise os casos em análise para otimizar o fluxo.'}
                 </p>
-                <button onClick={() => openCase(triageList[0])} className="text-xs font-semibold text-[#0056b3] hover:underline mt-2">Ver detalhes →</button>
+                <button onClick={() => openCase(triageList[0])} className="text-xs font-semibold text-primary hover:underline mt-2">Ver detalhes →</button>
               </div>
             </div>
           </Card>

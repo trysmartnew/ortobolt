@@ -199,7 +199,7 @@ function EditCaseModal({ caseData, onClose, onSave }: { caseData: ClinicalCase; 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-[22px] shadow-[0_8px_24px_rgba(0,0,0,0.08)] max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Edit3 size={18} /> Editar Caso</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-700"><X size={20} /></button>
@@ -207,29 +207,29 @@ function EditCaseModal({ caseData, onClose, onSave }: { caseData: ClinicalCase; 
         <div className="p-6 space-y-5">
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">Título do Caso</label>
-            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
+            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">Nome do Paciente</label>
-            <input value={form.patientName} onChange={e => setForm({ ...form, patientName: e.target.value })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
+            <input value={form.patientName} onChange={e => setForm({ ...form, patientName: e.target.value })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">Raça</label>
-            <input value={form.breed} onChange={e => setForm({ ...form, breed: e.target.value })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
+            <input value={form.breed} onChange={e => setForm({ ...form, breed: e.target.value })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1">Idade (anos)</label>
-              <input type="number" value={form.ageYears} onChange={e => setForm({ ...form, ageYears: Number(e.target.value) })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
+              <input type="number" value={form.ageYears} onChange={e => setForm({ ...form, ageYears: Number(e.target.value) })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1">Peso (kg)</label>
-              <input type="number" step="0.1" value={form.weightKg} onChange={e => setForm({ ...form, weightKg: Number(e.target.value) })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]" />
+              <input type="number" step="0.1" value={form.weightKg} onChange={e => setForm({ ...form, weightKg: Number(e.target.value) })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
             </div>
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as ClinicalCase['status'] })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]">
+            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as ClinicalCase['status'] })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
               <option value="pending">Pendente</option>
               <option value="analyzing">Em Análise</option>
               <option value="analyzed">Analisado</option>
@@ -262,7 +262,7 @@ function TutorGuideModal({ caseData, protocol, onClose }: { caseData: ClinicalCa
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-[22px] shadow-[0_8px_24px_rgba(0,0,0,0.08)] max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-white rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
           <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Printer size={18} /> Orientações para o Tutor</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-700"><X size={20} /></button>
@@ -382,7 +382,7 @@ export default function CasePage() {
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <button onClick={() => { closeCase(); setCurrentPage('gallery'); }} className="flex items-center gap-2 text-sm text-slate-600 hover:text-[#0056b3] font-semibold transition-colors">
+        <button onClick={() => { closeCase(); setCurrentPage('gallery'); }} className="flex items-center gap-2 text-sm text-slate-600 hover:text-primary font-semibold transition-colors">
           <ArrowLeft size={16} /> Voltar à Galeria
         </button>
         <div className="flex gap-2">
@@ -428,8 +428,8 @@ export default function CasePage() {
                 <button onClick={() => setZoom(z => Math.max(50, z - 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-bold">−</button>
                 <span className="text-xs font-mono text-slate-500 w-10 text-center">{zoom}%</span>
                 <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-bold">+</button>
-                <button onClick={() => setZoom(100)} className="text-xs text-slate-500 hover:text-[#0056b3] px-2">Reset</button>
-                <button onClick={() => fileInputRef.current?.click()} className="text-xs text-[#0056b3] hover:text-[#003d7a] px-2 flex items-center gap-1 font-medium">
+                <button onClick={() => setZoom(100)} className="text-xs text-slate-500 hover:text-primary px-2">Reset</button>
+                <button onClick={() => fileInputRef.current?.click()} className="text-xs text-primary hover:text-[#003d7a] px-2 flex items-center gap-1 font-medium">
                   <Upload size={14} /> Upload
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
@@ -470,42 +470,42 @@ export default function CasePage() {
             <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-4"><Stethoscope size={16} /> Dados Clínicos</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div className="flex items-start gap-2">
-                <PawPrint size={14} className="text-[#0056b3] mt-1" />
+                <PawPrint size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Paciente</p>
                   <p className="text-sm font-semibold text-slate-900">{activeCase.patientName}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <UserIcon size={14} className="text-[#0056b3] mt-1" />
+                <UserIcon size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Espécie</p>
                   <p className="text-sm font-semibold text-slate-900 capitalize">{activeCase.species}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Activity size={14} className="text-[#0056b3] mt-1" />
+                <Activity size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Raça</p>
                   <p className="text-sm font-semibold text-slate-900">{activeCase.breed || '—'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Calendar size={14} className="text-[#0056b3] mt-1" />
+                <Calendar size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Idade</p>
                   <p className="text-sm font-semibold text-slate-900">{activeCase.ageYears} anos</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Weight size={14} className="text-[#0056b3] mt-1" />
+                <Weight size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Peso</p>
                   <p className="text-sm font-semibold text-slate-900">{activeCase.weightKg} kg</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Ruler size={14} className="text-[#0056b3] mt-1" />
+                <Ruler size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Procedimento</p>
                   <p className="text-sm font-semibold text-slate-900 uppercase">{activeCase.procedure}</p>
@@ -515,7 +515,7 @@ export default function CasePage() {
             {activeCase.precisionScore !== undefined && (
               <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
                 <span className="text-xs text-slate-500">Score de Precisão IA</span>
-                <span className="text-lg font-extrabold text-[#0056b3] font-mono">{activeCase.precisionScore}%</span>
+                <span className="text-lg font-extrabold text-primary font-mono">{activeCase.precisionScore}%</span>
               </div>
             )}
           </Card>
@@ -532,7 +532,7 @@ export default function CasePage() {
               <ul className="space-y-1 mb-3">
                 {activeCase.aiAnalysis.recommendations.slice(0, 5).map((r, i) => (
                   <li key={i} className="text-xs text-slate-700 flex gap-2">
-                    <span className="text-[#0056b3]">›</span> {r}
+                    <span className="text-primary">›</span> {r}
                   </li>
                 ))}
               </ul>
@@ -561,13 +561,13 @@ export default function CasePage() {
             </div>
             {showNoteInput && (
               <div className="mb-4 space-y-2">
-                <textarea value={newNote} onChange={e => setNewNote(e.target.value)} placeholder="Descreva observações clínicas, evolução, conduta..." rows={3} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] resize-none" />
+                <textarea value={newNote} onChange={e => setNewNote(e.target.value)} placeholder="Descreva observações clínicas, evolução, conduta..." rows={3} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none" />
                 <Button size="sm" onClick={addClinicalNote}><Check size={14} /> Salvar Nota</Button>
               </div>
             )}
             {activeCase.notes ? (
                 <div className="relative pl-6">
-                  <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#0056b3] to-[#0056b3]/20"></div>
+                  <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-gradient-to-b from-primary to-[#0056b3]/20"></div>
                   <div className="space-y-4">
                     {activeCase.notes.split('\n\n').reverse().map((note, i) => {
                       const timestampMatch = note.match(/^\[(\d{2}\/\d{2}\/\d{4},?\s*\d{2}:\d{2}:\d{2})\]/);
@@ -576,7 +576,7 @@ export default function CasePage() {
                       
                       return (
                         <div key={i} className="relative">
-                          <div className="absolute -left-4 top-1.5 w-3 h-3 rounded-full bg-[#0056b3] border-2 border-white shadow-sm"></div>
+                          <div className="absolute -left-4 top-1.5 w-3 h-3 rounded-full bg-primary border-2 border-white shadow-sm"></div>
                           <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
                             {timestamp && (
                               <div className="flex items-center gap-1.5 mb-2 text-[10px] text-slate-500 font-semibold">
@@ -613,7 +613,7 @@ export default function CasePage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Protocolo */}
           <Card data-tour="tour-case-checklist" className="p-5"><div className="flex items-center justify-between mb-4"><h2 data-tour="tour-case-protocol"><Pill size={16} /> Plano Pós-Operatório</h2>
-              <span className="text-xs font-mono font-bold text-[#0056b3] bg-blue-50 px-2 py-0.5 rounded">{protocol.name.split(' - ')[0]}</span>
+              <span className="text-xs font-mono font-bold text-primary bg-blue-50 px-2 py-0.5 rounded">{protocol.name.split(' - ')[0]}</span>
             </div>
             <div className="mb-4">
               <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
@@ -621,7 +621,7 @@ export default function CasePage() {
                 <span className="font-bold">{progress}%</span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#0056b3] to-[#38BDF8] transition-all" style={{ width: `${progress}%` }} />
+                <div className="h-full bg-gradient-to-r from-primary to-accent transition-all" style={{ width: `${progress}%` }} />
               </div>
             </div>
             <div className="space-y-2">
@@ -629,7 +629,7 @@ export default function CasePage() {
                 const done = completedSteps.includes(step.text);
                 const icon = { medicacao: '💊', restricao: '🛌', retorno: '📅', cuidado: '🩹' }[step.category];
                 return (
-                  <button key={i} onClick={() => toggleStep(step.text)} className={`w-full text-left p-3 rounded-lg border transition-all flex items-start gap-3 ${done ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-100 hover:border-[#0056b3]/30 hover:bg-blue-50/30'}`}>
+                  <button key={i} onClick={() => toggleStep(step.text)} className={`w-full text-left p-3 rounded-lg border transition-all flex items-start gap-3 ${done ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-100 hover:border-primary/30 hover:bg-blue-50/30'}`}>
                     <div className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 ${done ? 'bg-emerald-500 text-white' : 'border-2 border-slate-300'}`}>
                       {done && <Check size={12} />}
                     </div>
@@ -637,7 +637,7 @@ export default function CasePage() {
                       <p className={`text-xs font-semibold ${done ? 'line-through text-slate-400' : 'text-slate-900'}`}>
                         <span className="mr-1">{icon}</span> {step.text}
                         {step.mgPerKg && (
-                          <span className="ml-1 font-mono text-[#0056b3] font-bold">
+                          <span className="ml-1 font-mono text-primary font-bold">
                             ({calculateDose(step.mgPerKg, activeCase.weightKg)})
                           </span>
                         )}

@@ -161,8 +161,8 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
   }
 
   return (
-    <div style={{ ...style, width: TW }} className="bg-white rounded-[18px] shadow-[0_8px_24px_rgba(0,0,0,0.12)] border border-slate-200/60 overflow-hidden">
-      <div className="bg-gradient-to-r from-[#0056b3] to-[#38BDF8] px-5 py-4 flex items-center justify-between">
+    <div style={{ ...style, width: TW }} className="bg-white rounded-2xl shadow-lg border border-slate-200/60 overflow-hidden">
+      <div className="bg-gradient-to-r from-primary to-accent px-5 py-4 flex items-center justify-between">
         <span className="text-white font-bold text-base">{step.title}</span>
         <button onClick={onClose} className="text-white/80 hover:text-white transition-colors">
           <X size={18} />
@@ -182,7 +182,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
           {Array.from({ length: total }).map((_, i) => (
             <div
               key={i}
-              className={`rounded-full transition-all duration-200 ${i === stepIndex ? 'w-5 h-2 bg-[#0056b3]' : 'w-2 h-2 bg-slate-200'}`}
+              className={`rounded-full transition-all duration-200 ${i === stepIndex ? 'w-5 h-2 bg-primary' : 'w-2 h-2 bg-slate-200'}`}
             />
           ))}
         </div>
@@ -190,7 +190,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
           {stepIndex > 0 && (
             <button
               onClick={onPrev}
-              className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
             >
               <ChevronLeft size={14} /> Anterior
             </button>
@@ -198,14 +198,14 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose }: T
           {stepIndex < total - 1 ? (
             <button
               onClick={onNext}
-              className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-white bg-[#0056b3] hover:bg-[#004494] transition-colors"
+              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-white bg-primary hover:bg-primary-dark transition-colors"
             >
               Próximo <ChevronRight size={14} />
             </button>
           ) : (
             <button
               onClick={onClose}
-              className="flex items-center gap-1 px-4 py-2 rounded-[12px] text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors"
+              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors"
             >
               Concluir ✓
             </button>

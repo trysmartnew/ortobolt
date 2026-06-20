@@ -8,7 +8,7 @@ import { Card, Button, SectionHeader } from '@/components/ui';
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <button onClick={() => onChange(!checked)} className={`relative inline-flex w-11 h-6 rounded-full transition-colors ${checked ? 'bg-[#0056b3]' : 'bg-slate-200'}`}>
+    <button onClick={() => onChange(!checked)} className={`relative inline-flex w-11 h-6 rounded-full transition-colors ${checked ? 'bg-primary' : 'bg-slate-200'}`}>
       <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
     </button>
   );
@@ -18,7 +18,7 @@ function SettingRow({ icon: Icon, title, description, children }: { icon: React.
   return (
     <div className="flex items-center justify-between py-4 border-b border-slate-50 last:border-0">
       <div className="flex items-start gap-3">
-        <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0 mt-0.5"><Icon size={15} className="text-[#0056b3]" /></div>
+        <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0 mt-0.5"><Icon size={15} className="text-primary" /></div>
         <div>
           <p className="text-sm font-semibold text-slate-900">{title}</p>
           {description && <p className="text-xs text-slate-400 mt-0.5">{description}</p>}
@@ -70,7 +70,7 @@ export default function SettingsPage() {
             <Toggle checked={prefs.notifications} onChange={v => set('notifications', v)} />
           </SettingRow>
           <SettingRow icon={Globe} title="Idioma" description="Língua da interface e relatórios">
-            <select value={prefs.language} onChange={e => set('language', e.target.value)} className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]">
+            <select value={prefs.language} onChange={e => set('language', e.target.value)} className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
               <option value="pt">Português (BR)</option>
               <option value="en">English</option>
             </select>
@@ -85,7 +85,7 @@ export default function SettingsPage() {
             <Toggle checked={prefs.autoAnalysis} onChange={v => set('autoAnalysis', v)} />
           </SettingRow>
           <SettingRow icon={FileDown} title="Formato de Relatório" description="Formato padrão para exportação">
-            <select value={prefs.reportFormat} onChange={e => set('reportFormat', e.target.value)} className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3]">
+            <select value={prefs.reportFormat} onChange={e => set('reportFormat', e.target.value)} className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
               <option value="pdf">PDF</option>
               <option value="docx">DOCX</option>
             </select>
@@ -97,7 +97,7 @@ export default function SettingsPage() {
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Sistema</p>
         <div>
           <SettingRow icon={Database} title="Modelo de IA Ativo" description="Versão do modelo de visão computacional">
-            <span className="text-xs font-mono font-semibold text-[#0056b3] bg-blue-50 px-2 py-1 rounded-lg">OrthoVision v3.2</span>
+            <span className="text-xs font-mono font-semibold text-primary bg-blue-50 px-2 py-1 rounded-lg">OrthoVision v3.2</span>
           </SettingRow>
           <SettingRow icon={Shield} title="Segurança" description="Autenticação e criptografia dos dados">
             <span className="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">✓ Ativo · TLS 1.3</span>

@@ -26,7 +26,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
     <div className={`flex gap-2 ${isUser ? 'flex-row-reverse' : ''}`}>
       <div
         className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center ${
-          isUser ? 'bg-[#0056b3] text-white' : 'bg-slate-100 text-slate-600'
+          isUser ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600'
         }`}
       >
         {isUser ? <User size={12} /> : <Bot size={12} />}
@@ -35,7 +35,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
         <div
           className={`rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap ${
             isUser
-              ? 'bg-[#0056b3] text-white rounded-tr-sm'
+              ? 'bg-primary text-white rounded-tr-sm'
               : 'bg-white text-slate-800 border border-slate-200 rounded-tl-sm'
           }`}
         >
@@ -52,7 +52,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
           <button
             type="button"
             onClick={copy}
-            className="text-[10px] text-slate-400 hover:text-[#0056b3] flex items-center gap-1"
+            className="text-[10px] text-slate-400 hover:text-primary flex items-center gap-1"
           >
             {copied ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
             Copiar
@@ -115,7 +115,7 @@ export default function ClinicalCopilotPanel({
     >
       <div className="px-4 py-3 border-b border-slate-200 bg-white flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Sparkles size={16} className="text-[#0056b3]" />
+          <Sparkles size={16} className="text-primary" />
           <div>
             <p className="text-sm font-bold text-slate-900">Copiloto Clínico</p>
             <p className="text-[10px] text-slate-500 font-mono">
@@ -133,7 +133,7 @@ export default function ClinicalCopilotPanel({
             className="relative overflow-hidden"
           >
             {!refining && !streaming && messages.length > 0 && (
-              <span className="absolute inset-0 rounded-md bg-[#0056b3] opacity-10 animate-pulse" />
+              <span className="absolute inset-0 rounded-md bg-primary opacity-10 animate-pulse" />
             )}
             <RefreshCw size={13} className="relative z-10" />
             <span className="relative z-10 ml-1.5">Refinar análise</span>
@@ -227,7 +227,7 @@ export default function ClinicalCopilotPanel({
             type="button"
             disabled={streaming}
             onClick={() => onSend(s)}
-            className="text-[10px] text-[#0056b3] bg-blue-50 border border-blue-100 px-2 py-1 rounded-full hover:bg-blue-100 disabled:opacity-50"
+            className="text-[10px] text-primary bg-blue-50 border border-blue-100 px-2 py-1 rounded-full hover:bg-blue-100 disabled:opacity-50"
           >
             {s}
           </button>
@@ -248,7 +248,7 @@ export default function ClinicalCopilotPanel({
             placeholder="Pergunte sobre a radiografia..."
             rows={2}
             disabled={streaming}
-            className="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[#0056b3]/20"
+            className="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           <Button size="sm" onClick={handleSend} disabled={!input.trim() || streaming} loading={streaming}>
             <Send size={14} />

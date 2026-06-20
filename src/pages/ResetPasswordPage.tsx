@@ -71,7 +71,7 @@ export default function ResetPasswordPage() {
           <h2 className="font-bold text-slate-800 text-xl mb-2">Senha redefinida!</h2>
           <p className="text-sm text-slate-500 mb-6">Faça login com sua nova senha.</p>
           <button onClick={() => setCurrentView('login')}
-            className="w-full py-3 rounded-xl text-sm font-bold text-white bg-[#0056b3]">
+            className="w-full py-3 rounded-xl text-sm font-bold text-white bg-primary">
             Ir para o login
           </button>
         </div>
@@ -90,7 +90,7 @@ export default function ResetPasswordPage() {
           <h2 className="font-bold text-slate-800 text-lg mb-2">Link inválido ou expirado</h2>
           <p className="text-sm text-slate-500 mb-6">Solicite um novo link de recuperação de senha.</p>
           <button onClick={() => setCurrentView('login')}
-            className="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-[#0056b3]">
+            className="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-primary">
             Voltar ao login
           </button>
         </div>
@@ -114,7 +114,7 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <input type={showPass ? 'text' : 'password'} value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full px-3 py-2.5 pr-10 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] transition-all"
+                  className="w-full px-3 py-2.5 pr-10 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="Mínimo 8 caracteres"
                   onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
                 <button type="button" onClick={() => setShowPass(v => !v)}
@@ -127,7 +127,7 @@ export default function ResetPasswordPage() {
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Confirmar senha</label>
               <input type="password" value={confirm}
                 onChange={e => setConfirm(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#0056b3] transition-all"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                 placeholder="Repita a senha"
                 onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
             </div>
@@ -137,7 +137,7 @@ export default function ResetPasswordPage() {
               </div>
             )}
             <button onClick={handleSubmit} disabled={loading}
-              className="w-full py-3 rounded-xl text-sm font-bold text-white bg-[#0056b3] hover:bg-[#004494] disabled:opacity-60 transition-all">
+              className="w-full py-3 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary-dark disabled:opacity-60 transition-all">
               {loading ? 'Salvando...' : 'Salvar nova senha'}
             </button>
           </div>

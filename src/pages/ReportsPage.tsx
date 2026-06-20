@@ -255,7 +255,7 @@ export default function ReportsPage() {
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0056b3]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
         <p className="ml-3 text-sm text-slate-500">Carregando relatórios...</p>
       </div>
     );
@@ -268,9 +268,9 @@ export default function ReportsPage() {
       )}
 
       {/* Personalização de Laudos */}
-      <Card data-tour="tour-report-customize" className="p-5 mb-4 border-l-4 border-l-[#0056b3]">
+      <Card data-tour="tour-report-customize" className="p-5 mb-4 border-l-4 border-l-primary">
         <div className="flex items-center gap-2 mb-4">
-          <Settings size={18} className="text-[#0056b3]" />
+          <Settings size={18} className="text-primary" />
           <h3 className="font-bold text-slate-900 text-sm">Personalização de Laudos e Relatórios</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
@@ -281,7 +281,7 @@ export default function ReportsPage() {
               value={clinicName}
               onChange={e => setClinicName(e.target.value)}
               onBlur={handleSavePrefs}
-              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#0056b3]/20 focus:border-[#0056b3] outline-none transition"
+              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
             />
           </div>
           <div>
@@ -291,7 +291,7 @@ export default function ReportsPage() {
               value={clinicSubtitle}
               onChange={e => setClinicSubtitle(e.target.value)}
               onBlur={handleSavePrefs}
-              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#0056b3]/20 focus:border-[#0056b3] outline-none transition"
+              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
             />
           </div>
           <div>
@@ -308,7 +308,7 @@ export default function ReportsPage() {
                   </button>
                 </div>
               ) : (
-                <label className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#0056b3] bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer transition">
+                <label className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-primary bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer transition">
                   <Upload size={14} /> Upload
                   <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
                 </label>
@@ -322,8 +322,8 @@ export default function ReportsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card data-tour="tour-monthly-report" className="p-5">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-[#0056b3]/10 rounded-[18px] flex items-center justify-center shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
-              <FileText className="h-5 w-5 text-[#0056b3]" />
+            <div className="w-10 h-10 bg-primary/10 rounded-2xl flex items-center justify-center shadow-sm">
+              <FileText className="h-5 w-5 text-primary" />
             </div>
             <div>
               <p className="font-bold text-slate-900 text-sm">Relatório Mensal</p>
@@ -347,7 +347,7 @@ export default function ReportsPage() {
 
         <Card data-tour="tour-case-report" className="p-5">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-emerald-50 rounded-[18px] flex items-center justify-center shadow-[0_1px_3px_0_rgba(0,0,0,0.04)]">
+            <div className="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center shadow-sm">
               <CheckCircle className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
@@ -367,7 +367,7 @@ export default function ReportsPage() {
               type="checkbox" 
               checked={tutorMode} 
               onChange={(e) => setTutorMode(e.target.checked)} 
-              className="w-4 h-4 text-[#0056b3] border-slate-300 rounded focus:ring-[#0056b3]" 
+              className="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary" 
             />
             <span className="text-sm font-medium text-slate-700">Ativar Modo Tutor (Linguagem simplificada)</span>
           </label>
@@ -429,7 +429,7 @@ export default function ReportsPage() {
                   onClick={() => downloadHistoryReport(r)}
                   disabled={downloadingId === r.id}
                   title="Baixar relatório"
-                  className="text-[#0056b3] hover:text-[#004494] transition-colors p-1.5 rounded-lg hover:bg-blue-50 disabled:opacity-50"
+                  className="text-primary hover:text-primary-dark transition-colors p-1.5 rounded-lg hover:bg-blue-50 disabled:opacity-50"
                 >
                   {downloadingId === r.id ? (
                     <Spinner size="sm" />
@@ -465,19 +465,19 @@ export default function ReportsPage() {
                   placeholder="Buscar por nome do paciente ou procedimento..."
                   value={caseSearch}
                   onChange={(e) => setCaseSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#0056b3]/20 focus:border-[#0056b3] outline-none transition"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
                 />
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setCaseSortBy('date')}
-                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'date' ? 'bg-[#0056b3] text-white border-[#0056b3]' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'date' ? 'bg-primary text-white border-primary' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
                 >
                   <Calendar size={14} /> Mais Recente
                 </button>
                 <button
                   onClick={() => setCaseSortBy('name')}
-                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'name' ? 'bg-[#0056b3] text-white border-[#0056b3]' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'name' ? 'bg-primary text-white border-primary' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
                 >
                   <User size={14} /> Nome (A-Z)
                 </button>
@@ -495,7 +495,7 @@ export default function ReportsPage() {
                     <button
                       key={c.id}
                       onClick={() => handleGenerateSpecificCase(c)}
-                      className="w-full flex items-center gap-4 p-3 rounded-xl border border-slate-100 hover:border-[#0056b3] hover:bg-blue-50/50 transition text-left group"
+                      className="w-full flex items-center gap-4 p-3 rounded-xl border border-slate-100 hover:border-primary hover:bg-blue-50/50 transition text-left group"
                     >
                       <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs overflow-hidden shrink-0">
                         {(c as any).patientAvatar ? (
