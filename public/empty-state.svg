@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="none"/>
+  <g transform="translate(168, 60) scale(1)">
+    <path d="M32 4L56 18V46L32 60L8 46V18L32 4Z" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="2"/>
+    <path d="M38 16L24 34H32L28 48L42 30H34L38 16Z" fill="#CBD5E1"/>
+  </g>
+  <text x="200" y="180" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="600" font-size="18" fill="#475569">Nenhum dado encontrado</text>
+  <text x="200" y="210" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="13" fill="#94A3B8">Comece adicionando um novo item</text>
+</svg>

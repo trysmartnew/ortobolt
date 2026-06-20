@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180">
+  <g transform="translate(68, 10) scale(1)">
+    <path d="M32 4L56 18V46L32 60L8 46V18L32 4Z" fill="#0A3D8F"/>
+    <path d="M38 16L24 34H32L28 48L42 30H34L38 16Z" fill="white"/>
+  </g>
+  <text x="100" y="110" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="600" font-size="32">
+    <tspan fill="#0A3D8F">Orto</tspan><tspan fill="#00B3A6">Bolt</tspan>
+  </text>
+  <text x="100" y="130" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="400" font-size="9" fill="#475569" letter-spacing="2">ORTOPEDIA VETERINÁRIA INTELIGENTE</text>
+</svg>

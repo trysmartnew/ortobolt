@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <circle cx="200" cy="120" r="60" fill="#00B3A6" opacity="0.1"/>
+  <circle cx="200" cy="120" r="40" fill="#00B3A6" opacity="0.2"/>
+  <path d="M180 120 L195 135 L220 105" stroke="#00B3A6" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="200" y="200" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="600" font-size="18" fill="#1D2433">Operação concluída!</text>
+  <text x="200" y="225" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="13" fill="#475569">Tudo ocorreu com sucesso</text>
+</svg>

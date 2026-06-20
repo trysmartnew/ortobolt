@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.08">
+  <g transform="translate(68, 40) scale(1)">
+    <path d="M32 4L56 18V46L32 60L8 46V18L32 4Z" fill="#0A3D8F"/>
+    <path d="M38 16L24 34H32L28 48L42 30H34L38 16Z" fill="#0A3D8F"/>
+  </g>
+  <text x="100" y="140" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="600" font-size="24" fill="#0A3D8F">OrtoBolt</text>
+  <text x="100" y="160" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="8" fill="#0A3D8F" letter-spacing="2">ORTOPEDIA VETERINÁRIA</text>
+</svg>
