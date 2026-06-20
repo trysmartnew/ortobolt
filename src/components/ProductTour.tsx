@@ -1,5 +1,5 @@
 // src/components/ProductTour.tsx
-import { useState, useEffect, useCallback, memo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo, useRef } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 
 export interface TourStep {
@@ -323,7 +323,13 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
   const [rect, setRect] = useState<Rect | null>(null);
   const [spotlightVisible, setSpotlightVisible] = useState(false);
   const [targetMissing, setTargetMissing] = useState(false);
-  const steps = TOUR_STEPS[page] || [];
+  const steps = useMemo(() => {
+    const raw = TOUR_STEPS[page] || [];
+    if (!active) return raw;
+    return raw.filter(
+      (s) => s.target === '__welcome__' || !!document.querySelector(`[data-tour="${s.target}"]`)
+    );
+  }, [page, active]);
   const currentStep = steps[stepIndex];
 
   useEffect(() => {
@@ -431,14 +437,6 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
       handleClose();
     }
   }, [stepIndex, steps.length, handleClose]);
-
-  useEffect(() => {
-    if (!active || !targetMissing) return;
-    const skipTimer = setTimeout(() => {
-      handleNext();
-    }, 1500);
-    return () => clearTimeout(skipTimer);
-  }, [active, targetMissing, handleNext]);
 
   if (!active || steps.length === 0) return null;
 
