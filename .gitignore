@@ -22,3 +22,5 @@ product-tour-audit-report.json
 # Auditorias locais
 supabase-audit.json
 tour-audit.json
+
+scripts/
