@@ -35,7 +35,7 @@ export const OrtoBoltLogo: React.FC<OrtoBoltLogoProps> = ({
 
   if (variant === 'vertical') {
     return (
-      <div className={`flex flex-col items-center gap-2 ${className}`}>
+      <div className={`flex flex-col items-center justify-center gap-2 ${className}`}>
         <OrtoBoltSymbol size={symbolSize * 1.5} />
         <div className="flex flex-col items-center">
           <h1 className={`${textSizes[size]} font-semibold tracking-tight`}>
@@ -53,7 +53,7 @@ export const OrtoBoltLogo: React.FC<OrtoBoltLogoProps> = ({
   }
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex items-center justify-center gap-3 ${className}`}>
       <OrtoBoltSymbol size={symbolSize} />
       <div className="flex flex-col">
         <h1 className={`${textSizes[size]} font-semibold tracking-tight leading-none`}>
