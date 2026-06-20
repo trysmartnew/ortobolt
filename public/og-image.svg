@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A3D8F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1D2433;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Logo Central -->
+  <g transform="translate(536, 180) scale(2)">
+    <path d="M32 4L56 18V46L32 60L8 46V18L32 4Z" fill="white"/>
+    <path d="M38 16L24 34H32L28 48L42 30H34L38 16Z" fill="#00B3A6"/>
+  </g>
+  
+  <!-- Texto -->
+  <text x="600" y="380" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="600" font-size="72" fill="white">OrtoBolt</text>
+  <text x="600" y="430" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="24" fill="white" opacity="0.9" letter-spacing="3">ORTOPEDIA VETERINÁRIA INTELIGENTE</text>
+  
+  <!-- Tagline -->
+  <text x="600" y="520" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="20" fill="white" opacity="0.7">Cirurgia veterinária mais precisa com inteligência artificial</text>
+</svg>
