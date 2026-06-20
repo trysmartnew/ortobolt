@@ -11,28 +11,28 @@ const FEATURES = [
     icon: Stethoscope,
     title: 'Sessão de Casos',
     desc: 'Registre, organize e acompanhe casos clínicos e cirúrgicos do diagnóstico à alta. Histórico completo com checklists de protocolos e evolução do paciente.',
-    color: '#0056b3',
-    bg: '#EFF6FF',
+    color: 'var(--color-primary)',
+    bg: 'var(--color-primary-light)',
   },
   {
     icon: Brain,
     title: 'OrthoAI Avançado',
     desc: 'Inteligência artificial especializada em medicina veterinária com protocolos ortopédicos e cálculos clínicos precisos.',
-    color: '#0056b3',
-    bg: '#EFF6FF',
+    color: 'var(--color-primary)',
+    bg: 'var(--color-primary-light)',
   },
   {
     icon: Activity,
     title: 'Análise de Imagens',
     desc: 'Upload de radiografias com detecção automática de landmarks anatômicos e score de precisão diagnóstica em segundos.',
-    color: '#0891B2',
+    color: 'var(--color-accent)',
     bg: '#ECFEFF',
   },
   {
     icon: FileText,
     title: 'Laudos em PDF',
     desc: 'Geração automática de relatórios clínicos completos com análise de risco, recomendações e protocolo anestésico.',
-    color: '#059669',
+    color: 'var(--color-success)',
     bg: '#ECFDF5',
   },
   {
@@ -58,7 +58,7 @@ const TESTIMONIALS = [
     text: 'O OrtoBolt centralizou toda a minha gestão de casos. Antes perdia informações em anotações soltas. Hoje acompanho a evolução de cada paciente do diagnóstico à alta em um só lugar.',
     rating: 5,
     avatar: 'MA',
-    color: '#0056b3',
+    color: 'var(--color-primary)',
   },
   {
     name: 'Dr. Paulo Henrique',
@@ -112,7 +112,7 @@ export default function HomePage() {
                 href={`#${item.toLowerCase()}`}
                 className="text-sm font-medium transition-colors"
                 style={{ color: scrolled ? '#334155' : 'rgba(255,255,255,0.85)' }}
-                onMouseEnter={e => (e.currentTarget.style.color = scrolled ? '#0056b3' : '#fff')}
+                onMouseEnter={e => (e.currentTarget.style.color = scrolled ? 'var(--color-primary)' : '#fff')}
                 onMouseLeave={e => (e.currentTarget.style.color = scrolled ? '#334155' : 'rgba(255,255,255,0.85)')}
               >
                 {item}
@@ -130,8 +130,8 @@ export default function HomePage() {
                 color: '#fff',
                 border: scrolled ? 'none' : '1.5px solid rgba(255,255,255,0.5)',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#004494'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = scrolled ? '#0056b3' : 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'none'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-primary-dark)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = scrolled ? 'var(--color-primary)' : 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'none'; }}
             >
               Entrar <ChevronRight size={15} />
             </button>
@@ -143,8 +143,8 @@ export default function HomePage() {
                 color: '#fff',
                 border: scrolled ? 'none' : '1.5px solid rgba(255,255,255,0.5)',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#004494'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = scrolled ? '#0056b3' : 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'none'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-primary-dark)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = scrolled ? 'var(--color-primary)' : 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'none'; }}
             >
               Cadastre-se gratuitamente
             </button>
@@ -299,7 +299,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4"
-              style={{ background: '#EFF6FF', color: 'var(--color-primary)' }}>
+              style={{ background: 'var(--color-primary-light)', color: 'var(--color-primary)' }}>
               <Stethoscope size={12} /> Funcionalidades
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4" style={{ color: 'var(--color-navy)' }}>
@@ -350,8 +350,8 @@ export default function HomePage() {
               onClick={() => setCurrentView('register')}
               className="px-8 py-4 rounded-2xl font-bold text-base transition-all duration-200"
               style={{ background: 'var(--color-primary)', color: '#fff', boxShadow: '0 8px 32px rgba(0,86,179,0.4)' }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#004494'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#0056b3'; e.currentTarget.style.transform = 'none'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-primary-dark)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--color-primary)'; e.currentTarget.style.transform = 'none'; }}
             >
               Criar conta gratuita →
             </button>

@@ -37,7 +37,7 @@ interface BtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> { varia
 export function Button({ children, variant='primary', size='md', loading, className='', disabled, ...props }: BtnProps) {
   const base = 'inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed';
   const variants: Record<string,string> = {
-    primary: 'bg-[#0056b3] text-white hover:bg-[#004494] focus:ring-[#0056b3] shadow-sm',
+    primary: 'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] focus:ring-[var(--color-primary)] shadow-sm',
     secondary: 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 focus:ring-slate-300 shadow-sm',
     ghost: 'text-slate-600 hover:bg-slate-100 focus:ring-slate-300',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
@@ -80,7 +80,7 @@ export const KPIWidget = React.memo(function KPIWidget({ label, value, unit, tre
 // ── Spinner ──────────────────────────────────────────────────────────────────
 export function Spinner({ size = 'md' }: { size?: 'sm'|'md'|'lg' }) {
   const s = { sm: 'w-4 h-4 border-2', md: 'w-7 h-7 border-2', lg: 'w-10 h-10 border-3' }[size];
-  return <span className={`${s} border-[#0056b3] border-t-transparent rounded-full animate-spin inline-block`} />;
+  return <span className={`${s} border-[var(--color-primary)] border-t-transparent rounded-full animate-spin inline-block`} />;
 }
 
 // ── Section Header ───────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ export function PrecisionGauge({ value, size = 80 }: { value: number; size?: num
   const circ = 2 * Math.PI * r;
   const filled = (value / 100) * circ * 0.75;
   const offset = circ * 0.25;
-  const color = value >= 95 ? '#059669' : value >= 85 ? '#0056b3' : value >= 70 ? '#d97706' : '#dc2626';
+  const color = value >= 95 ? 'var(--color-success)' : value >= 85 ? 'var(--color-primary)' : value >= 70 ? '#d97706' : '#dc2626';
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(135deg)' }}>

@@ -574,7 +574,7 @@ export default function GalleryPage() {
                 const file = e.target.files?.[0] || null;
                 setForm(f => ({ ...f, imageFile: file }));
               }}
-              className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[#003d7a] cursor-pointer"
+              className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[var(--color-primary)] cursor-pointer"
             />
             {form.imageFile && (
               <p className="text-xs text-green-600 mt-1">Imagem selecionada: {form.imageFile.name}</p>

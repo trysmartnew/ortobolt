@@ -106,8 +106,8 @@ export default function ProfilePage() {
       {/* Stats */}
       <div data-tour="tour-profile-stats" className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total de Casos', value: user.stats.totalCases, color: '#0056b3' },
-          { label: 'Taxa de Sucesso', value: `${user.stats.successRate}%`, color: '#059669' },
+          { label: 'Total de Casos', value: user.stats.totalCases, color: 'var(--color-primary)' },
+          { label: 'Taxa de Sucesso', value: `${user.stats.successRate}%`, color: 'var(--color-success)' },
           { label: 'Precisão Média', value: `${user.stats.avgPrecision}%`, color: '#0891b2' },
           { label: 'Procedimentos/Mês', value: user.stats.monthlyProcedures, color: '#d97706' },
         ].map(({ label, value, color }) => (
@@ -172,7 +172,7 @@ export default function ProfilePage() {
               <PolarGrid stroke="#e2e8f0" />
               <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#64748b', fontFamily: 'Roboto Mono' }} />
               <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 9, fill: '#94a3b8' }} />
-              <Radar dataKey="A" stroke="#0056b3" fill="#0056b3" fillOpacity={0.15} strokeWidth={2} dot={{ r: 3, fill: '#0056b3' }} />
+              <Radar dataKey="A" stroke="var(--color-primary)" fill="var(--color-primary)" fillOpacity={0.15} strokeWidth={2} dot={{ r: 3, fill: 'var(--color-primary)' }} />
             </RadarChart>
           </ResponsiveContainer>
         </Card>

@@ -429,7 +429,7 @@ export default function CasePage() {
                 <span className="text-xs font-mono text-slate-500 w-10 text-center">{zoom}%</span>
                 <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-bold">+</button>
                 <button onClick={() => setZoom(100)} className="text-xs text-slate-500 hover:text-primary px-2">Reset</button>
-                <button onClick={() => fileInputRef.current?.click()} className="text-xs text-primary hover:text-[#003d7a] px-2 flex items-center gap-1 font-medium">
+                <button onClick={() => fileInputRef.current?.click()} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
                   <Upload size={14} /> Upload
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />

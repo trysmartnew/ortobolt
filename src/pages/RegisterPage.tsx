@@ -19,7 +19,7 @@ function calcPasswordStrength(pwd: string): number {
 }
 
 const STRENGTH_LABELS = ['', 'Fraca', 'Razoável', 'Boa', 'Forte'];
-const STRENGTH_COLORS = ['', '#ef4444', '#f97316', '#3b82f6', '#22c55e'];
+const STRENGTH_COLORS = ['', 'var(--color-error)', 'var(--color-warning)', 'var(--color-primary)', 'var(--color-success)'];
 
 interface FormData {
   name: string;
