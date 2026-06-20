@@ -423,16 +423,24 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
     return () => window.removeEventListener('keydown', handler);
   }, [active, handleClose]);
 
-  if (!active || steps.length === 0) return null;
-
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (stepIndex < steps.length - 1) {
       setSpotlightVisible(false);
       setTimeout(() => setStepIndex(s => s + 1), 150);
     } else {
       handleClose();
     }
-  };
+  }, [stepIndex, steps.length, handleClose]);
+
+  useEffect(() => {
+    if (!active || !targetMissing) return;
+    const skipTimer = setTimeout(() => {
+      handleNext();
+    }, 1500);
+    return () => clearTimeout(skipTimer);
+  }, [active, targetMissing, handleNext]);
+
+  if (!active || steps.length === 0) return null;
 
   const handlePrev = () => {
     if (stepIndex > 0) {
