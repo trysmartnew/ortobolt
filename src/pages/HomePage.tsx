@@ -126,7 +126,7 @@ export default function HomePage() {
               onClick={() => setCurrentView('login')}
               className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200"
               style={{
-                background: scrolled ? '#0056b3' : 'rgba(255,255,255,0.15)',
+                background: scrolled ? 'var(--color-primary)' : 'rgba(255,255,255,0.15)',
                 color: '#fff',
                 border: scrolled ? 'none' : '1.5px solid rgba(255,255,255,0.5)',
               }}
@@ -139,7 +139,7 @@ export default function HomePage() {
               onClick={() => setCurrentView('register')}
               className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200"
               style={{
-                background: scrolled ? '#0056b3' : 'rgba(255,255,255,0.15)',
+                background: scrolled ? 'var(--color-primary)' : 'rgba(255,255,255,0.15)',
                 color: '#fff',
                 border: scrolled ? 'none' : '1.5px solid rgba(255,255,255,0.5)',
               }}
@@ -171,14 +171,14 @@ export default function HomePage() {
             <button
               onClick={() => setCurrentView('login')}
               className="w-full mt-2 py-2.5 rounded-xl text-sm font-semibold text-white"
-              style={{ background: '#0056b3' }}
+              style={{ background: 'var(--color-primary)' }}
             >
               Entrar na plataforma
             </button>
             <button
               onClick={() => setCurrentView('register')}
               className="w-full py-2.5 rounded-xl text-sm font-semibold border"
-              style={{ color: '#0056b3', borderColor: '#0056b3' }}
+              style={{ color: 'var(--color-primary)', borderColor: 'var(--color-primary)' }}
             >
               Criar conta gratuita
             </button>
@@ -189,7 +189,7 @@ export default function HomePage() {
       <section
         className="relative min-h-screen flex items-center justify-center overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #001a40 0%, #002d6b 50%, #003d8f 100%)',
+          background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 50%, var(--color-navy-mid) 100%)',
         }}
       >
         {/* Decorative circles */}
@@ -224,7 +224,7 @@ export default function HomePage() {
           {/* H1 */}
           <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
             Gerencie seus casos clínicos
-            <span className="block" style={{ color: '#38BDF8' }}>
+            <span className="block" style={{ color: 'var(--color-accent)' }}>
               com eficiência e segurança
             </span>
           </h1>
@@ -239,7 +239,7 @@ export default function HomePage() {
             <button
               onClick={() => setCurrentView('register')}
               className="flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-bold transition-all duration-200 shadow-xl"
-              style={{ background: '#0056b3', color: '#fff', boxShadow: '0 8px 32px rgba(0,86,179,0.4)' }}
+              style={{ background: 'var(--color-primary)', color: '#fff', boxShadow: '0 8px 32px rgba(0,86,179,0.4)' }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,86,179,0.5)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,86,179,0.4)'; }}
             >
@@ -285,8 +285,8 @@ export default function HomePage() {
             {STATS.map(({ value, label, icon: Icon }) => (
               <div key={label} className="text-center p-6 rounded-2xl"
                 style={{ background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                <Icon size={24} className="mx-auto mb-3" style={{ color: '#0056b3' }} />
-                <div className="text-3xl font-extrabold mb-1" style={{ color: '#001a40' }}>{value}</div>
+                <Icon size={24} className="mx-auto mb-3" style={{ color: 'var(--color-primary)' }} />
+                <div className="text-3xl font-extrabold mb-1" style={{ color: 'var(--color-navy)' }}>{value}</div>
                 <div className="text-xs font-medium" style={{ color: '#64748B' }}>{label}</div>
               </div>
             ))}
@@ -299,10 +299,10 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4"
-              style={{ background: '#EFF6FF', color: '#0056b3' }}>
+              style={{ background: '#EFF6FF', color: 'var(--color-primary)' }}>
               <Stethoscope size={12} /> Funcionalidades
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4" style={{ color: '#001a40' }}>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4" style={{ color: 'var(--color-navy)' }}>
               Tudo que você precisa em uma plataforma
             </h2>
             <p className="text-base max-w-xl mx-auto" style={{ color: '#64748B' }}>
@@ -332,7 +332,7 @@ export default function HomePage() {
 
       {/* ── PRICING TEASER ─────────────────────────────────────────────── */}
       <section id="planos" className="py-20"
-        style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <div className="max-w-3xl mx-auto px-6 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-6"
             style={{ background: 'rgba(255,255,255,0.1)', color: '#7DD3FC' }}>
@@ -349,7 +349,7 @@ export default function HomePage() {
             <button
               onClick={() => setCurrentView('register')}
               className="px-8 py-4 rounded-2xl font-bold text-base transition-all duration-200"
-              style={{ background: '#0056b3', color: '#fff', boxShadow: '0 8px 32px rgba(0,86,179,0.4)' }}
+              style={{ background: 'var(--color-primary)', color: '#fff', boxShadow: '0 8px 32px rgba(0,86,179,0.4)' }}
               onMouseEnter={e => { e.currentTarget.style.background = '#004494'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
               onMouseLeave={e => { e.currentTarget.style.background = '#0056b3'; e.currentTarget.style.transform = 'none'; }}
             >
@@ -376,7 +376,7 @@ export default function HomePage() {
               style={{ background: '#FEF9C3', color: '#92400E' }}>
               <Star size={12} /> Depoimentos
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4" style={{ color: '#001a40' }}>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4" style={{ color: 'var(--color-navy)' }}>
               O que dizem nossos veterinários
             </h2>
           </div>

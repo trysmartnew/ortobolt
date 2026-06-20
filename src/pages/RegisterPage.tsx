@@ -163,7 +163,7 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4"
-        style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)', fontFamily: 'Montserrat, sans-serif' }}>
+        style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)', fontFamily: 'Montserrat, sans-serif' }}>
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#ECFDF5' }}>
             <CheckCircle size={32} className="text-emerald-500" />
@@ -173,7 +173,7 @@ export default function RegisterPage() {
             Verifique seu e-mail <strong>{form.email}</strong> para confirmar sua conta antes de acessar a plataforma.
           </p>
           <button onClick={() => setCurrentView('login')}
-            className="w-full py-3 rounded-xl text-sm font-bold text-white" style={{ background: '#0056b3' }}>
+            className="w-full py-3 rounded-xl text-sm font-bold text-white" style={{ background: 'var(--color-primary)' }}>
             Ir para o login
           </button>
         </div>
@@ -185,12 +185,12 @@ export default function RegisterPage() {
     <div className="min-h-screen flex" style={{ fontFamily: 'Montserrat, sans-serif' }}>
       {/* Painel esquerdo */}
       <div className="hidden lg:flex flex-col justify-between w-2/5 p-12"
-        style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <img src="/logo.png" alt="OrtoBolt" className="h-9 w-auto object-contain" />
         <div>
           <h2 className="text-3xl font-extrabold text-white mb-4 leading-tight">
             Comece agora,<br />
-            <span style={{ color: '#38BDF8' }}>é gratuito</span>
+            <span style={{ color: 'var(--color-accent)' }}>é gratuito</span>
           </h2>
           <p className="text-white/60 text-sm leading-relaxed mb-8">
             Crie sua conta e tenha acesso completo às ferramentas de ortopedia veterinária com IA.
@@ -209,7 +209,7 @@ export default function RegisterPage() {
             <h1 className="text-2xl font-extrabold text-slate-800 mb-1">Criar conta</h1>
             <p className="text-sm text-slate-400">
               Já tem conta?{' '}
-              <button onClick={() => setCurrentView('login')} className="font-semibold" style={{ color: '#0056b3' }}>
+              <button onClick={() => setCurrentView('login')} className="font-semibold" style={{ color: 'var(--color-primary)' }}>
                 Entrar aqui
               </button>
             </p>
@@ -324,13 +324,13 @@ export default function RegisterPage() {
               <div className="relative mt-0.5 flex-shrink-0">
                 <input type="checkbox" className="sr-only" checked={form.acceptTerms} onChange={e => update('acceptTerms', e.target.checked)} />
                 <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
-                  style={{ borderColor: form.acceptTerms ? '#0056b3' : '#CBD5E1', background: form.acceptTerms ? '#0056b3' : '#fff' }}>
+                  style={{ borderColor: form.acceptTerms ? 'var(--color-primary)' : '#CBD5E1', background: form.acceptTerms ? 'var(--color-primary)' : '#fff' }}>
                   {form.acceptTerms && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
                 </div>
               </div>
               <span className="text-xs text-slate-500 leading-relaxed">
-                Aceito os <span style={{ color: '#0056b3' }} className="font-semibold">Termos de Uso</span> e a{' '}
-                <span style={{ color: '#0056b3' }} className="font-semibold">Política de Privacidade</span>
+                Aceito os <span style={{ color: 'var(--color-primary)' }} className="font-semibold">Termos de Uso</span> e a{' '}
+                <span style={{ color: 'var(--color-primary)' }} className="font-semibold">Política de Privacidade</span>
               </span>
             </label>
 
@@ -339,7 +339,7 @@ export default function RegisterPage() {
               <div className="relative mt-0.5 flex-shrink-0">
                 <input type="checkbox" className="sr-only" checked={form.acceptAiConsent} onChange={e => update('acceptAiConsent', e.target.checked)} />
                 <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
-                  style={{ borderColor: form.acceptAiConsent ? '#0056b3' : '#CBD5E1', background: form.acceptAiConsent ? '#0056b3' : '#fff' }}>
+                  style={{ borderColor: form.acceptAiConsent ? 'var(--color-primary)' : '#CBD5E1', background: form.acceptAiConsent ? 'var(--color-primary)' : '#fff' }}>
                   {form.acceptAiConsent && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
                 </div>
               </div>
@@ -354,7 +354,7 @@ export default function RegisterPage() {
                 <div className="relative mt-0.5 flex-shrink-0">
                   <input type="checkbox" className="sr-only" checked={crmvDeclaration} onChange={e => setCrmvDeclaration(e.target.checked)} />
                   <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
-                    style={{ borderColor: crmvDeclaration ? '#0056b3' : '#CBD5E1', background: crmvDeclaration ? '#0056b3' : '#fff' }}>
+                    style={{ borderColor: crmvDeclaration ? 'var(--color-primary)' : '#CBD5E1', background: crmvDeclaration ? 'var(--color-primary)' : '#fff' }}>
                     {crmvDeclaration && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
                   </div>
                 </div>
@@ -370,11 +370,11 @@ export default function RegisterPage() {
 
             <button onClick={handleSubmit} disabled={loading}
               className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
-              style={{ background: '#0056b3', boxShadow: '0 4px 14px rgba(0,86,179,0.3)' }}>
+              style={{ background: 'var(--color-primary)', boxShadow: '0 4px 14px rgba(0,86,179,0.3)' }}>
               {loading ? 'Criando conta...' : 'Criar minha conta'}
             </button>
             {showLoginButton && (
-              <button onClick={() => setCurrentView('login')} className="w-full mt-3 py-3 rounded-xl text-sm font-bold text-white transition-all" style={{ background: '#0056b3', boxShadow: '0 4px 14px rgba(0,86,179,0.3)' }}>
+              <button onClick={() => setCurrentView('login')} className="w-full mt-3 py-3 rounded-xl text-sm font-bold text-white transition-all" style={{ background: 'var(--color-primary)', boxShadow: '0 4px 14px rgba(0,86,179,0.3)' }}>
                 Entrar
               </button>
             )}

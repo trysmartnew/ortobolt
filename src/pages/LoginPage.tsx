@@ -93,7 +93,7 @@ export default function LoginPage() {
   if (forgotMode) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4"
-        style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)', fontFamily: 'Montserrat, sans-serif' }}>
+        style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)', fontFamily: 'Montserrat, sans-serif' }}>
         <div className="w-full max-w-sm">
           <div className="flex justify-center mb-8">
             <img src="/logo.png" alt="OrtoBolt" className="h-60 w-auto object-contain drop-shadow-lg" />
@@ -111,7 +111,7 @@ export default function LoginPage() {
                 <h2 className="font-bold text-slate-800 mb-2">E-mail enviado!</h2>
                 <p className="text-sm text-slate-500 mb-6">Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.</p>
                 <button onClick={() => { setForgotMode(false); setForgotSent(false); }}
-                  className="w-full py-2.5 rounded-xl text-sm font-semibold text-white" style={{ background: '#0056b3' }}>
+                  className="w-full py-2.5 rounded-xl text-sm font-semibold text-white" style={{ background: 'var(--color-primary)' }}>
                   Voltar ao login
                 </button>
               </div>
@@ -128,7 +128,7 @@ export default function LoginPage() {
                   </div>
                   {error && <div className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</div>}
                   <button onClick={handleForgotPassword} disabled={forgotLoading}
-                    className="w-full py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-60" style={{ background: '#0056b3' }}>
+                    className="w-full py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-60" style={{ background: 'var(--color-primary)' }}>
                     {forgotLoading ? 'Enviando...' : 'Enviar link de recuperação'}
                   </button>
                 </div>
@@ -144,12 +144,12 @@ export default function LoginPage() {
     <div className="min-h-screen flex" style={{ fontFamily: 'Montserrat, sans-serif' }}>
       {/* Painel esquerdo desktop */}
       <div className="hidden lg:flex flex-col justify-between w-2/5 p-12"
-        style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <img src="/logo.png" alt="OrtoBolt" className="h-60 w-auto object-contain" />
         <div>
           <h2 className="text-3xl font-extrabold text-white mb-4 leading-tight">
             Precisão cirúrgica com<br />
-            <span style={{ color: '#38BDF8' }}>inteligência artificial</span>
+            <span style={{ color: 'var(--color-accent)' }}>inteligência artificial</span>
           </h2>
           <p className="text-white/60 text-sm leading-relaxed mb-8">
             Mais de 180 veterinários confiam no OrtoBolt para análise de imagens, protocolos ortopédicos e clínicos.
@@ -178,7 +178,7 @@ export default function LoginPage() {
             <h1 className="text-2xl font-extrabold text-slate-800 mb-1">Entrar na plataforma</h1>
             <p className="text-sm text-slate-400">
               Não tem conta?{' '}
-              <button onClick={() => setCurrentView('register')} className="font-semibold" style={{ color: '#0056b3' }}>
+              <button onClick={() => setCurrentView('register')} className="font-semibold" style={{ color: 'var(--color-primary)' }}>
                 Cadastre-se aqui
               </button>
             </p>
@@ -231,7 +231,7 @@ export default function LoginPage() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs font-semibold text-slate-600">Senha</label>
-                <button onClick={() => setForgotMode(true)} className="text-xs font-medium" style={{ color: '#0056b3' }}>
+                <button onClick={() => setForgotMode(true)} className="text-xs font-medium" style={{ color: 'var(--color-primary)' }}>
                   Esqueci minha senha
                 </button>
               </div>
@@ -253,7 +253,7 @@ export default function LoginPage() {
               <div className="relative">
                 <input type="checkbox" className="sr-only" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
                 <div className="w-4 h-4 rounded border-2 flex items-center justify-center transition-all"
-                  style={{ borderColor: rememberMe ? '#0056b3' : '#CBD5E1', background: rememberMe ? '#0056b3' : '#fff' }}>
+                  style={{ borderColor: rememberMe ? 'var(--color-primary)' : '#CBD5E1', background: rememberMe ? 'var(--color-primary)' : '#fff' }}>
                   {rememberMe && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
                 </div>
               </div>
@@ -269,7 +269,7 @@ export default function LoginPage() {
 
             <button onClick={handleSubmit} disabled={loading || loginLocked}
               className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60"
-              style={{ background: '#0056b3', boxShadow: '0 4px 14px rgba(0,86,179,0.3)' }}
+              style={{ background: 'var(--color-primary)', boxShadow: '0 4px 14px rgba(0,86,179,0.3)' }}
               onMouseEnter={e => { if (!loading && !loginLocked) e.currentTarget.style.background = '#004494'; }}
               onMouseLeave={e => { e.currentTarget.style.background = '#0056b3'; }}>
               {loading ? 'Entrando...' : loginLocked ? `Bloqueado (${loginLockSecondsLeft}s)` : 'Entrar na plataforma'}

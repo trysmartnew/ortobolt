@@ -54,7 +54,7 @@ export default function ResetPasswordPage() {
   if (checking) {
     return (
       <div className="min-h-screen flex items-center justify-center"
-        style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <Loader2 size={32} className="text-white animate-spin" />
       </div>
     );
@@ -63,7 +63,7 @@ export default function ResetPasswordPage() {
   if (done) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4"
-        style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-emerald-50">
             <CheckCircle size={32} className="text-emerald-500" />
@@ -82,7 +82,7 @@ export default function ResetPasswordPage() {
   if (!validToken) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4"
-        style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 bg-red-50">
             <Shield size={24} className="text-red-500" />
@@ -100,7 +100,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4"
-      style={{ background: 'linear-gradient(135deg, #001a40 0%, #002d6b 100%)' }}>
+      style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-8">
           <img src="/logo.png" alt="OrtoBolt" className="h-40 w-auto object-contain drop-shadow-lg" />

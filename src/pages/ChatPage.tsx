@@ -155,7 +155,7 @@ export default function ChatPage() {
       )}
 
       <div data-tour="tour-chat-input" className="flex-shrink-0 px-6 py-4 border-t border-slate-100 bg-white">
-        <div className="flex items-end gap-3 bg-slate-50 rounded-2xl border border-slate-200/60 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-[#0056b3]/20 transition-all px-4 py-3">
+        <div className="flex items-end gap-3 bg-slate-50 rounded-2xl border border-slate-200/60 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all px-4 py-3">
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}

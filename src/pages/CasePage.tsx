@@ -567,7 +567,7 @@ export default function CasePage() {
             )}
             {activeCase.notes ? (
                 <div className="relative pl-6">
-                  <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-gradient-to-b from-primary to-[#0056b3]/20"></div>
+                  <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-gradient-to-b from-primary to-primary/20"></div>
                   <div className="space-y-4">
                     {activeCase.notes.split('\n\n').reverse().map((note, i) => {
                       const timestampMatch = note.match(/^\[(\d{2}\/\d{2}\/\d{4},?\s*\d{2}:\d{2}:\d{2})\]/);
