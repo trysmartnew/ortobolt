@@ -1,3 +1,4 @@
+import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Shield, CheckCircle, Loader2 } from 'lucide-react';
 import { supabase } from '@/services/supabase';
@@ -103,7 +104,7 @@ export default function ResetPasswordPage() {
       style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-8">
-          <img src="/logo.png" alt="OrtoBolt" className="h-40 w-auto object-contain drop-shadow-lg" />
+          <OrtoBoltLogo variant="vertical" size="large" />
         </div>
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           <h2 className="font-bold text-slate-800 text-lg mb-1">Redefinir senha</h2>

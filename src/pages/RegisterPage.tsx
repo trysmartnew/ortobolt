@@ -1,3 +1,4 @@
+import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
 // src/pages/RegisterPage.tsx
 // ✅ U-03: Senha fraca bloqueia envio — score mínimo 2 obrigatório
 // (restante do arquivo mantido igual ao original)
@@ -186,7 +187,7 @@ export default function RegisterPage() {
       {/* Painel esquerdo */}
       <div className="hidden lg:flex flex-col justify-between w-2/5 p-12"
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
-        <img src="/logo.png" alt="OrtoBolt" className="h-9 w-auto object-contain" />
+        <OrtoBoltLogo variant="horizontal" size="small" showSubtitle={false} />
         <div>
           <h2 className="text-3xl font-extrabold text-white mb-4 leading-tight">
             Comece agora,<br />
@@ -202,7 +203,7 @@ export default function RegisterPage() {
       {/* Painel direito */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white overflow-y-auto">
         <div className="lg:hidden mb-6">
-          <img src="/logo.png" alt="OrtoBolt" className="h-9 w-auto object-contain" />
+          <OrtoBoltLogo variant="horizontal" size="small" showSubtitle={false} />
         </div>
         <div className="w-full max-w-sm">
           <div className="mb-6">

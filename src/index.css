@@ -46,9 +46,9 @@ h3 { font-size: 18px; font-weight: 600; }
 
 @theme {
   /* Cores Institucionais */
-  --color-primary: #0056b3;
-  --color-primary-light: #0056b31a;
-  --color-navy: #001941;
+  --color-primary: #0A3D8F;
+  --color-primary-light: #1258B41a;
+  --color-navy: #1D2433;
 
   /* Neutros */
   --color-surface: #ffffff;
@@ -80,9 +80,9 @@ h3 { font-size: 18px; font-weight: 600; }
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 
   /* Tokens adicionais */
-  --color-primary-mid: #0066cc;
+  --color-primary-mid: #1258B4;
   --color-primary-dark: #004494;
-  --color-accent: #38BDF8;
+  --color-accent: #00B3A6;
   --color-navy-gradient: #002d6b;
   --color-navy-mid: #003d8f;
 }

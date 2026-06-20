@@ -1,3 +1,4 @@
+import { OrtoBoltLogo } from './brand/OrtoBoltLogo';
 ﻿import { useMemo } from 'react';
 import { 
   ClipboardList, Scan, Activity, BarChart3,
@@ -70,7 +71,7 @@ export default function Sidebar() {
     <aside className="w-64 bg-slate-900 text-white h-screen flex flex-col">
       {/* Logo */}
       <div className="p-4 border-b border-white/10">
-        <h1 className="text-xl font-bold text-blue-400">OrtoBolt</h1>
+        <OrtoBoltLogo variant="horizontal" size="small" showSubtitle={false} />
         <p className="text-xs text-white/60">Ortopedia Veterinária</p>
       </div>
 

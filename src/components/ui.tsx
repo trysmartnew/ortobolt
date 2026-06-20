@@ -1,3 +1,4 @@
+import { LoadingSpinner } from './brand/LoadingSpinner';
 import React from 'react';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import type { CaseStatus, NotificationType } from '@/types/index';
@@ -78,9 +79,9 @@ export const KPIWidget = React.memo(function KPIWidget({ label, value, unit, tre
 });  
 
 // ── Spinner ──────────────────────────────────────────────────────────────────
-export function Spinner({ size = 'md' }: { size?: 'sm'|'md'|'lg' }) {
-  const s = { sm: 'w-4 h-4 border-2', md: 'w-7 h-7 border-2', lg: 'w-10 h-10 border-3' }[size];
-  return <span className={`${s} border-[var(--color-primary)] border-t-transparent rounded-full animate-spin inline-block`} />;
+export function Spinner({ size = "md" }: { size?: "sm"|"md"|"lg" }) {
+  const px = size === "sm" ? 20 : size === "md" ? 32 : 48;
+  return <LoadingSpinner size={px} />;
 }
 
 // ── Section Header ───────────────────────────────────────────────────────────
