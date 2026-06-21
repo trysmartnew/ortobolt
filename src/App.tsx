@@ -44,6 +44,7 @@ function AppInner() {
   const {
     currentView, authLoading,
     currentPage, tourActive, tourForceShow, closeTour,
+    analysisMode, setAnalysisMode,
     logout, setUserFromSession, setCurrentView,
     toasts, removeToast,
   } = useApp();
@@ -136,7 +137,16 @@ function AppInner() {
           <PageComponent />
         </main>
       </div>
-      <ProductTour page={currentPage} active={tourActive} onClose={closeTour} forceShow={tourForceShow} />
+      <ProductTour
+        page={currentPage}
+        active={tourActive}
+        onClose={closeTour}
+        forceShow={tourForceShow}
+        onStepChange={(_, step) => {
+          if (step.target.startsWith('tour-compare-')) setAnalysisMode('compare');
+          else if (step.target !== '__welcome__') setAnalysisMode('analysis');
+        }}
+      />
       <ToastContainer toasts={toasts} onRemove={removeToast} />
       {currentPage !== 'chat' && <AIAssistant />}
     </div>

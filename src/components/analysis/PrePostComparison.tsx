@@ -314,6 +314,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                 size="sm"
                 onClick={runAIAnalysis}
                 disabled={isAnalyzing}
+                data-tour="tour-compare-ai-analysis"
                 className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs gap-1.5 border border-slate-700"
               >
                 <Brain className={`w-3.5 h-3.5 text-cyan-400 ${isAnalyzing ? 'animate-pulse' : ''}`} />
@@ -338,6 +339,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                 size="sm"
                 onClick={handleSaveComparison}
                 disabled={isSaving || workflowStatus === 'pending_approval'}
+                data-tour="tour-compare-save"
                 className="bg-navy hover:bg-[var(--color-navy-gradient)] text-white text-xs gap-1.5"
               >
                 <Save className="w-3.5 h-3.5" />
@@ -393,7 +395,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
       )}
 
       {/* Canvas da Mesa de Luz */}
-      <div className="p-6 bg-slate-950">
+      <div className="p-6 bg-slate-950" data-tour="tour-compare-upload">
         <input type="file" ref={refBefore} accept="image/*" onChange={(e) => handleFile(e, setImageBefore)} className="hidden" />
         <input type="file" ref={refAfter} accept="image/*" onChange={(e) => handleFile(e, setImageAfter)} className="hidden" />
 

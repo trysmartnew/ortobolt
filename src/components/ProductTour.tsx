@@ -32,6 +32,9 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-analysis-result', title: '🧠 Resultado da IA', content: 'Leia o laudo e os diagnósticos diferenciais sugeridos pela inteligência artificial.', placement: 'top', highlight: true },
     { target: 'tour-clinical-copilot', title: '💬 Copiloto', content: 'Refine o laudo da IA cruzando com o contexto clínico do paciente.', placement: 'left', highlight: true },
     { target: 'tour-approve-case', title: '✅ Integrar ao Caso', content: 'Salve o laudo na Galeria de Casos ou abra diretamente o Protocolo Pós-Operatório.', placement: 'top', highlight: true },
+    { target: 'tour-compare-upload', title: '🖼️ Mesa de Luz Digital', content: 'Carregue duas radiografias do mesmo paciente para comparar a evolução do caso, lado a lado ou em superposição.', placement: 'top' },
+    { target: 'tour-compare-ai-analysis', title: '🧠 Análise de IA Comparativa', content: 'Rode a análise de IA para avaliar alinhamento, densidade óssea e recomendações entre os dois exames.', placement: 'bottom' },
+    { target: 'tour-compare-save', title: '💾 Salvar Comparação', content: 'Salve o estudo comparativo como novo caso ou anexe a um caso clínico existente.', placement: 'top' },
   ],
   gallery: [
     { target: '__welcome__', title: '🗂️ Memória Clínica Centralizada', content: 'Aqui fica o histórico completo de cada paciente. Acompanhe a evolução, reconsultas e protocolos em um só lugar.', placement: 'center' },

@@ -82,6 +82,8 @@ interface AppContextType {
   tourForceShow: boolean;
   startTour: () => void;
   closeTour: () => void;
+  analysisMode: 'analysis' | 'compare';
+  setAnalysisMode: (mode: 'analysis' | 'compare') => void;
   toasts: Toast[];
   addToast: (message: string, type: Toast['type']) => void;
   removeToast: (id: number) => void;
@@ -163,6 +165,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }]);
   const [tourActive, setTourActive]       = useState(false);
   const [tourForceShow, setTourForceShow] = useState(false);
+  const [analysisMode, setAnalysisMode]   = useState<'analysis' | 'compare'>('analysis');
   const [toasts, setToasts]               = useState<Toast[]>([]);
   
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -490,6 +493,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (currentPage !== 'analysis') {
+      setAnalysisMode('analysis');
+    }
+  }, [currentPage]);
+
 
 
 
@@ -506,6 +515,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       notifications, unreadCount, markAllRead, markRead, addNotification,
       chatHistory, setChatHistory,
       tourActive, tourForceShow, startTour, closeTour,
+      analysisMode, setAnalysisMode,
       toasts, addToast, removeToast,
       loginLocked, loginLockSecondsLeft,
     }}>

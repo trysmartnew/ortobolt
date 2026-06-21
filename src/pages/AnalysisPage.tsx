@@ -24,7 +24,7 @@ const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 export default function AnalysisPage() {
   const { currentAnalysis, setCurrentAnalysis, addAnalysisToHistory } = useAnalysis();
-  const { user, approveAndIntegrateCase, openCase, setCurrentPage, addToast } = useApp();
+  const { user, approveAndIntegrateCase, openCase, setCurrentPage, addToast, analysisMode, setAnalysisMode } = useApp();
   const [mode, setMode] = useState<Mode>('idle');
   const [imageData, setImageData] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
@@ -106,7 +106,6 @@ export default function AnalysisPage() {
     }
   };
   const [approving, setApproving] = useState(false);
-  const [analysisMode, setAnalysisMode] = useState<'analysis' | 'compare'>('analysis');
   const fileRef = useRef<HTMLInputElement>(null);
 
   const imageBase64 = useMemo(
