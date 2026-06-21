@@ -18,6 +18,7 @@ import React, {
 
   type ReactNode,
 } from 'react';
+import { ONBOARDING_FLOW } from '@/config/onboardingFlow';
 import type {
   User,
   ClinicalCase,
@@ -84,6 +85,11 @@ interface AppContextType {
   closeTour: () => void;
   analysisMode: 'analysis' | 'compare';
   setAnalysisMode: (mode: 'analysis' | 'compare') => void;
+  onboardingActive: boolean;
+  onboardingStageIndex: number;
+  startOnboarding: () => void;
+  advanceOnboarding: () => void;
+  skipOnboarding: () => void;
   toasts: Toast[];
   addToast: (message: string, type: Toast['type']) => void;
   removeToast: (id: number) => void;
@@ -166,6 +172,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [tourActive, setTourActive]       = useState(false);
   const [tourForceShow, setTourForceShow] = useState(false);
   const [analysisMode, setAnalysisMode]   = useState<'analysis' | 'compare'>('analysis');
+  const [onboardingActive, setOnboardingActive]         = useState(false);
+  const [onboardingStageIndex, setOnboardingStageIndex] = useState(0);
   const [toasts, setToasts]               = useState<Toast[]>([]);
   
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -499,6 +507,36 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [currentPage]);
 
+  const startOnboarding = useCallback(() => {
+    setOnboardingStageIndex(0);
+    setOnboardingActive(true);
+    setCurrentPage(ONBOARDING_FLOW[0].page);
+    setTourForceShow(true);
+    setTourActive(true);
+  }, []);
+
+  const advanceOnboarding = useCallback(() => {
+    setOnboardingStageIndex((idx) => {
+      const next = idx + 1;
+      if (next < ONBOARDING_FLOW.length) {
+        setCurrentPage(ONBOARDING_FLOW[next].page);
+        setTourForceShow(true);
+        setTourActive(true);
+      } else {
+        setOnboardingActive(false);
+        setTourActive(false);
+        setTourForceShow(false);
+      }
+      return next;
+    });
+  }, []);
+
+  const skipOnboarding = useCallback(() => {
+    setOnboardingActive(false);
+    setTourActive(false);
+    setTourForceShow(false);
+  }, []);
+
 
 
 
@@ -516,6 +554,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       chatHistory, setChatHistory,
       tourActive, tourForceShow, startTour, closeTour,
       analysisMode, setAnalysisMode,
+      onboardingActive, onboardingStageIndex, startOnboarding, advanceOnboarding, skipOnboarding,
       toasts, addToast, removeToast,
       loginLocked, loginLockSecondsLeft,
     }}>
