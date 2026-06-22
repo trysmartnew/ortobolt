@@ -164,14 +164,24 @@ export default function GalleryPage() {
     if (!avatarCaseId) return;
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const url = await uploadCaseImage(reader.result as string, avatarCaseId, 'avatar');
-      updateCase(avatarCaseId, { avatarUrl: url || reader.result as string, updatedAt: new Date().toISOString() });
-      addToast(url ? 'Avatar salvo na nuvem.' : 'Apenas cache local (falha no upload).', 'success');
-      setAvatarCaseId(null);
-    };
-    reader.readAsDataURL(file);
+    addToast('Processando avatar...', 'info');
+    const base64 = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
+    const uploadResult = await uploadImageToStorage(base64, {
+      storagePath: `avatar-${avatarCaseId}-${Date.now()}`,
+      type: 'avatar',
+      caseId: avatarCaseId
+    });
+    if (uploadResult.url) {
+      updateCase(avatarCaseId, { avatarUrl: uploadResult.url, updatedAt: new Date().toISOString() });
+      addToast('Avatar salvo na nuvem.', 'success');
+    } else {
+      addToast('Falha no upload do avatar.', 'warning');
+    }
+    setAvatarCaseId(null);
   };
   
   const [search, setSearch] = useState('');

@@ -6,6 +6,7 @@ import { useAnalysis } from '@/contexts/AnalysisContext';
 import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { uploadCaseImage } from '@/services/supabase';
+import { uploadImageToStorage } from '@/services/imageService';
 import { Card, Button, StatusBadge, RiskTag } from '@/components/ui';
 import type { ClinicalCase, ProcedureType } from '@/types/index';
 
@@ -289,25 +290,45 @@ export default function CasePage() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !activeCase) return;
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const url = await uploadCaseImage(reader.result as string, activeCase.id, 'xray');
-      updateCase(activeCase.id, { imageUrl: url || reader.result as string, updatedAt: new Date().toISOString() });
-      addToast(url ? 'Radiografia salva na nuvem.' : 'Apenas cache local (falha no upload).', 'success');
-    };
-    reader.readAsDataURL(file);
+    addToast('Processando radiografia...', 'info');
+    const base64 = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
+    const uploadResult = await uploadImageToStorage(base64, {
+      storagePath: `xray-${activeCase.id}-${Date.now()}`,
+      type: 'xray',
+      caseId: activeCase.id
+    });
+    if (uploadResult.url) {
+      updateCase(activeCase.id, { imageUrl: uploadResult.url, updatedAt: new Date().toISOString() });
+      addToast('Radiografia salva na nuvem.', 'success');
+    } else {
+      addToast('Falha no upload da radiografia.', 'warning');
+    }
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !activeCase) return;
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const url = await uploadCaseImage(reader.result as string, activeCase.id, 'avatar');
-      updateCase(activeCase.id, { avatarUrl: url || reader.result as string, updatedAt: new Date().toISOString() });
-      addToast(url ? 'Avatar salvo na nuvem.' : 'Apenas cache local (falha no upload).', 'success');
-    };
-    reader.readAsDataURL(file);
+    addToast('Processando avatar...', 'info');
+    const base64 = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
+    const uploadResult = await uploadImageToStorage(base64, {
+      storagePath: `avatar-${activeCase.id}-${Date.now()}`,
+      type: 'avatar',
+      caseId: activeCase.id
+    });
+    if (uploadResult.url) {
+      updateCase(activeCase.id, { avatarUrl: uploadResult.url, updatedAt: new Date().toISOString() });
+      addToast('Avatar salvo na nuvem.', 'success');
+    } else {
+      addToast('Falha no upload do avatar.', 'warning');
+    }
   };
 
   const [zoom, setZoom] = useState(100);
