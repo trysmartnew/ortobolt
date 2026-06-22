@@ -109,7 +109,6 @@ function AppInner() {
     });
 
     return () => subscription.unsubscribe();
-      <AcademicDisclaimer />
   }, []);
 
   if (authLoading) {
@@ -157,6 +156,7 @@ function AppInner() {
       />
       <ToastContainer toasts={toasts} onRemove={removeToast} />
       {currentPage !== 'chat' && <AIAssistant />}
+      <AcademicDisclaimer />
     </div>
   );
 }
