@@ -1,3 +1,5 @@
+import { ClinicalEvidenceView } from '@/components/ClinicalEvidenceView';
+import { useCaseRealtime } from '@/hooks/useCaseRealtime';
 // src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
 import { useState, useMemo, useRef } from 'react';
@@ -572,79 +574,17 @@ export default function CasePage() {
             </Card>
           )}
 
-          {/* Notas Clínicas */}
-          <Card className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <h2 data-tour="tour-case-notes" className="text-sm font-bold text-slate-900 flex items-center gap-2"><ClipboardList size={16} /> Notas Clínicas</h2>
-              <Button size="sm" variant="secondary" onClick={() => setShowNoteInput(!showNoteInput)}>
-                <Plus size={14} /> {showNoteInput ? 'Cancelar' : 'Nova Nota'}
-              </Button>
+          {/* Exibição em Tempo Real (Fase 2 CEP) */}
+          {activeCase.clinicalEvidence && (
+            <div className="mb-6">
+              <ClinicalEvidenceView evidence={activeCase.clinicalEvidence} />
             </div>
-            {showNoteInput && (
-              <div className="mb-4 space-y-2">
-                <textarea value={newNote} onChange={e => setNewNote(e.target.value)} placeholder="Descreva observações clínicas, evolução, conduta..." rows={3} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none" />
-                <Button size="sm" onClick={addClinicalNote}><Check size={14} /> Salvar Nota</Button>
-              </div>
-            )}
-            {activeCase.notes ? (
-                <div className="relative pl-6">
-                  <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-gradient-to-b from-primary to-primary/20"></div>
-                  <div className="space-y-4">
-                    {activeCase.notes.split('\n\n').reverse().map((note, i) => {
-                      const timestampMatch = note.match(/^\[(\d{2}\/\d{2}\/\d{4},?\s*\d{2}:\d{2}:\d{2})\]/);
-                      const timestamp = timestampMatch ? timestampMatch[1] : null;
-                      const cleanNote = timestampMatch ? note.replace(/^\[.*?\]\s*/, '') : note;
-                      
-                      return (
-                        <div key={i} className="relative">
-                          <div className="absolute -left-4 top-1.5 w-3 h-3 rounded-full bg-primary border-2 border-white shadow-sm"></div>
-                          <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
-                            {timestamp && (
-                              <div className="flex items-center gap-1.5 mb-2 text-[10px] text-slate-500 font-semibold">
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                {timestamp}
-                              </div>
-                            )}
-                            <div className="text-xs text-slate-700 font-mono whitespace-pre-wrap leading-relaxed">
-                              {cleanNote}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-6">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-2">
-                    <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </div>
-                  <p className="text-xs text-slate-400 italic">Nenhuma nota clínica registrada ainda.</p>
-                  <p className="text-[10px] text-slate-400 mt-1">Clique em "Nova Nota" para começar</p>
-                </div>
-              )}
-            </Card>
-        </div>
+          )}
 
-        {/* Coluna Direita: Plano de Ação */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Protocolo */}
-          <Card data-tour="tour-case-checklist" className="p-5"><div className="flex items-center justify-between mb-4"><h2 data-tour="tour-case-protocol"><Pill size={16} /> Plano Pós-Operatório</h2>
-              <span className="text-xs font-mono font-bold text-primary bg-blue-50 px-2 py-0.5 rounded">{protocol.name.split(' - ')[0]}</span>
-            </div>
-            <div className="mb-4">
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
-                <span>Progresso do protocolo</span>
-                <span className="font-bold">{progress}%</span>
-              </div>
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-primary to-accent transition-all" style={{ width: `${progress}%` }} />
-              </div>
-            </div>
+          <Card className="p-5">
+            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-3">
+              📋 Protocolo Sugerido: {protocol?.name}
+            </h2>
             <div className="space-y-2">
               {protocol.steps.map((step, i) => {
                 const done = completedSteps.includes(step.text);
@@ -692,8 +632,6 @@ export default function CasePage() {
     </div>
   );
 }
-
-
 
 
 
