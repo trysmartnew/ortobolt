@@ -226,13 +226,23 @@ export default function GalleryPage() {
     }
     setFormErrors([]);
     
-    const imageUrl = form.imageFile 
-      ? await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.readAsDataURL(form.imageFile as File);
-        })
-      : undefined;
+    let imageUrl: string | undefined;
+    if (form.imageFile) {
+      addToast('Processando imagem...', 'info');
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(form.imageFile as File);
+      });
+      const uploadResult = await uploadImageToStorage(base64, {
+        storagePath: `gallery-${Date.now()}`,
+        type: 'radiograph'
+      });
+      imageUrl = uploadResult.url ?? undefined;
+      if (!uploadResult.url) {
+        addToast('Falha no upload da imagem. Caso salvo sem imagem.', 'warning');
+      }
+    }
 
     addCase({
       id: crypto.randomUUID(),
@@ -249,8 +259,13 @@ export default function GalleryPage() {
       tags: [form.procedure, form.species],
       // ✅ CORREÇÃO: Usar ID real do usuário logado
       veterinarianId: user?.id ?? '',
-      // ✅ CORREÇÃO: imageUrl: imageUrl ?? undefined,  // será preenchido via upload de imagem na AnalysisPage
       imageUrl: imageUrl ?? undefined,
+      exams: imageUrl ? [{
+        id: `exam-${crypto.randomUUID()}`,
+        modality: 'radiograph' as const,
+        imageUrls: [imageUrl],
+        createdAt: new Date().toISOString(),
+      }] : undefined,
     });
 
     setShowAdd(false);
