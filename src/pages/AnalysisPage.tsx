@@ -89,31 +89,18 @@ export default function AnalysisPage() {
         },
       });
       
-      addToast(`Caso do paciente "${clinicalCase.patientName || 'Não Identificado'}" salvo com sucesso!`, 'success');
-      
-      // Garantia defensiva: se clinicalCase for inválido, monta fallback mínimo
-      if (!clinicalCase || !clinicalCase.id) {
-        console.warn('[Frente A] clinicalCase inválido. Gerando fallback.');
-        return {
-          id: `fallback-${Date.now()}`,
-          patientName: currentCtx.patientName || 'Paciente Não Identificado',
-          status: 'completed' as const,
-          createdAt: new Date().toISOString(),
-        } as ClinicalCase;
+      if (!clinicalCase?.id) {
+        console.error('[Mesa de Luz] approveAndIntegrateCase retornou caso invalido.');
+        addToast('Erro ao integrar o caso. Verifique os dados e tente novamente.', 'error');
+        return null;
       }
-      
+
+      addToast(`Caso do paciente "${clinicalCase.patientName || 'Não Identificado'}" salvo com sucesso!`, 'success');
       return clinicalCase;
     } catch (err: any) {
-      console.error('[Frente A] Erro ao salvar caso:', err);
-      addToast(`Falha na persistência dos dados clínicos: ${err.message || err}`, 'error');
-      
-      // Fallback de emergência: retorna objeto mínimo para não bloquear o usuário
-      return {
-        id: `error-fallback-${Date.now()}`,
-        patientName: 'Caso com erro de persistência',
-        status: 'completed' as const,
-        createdAt: new Date().toISOString(),
-      } as ClinicalCase;
+      console.error('[Mesa de Luz] Erro ao salvar caso comparativo:', err);
+      addToast(`Falha ao salvar o caso: ${err.message || 'erro desconhecido'}`, 'error');
+      return null;
     }
   };
   const [approving, setApproving] = useState(false);

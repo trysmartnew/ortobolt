@@ -220,27 +220,21 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
     setIsSaving(true);
     setError('');
     try {
-      if (onSaveCase) {
-        const clinicalCase = await onSaveCase(imageBefore, imageAfter, aiAnalysisResult);
-        
-        if (clinicalCase && clinicalCase.id) {
-          // Caso válido retornado pela API
-          setSavedCase(clinicalCase);
-        } else {
-          // FRENTE B: Fallback local defensivo
-          console.warn('[Frente B] onSaveCase retornou null/inválido. Montando fallback local.');
-          const localFallback = {
-            id: `local-fallback-${Date.now()}`,
-            patientName: 'Caso Comparativo',
-            status: 'completed' as const,
-            createdAt: new Date().toISOString(),
-          } as ClinicalCase;
-          setSavedCase(localFallback);
-        }
-      } else {
-        // Fallback local seguro para simulação de persistência
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (!onSaveCase) {
+        console.error('[Mesa de Luz] onSaveCase nao foi configurado. Salvamento nao realizado.');
+        setError('Configuração inválida: função de salvamento não disponível.');
+        return;
       }
+
+      const clinicalCase = await onSaveCase(imageBefore, imageAfter, aiAnalysisResult);
+
+      if (!clinicalCase?.id) {
+        console.error('[Mesa de Luz] onSaveCase retornou caso inválido.');
+        setError('Erro ao salvar: o caso não foi criado corretamente. Tente novamente.');
+        return;
+      }
+
+      setSavedCase(clinicalCase);
       setWorkflowStatus('pending_approval');
     } catch (err) {
       setError('Erro operacional ao salvar comparação no histórico de casos.');
