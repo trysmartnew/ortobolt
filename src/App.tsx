@@ -144,18 +144,22 @@ function AppInner() {
           </Suspense>
         </main>
       </div>
-      <ProductTour
-        page={currentPage}
-        active={tourActive}
-        onClose={closeTour}
-        forceShow={tourForceShow}
-        onStepChange={(_, step) => {
-          if (step.target.startsWith('tour-compare-')) setAnalysisMode('compare');
-          else if (step.target !== '__welcome__') setAnalysisMode('analysis');
-        }}
-      />
+      <Suspense fallback={null}>
+        <ProductTour
+          page={currentPage}
+          active={tourActive}
+          onClose={closeTour}
+          forceShow={tourForceShow}
+          onStepChange={(_, step) => {
+            if (step.target.startsWith('tour-compare-')) setAnalysisMode('compare');
+            else if (step.target !== '__welcome__') setAnalysisMode('analysis');
+          }}
+        />
+      </Suspense>
       <ToastContainer toasts={toasts} onRemove={removeToast} />
-      {currentPage !== 'chat' && <AIAssistant />}
+      <Suspense fallback={null}>
+        {currentPage !== 'chat' && <AIAssistant />}
+      </Suspense>
       <AcademicDisclaimer />
     </div>
   );
