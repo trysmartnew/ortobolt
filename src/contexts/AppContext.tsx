@@ -121,6 +121,7 @@ function mapCaseFromDB(row: Record<string, unknown>): ClinicalCase {
     notes:          row.notes != null ? String(row.notes) : undefined,
     veterinarianId: String(row.veterinarian_id ?? row.veterinarianId ?? ''),
     aiAnalysis:     loadAiAnalysisFromRow(row),
+    exams:          Array.isArray(row.exams) ? (row.exams as import('@/types').CaseExam[]) : undefined,
   };
 }
 
@@ -389,6 +390,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       notes:           enriched.notes ?? null,
       image_url:       enriched.imageUrl ?? null,
       ai_analysis:     enriched.aiAnalysis ?? null,
+      exams:           enriched.exams ?? null,
       veterinarian_id: enriched.veterinarianId,
       created_at:      enriched.createdAt,
       updated_at:      enriched.updatedAt,
@@ -440,6 +442,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (updates.aiAnalysis !== undefined) {
       dbUpdates.ai_analysis = updates.aiAnalysis;
       persistCaseAiAnalysis(id, updates.aiAnalysis);
+    }
+    if (updates.exams !== undefined) {
+      dbUpdates.exams = updates.exams;
     }
     dbUpdates.updated_at = new Date().toISOString();
 
