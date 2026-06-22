@@ -10,7 +10,11 @@ import { uploadImageToStorage } from '@/services/imageService';
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
 import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
 import ApproveCompleteCaseBar from '@/components/analysis/ApproveCompleteCaseBar';
-import PrePostComparison from '@/components/analysis/PrePostComparison';
+import { lazy, Suspense } from 'react';
+// Code-split: html2canvas (~202 kB) + jspdf (~391 kB) so na Mesa de Luz
+const PrePostComparison = lazy(
+  () => import('@/components/analysis/PrePostComparison')
+);
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import { useApp } from '@/contexts/AppContext';
 import { buildCaseTitle } from '@/services/clinicalCaseIntegrationService';
@@ -478,7 +482,13 @@ export default function AnalysisPage() {
       )}
 
       {analysisMode === 'compare' && (
-        <PrePostComparison onSaveCase={handleSaveComparisonCase} />
+        <Suspense fallback={
+  <div className="flex items-center justify-center p-12">
+    <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+  </div>
+}>
+  <PrePostComparison onSaveCase={handleSaveComparisonCase} />
+</Suspense>
       )}
     </div>
   );

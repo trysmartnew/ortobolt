@@ -1,19 +1,21 @@
-import { useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { AppProvider, useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
 import HomePage          from '@/pages/HomePage';
 import LoginPage         from '@/pages/LoginPage';
 import RegisterPage      from '@/pages/RegisterPage';
 import ResetPasswordPage from '@/pages/ResetPasswordPage';
-import DashboardPage     from '@/pages/DashboardPage';
-import ChatPage          from '@/pages/ChatPage';
-import AnalysisPage      from '@/pages/AnalysisPage';
-import GalleryPage       from '@/pages/GalleryPage';
-import CasePage          from '@/pages/CasePage';
-import ProfilePage       from '@/pages/ProfilePage';
-import ReportsPage       from '@/pages/ReportsPage';
-import SettingsPage      from '@/pages/SettingsPage';
-import NotificationsPage from '@/pages/NotificationsPage';
+
+// Code-split: cada pagina gera chunk proprio; carrega so quando navegada
+const DashboardPage     = lazy(() => import('@/pages/DashboardPage'));
+const ChatPage          = lazy(() => import('@/pages/ChatPage'));
+const AnalysisPage      = lazy(() => import('@/pages/AnalysisPage'));
+const GalleryPage       = lazy(() => import('@/pages/GalleryPage'));
+const CasePage          = lazy(() => import('@/pages/CasePage'));
+const ProfilePage       = lazy(() => import('@/pages/ProfilePage'));
+const ReportsPage       = lazy(() => import('@/pages/ReportsPage'));
+const SettingsPage      = lazy(() => import('@/pages/SettingsPage'));
+const NotificationsPage = lazy(() => import('@/pages/NotificationsPage'));
 import Sidebar           from '@/components/Sidebar';
 import TopBar            from '@/components/TopBar';
 import ProductTour       from '@/components/ProductTour';
@@ -134,7 +136,13 @@ function AppInner() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <TopBar />
         <main className="flex-1 overflow-y-auto">
-          <PageComponent />
+          <Suspense fallback={
+            <div className="flex h-full items-center justify-center">
+              <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+            </div>
+          }>
+            <PageComponent />
+          </Suspense>
         </main>
       </div>
       <ProductTour
