@@ -2,6 +2,7 @@ import type {
   AIAnalysisResult,
   AnatomicalLandmark,
   ClinicalCase,
+  CaseExam,
   CaseStatus,
   ProcedureType,
   RiskFactor,
@@ -179,6 +180,15 @@ export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): Cl
     input.titleOverride?.trim() ||
     buildCaseTitle(input.clinicalContext.patientName, procedure);
 
+  const primaryExam: CaseExam = {
+    id: `exam-${id}-primary`,
+    modality: 'radiograph',
+    imageUrls: [input.imageStorageUrl ?? input.imageDataUrl],
+    aiAnalysis,
+    analysisText: input.analysisText,
+    createdAt: now,
+  };
+
   return {
     id,
     title,
@@ -198,6 +208,7 @@ export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): Cl
     notes: formatIntegratedNotes(input.analysisText, input.copilotMessages),
     veterinarianId: input.veterinarianId,
     aiAnalysis,
+    exams: [primaryExam, ...(input.additionalExams ?? [])],
   };
 }
 

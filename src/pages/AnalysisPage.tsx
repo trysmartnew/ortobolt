@@ -14,7 +14,7 @@ import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import { useApp } from '@/contexts/AppContext';
 import { buildCaseTitle } from '@/services/clinicalCaseIntegrationService';
 
-import type { ClinicalCase } from '@/types';
+import type { ClinicalCase, CaseExam } from '@/types';
 
 type Mode = 'idle' | 'preview' | 'analyzing' | 'result';
 
@@ -51,7 +51,17 @@ export default function AnalysisPage() {
                 .join('\n\n')
             || 'Análise comparativa de Mesa de Luz — dados não disponíveis.');
 
-      // Acoplamento estrito e seguro com o pipeline nativo
+      // Acoplamento estrito e seguro com o pipeline nativo.
+      // Ambas as imagens (pre/pos) sao preservadas como um exame
+      // comparativo vinculado ao Caso, em vez de descartar uma delas.
+      const comparativeExam: CaseExam = {
+        id: `exam-compare-${Date.now()}`,
+        modality: 'comparative_study',
+        imageUrls: [beforeImage, afterImage].filter(Boolean),
+        analysisText: reportText,
+        createdAt: new Date().toISOString(),
+      };
+
       const clinicalCase = approveAndIntegrateCase({
         veterinarianId: user.id,
         imageDataUrl: afterImage || beforeImage || '',
@@ -61,6 +71,7 @@ export default function AnalysisPage() {
         copilotSessionId: session?.sessionId,
         titleOverride: caseTitle,
         status: 'completed',
+        additionalExams: [comparativeExam],
       });
 
       addAnalysisToHistory({
