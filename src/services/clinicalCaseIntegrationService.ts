@@ -10,6 +10,7 @@ import type {
 import type { ChatMessage } from '@/types/index';
 import type { ApproveCompleteCaseInput } from '@/types/casePipeline';
 import { PIPELINE_TAG_ANALYSIS, PIPELINE_TAG_INTEGRATED } from '@/types/casePipeline';
+import { deriveClinicalEvidence } from './clinicalEngine';
 
 const AI_STORAGE_PREFIX = 'ortobolt-case-ai-';
 const LAST_INTEGRATED_KEY = 'ortobolt-last-integrated-case';
@@ -189,6 +190,8 @@ export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): Cl
     createdAt: now,
   };
 
+  const clinicalEvidence = deriveClinicalEvidence(aiAnalysis);
+
   return {
     id,
     title,
@@ -207,6 +210,7 @@ export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): Cl
     imageUrl: input.imageStorageUrl ?? undefined,
     notes: formatIntegratedNotes(input.analysisText, input.copilotMessages),
     veterinarianId: input.veterinarianId,
+    clinicalEvidence,
     aiAnalysis,
     exams: [primaryExam, ...(input.additionalExams ?? [])],
   };
