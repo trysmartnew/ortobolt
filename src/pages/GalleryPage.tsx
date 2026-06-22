@@ -4,6 +4,7 @@ import { useState, useMemo, useRef } from 'react';
 import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2, Upload } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { uploadCaseImage } from '@/services/supabase';
+import { uploadImageToStorage } from '@/services/imageService';
 import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/constants/labels';
 import type { ClinicalCase, CaseStatus, ProcedureType, AnimalSpecies } from '@/types/index';

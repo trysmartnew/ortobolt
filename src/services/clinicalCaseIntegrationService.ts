@@ -183,7 +183,7 @@ export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): Cl
   const primaryExam: CaseExam = {
     id: `exam-${id}-primary`,
     modality: 'radiograph',
-    imageUrls: [input.imageStorageUrl ?? input.imageDataUrl],
+    imageUrls: input.imageStorageUrl ? [input.imageStorageUrl] : [],
     aiAnalysis,
     analysisText: input.analysisText,
     createdAt: now,
@@ -204,7 +204,7 @@ export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): Cl
     createdAt: now,
     updatedAt: now,
     tags: [procedure, species, PIPELINE_TAG_ANALYSIS, PIPELINE_TAG_INTEGRATED],
-    imageUrl: input.imageStorageUrl ?? input.imageDataUrl,
+    imageUrl: input.imageStorageUrl ?? undefined,
     notes: formatIntegratedNotes(input.analysisText, input.copilotMessages),
     veterinarianId: input.veterinarianId,
     aiAnalysis,

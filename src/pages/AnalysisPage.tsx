@@ -6,6 +6,7 @@ import { useAnalysis } from '@/contexts/AnalysisContext';
 import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
 import { analyzeImage, PRIMARY_MODEL } from '@/services/aiService';
 import { uploadRadiografia } from '@/services/supabase';
+import { uploadImageToStorage } from '@/services/imageService';
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
 import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
 import ApproveCompleteCaseBar from '@/components/analysis/ApproveCompleteCaseBar';
