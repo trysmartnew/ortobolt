@@ -369,6 +369,13 @@ export async function analyzeImage(
       ? `Paciente: ${patientRef}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears}a, ${caseInfo.weightKg}kg. Procedimento: ${caseInfo.procedure}. Status: ${caseInfo.status ?? 'pending'}.`
       : '';
 
+    // INCREMENTO 1: Contexto dinâmico do paciente para análise biomecânica
+    const patientContext = caseInfo 
+      ? `PACIENTE: ${caseInfo.species} | ${caseInfo.breed} | ${caseInfo.ageYears} anos | ${caseInfo.weightKg} kg
+IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste paciente.`
+      : '';
+
+
     const promptText = caseInfo
       ? caseInfo.status === 'completed'
         ? `\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
@@ -446,6 +453,35 @@ Se TODAS as validações passarem, proceda com a análise comparativa:
 6. RECOMENDAÇÃO CLÍNICA: Sugira conduta pós-operatória, restrições de atividade, necessidade de acompanhamento, prognóstico funcional.
 
 Responda APENAS em formato JSON válido:
+
+⚠️ INSTRUÇÕES OBRIGATÓRIAS (SIGA EXATAMENTE):
+
+**ETAPA 1 — RACIOCÍNIO CLÍNICO (Chain-of-Thought):**
+Antes de gerar o JSON, responda mentalmente:
+1. O que vejo exatamente na imagem? (descreva objetivamente)
+2. O que isso significa biomecanicamente? (carga, tensão, estabilidade)
+3. Como o peso/porte do paciente afeta esta análise?
+4. Qual minha conclusão clínica baseada nas evidências?
+
+**ETAPA 2 — CHECKLIST QUANTITATIVO:**
+- CONTE exatamente quantos parafusos estão visíveis
+- IDENTIFIQUE o segmento ósseo (epífise/diáfise/metáfise)
+- AVALIE o alinhamento (neutro/varo/valgo)
+- CLASSIFIQUE o estágio de consolidação
+
+**ETAPA 3 — CAÇA A RED FLAGS:**
+Verifique ATIVAMENTE se há:
+□ Parafusos penetrando a articulação
+□ Sinais de lise óssea ao redor dos parafusos
+□ Falha do implante (quebra, soltura)
+□ Não união ou união retardada
+□ Alinhamento inaceitável
+
+Se encontrar, mencione no "fullAnalysis". Se não, confirme que está tudo normal.
+
+**ETAPA 4 — JSON FINAL:**
+Agora gere o JSON com os 4 campos obrigatórios.
+
 {
   "validationPassed": true ou false (boolean),
   "validationError": "descrição do erro se validationPassed=false, ou null se true",
