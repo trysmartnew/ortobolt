@@ -42,6 +42,7 @@ scripts/
 !package.json
 !tsconfig*.json
 !vite.config.*
+!vercel.json
 
 # Logs e outputs de auditoria local
 *.log
