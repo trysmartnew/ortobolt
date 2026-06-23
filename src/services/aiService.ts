@@ -205,11 +205,25 @@ export async function proxyRequest(body: {
     return cached;
   }
 
-  const res = await fetch(AI_PROXY, {
-    method: 'POST',
-    headers: await buildAiProxyHeaders(),
-    body: JSON.stringify(body),
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
+
+  let res: Response;
+  try {
+    res = await fetch(AI_PROXY, {
+      method: 'POST',
+      headers: await buildAiProxyHeaders(),
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new Error('AI_PROXY_TIMEOUT: A requisição excedeu 60 segundos.');
+    }
+    throw err;
+  }
+  clearTimeout(timeoutId);
 
   if (!res.ok) {
     const errorText = await res.text();
@@ -452,6 +466,10 @@ Seja objetivo, técnico e baseado em evidências radiográficas visíveis.`;
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
+        // Validação defensiva dos campos obrigatórios
+        if (!parsed.alignment && !parsed.fullAnalysis) {
+          console.warn('AI comparison response missing required fields');
+        }
         return {
           alignment: parsed.alignment || 'Análise de alinhamento indisponível.',
           boneDensity: parsed.boneDensity || 'Análise de densidade óssea indisponível.',
@@ -650,7 +668,7 @@ export async function refineClinicalAnalysis(
 export async function getStructuredOrthopedicAnalysis(caseDescription: string): Promise<RespostaOrtopedica> {
   try {
     const contextoRAG = await buscarContextoRAG(caseDescription);
-    const promptFinal = contextoRAG 
+    const promptFinal = (contextoRAG && contextoRAG.trim().length > 0)
       ? `${ORTOBOLT_STRUCTURED_PROMPT}\n\nCONTEXTO DE LITERATURA/CASOS SIMILARES (Use estritamente se aplicável):\n${contextoRAG}`
       : ORTOBOLT_STRUCTURED_PROMPT;
 
@@ -664,7 +682,7 @@ export async function getStructuredOrthopedicAnalysis(caseDescription: string): 
     });
 
     // Limpeza de markdown caso a IA insira `json ... `
-    const cleanJson = response.replace(/^\\\json\s*|\s*\\\$/g, '').trim();
+    const cleanJson = response.replace(/^```json\s*|\s*```$/g, '').trim();
     
     // Parse e Validação em Camadas (Zod + Regras Clínicas)
     const parsed = JSON.parse(cleanJson);
