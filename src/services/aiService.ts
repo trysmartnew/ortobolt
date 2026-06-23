@@ -429,23 +429,33 @@ ${ctx}
 IMAGEM 1: Exame Pré-Operatório (baseline)
 IMAGEM 2: Exame Pós-Operatório (resultado cirúrgico)
 
-Analise COMPARATIVAMENTE as duas imagens e forneça:
+⚠️ VALIDAÇÃO DE SEGURANÇA OBRIGATÓRIA (execute ANTES da análise clínica):
 
-1. ALINHAMENTO E GEOMETRIA: Avalie eixo mecânico, ângulos articulares, posicionamento de implantes, congruência articular. Seja específico sobre melhorias ou desvios.
+1. VERIFIQUE A SEQUÊNCIA TEMPORAL: A IMAGEM 1 deve mostrar a condição ANTES da cirurgia (fratura, deformidade, sem implante). A IMAGEM 2 deve mostrar o resultado DEPOIS (implante presente, osteossíntese, correção). Se detectar INVERSÃO (implante na IMAGEM 1 mas não na IMAGEM 2), ABORTE e retorne erro.
 
-2. DENSIDADE ÓSSEA E ZONA DE INTERFACE: Avalie qualidade óssea, integração de implantes, sinais de consolidação, presença de halos radiolúcidos, distribuição de carga.
+2. CONSISTÊNCIA DE IMPLANTES: Se o caso menciona procedimento cirúrgico, a IMAGEM 2 DEVE conter implante/osteossíntese. Se não houver implante visível na IMAGEM 2, ABORTE e retorne erro.
 
-3. RECOMENDAÇÃO CLÍNICA: Sugira conduta pós-operatória, restrições de atividade, necessidade de acompanhamento, prognóstico funcional.
+3. COMPATIBILIDADE ANATÔMICA: Ambas as imagens devem ser do mesmo paciente/mesmo membro/mesma projeção radiográfica. Se detectar incompatibilidade, ABORTE e retorne erro.
+
+Se TODAS as validações passarem, proceda com a análise comparativa:
+
+4. ALINHAMENTO E GEOMETRIA: Avalie eixo mecânico, ângulos articulares, posicionamento de implantes, congruência articular. Seja específico sobre melhorias ou desvios.
+
+5. DENSIDADE ÓSSEA E ZONA DE INTERFACE: Avalie qualidade óssea, integração de implantes, sinais de consolidação, presença de halos radiolúcidos, distribuição de carga.
+
+6. RECOMENDAÇÃO CLÍNICA: Sugira conduta pós-operatória, restrições de atividade, necessidade de acompanhamento, prognóstico funcional.
 
 Responda APENAS em formato JSON válido:
 {
-  "alignment": "texto conciso sobre alinhamento (máx 80 palavras)",
-  "boneDensity": "texto conciso sobre densidade óssea (máx 80 palavras)",
-  "recommendation": "recomendação clínica direta (máx 60 palavras)",
-  "fullAnalysis": "análise completa comparativa (máx 200 palavras)"
+  "validationPassed": true ou false (boolean),
+  "validationError": "descrição do erro se validationPassed=false, ou null se true",
+  "alignment": "texto conciso sobre alinhamento (máx 80 palavras) — apenas se validationPassed=true",
+  "boneDensity": "texto conciso sobre densidade óssea (máx 80 palavras) — apenas se validationPassed=true",
+  "recommendation": "recomendação clínica direta (máx 60 palavras) — apenas se validationPassed=true",
+  "fullAnalysis": "análise completa comparativa (máx 200 palavras) — apenas se validationPassed=true"
 }
 
-Seja objetivo, técnico e baseado em evidências radiográficas visíveis.`;
+Seja objetivo, técnico e baseado em evidências radiográficas visíveis. NUNCA alucine dados não visíveis nas imagens.`;
 
     const response = await proxyRequest({
       model: PRIMARY_MODEL,
@@ -466,6 +476,14 @@ Seja objetivo, técnico e baseado em evidências radiográficas visíveis.`;
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
+        
+        // Validação de segurança: se IA detectou inconsistência, abortar
+        if (parsed.validationPassed === false) {
+          const errorMsg = parsed.validationError || 'Inconsistência detectada nas imagens pré/pós-operatórias.';
+          console.warn('[SAFETY] AI validation failed:', errorMsg);
+          throw new Error(`⚠️ VALIDAÇÃO DE SEGURANÇA: ${errorMsg}`);
+        }
+        
         // Validação defensiva dos campos obrigatórios
         if (!parsed.alignment && !parsed.fullAnalysis) {
           console.warn('AI comparison response missing required fields');
@@ -478,6 +496,10 @@ Seja objetivo, técnico e baseado em evidências radiográficas visíveis.`;
         };
       }
     } catch (parseErr) {
+      // Se for erro de segurança, propagar
+      if (parseErr instanceof Error && parseErr.message.includes('VALIDAÇÃO DE SEGURANÇA')) {
+        throw parseErr;
+      }
       console.warn('Failed to parse AI comparison response as JSON, using fallback');
     }
 
