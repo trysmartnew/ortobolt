@@ -7,12 +7,35 @@ import { z } from 'zod';
 
 // Schema rígido para respostas ortopédicas estruturadas
 export const RespostaOrtopedicaSchema = z.object({
+  // Campos originais (obrigatórios)
   diagnostico_principal: z.string(),
   diagnosticos_diferenciais: z.array(z.string()),
   confianca: z.number().min(0).max(1),
   proximos_passos: z.array(z.string()),
   tratamento_inicial_sugerido: z.string(),
-  alertas_criticos: z.array(z.string())
+  alertas_criticos: z.array(z.string()),
+  
+  // Campos quantitativos opcionais (para análise de imagens)
+  implantCount: z.object({
+    proximal: z.number().min(0).optional(),
+    distal: z.number().min(0).optional(),
+    total: z.number().min(0).optional(),
+  }).optional().describe('Contagem de parafusos/pinos visíveis na imagem'),
+  
+  alignmentStatus: z.enum(['Neutro', 'Varo', 'Valgo', 'Procurvatum', 'Recurvatum', 'Indeterminado']).optional()
+    .describe('Avaliação do eixo mecânico do membro'),
+  
+  healingStage: z.enum(['Agudo', 'Calo Mole', 'Calo Duro', 'Consolidado', 'Não União', 'Indeterminado']).optional()
+    .describe('Estágio de consolidação da fratura'),
+  
+  boneSegment: z.string().optional()
+    .describe('Segmento ósseo afetado (ex: diáfise média da tíbia)'),
+  
+  redFlags: z.array(z.string()).optional()
+    .describe('Lista de problemas críticos detectados (parafuso intra-articular, falha do implante, etc)'),
+  
+  clinicalReasoning: z.string().optional()
+    .describe('Raciocínio clínico passo a passo (Chain-of-Thought)'),
 });
 
 export type RespostaOrtopedica = z.infer<typeof RespostaOrtopedicaSchema>;
