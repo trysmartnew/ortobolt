@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.git/
+*.bkp
+*.log
+*.current
+*.pre-integration
+*.pre-copilot
+*.cpuprofile
+vite-profile-*.cpuprofile
+backup_ortobolt_patch/
+auditoria_contexto_ortobolt.json
