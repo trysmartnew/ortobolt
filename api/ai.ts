@@ -2,10 +2,10 @@
 // Gemini API via proxy — cascade flash-lite → flash
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifySupabaseBearer } from './lib/verifySupabaseJwt';
-import { sanitizeAiMessages } from './lib/anonymizeClinical';
-import { checkRateLimit, userIdFromBearer } from './lib/rateLimit';
-import { applyCors } from './lib/cors';
+import { verifySupabaseBearer } from './lib/verifySupabaseJwt.js';
+import { sanitizeAiMessages } from './lib/anonymizeClinical.js';
+import { checkRateLimit, userIdFromBearer } from './lib/rateLimit.js';
+import { applyCors } from './lib/cors.js';
 
 const RL_WINDOW_MS = 60_000;
 const RL_MAX = 30;

@@ -1,8 +1,11 @@
 // api/embeddings.ts — Vercel Serverless Function para Embeddings (Gemini)
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifySupabaseBearer } from './lib/verifySupabaseJwt';
-import { checkRateLimit, userIdFromBearer } from './lib/rateLimit';
-import { applyCors } from './lib/cors';
+
+
+
+import { verifySupabaseBearer } from './lib/verifySupabaseJwt.js';
+import { checkRateLimit, userIdFromBearer } from './lib/rateLimit.js';
+import { applyCors } from './lib/cors.js';
 
 const RL_WINDOW_MS = 60_000;
 const RL_MAX = 60;
