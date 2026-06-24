@@ -25,15 +25,15 @@ tour-audit.json
 
 scripts/
 
-scripts/
-
 # ==========================================
 # Blindagem OrtoBolt: Arquivos Locais e Dev
 # ==========================================
 # Backups automáticos e patches temporários
 *.pre-*
 *.bak
+*.bkp
 *.old
+*.txt
 
 # Scripts utilitários e automações locais da raiz
 /*.py
@@ -43,6 +43,17 @@ scripts/
 !tsconfig*.json
 !vite.config.*
 !vercel.json
+
+# Padrões específicos de scripts de patch/auditoria
+apply_*.py
+fix_*.py
+diagnose_*.py
+expand_*.py
+deploy_*.ps1
+*_audit_*.json
+real_context.json
+patch_input.txt
+ai_audit_input.txt
 
 # Logs e outputs de auditoria local
 *.log
