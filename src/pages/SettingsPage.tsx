@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Bell, Globe, FileDown, Zap, Shield, Database, RefreshCw, Check, Download } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { exportUserData } from '@/services/backupService';
+import { invalidateAiConsentCache } from '@/services/aiConsent';
 import { Card, Button, SectionHeader } from '@/components/ui';
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -47,7 +48,10 @@ export default function SettingsPage() {
 
   const save = async () => {
     setSaving(true);
-    try { localStorage.setItem('ortobolt_prefs', JSON.stringify(prefs)); addToast('Configurações salvas com sucesso!', 'success'); }
+    try {
+      localStorage.setItem('ortobolt_prefs', JSON.stringify(prefs));
+      invalidateAiConsentCache();
+      addToast('Configurações salvas com sucesso!', 'success'); }
     catch { addToast('Erro ao salvar configurações.', 'error'); }
     finally { setSaving(false); }
   };
@@ -57,7 +61,10 @@ export default function SettingsPage() {
     catch { addToast('Erro ao limpar cache.', 'error'); }
   };
 
-  const set = (key: string, val: any) => setPrefs((p: typeof prefs) => ({ ...p, [key]: val }));
+  const set = (key: string, val: unknown) => {
+    setPrefs((p: typeof prefs) => ({ ...p, [key]: val }));
+    if (key === 'autoAnalysis') invalidateAiConsentCache();
+  };
 
   return (
     <div className="p-6 max-w-2xl space-y-6">
@@ -96,8 +103,8 @@ export default function SettingsPage() {
       <Card className="p-5">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Sistema</p>
         <div>
-          <SettingRow icon={Database} title="Modelo de IA Ativo" description="Versão do modelo de visão computacional">
-            <span className="text-xs font-mono font-semibold text-primary bg-blue-50 px-2 py-1 rounded-lg">OrthoVision v3.2</span>
+          <SettingRow icon={Database} title="Modelo de IA Ativo" description="Modelo Gemini usado pelo OrthoAI">
+            <span className="text-xs font-mono font-semibold text-primary bg-blue-50 px-2 py-1 rounded-lg">gemini-2.5-flash-lite</span>
           </SettingRow>
           <SettingRow icon={Shield} title="Segurança" description="Autenticação e criptografia dos dados">
             <span className="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">✓ Ativo · TLS 1.3</span>

@@ -165,11 +165,7 @@ Saída: {
   "redFlags": [],
   "clinicalReasoning": "Paciente com histórico de fratura femoral, radiografia mostra consolidação progressiva com alinhamento adequado.",
   "reductionQuality": "Anatômica",
-  "implantPositioning": "Adequado",
-  "healingStage": "Calo Duro",
-  "boneSegment": "diáfise distal do fêmur",
-  "redFlags": [],
-  "clinicalReasoning": "Paciente com histórico de fratura femoral, radiografia mostra consolidação progressiva com alinhamento adequado."
+  "implantPositioning": "Adequado"
 }
 
 Caso clínico:

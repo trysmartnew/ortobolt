@@ -39,6 +39,7 @@ import {
   persistCaseAiAnalysis,
   setLastIntegratedCaseId,
 } from '@/services/clinicalCaseIntegrationService';
+import { setAiConsentFromProfile } from '@/services/aiConsent';
 
 export type Page =
   | 'dashboard' | 'chat' | 'analysis' | 'gallery'
@@ -294,6 +295,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!profile) return false;
 
     setUser(profile);
+    setAiConsentFromProfile(profile.preferences?.autoAnalysis);
     setIsLoggedIn(true);
     setCurrentView((prev) => prev === 'reset' ? 'reset' : 'app');
     const hasSeenTour = localStorage.getItem(`ortobolt_tour_v1_${profile.id}`);
@@ -348,6 +350,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const profile = await fetchUserProfile(supaUser.id);
     if (profile) {
       setUser(profile);
+      setAiConsentFromProfile(profile.preferences?.autoAnalysis);
       setIsLoggedIn(true);
       setCurrentView((prev) => prev === 'reset' ? 'reset' : 'app');
       const hasSeenTourSession = localStorage.getItem(`ortobolt_tour_v1_${profile.id}`);

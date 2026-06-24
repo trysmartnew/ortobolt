@@ -346,7 +346,7 @@ export default function RegisterPage() {
               </div>
               <span className="text-xs text-slate-500 leading-relaxed">
                 Aceito o envio de <strong>dados clínicos anonimizados</strong> para análise por IA (LGPD Art. 7º).
-                Nenhum dado identificável é transmitido.
+                Nomes e identificadores são removidos ou pseudonimizados antes do envio ao provedor de IA.
               </span>
             </label>
 

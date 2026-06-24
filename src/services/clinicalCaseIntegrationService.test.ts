@@ -49,7 +49,7 @@ describe('clinicalCaseIntegrationService', () => {
     expect(c.tags).toContain('integrado');
     expect(c.tags).toContain('analise-ia');
     expect(c.aiAnalysis).toBeDefined();
-    expect(c.imageUrl).toContain('data:image');
+    expect(c.exams?.[0]?.imageUrls).toEqual([]);
   });
 
   it('buildCaseTitle usa paciente e procedimento', () => {

@@ -1,47 +1,35 @@
 // api/embeddings.ts — Vercel Serverless Function para Embeddings (Gemini)
-// ✅ Mesma arquitetura de auth/CORS/fallback do api/ai.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { verifySupabaseBearer } from './lib/verifySupabaseJwt';
+import { checkRateLimit, userIdFromBearer } from './lib/rateLimit';
+import { applyCors } from './lib/cors';
+
+const RL_WINDOW_MS = 60_000;
+const RL_MAX = 60;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS
-  const origin = req.headers.origin || '';
-  const allowedOrigins = [
-    'https://ortobolt.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:4173',
-  ];
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  applyCors(res, req.headers.origin || '');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // ── [SECURITY PATCH] Autenticação Supabase (JWT Obrigatório) ──
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Authentication required' });
+  const auth = await verifySupabaseBearer(req.headers.authorization);
+  if (!auth.ok) {
+    return res.status(auth.status).json({ error: auth.error });
   }
-  
-  try {
-    const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '',
-      process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '',
-      { auth: { persistSession: false, autoRefreshToken: false } }
-    );
-    const { data, error } = await supabase.auth.getUser(authHeader.slice(7));
-    if (error || !data.user) {
-      return res.status(401).json({ error: 'Invalid or expired token' });
-    }
-  } catch (err) {
-    console.error('[Embeddings] Auth error:', err);
-    return res.status(500).json({ error: 'Authentication service error' });
+
+  const authHeader =
+    typeof req.headers.authorization === 'string'
+      ? req.headers.authorization
+      : req.headers.authorization?.[0];
+  const userId = userIdFromBearer(authHeader);
+  const rl = checkRateLimit(`emb:${userId}`, RL_MAX, RL_WINDOW_MS);
+  if (!rl.allowed) {
+    res.setHeader('Retry-After', String(rl.retryAfter));
+    return res.status(429).json({
+      error: `Taxa de requisicoes excedida. Aguarde ${rl.retryAfter}s.`,
+    });
   }
-  // ── [FIM SECURITY PATCH] ──
 
   const key = process.env.GEMINI_API_KEY;
   if (!key) {
@@ -55,19 +43,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Invalid text' });
     }
 
-    // Truncar texto muito longo (limite Gemini ~30k tokens)
     const truncatedText = text.length > 8000 ? text.slice(0, 8000) : text;
 
-    // Endpoint oficial Gemini Embeddings
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${key}`;
+    const url =
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent';
 
-    let response = await fetch(url, {
+    const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': key,
+      },
       body: JSON.stringify({
         model: 'models/gemini-embedding-001',
         content: { parts: [{ text: truncatedText }] },
-        outputDimensionality: 768
+        outputDimensionality: 768,
       }),
     });
 
@@ -78,16 +68,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const data = await response.json();
-    
-    // Validar estrutura da resposta
+
     if (!data.embedding?.values || !Array.isArray(data.embedding.values)) {
       return res.status(500).json({ error: 'Invalid embedding response structure' });
     }
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       embedding: data.embedding.values,
       dimensions: data.embedding.values.length,
-      model: 'gemini-embedding-001'
+      model: 'gemini-embedding-001',
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Erro desconhecido';
@@ -95,5 +84,3 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
-
-

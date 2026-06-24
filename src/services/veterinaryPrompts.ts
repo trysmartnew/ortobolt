@@ -1,6 +1,8 @@
 // src/services/veterinaryPrompts.ts
 // Sistema central de prompts do OrthoAI Copiloto
-// Usado por: ChatPage, AIAssistant, DashboardPage
+// Usado por: ChatPage, AIAssistant, ClinicalCopilotPanel
+
+import { anonymizePatientRef } from '@/lib/anonymizeClinical';
 
 export const VET_SYSTEM_PROMPT = `Você é o OrthoAI, um copiloto de inteligência artificial especializado em medicina veterinária ortopédica.
 
@@ -55,20 +57,13 @@ ESPECIALIDADES:
 TOM: Profissional, empático, objetivo. Linguagem técnica veterinária quando
 apropriado, mas acessível para residentes e estudantes.`;
 
-export const VET_DASHBOARD_PROMPT = `Você é o OrthoAI em modo DASHBOARD.
-Analise o contexto operacional atual e sugira 1-2 ações prioritárias.
-Seja breve (máximo 3 frases). Termine com uma pergunta sobre o próximo caso.`;
-
-export const VET_CASE_PROMPT = `Você é o OrthoAI analisando um caso específico.
-Use os dados do caso para oferecer insights clínicos relevantes.
-Priorize: diagnóstico diferencial, protocolo recomendado, sinais de alerta.`;
-
 export function buildVetMessage(
   userMessage: string,
   context?: { caseId?: string; patientName?: string; procedure?: string }
 ): string {
   if (context?.patientName) {
-    return `Caso: ${context.patientName}${context.procedure ? ` (${context.procedure})` : ''}\n\nPergunta do veterinário: ${userMessage}`;
+    const ref = anonymizePatientRef(context.patientName, context.caseId);
+    return `Caso: ${ref}${context.procedure ? ` (${context.procedure})` : ''}\n\nPergunta do veterinário: ${userMessage}`;
   }
   return userMessage;
 }
@@ -95,7 +90,9 @@ export function formatClinicalContextBlock(ctx: {
   linkedCaseId?: string;
 }): string {
   const lines: string[] = ['=== CONTEXTO CLÍNICO ==='];
-  if (ctx.patientName) lines.push(`Paciente: ${ctx.patientName}`);
+  if (ctx.patientName) {
+    lines.push(`Paciente: ${anonymizePatientRef(ctx.patientName, ctx.linkedCaseId)}`);
+  }
   if (ctx.species) lines.push(`Espécie: ${ctx.species}`);
   if (ctx.breed) lines.push(`Raça: ${ctx.breed}`);
   if (ctx.ageYears != null) lines.push(`Idade: ${ctx.ageYears} anos`);

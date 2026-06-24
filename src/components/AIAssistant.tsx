@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
 import { sendChatMessageStream } from '@/services/aiService';
 import { buildVetMessage } from '@/services/veterinaryPrompts';
+import { anonymizeCaseContext } from '@/lib/anonymizeClinical';
 import { useApp } from '@/contexts/AppContext';
 import OrthoDeepAnalysis from './OrthoDeepAnalysis';
 import { getStructuredOrthopedicAnalysis } from '@/services/aiService';
@@ -35,7 +36,7 @@ export default function AIAssistant() {
     if (!activeCase) { alert('Selecione um caso clínico primeiro.'); return; }
     setIsAnalyzing(true);
     try {
-      const ctx = `Paciente: ${activeCase.patientName}, ${activeCase.species}, ${activeCase.breed}, ${activeCase.ageYears}a, ${activeCase.weightKg}kg. Procedimento: ${activeCase.procedure}. Status: ${activeCase.status}.`;
+      const ctx = anonymizeCaseContext(activeCase);
       const result = await getStructuredOrthopedicAnalysis(ctx);
       setDeepAnalysis(result);
     } catch (err) {
@@ -93,7 +94,7 @@ export default function AIAssistant() {
 
   const quickActions = [
     { label: '🩺 Análise Profunda (RAG)', action: 'deep' },
-    { label: '🩺 Analisar caso atual', prompt: `Analise o caso ${activeCase?.patientName || 'atual'} e sugira próximos passos clínicos.` },
+    { label: '🩺 Analisar caso atual', prompt: `Analise o caso atual e sugira próximos passos clínicos.` },
     { label: '💊 Calcular dosagem', prompt: 'Preciso calcular a dosagem de um medicamento. Me ajude a coletar os dados necessários.' },
     { label: '🔍 Diagnóstico diferencial', prompt: 'Preciso de ajuda com diagnóstico diferencial. Me faça perguntas sobre o caso.' },
   ];

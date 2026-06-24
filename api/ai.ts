@@ -1,127 +1,25 @@
 // api/ai.ts — Vercel Serverless Function (Node.js Runtime)
-// ✅ Gemini API direta — 1.500 req/dia free, sem OpenRouter
-// ✅ Cascade: gemini-2.5-flash-lite (primary) → gemini-2.5-flash (fallback)
-// ✅ OpenAI-compatible endpoint do Google
-// ✅ GEMINI_API_KEY apenas no servidor
+// Gemini API via proxy — cascade flash-lite → flash
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-// [Incorporado] verifySupabaseBearer – import removido (função inline abaixo)
+import { verifySupabaseBearer } from './lib/verifySupabaseJwt';
+import { sanitizeAiMessages } from './lib/anonymizeClinical';
+import { checkRateLimit, userIdFromBearer } from './lib/rateLimit';
+import { applyCors } from './lib/cors';
 
-
-// ── Função verifySupabaseBearer (incorporada de api/lib/verifySupabaseJwt.ts) ─
-import { createClient, type User } from '@supabase/supabase-js';
-
-type VerifyAuthResult =
-  | { ok: true; user: User }
-  | { ok: false; status: 401 | 500; error: string };
-
-function createAuthClient() {
-  const url =
-    process.env.SUPABASE_URL ??
-    process.env.VITE_SUPABASE_URL;
-  const anonKey =
-    process.env.SUPABASE_ANON_KEY ??
-    process.env.VITE_SUPABASE_ANON_KEY;
-
-  if (!url || !anonKey) {
-    return null;
-  }
-
-  return createClient(url, anonKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
-
-async function verifySupabaseBearer(
-  authHeader: string | string[] | undefined
-): Promise<VerifyAuthResult> {
-  const raw =
-    typeof authHeader === 'string'
-      ? authHeader
-      : Array.isArray(authHeader)
-      ? authHeader[0]
-      : undefined;
-
-  if (!raw?.trim()) {
-    return { ok: false, status: 401, error: 'Authentication required' };
-  }
-
-  const match = raw.match(/^Bearer\s+(\S+)$/i);
-  if (!match?.[1]) {
-    return { ok: false, status: 401, error: 'Invalid Authorization header' };
-  }
-
-  const token = match[1];
-  const supabase = createAuthClient();
-
-  if (!supabase) {
-    console.error('[AI Proxy] SUPABASE_URL / SUPABASE_ANON_KEY not configured');
-    return {
-      ok: false,
-      status: 500,
-      error: 'Authentication service not configured',
-    };
-  }
-
-  const { data, error } = await supabase.auth.getUser(token);
-
-  if (error || !data.user) {
-    return { ok: false, status: 401, error: 'Invalid or expired token' };
-  }
-
-  return { ok: true, user: data.user };
-}
-// ── Rate Limiter in-memory (por userId, 30 req/min) ─────────────────────────
 const RL_WINDOW_MS = 60_000;
-const RL_MAX       = 30;
-const rlMap        = new Map<string, { count: number; resetAt: number }>();
+const RL_MAX = 30;
 
-function checkRateLimit(uid: string): { allowed: boolean; retryAfter: number } {
-  const now = Date.now();
-  const rec = rlMap.get(uid);
-  if (!rec || now >= rec.resetAt) {
-    rlMap.set(uid, { count: 1, resetAt: now + RL_WINDOW_MS });
-    return { allowed: true, retryAfter: 0 };
-  }
-  if (rec.count >= RL_MAX) {
-    return { allowed: false, retryAfter: Math.ceil((rec.resetAt - now) / 1000) };
-  }
-  rec.count++;
-  return { allowed: true, retryAfter: 0 };
-}
-
-function userIdFromToken(authHeader: string | undefined): string {
-  if (!authHeader?.startsWith('Bearer ')) return 'anon';
-  try {
-    const payload = JSON.parse(Buffer.from(authHeader.slice(7).split('.')[1], 'base64').toString());
-    return (payload.sub as string) ?? 'anon';
-  } catch {
-    return 'anon';
-  }
-}
-
-// ── Modelos Gemini (OpenAI-compatible) ───────────────────────────────────────
-const GEMINI_BASE    = 'https://generativelanguage.googleapis.com/v1beta/openai';
-const PRIMARY_MODEL  = 'gemini-2.5-flash-lite';
+const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/openai';
+const PRIMARY_MODEL = 'gemini-2.5-flash-lite';
 const FALLBACK_MODEL = 'gemini-2.5-flash';
 
-// ── Anonimizador LGPD ────────────────────────────────────────────────────────
-function anonymizeCaseContext(ctx: string): string {
-  if (typeof ctx !== 'string') return ctx;
-  return ctx
-    .replace(/\b([A-ZÁÉÍÓÚÀÂÊÔÃÕÇ][a-záéíóúàâêôãõç]+)\s([A-ZÁÉÍÓÚÀÂÊÔÃÕÇ][a-záéíóúàâêôãõç]+)\b/g, '[NOME]')
-    .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[EMAIL]')
-    .replace(/(\(?\d{2}\)?\s?\d{4,5}-?\d{4})/g, '[TELEFONE]')
-    .replace(/\d{3}\.?\d{3}\.?\d{3}-?\d{2}/g, '[CPF]');
-}
-
-// ── Chamada Gemini com retry ──────────────────────────────────────────────────
 async function callGemini(
   model: string,
   messages: Array<{ role: string; content: unknown }>,
   maxTokens: number,
   key: string,
-  stream = false
+  options: { stream?: boolean; jsonMode?: boolean } = {}
 ): Promise<Response> {
   const maxAttempts = 3;
   let lastResponse: Response | null = null;
@@ -139,7 +37,8 @@ async function callGemini(
           model,
           messages,
           max_tokens: maxTokens,
-          ...(stream && { stream: true }),
+          ...(options.stream && { stream: true }),
+          ...(options.jsonMode && { response_format: { type: 'json_object' } }),
         }),
       });
 
@@ -160,35 +59,25 @@ async function callGemini(
   throw lastError ?? new Error('Gemini unreachable');
 }
 
-// ── Handler ───────────────────────────────────────────────────────────────────
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // 1. CORS
-  const origin = req.headers.origin || '';
-  const allowedOrigins = [
-    'https://ortobolt.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:4173',
-  ];
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  applyCors(res, req.headers.origin || '');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // 2. Autenticação Supabase (JWT obrigatório)
   const auth = await verifySupabaseBearer(req.headers.authorization);
   if (!auth.ok) {
     return res.status(auth.status).json({ error: auth.error });
   }
 
-  // 2b. Rate limiting por usuário
-  const userId = userIdFromToken(req.headers.authorization);
-  const rl     = checkRateLimit(userId);
+  const authHeader =
+    typeof req.headers.authorization === 'string'
+      ? req.headers.authorization
+      : req.headers.authorization?.[0];
+  const userId = userIdFromBearer(authHeader);
+  const rl = checkRateLimit(`ai:${userId}`, RL_MAX, RL_WINDOW_MS);
   if (!rl.allowed) {
     res.setHeader('Retry-After', String(rl.retryAfter));
     return res.status(429).json({
@@ -196,7 +85,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  // 3. Chave Gemini
   const key = process.env.GEMINI_API_KEY;
   if (!key) {
     console.error('[AI Proxy] GEMINI_API_KEY não configurada');
@@ -209,35 +97,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       messages: { role: string; content: unknown }[];
       max_tokens?: number;
       stream?: boolean;
+      json_mode?: boolean;
     };
 
-    // 4. Payload size
     if (JSON.stringify(body).length > 5 * 1024 * 1024) {
       return res.status(413).json({ error: 'Payload too large (max 5MB)' });
     }
 
-    // 5. LGPD
-    const sanitizedMessages = body.messages.map((msg) => {
-      if (msg.role === 'user' && typeof msg.content === 'string') {
-        return { ...msg, content: anonymizeCaseContext(msg.content) };
-      }
-      return msg;
-    });
-
+    const sanitizedMessages = sanitizeAiMessages(body.messages);
     const maxTokens = Math.min(body.max_tokens ?? 1000, 1000);
-    const isStream  = body.stream === true;
+    const isStream = body.stream === true;
+    const jsonMode = body.json_mode === true;
 
-    // 6. Stream SSE
     if (isStream) {
-      let streamRes = await callGemini(PRIMARY_MODEL, sanitizedMessages, maxTokens, key, true).catch(
-        () => new Response(null, { status: 503 })
-      );
+      let streamRes = await callGemini(
+        PRIMARY_MODEL,
+        sanitizedMessages,
+        maxTokens,
+        key,
+        { stream: true }
+      ).catch(() => new Response(null, { status: 503 }));
 
       if (!streamRes.ok && [429, 503, 500].includes(streamRes.status)) {
-        console.warn(`[AI Proxy] Stream primary failed (${streamRes.status}). Fallback → ${FALLBACK_MODEL}`);
-        streamRes = await callGemini(FALLBACK_MODEL, sanitizedMessages, maxTokens, key, true).catch(
-          () => new Response(null, { status: 503 })
+        console.warn(
+          `[AI Proxy] Stream primary failed (${streamRes.status}). Fallback → ${FALLBACK_MODEL}`
         );
+        streamRes = await callGemini(FALLBACK_MODEL, sanitizedMessages, maxTokens, key, {
+          stream: true,
+        }).catch(() => new Response(null, { status: 503 }));
       }
 
       if (!streamRes.ok) {
@@ -263,20 +150,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
-    // 7. Request normal — Primary
     let response: Response;
     try {
-      response = await callGemini(PRIMARY_MODEL, sanitizedMessages, maxTokens, key);
+      response = await callGemini(PRIMARY_MODEL, sanitizedMessages, maxTokens, key, { jsonMode });
     } catch (err) {
       console.error('[AI Proxy] Primary network error:', err);
       response = new Response(null, { status: 503 });
     }
 
-    // 8. Fallback
     if (!response.ok && [429, 503, 500].includes(response.status)) {
-      console.warn(`[AI Proxy] Primary failed (${response.status}). Fallback → ${FALLBACK_MODEL}`);
+      console.warn(
+        `[AI Proxy] Primary failed (${response.status}). Fallback → ${FALLBACK_MODEL}`
+      );
       try {
-        response = await callGemini(FALLBACK_MODEL, sanitizedMessages, maxTokens, key);
+        response = await callGemini(FALLBACK_MODEL, sanitizedMessages, maxTokens, key, {
+          jsonMode,
+        });
       } catch (err) {
         console.error('[AI Proxy] Fallback network error:', err);
         return res.status(503).json({ error: 'All Gemini providers unreachable' });
@@ -291,13 +180,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const data = await response.json();
     return res.status(200).json(data);
-
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Erro desconhecido';
     console.error('[AI Proxy] Internal error:', msg);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
-
-
-

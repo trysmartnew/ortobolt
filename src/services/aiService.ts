@@ -1,9 +1,7 @@
 // src/services/aiService.ts
-// ✅ C-01: Chave removida do cliente — todas as chamadas vão para /api/ai
-// ✅ C-04: Anonimização adicional no cliente antes de enviar ao proxy
-// ✅ Modelo: Gemma 4 27B (free) para chat + visão
-// ✅ Q-02: stripThinking() remove bloco <think>…</think> antes de exibir
-// ✅ CACHE: getCacheKey usa msgCount:lastContent (não SYSTEM_PROMPT)
+// Chave removida do cliente — todas as chamadas vão para /api/ai
+// Anonimização no cliente + servidor; consentimento via aiConsent
+// Modelo: Gemini 2.5 Flash Lite (primary) → Flash (fallback)
 
 import type { ClinicalCase } from '@/types/index';
 import type { ClinicalCopilotPayload } from '@/types/clinicalCopilot';
@@ -12,7 +10,22 @@ import {
   REFINE_ANALYSIS_PROMPT,
 } from '@/services/veterinaryPrompts';
 import { getSupabaseAccessToken } from '@/services/supabase';
-import { RespostaOrtopedicaSchema, validarRespostaMedica, ORTOBOLT_STRUCTURED_PROMPT, buscarContextoRAG, type RespostaOrtopedica } from './ortoboltEngine';
+import {
+  assertAiConsentGranted,
+  AI_CONSENT_DENIED_MESSAGE,
+  AiConsentDeniedError,
+} from '@/services/aiConsent';
+import {
+  anonymizeCaseContext,
+  sanitizeProxyMessages,
+  anonymizeClinicalText,
+} from '@/lib/anonymizeClinical';
+import {
+  validarRespostaMedica,
+  ORTOBOLT_STRUCTURED_PROMPT,
+  buscarContextoRAG,
+  type RespostaOrtopedica,
+} from './ortoboltEngine';
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
 interface CacheEntry {
@@ -45,22 +58,38 @@ interface AIResponse {
 const responseCache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
 
+function hashContent(s: string): string {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  }
+  return (h >>> 0).toString(36);
+}
+
+function contentFingerprint(content: unknown): string {
+  if (typeof content === 'string') return content.slice(0, 300);
+  if (Array.isArray(content)) {
+    return content
+      .map((c) =>
+        c.type === 'text'
+          ? c.text ?? ''
+          : `img:${c.image_url?.url?.slice(-64) ?? 'none'}`
+      )
+      .join('|')
+      .slice(0, 300);
+  }
+  return '';
+}
+
 function getCacheKey(model: string, messages: ProxyMessage[]): string {
+  const systemSig = messages
+    .filter((m) => m.role === 'system')
+    .map((m) => contentFingerprint(m.content))
+    .join('|');
   const msgCount = messages.length;
   const lastMsg = messages[messages.length - 1];
-  const lastContent =
-    typeof lastMsg?.content === 'string'
-      ? lastMsg.content
-      : Array.isArray(lastMsg?.content)
-      ? lastMsg.content
-          .map((c) =>
-            c.type === 'text'
-              ? c.text ?? ''
-              : `img:${c.image_url?.url?.slice(-64) ?? 'none'}`
-          )
-          .join('|')
-      : '';
-  return `${model}:${msgCount}:${lastContent.slice(0, 300)}`;
+  const lastContent = contentFingerprint(lastMsg?.content);
+  return `${model}:${hashContent(systemSig)}:${msgCount}:${lastContent}`;
 }
 
 function getCachedResponse(key: string): string | null {
@@ -192,13 +221,17 @@ Cite intervalo de normalidade ao reportar valores.
 Para casos críticos, indique urgência na primeira linha.
 Cálculos são ORIENTATIVOS — confirmar com instrumentação física antes de qualquer procedimento.`;
 
-// ── proxyRequest (modo JSON — analyzeImage, getCaseAISuggestion) ──────────────
+// ── proxyRequest (modo JSON — analyzeImage, structured analysis) ──────────────
 export async function proxyRequest(body: {
   model: string;
   messages: ProxyMessage[];
   max_tokens?: number;
+  json_mode?: boolean;
 }): Promise<string> {
-  const cacheKey = getCacheKey(body.model, body.messages);
+  assertAiConsentGranted();
+
+  const sanitizedMessages = sanitizeProxyMessages(body.messages);
+  const cacheKey = getCacheKey(body.model, sanitizedMessages);
   const cached = getCachedResponse(cacheKey);
   if (cached) {
     if (import.meta.env.DEV) console.log('📦 Cache hit:', cacheKey.slice(0, 40));
@@ -213,7 +246,12 @@ export async function proxyRequest(body: {
     res = await fetch(AI_PROXY, {
       method: 'POST',
       headers: await buildAiProxyHeaders(),
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        model: body.model,
+        messages: sanitizedMessages,
+        max_tokens: body.max_tokens,
+        ...(body.json_mode && { json_mode: true }),
+      }),
       signal: controller.signal,
     });
   } catch (err) {
@@ -241,14 +279,7 @@ export async function proxyRequest(body: {
   return result;
 }
 
-// ── Anonimizador de paciente (LGPD — camada cliente) ─────────────────────────
-function anonymizePatientName(
-  name: string | undefined,
-  id: string | undefined
-): string {
-  if (!name) return 'Paciente';
-  return id ? `Paciente-${id.slice(-4).toUpperCase()}` : 'Paciente-XXXX';
-}
+export { AI_CONSENT_DENIED_MESSAGE, AiConsentDeniedError };
 
 // ── sendChatMessage (legado — mantido para compatibilidade) ───────────────────
 export async function sendChatMessage(
@@ -267,6 +298,7 @@ export async function sendChatMessage(
     });
   } catch (err) {
     console.error('AI chat error:', err);
+    if (err instanceof AiConsentDeniedError) return err.message;
     return mapAiProxyError(
       err,
       '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.'
@@ -280,14 +312,16 @@ export async function sendChatMessageStream(
   history: { role: 'user' | 'assistant'; content: string }[],
   onChunk: (accumulatedText: string) => void
 ): Promise<string> {
-  const messages: ProxyMessage[] = [
+  assertAiConsentGranted();
+
+  const messages: ProxyMessage[] = sanitizeProxyMessages([
     { role: 'system', content: SYSTEM_PROMPT },
     ...history.map((m) => ({
       role: m.role as 'user' | 'assistant',
       content: m.content,
     })),
     { role: 'user', content: userMessage },
-  ];
+  ]);
 
   try {
     const res = await fetch(AI_PROXY, {
@@ -343,10 +377,13 @@ export async function sendChatMessageStream(
     return stripThinking(accumulated) || 'Resposta não disponível.';
   } catch (err) {
     console.error('AI chat stream error:', err);
-    const msg = mapAiProxyError(
-      err,
-      '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.'
-    );
+    const msg =
+      err instanceof AiConsentDeniedError
+        ? err.message
+        : mapAiProxyError(
+            err,
+            '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.'
+          );
     onChunk(msg);
     return msg;
   }
@@ -360,21 +397,13 @@ export async function analyzeImage(
   try {
     // ✅ Comprimir imagem antes de enviar (reduz payload em ~70%)
     const compressed = await compressImageBase64(imageBase64);
-    
-    const patientRef = caseInfo
-      ? anonymizePatientName(caseInfo.patientName, caseInfo.id)
-      : 'Paciente';
 
-    const ctx = caseInfo
-      ? `Paciente: ${patientRef}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears}a, ${caseInfo.weightKg}kg. Procedimento: ${caseInfo.procedure}. Status: ${caseInfo.status ?? 'pending'}.`
-      : '';
+    const ctx = caseInfo ? anonymizeCaseContext(caseInfo) : '';
 
-    // INCREMENTO 1: Contexto dinâmico do paciente para análise biomecânica
-    const patientContext = caseInfo 
+    const patientContext = caseInfo
       ? `PACIENTE: ${caseInfo.species} | ${caseInfo.breed} | ${caseInfo.ageYears} anos | ${caseInfo.weightKg} kg
 IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste paciente.`
       : '';
-
 
     const promptText = caseInfo
       ? caseInfo.status === 'completed'
@@ -398,6 +427,7 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
     });
   } catch (err) {
     console.error('Vision error:', err);
+    if (err instanceof AiConsentDeniedError) return err.message;
     return mapAiProxyError(
       err,
       '⚠️ Erro na análise de imagem. Verifique o formato (JPG/PNG/WEBP, máx. 15MB) e tente novamente.'
@@ -422,13 +452,7 @@ export async function analyzeImagesComparison(
     const compressedBefore = await compressImageBase64(beforeBase64);
     const compressedAfter = await compressImageBase64(afterBase64);
 
-    const patientRef = caseInfo
-      ? anonymizePatientName(caseInfo.patientName, caseInfo.id)
-      : 'Paciente';
-
-    const ctx = caseInfo
-      ? `Paciente: ${patientRef}, ${caseInfo.species}, ${caseInfo.breed}, ${caseInfo.ageYears}a, ${caseInfo.weightKg}kg. Procedimento: ${caseInfo.procedure}.`
-      : '';
+    const ctx = caseInfo ? anonymizeCaseContext(caseInfo) : '';
 
     const promptText = `Você é um especialista em ortopedia veterinária analisando uma comparação pré e pós-operatória.
 
@@ -507,7 +531,7 @@ Seja objetivo, técnico e baseado em evidências radiográficas visíveis. NUNCA
           ],
         },
       ],
-      max_tokens: 1500,
+      max_tokens: 1000,
     });
 
     try {
@@ -549,6 +573,7 @@ Seja objetivo, técnico e baseado em evidências radiográficas visíveis. NUNCA
     };
   } catch (err) {
     console.error('Comparison analysis error:', err);
+    if (err instanceof AiConsentDeniedError) throw err;
     throw new Error(
       mapAiProxyError(
         err,
@@ -558,51 +583,14 @@ Seja objetivo, técnico e baseado em evidências radiográficas visíveis. NUNCA
   }
 }
 
-// ── getCaseAISuggestion ───────────────────────────────────────────────────────
-export async function getCaseAISuggestion(
-  caseInfo: Partial<ClinicalCase>
-): Promise<string> {
-  try {
-    const patientRef = anonymizePatientName(
-      caseInfo.patientName,
-      caseInfo.id
-    );
-    const ctx =
-      `CASO: ${caseInfo.title}. Paciente: ${patientRef}, ${caseInfo.species},` +
-      `${caseInfo.breed}, ${caseInfo.ageYears} anos, ${caseInfo.weightKg}kg.` +
-      `Procedimento: ${caseInfo.procedure}. Status: ${caseInfo.status}. Risco: ${caseInfo.riskLevel}.`;
-
-    return await proxyRequest({
-      model: PRIMARY_MODEL,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        {
-          role: 'user',
-          content: (
-            caseInfo.status === 'completed'
-              ? `${ctx}\n\nAvalie a evolução pós-operatória. Máx. 120 palavras: evolução clínica, achados atuais, prognóstico e condutas recomendadas.`
-              : caseInfo.status === 'critical'
-              ? `${ctx}\n\nUrgência clínica. Máx. 80 palavras: conduta imediata, estabilização e encaminhamento se necessário.`
-              : caseInfo.status === 'in_analysis'
-              ? `${ctx}\n\nAnalise o caso. Máx. 150 palavras: achados, diagnóstico diferencial, implante com dimensões e protocolo anestésico com doses pelo peso.`
-              : `${ctx}\n\nPlanejamento pré-cirúrgico. Máx. 150 palavras: implante com dimensões, cálculo cirúrgico se aplicável e protocolo anestésico com doses pelo peso.`
-          ),
-        },
-      ],
-      max_tokens: 800,
-    });
-  } catch (err) {
-    console.error('AI suggestion error:', err);
-    return '⚠️ Erro ao gerar sugestão de IA. Tente novamente em alguns instantes.';
-  }
-}
-
 // ── Copiloto Clínico — radiografia + contexto + histórico ─────────────────────
 
 export async function sendClinicalCopilotStream(
   payload: ClinicalCopilotPayload,
   onChunk: (accumulatedText: string) => void
 ): Promise<string> {
+  assertAiConsentGranted();
+
   const compressed = await compressImageBase64(payload.imageBase64);
   const imageDataUrl = buildImageDataUrl(compressed);
 
@@ -614,7 +602,7 @@ export async function sendClinicalCopilotStream(
 
   const userText = `[Radiografia anexada]\n\nPergunta do veterinário:\n${payload.userMessage}`;
 
-  const messages: ProxyMessage[] = [
+  const messages: ProxyMessage[] = sanitizeProxyMessages([
     { role: 'system', content: systemContent },
     ...payload.history.map((m) => ({
       role: m.role as 'user' | 'assistant',
@@ -624,7 +612,7 @@ export async function sendClinicalCopilotStream(
       role: 'user',
       content: buildMultimodalUserContent(userText, imageDataUrl),
     },
-  ];
+  ]);
 
   try {
     const res = await fetch(AI_PROXY, {
@@ -633,7 +621,7 @@ export async function sendClinicalCopilotStream(
       body: JSON.stringify({
         model: PRIMARY_MODEL,
         messages,
-        max_tokens: 1200,
+        max_tokens: 1000,
         stream: true,
       }),
     });
@@ -680,7 +668,10 @@ export async function sendClinicalCopilotStream(
     return stripThinking(accumulated) || 'Resposta não disponível.';
   } catch (err) {
     console.error('Clinical copilot stream error:', err);
-    const msg = mapAiProxyError(err, 'Erro ao conectar com o copiloto.');
+    const msg =
+      err instanceof AiConsentDeniedError
+        ? err.message
+        : mapAiProxyError(err, 'Erro ao conectar com o copiloto.');
     onChunk(msg);
     throw new Error(msg);
   }
@@ -716,7 +707,7 @@ export async function refineClinicalAnalysis(
           content: buildMultimodalUserContent(prompt, imageDataUrl),
         },
       ],
-      max_tokens: 1200,
+      max_tokens: 1000,
     });
   } catch (err) {
     console.error('Refine analysis error:', err);
@@ -724,31 +715,34 @@ export async function refineClinicalAnalysis(
   }
 }
 
-// ── ✅ NOVO: Análise Ortopédica Estruturada (JSON + Validação em Camadas) ──
-export async function getStructuredOrthopedicAnalysis(caseDescription: string): Promise<RespostaOrtopedica> {
+// ── Análise Ortopédica Estruturada (JSON + Validação em Camadas) ──
+export async function getStructuredOrthopedicAnalysis(
+  caseDescription: string
+): Promise<RespostaOrtopedica> {
   try {
-    const contextoRAG = await buscarContextoRAG(caseDescription);
-    const promptFinal = (contextoRAG && contextoRAG.trim().length > 0)
-      ? `${ORTOBOLT_STRUCTURED_PROMPT}\n\nCONTEXTO DE LITERATURA/CASOS SIMILARES (Use estritamente se aplicável):\n${contextoRAG}`
-      : ORTOBOLT_STRUCTURED_PROMPT;
+    const descAnon = anonymizeClinicalText(caseDescription);
+    const contextoRAG = await buscarContextoRAG(descAnon);
+    const promptFinal =
+      contextoRAG && contextoRAG.trim().length > 0
+        ? `${ORTOBOLT_STRUCTURED_PROMPT}\n\nCONTEXTO DE LITERATURA/CASOS SIMILARES (Use estritamente se aplicável):\n${contextoRAG}`
+        : ORTOBOLT_STRUCTURED_PROMPT;
 
     const response = await proxyRequest({
       model: PRIMARY_MODEL,
       messages: [
         { role: 'system', content: promptFinal },
-        { role: 'user', content: caseDescription }
+        { role: 'user', content: descAnon },
       ],
-      max_tokens: 800,
+      max_tokens: 1000,
+      json_mode: true,
     });
 
-    // Limpeza de markdown caso a IA insira `json ... `
     const cleanJson = response.replace(/^```json\s*|\s*```$/g, '').trim();
-    
-    // Parse e Validação em Camadas (Zod + Regras Clínicas)
     const parsed = JSON.parse(cleanJson);
     return validarRespostaMedica(parsed);
   } catch (err) {
     console.error('Erro na análise estruturada:', err);
+    if (err instanceof AiConsentDeniedError) throw err;
     throw new Error('Falha ao gerar análise estruturada. Verifique os dados do caso.');
   }
 }
