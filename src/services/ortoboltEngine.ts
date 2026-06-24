@@ -4,6 +4,7 @@
 // ✅ Importar em: AIAssistant.tsx, AnalysisPage.tsx
 
 import { z } from 'zod';
+import { getSupabaseAccessToken } from '@/services/supabase';
 
 // Schema rígido para respostas ortopédicas estruturadas
 export const RespostaOrtopedicaSchema = z.object({
@@ -86,7 +87,13 @@ Saída: {
   "confianca": 0.85,
   "proximos_passos": ["Radiografia de bacia em posição VD com extensão", "Avaliação de função renal"],
   "tratamento_inicial_sugerido": "Restrição de exercício, controle de peso, AINE (ex: Meloxicam 0.1mg/kg/dia).",
-  "alertas_criticos": ["Verificar função renal e hepática antes de iniciar AINEs."]
+  "alertas_criticos": ["Verificar função renal e hepática antes de iniciar AINEs."],
+  "implantCount": { "proximal": 3, "distal": 4, "total": 7 },
+  "alignmentStatus": "Neutro",
+  "healingStage": "Calo Duro",
+  "boneSegment": "diáfise distal do fêmur",
+  "redFlags": [],
+  "clinicalReasoning": "Paciente com histórico de fratura femoral, radiografia mostra consolidação progressiva com alinhamento adequado."
 }
 
 Caso clínico:
@@ -94,9 +101,12 @@ Caso clínico:
 
 // ── ✅ NOVO: RAG (Retrieval-Augmented Generation) ──
 export async function getEmbedding(text: string): Promise<number[]> {
+  const token = await getSupabaseAccessToken();
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
   const res = await fetch('/api/embeddings', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({ text }),
   });
   if (!res.ok) throw new Error('Falha ao gerar embedding');
@@ -121,7 +131,7 @@ export async function buscarContextoRAG(descricaoCaso: string): Promise<string> 
 
     if (error || !data || data.length === 0) return '';
 
-    return data.map((doc: any) => `FONTE: \nCONTEÚDO: `).join('\n\n');
+    return data.map((doc: any) => `FONTE: ${doc.source ?? ''}\nCONTEÚDO: ${doc.content ?? ''}`).join('\n\n');
   } catch (err) {
     console.error('Erro no RAG:', err);
     return '';

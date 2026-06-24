@@ -56,7 +56,7 @@ function getCacheKey(model: string, messages: ProxyMessage[]): string {
           .map((c) =>
             c.type === 'text'
               ? c.text ?? ''
-              : `img:${c.image_url?.url?.length ?? 0}`
+              : `img:${c.image_url?.url?.slice(-64) ?? 'none'}`
           )
           .join('|')
       : '';
@@ -378,13 +378,14 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
 
     const promptText = caseInfo
       ? caseInfo.status === 'completed'
-        ? `\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
-        : `\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.`
+        ? `\n\n${patientContext}\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
+        : `\n\n${patientContext}\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.`
       : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.`;
 
     return await proxyRequest({
       model: PRIMARY_MODEL,
       messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
         {
           role: 'user',
           content: buildMultimodalUserContent(
@@ -488,7 +489,8 @@ Agora gere o JSON com os 4 campos obrigatórios.
   "alignment": "texto conciso sobre alinhamento (máx 80 palavras) — apenas se validationPassed=true",
   "boneDensity": "texto conciso sobre densidade óssea (máx 80 palavras) — apenas se validationPassed=true",
   "recommendation": "recomendação clínica direta (máx 60 palavras) — apenas se validationPassed=true",
-  "fullAnalysis": "análise completa comparativa (máx 200 palavras) — apenas se validationPassed=true"
+  "fullAnalysis": "análise completa comparativa (máx 200 palavras) — apenas se validationPassed=true",
+  "clinicalReasoning": "raciocínio clínico passo a passo (Chain-of-Thought) — apenas se validationPassed=true"
 }
 
 Seja objetivo, técnico e baseado em evidências radiográficas visíveis. NUNCA alucine dados não visíveis nas imagens.`;
