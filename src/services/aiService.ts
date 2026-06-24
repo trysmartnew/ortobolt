@@ -468,79 +468,45 @@ ${ctx}
 IMAGEM 1: Exame Pré-Operatório (baseline)
 IMAGEM 2: Exame Pós-Operatório (resultado cirúrgico)
 
-⚠️ VALIDAÇÃO DE SEGURANÇA OBRIGATÓRIA (execute ANTES da análise clínica):
+⚠️ VALIDAÇÃO DE SEGURANÇA OBRIGATÓRIA:
+1. VERIFIQUE A SEQUÊNCIA TEMPORAL: IMAGEM 1 deve mostrar ANTES da cirurgia. IMAGEM 2 deve mostrar DEPOIS.
+2. CONSISTÊNCIA DE IMPLANTES: Se menciona procedimento, IMAGEM 2 DEVE conter implante.
+3. Se detectar INVERSÃO ou inconsistência, retorne validationPassed=false.
 
-1. VERIFIQUE A SEQUÊNCIA TEMPORAL: A IMAGEM 1 deve mostrar a condição ANTES da cirurgia (fratura, deformidade, sem implante). A IMAGEM 2 deve mostrar o resultado DEPOIS (implante presente, osteossíntese, correção). Se detectar INVERSÃO (implante na IMAGEM 1 mas não na IMAGEM 2), ABORTE e retorne erro.
+Se validações passarem, analise:
 
-2. CONSISTÊNCIA DE IMPLANTES: Se o caso menciona procedimento cirúrgico, a IMAGEM 2 DEVE conter implante/osteossíntese. Se não houver implante visível na IMAGEM 2, ABORTE e retorne erro.
+4. ALINHAMENTO E GEOMETRIA: Avalie eixo mecânico, ângulos articulares, posicionamento de implantes.
+5. DENSIDADE ÓSSEA: Avalie qualidade óssea, integração de implantes, sinais de consolidação.
+6. RECOMENDAÇÃO CLÍNICA: Sugira conduta pós-operatória e prognóstico.
 
-3. COMPATIBILIDADE ANATÔMICA: Ambas as imagens devem ser do mesmo paciente/mesmo membro/mesma projeção radiográfica. Se detectar incompatibilidade, ABORTE e retorne erro.
+7. MÉTRICAS QUANTITATIVAS (estimativas visuais):
+   - norbergAngle: ângulo de Norberg em graus (normal: 105°±7°)
+   - acetabularAngle: ângulo acetabular em graus (normal: 30°-35°)
+   - tpaAngle: ângulo do plateau tibial em graus (normal: 18°-25°)
+   - boneDensityPercent: estimativa visual 0-100 (100=ótima)
+   - anatomicalPoints: pontos relevantes [{x: 0-100, y: 0-100, label: string}]
 
-Se TODAS as validações passarem, proceda com a análise comparativa:
-
-4. ALINHAMENTO E GEOMETRIA: Avalie eixo mecânico, ângulos articulares, posicionamento de implantes, congruência articular. Seja específico sobre melhorias ou desvios.
-
-5. DENSIDADE ÓSSEA E ZONA DE INTERFACE: Avalie qualidade óssea, integração de implantes, sinais de consolidação, presença de halos radiolúcidos, distribuição de carga.
-
-6. RECOMENDAÇÃO CLÍNICA: Sugira conduta pós-operatória, restrições de atividade, necessidade de acompanhamento, prognóstico funcional.
-
-Responda APENAS em formato JSON válido:
-
-⚠️ INSTRUÇÕES OBRIGATÓRIAS (SIGA EXATAMENTE):
-
-**ETAPA 1 — RACIOCÍNIO CLÍNICO (Chain-of-Thought):**
-Antes de gerar o JSON, responda mentalmente:
-1. O que vejo exatamente na imagem? (descreva objetivamente)
-2. O que isso significa biomecanicamente? (carga, tensão, estabilidade)
-3. Como o peso/porte do paciente afeta esta análise?
-4. Qual minha conclusão clínica baseada nas evidências?
-
-**ETAPA 2 — CHECKLIST QUANTITATIVO:**
-- CONTE exatamente quantos parafusos estão visíveis
-- IDENTIFIQUE o segmento ósseo (epífise/diáfise/metáfise)
-- AVALIE o alinhamento (neutro/varo/valgo)
-- CLASSIFIQUE o estágio de consolidação
-
-**ETAPA 3 — CAÇA A RED FLAGS:**
-Verifique ATIVAMENTE se há:
-□ Parafusos penetrando a articulação
-□ Sinais de lise óssea ao redor dos parafusos
-□ Falha do implante (quebra, soltura)
-□ Não união ou união retardada
-□ Alinhamento inaceitável
-
-Se encontrar, mencione no "fullAnalysis". Se não, confirme que está tudo normal.
-
-**ETAPA 4 — JSON FINAL:**
-Agora gere o JSON com os 4 campos obrigatórios + métricas quantitativas.
+Responda APENAS em JSON válido:
 
 {
-  "validationPassed": true ou false (boolean),
-  "validationError": "descrição do erro se validationPassed=false, ou null se true",
-  "alignment": "texto conciso sobre alinhamento (máx 80 palavras) — apenas se validationPassed=true",
-  "boneDensity": "texto conciso sobre densidade óssea (máx 80 palavras) — apenas se validationPassed=true",
-  "recommendation": "recomendação clínica direta (máx 60 palavras) — apenas se validationPassed=true",
-  "fullAnalysis": "análise completa comparativa (máx 200 palavras) — apenas se validationPassed=true",
-  "clinicalReasoning": "raciocínio clínico passo a passo (Chain-of-Thought) — apenas se validationPassed=true",
+  "validationPassed": true ou false,
+  "validationError": "descrição do erro ou null",
+  "alignment": "texto conciso (máx 80 palavras)",
+  "boneDensity": "texto conciso (máx 80 palavras)",
+  "recommendation": "recomendação direta (máx 60 palavras)",
+  "fullAnalysis": "análise completa (máx 200 palavras)",
+  "clinicalReasoning": "raciocínio passo a passo",
   "metrics": {
-    "norbergAngle": número inteiro (graus, ex: 98) ou null se não aplicável,
-    "acetabularAngle": número inteiro (graus, ex: 35) ou null se não aplicável,
-    "tpaAngle": número inteiro (graus, ex: 22) ou null se não aplicável,
-    "boneDensityPercent": número inteiro (0-100, estimativa visual) ou null,
-    "anatomicalPoints": array de objetos [{ "x": número (0-100), "y": número (0-100), "label": string }] ou array vazio
+    "norbergAngle": número ou null,
+    "acetabularAngle": número ou null,
+    "tpaAngle": número ou null,
+    "boneDensityPercent": número ou null,
+    "anatomicalPoints": []
   }
 }
 
-⚠️ INSTRUÇÕES PARA MÉTRICAS:
-- norbergAngle: meça o ângulo entre a linha vertical e a linha do centro da cabeça femoral ao bordo cranial do acetábulo (normal: 105°±7°)
-- acetabularAngle: ângulo entre a linha horizontal e a linha do bordo cranial do acetábulo (normal: 30°-35°)
-- tpaAngle: ângulo do plateau tibial em relação à linha longitudinal da tíbia (normal: 18°-25°)
-- boneDensityPercent: estimativa visual de densidade óssea (100=ótima, 70=moderada, <50=baixa)
-- anatomicalPoints: coordenadas percentuais (0-100) de pontos anatômicos relevantes na imagem
-- Se não for possível estimar com confiança, retorne null para o campo específico
-- ADICIONE no final do fullAnalysis: "⚠️ Métricas são estimativas visuais por IA - validar com medição manual"
-
-Seja objetivo, técnico e baseado em evidências radiográficas visíveis. NUNCA alucine dados não visíveis nas imagens.`;
+⚠️ ADICIONE no fullAnalysis: "Métricas são estimativas visuais - validar manualmente."
+Seja objetivo e técnico. NUNCA alucine dados não visíveis.`;
 
     const response = await proxyRequest({
       model: PRIMARY_MODEL,
