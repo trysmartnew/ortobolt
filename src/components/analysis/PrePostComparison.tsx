@@ -30,6 +30,13 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
     boneDensity: string;
     recommendation: string;
     fullAnalysis: string;
+    metrics?: {
+      norbergAngle?: number;
+      acetabularAngle?: number;
+      tpaAngle?: number;
+      boneDensityPercent?: number;
+      anatomicalPoints?: Array<{ x: number; y: number; label: string }>;
+    };
   } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
@@ -102,6 +109,11 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
       const afterBase64 = imageAfter.split(',')[1] || imageAfter;
 
       const result = await analyzeImagesComparison(beforeBase64, afterBase64);
+
+      // Extrair métricas quantitativas se disponíveis
+      if (result.metrics) {
+        console.log('[OrtoBolt] Métricas quantitativas recebidas:', result.metrics);
+      }
 
       setAiAnalysisResult({
         alignment: result.alignment,
@@ -366,6 +378,16 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
       {/* Box Dinâmico de Resultados da IA OrtoBolt */}
       {aiAnalysisResult && (
         <div className="bg-slate-900 border-b border-slate-800 p-4 px-6 animate-fade-in">
+          {/* Disclaimer de segurança para métricas estimadas */}
+          {aiAnalysisResult?.metrics && (
+            <div className="mb-3 flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <div className="text-[11px] text-amber-200">
+                <strong className="font-semibold">⚠️ Aviso de Segurança:</strong> As métricas exibidas são estimativas visuais geradas por IA. 
+                Valide clinicamente com medição manual antes de tomar decisões cirúrgicas.
+              </div>
+            </div>
+          )}
           <div className="flex items-start gap-3">
             <div className="p-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-md mt-0.5">
               <Brain className="w-4 h-4 text-cyan-400" />
@@ -483,6 +505,75 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                   <div className="absolute bottom-3 right-3 bg-slate-950/90 px-2.5 py-1 rounded text-[10px] font-semibold text-emerald-400 border border-slate-800 uppercase tracking-wider">
                     ESTUDO EVOLUTIVO
                   </div>
+                  
+                  {/* Overlays SVG com métricas da IA */}
+                  {aiAnalysisResult?.metrics && (
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                      {/* Badge Ângulo de Norberg */}
+                      {aiAnalysisResult.metrics.norbergAngle && (
+                        <g transform="translate(20, 20)">
+                          <rect className="fill-slate-950/80" width="140" height="32" rx="6" stroke="rgb(52 211 153)" strokeWidth="1" />
+                          <text className="fill-emerald-400 text-[11px] font-semibold" x="10" y="21">
+                            Norberg: {aiAnalysisResult.metrics.norbergAngle}°
+                          </text>
+                        </g>
+                      )}
+                      
+                      {/* Badge Ângulo Acetabular */}
+                      {aiAnalysisResult.metrics.acetabularAngle && (
+                        <g transform="translate(20, 60)">
+                          <rect className="fill-slate-950/80" width="160" height="32" rx="6" stroke="rgb(52 211 153)" strokeWidth="1" />
+                          <text className="fill-emerald-400 text-[11px] font-semibold" x="10" y="21">
+                            Acetabular: {aiAnalysisResult.metrics.acetabularAngle}°
+                          </text>
+                        </g>
+                      )}
+                      
+                      {/* Badge TPA */}
+                      {aiAnalysisResult.metrics.tpaAngle && (
+                        <g transform="translate(20, 100)">
+                          <rect className="fill-slate-950/80" width="120" height="32" rx="6" stroke="rgb(52 211 153)" strokeWidth="1" />
+                          <text className="fill-emerald-400 text-[11px] font-semibold" x="10" y="21">
+                            TPA: {aiAnalysisResult.metrics.tpaAngle}°
+                          </text>
+                        </g>
+                      )}
+                      
+                      {/* Badge Densidade Óssea */}
+                      {aiAnalysisResult.metrics.boneDensityPercent && (
+                        <g transform="translate(20, 140)">
+                          <rect className="fill-slate-950/80" width="180" height="32" rx="6" stroke="rgb(52 211 153)" strokeWidth="1" />
+                          <text className="fill-emerald-400 text-[11px] font-semibold" x="10" y="21">
+                            Densidade: {aiAnalysisResult.metrics.boneDensityPercent}%
+                          </text>
+                        </g>
+                      )}
+                      
+                      {/* Ponteiros anatômicos */}
+                      {aiAnalysisResult.metrics.anatomicalPoints?.map((point: { x: number; y: number; label: string }, i: number) => (
+                        <g key={i}>
+                          <circle cx={`${point.x}%`} cy={`${point.y}%`} r="4" className="fill-emerald-400" stroke="white" strokeWidth="1" />
+                          <line 
+                            x1={`${point.x}%`} 
+                            y1={`${point.y}%`} 
+                            x2={`${Math.min(point.x + 10, 95)}%`} 
+                            y2={`${Math.max(point.y - 10, 5)}%`} 
+                            className="stroke-emerald-400" 
+                            strokeWidth="1.5" 
+                            strokeDasharray="3,2"
+                          />
+                          <text 
+                            x={`${Math.min(point.x + 12, 90)}%`} 
+                            y={`${Math.max(point.y - 12, 8)}%`} 
+                            className="fill-white text-[10px] font-medium"
+                            style={{ textShadow: '0 0 4px rgba(0,0,0,0.8)' }}
+                          >
+                            {point.label}
+                          </text>
+                        </g>
+                      ))}
+                    </svg>
+                  )}
                 </div>
               </div>
             ) : (

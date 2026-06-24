@@ -447,6 +447,13 @@ export async function analyzeImagesComparison(
   boneDensity: string;
   recommendation: string;
   fullAnalysis: string;
+  metrics?: {
+    norbergAngle?: number;
+    acetabularAngle?: number;
+    tpaAngle?: number;
+    boneDensityPercent?: number;
+    anatomicalPoints?: Array<{ x: number; y: number; label: string }>;
+  };
 }> {
   try {
     const compressedBefore = await compressImageBase64(beforeBase64);
@@ -505,7 +512,7 @@ Verifique ATIVAMENTE se há:
 Se encontrar, mencione no "fullAnalysis". Se não, confirme que está tudo normal.
 
 **ETAPA 4 — JSON FINAL:**
-Agora gere o JSON com os 4 campos obrigatórios.
+Agora gere o JSON com os 4 campos obrigatórios + métricas quantitativas.
 
 {
   "validationPassed": true ou false (boolean),
@@ -514,8 +521,24 @@ Agora gere o JSON com os 4 campos obrigatórios.
   "boneDensity": "texto conciso sobre densidade óssea (máx 80 palavras) — apenas se validationPassed=true",
   "recommendation": "recomendação clínica direta (máx 60 palavras) — apenas se validationPassed=true",
   "fullAnalysis": "análise completa comparativa (máx 200 palavras) — apenas se validationPassed=true",
-  "clinicalReasoning": "raciocínio clínico passo a passo (Chain-of-Thought) — apenas se validationPassed=true"
+  "clinicalReasoning": "raciocínio clínico passo a passo (Chain-of-Thought) — apenas se validationPassed=true",
+  "metrics": {
+    "norbergAngle": número inteiro (graus, ex: 98) ou null se não aplicável,
+    "acetabularAngle": número inteiro (graus, ex: 35) ou null se não aplicável,
+    "tpaAngle": número inteiro (graus, ex: 22) ou null se não aplicável,
+    "boneDensityPercent": número inteiro (0-100, estimativa visual) ou null,
+    "anatomicalPoints": array de objetos [{ "x": número (0-100), "y": número (0-100), "label": string }] ou array vazio
+  }
 }
+
+⚠️ INSTRUÇÕES PARA MÉTRICAS:
+- norbergAngle: meça o ângulo entre a linha vertical e a linha do centro da cabeça femoral ao bordo cranial do acetábulo (normal: 105°±7°)
+- acetabularAngle: ângulo entre a linha horizontal e a linha do bordo cranial do acetábulo (normal: 30°-35°)
+- tpaAngle: ângulo do plateau tibial em relação à linha longitudinal da tíbia (normal: 18°-25°)
+- boneDensityPercent: estimativa visual de densidade óssea (100=ótima, 70=moderada, <50=baixa)
+- anatomicalPoints: coordenadas percentuais (0-100) de pontos anatômicos relevantes na imagem
+- Se não for possível estimar com confiança, retorne null para o campo específico
+- ADICIONE no final do fullAnalysis: "⚠️ Métricas são estimativas visuais por IA - validar com medição manual"
 
 Seja objetivo, técnico e baseado em evidências radiográficas visíveis. NUNCA alucine dados não visíveis nas imagens.`;
 
@@ -555,6 +578,7 @@ Seja objetivo, técnico e baseado em evidências radiográficas visíveis. NUNCA
           boneDensity: parsed.boneDensity || 'Análise de densidade óssea indisponível.',
           recommendation: parsed.recommendation || 'Recomendação indisponível.',
           fullAnalysis: parsed.fullAnalysis || response,
+          metrics: parsed.metrics || undefined,
         };
       }
     } catch (parseErr) {
@@ -570,6 +594,7 @@ Seja objetivo, técnico e baseado em evidências radiográficas visíveis. NUNCA
       boneDensity: 'Avaliação de densidade óssea disponível.',
       recommendation: 'Recomendação clínica gerada.',
       fullAnalysis: response,
+      metrics: undefined,
     };
   } catch (err) {
     console.error('Comparison analysis error:', err);
