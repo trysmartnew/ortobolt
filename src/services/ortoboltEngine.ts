@@ -37,6 +37,49 @@ export const RespostaOrtopedicaSchema = z.object({
   
   clinicalReasoning: z.string().optional()
     .describe('Raciocínio clínico passo a passo (Chain-of-Thought)'),
+
+  // Novos campos para validação cirúrgica
+  reductionQuality: z.enum(['Anatômica', 'Aceitável', 'Inaceitável', 'Falha']).optional()
+    .describe('Qualidade da redução da fratura'),
+
+  implantPositioning: z.enum(['Adequado', 'Subótimo', 'Inadequado', 'Não Aplicável']).optional()
+    .describe('Posicionamento do implante'),
+
+  dosagem: z.object({
+    medicamento: z.string().min(1),
+    dose_mg_kg: z.number().min(0.01, 'Dosagem não pode ser zero'),
+    frequencia: z.string().min(1),
+    duracao_dias: z.number().min(1).optional(),
+  }).optional().describe('Dosagem estruturada com validação clínica'),
+
+  redFlagsEstruturadas: z.array(z.object({
+    tipo: z.enum(['Parafuso Intra-Articular', 'Falha do Implante', 'Redução Inaceitável', 'Lise Óssea', 'Não União', 'Outro']),
+    severidade: z.enum(['leve', 'moderada', 'grave', 'crítica']),
+    descricao: z.string().min(10),
+  })).optional().describe('Lista de problemas críticos detectados'),
+}).superRefine((data, ctx) => {
+  // Validação cruzada: fratura fixada deve ter implantCount
+  if (data.diagnostico_principal.toLowerCase().includes('fratura') && 
+      data.diagnostico_principal.toLowerCase().includes('fixada')) {
+    if (!data.implantCount) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Fratura fixada deve ter implantCount preenchido',
+        path: ['implantCount'],
+      });
+    }
+  }
+  
+  // Validação cruzada: red flags graves exigem alertas_criticos
+  if (data.redFlagsEstruturadas?.some((f: any) => f.severidade === 'grave' || f.severidade === 'crítica')) {
+    if (!data.alertas_criticos || data.alertas_criticos.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Red flags graves exigem alertas_criticos',
+        path: ['alertas_criticos'],
+      });
+    }
+  }
 });
 
 export type RespostaOrtopedica = z.infer<typeof RespostaOrtopedicaSchema>;
@@ -56,6 +99,33 @@ export function validarRespostaMedica(resposta: any): RespostaOrtopedica {
   // Regra 2: Baixa confiança exige revisão humana
   if (parsed.confianca < 0.6 && !parsed.alertas_criticos.some((a: string) => a.toLowerCase().includes('revisão humana'))) {
     erros.push('⚠️ REGRA DE SEGURANÇA: Confiança < 60%. Revisão humana por especialista é obrigatória.');
+  }
+
+  if (erros.length > 0) {
+    return { ...parsed, alertas_criticos: [...parsed.alertas_criticos, ...erros] };
+  }
+  // Regra 3: Dosagem mínima
+  if (parsed.dosagem && parsed.dosagem.dose_mg_kg < 0.01) {
+    erros.push(`⚠️ REGRA DE SEGURANÇA: Dosagem de ${parsed.dosagem.medicamento} abaixo do mínimo terapêutico (${parsed.dosagem.dose_mg_kg}mg/kg).`);
+  }
+
+  // Regra 4: Redução inaceitável exige reoperação
+  if (parsed.reductionQuality === 'Inaceitável' || parsed.reductionQuality === 'Falha') {
+    if (!parsed.alertas_criticos.some((a: string) => a.toLowerCase().includes('reoperação'))) {
+      erros.push('⚠️ REGRA DE SEGURANÇA: Redução inaceitável detectada. Reoperação deve ser recomendada.');
+    }
+  }
+
+  // Regra 5: Parafuso intra-articular é crítico
+  if (parsed.redFlagsEstruturadas?.some((f: any) => f.tipo === 'Parafuso Intra-Articular')) {
+    if (!parsed.alertas_criticos.some((a: string) => a.toLowerCase().includes('intra-articular'))) {
+      erros.push('⚠️ REGRA DE SEGURANÇA: Parafuso intra-articular detectado. Alerta crítico obrigatório.');
+    }
+  }
+
+  // Regra 6: Implante sem contagem
+  if (texto.includes('parafuso') && !parsed.implantCount) {
+    erros.push('⚠️ REGRA DE SEGURANÇA: Menção a parafusos sem contagem estruturada (implantCount).');
   }
 
   if (erros.length > 0) {
@@ -90,6 +160,12 @@ Saída: {
   "alertas_criticos": ["Verificar função renal e hepática antes de iniciar AINEs."],
   "implantCount": { "proximal": 3, "distal": 4, "total": 7 },
   "alignmentStatus": "Neutro",
+  "healingStage": "Calo Duro",
+  "boneSegment": "diáfise distal do fêmur",
+  "redFlags": [],
+  "clinicalReasoning": "Paciente com histórico de fratura femoral, radiografia mostra consolidação progressiva com alinhamento adequado.",
+  "reductionQuality": "Anatômica",
+  "implantPositioning": "Adequado",
   "healingStage": "Calo Duro",
   "boneSegment": "diáfise distal do fêmur",
   "redFlags": [],
