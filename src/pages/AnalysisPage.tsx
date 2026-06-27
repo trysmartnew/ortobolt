@@ -195,7 +195,8 @@ export default function AnalysisPage() {
     ctx.procedure ?? 'other'
   );
 
-  const handleApprove = async (title: string, destination: 'case' | 'gallery') => {
+    const handleApprove = async (title: string, destination: 'case' | 'gallery') => {
+    if (approving) return; // Bloqueio atômico adicional
     if (!user?.id || !imageData || !analysisText.trim()) {
       addToast('Conclua a análise e preencha o contexto clínico antes de aprovar.', 'warning');
       return;
@@ -231,10 +232,7 @@ export default function AnalysisPage() {
         },
       });
 
-      addToast(
-        `Caso "${clinicalCase.patientName}" integrado em todos os módulos.`,
-        'success'
-      );
+      addToast(`Caso "${clinicalCase.patientName}" integrado em todos os módulos.`, 'success');
 
       if (destination === 'case') {
         openCase(clinicalCase);
@@ -246,7 +244,7 @@ export default function AnalysisPage() {
     } finally {
       setApproving(false);
     }
-  };
+  };;
 
   const renderResult = (text: string) =>
     text.split('\n').map((line, i) => {
@@ -451,12 +449,10 @@ export default function AnalysisPage() {
           </div>
 
           <div data-tour="tour-approve-case">
-          <ApproveCompleteCaseBar
+                    <ApproveCompleteCaseBar
             disabled={approving || streaming || refining || !user}
             defaultTitle={defaultCaseTitle}
-            onApprove={(title, dest) => {
-              void handleApprove(title, dest);
-            }}
+            onApprove={(title, dest) => handleApprove(title, dest)}
           />
           </div>
         </div>

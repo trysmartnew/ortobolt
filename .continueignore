@@ -1,0 +1,27 @@
+# Dependências e build
+node_modules/
+dist/
+.git/
+
+# Scripts de auditoria e patches
+*.py
+*.ps1
+*.bkp
+*.cpuprofile
+
+# JSONs de auditoria
+auditoria_*.json
+ortobolt_audit_*.json
+real_context.json
+
+# Arquivos de contexto gerados
+PROJETO_CONTEXTO.md
+repomix-output.md
+REPOSITORIO.md
+
+# Ambiente
+.env
+.env.example
+
+# Arquivos com espaço no nome
+python apply_audit_fixes.py

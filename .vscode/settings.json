@@ -1,1 +1,19 @@
-{"editor.formatOnSave": true, "tailwindCSS.emmetCompletions": true}
+{
+  "editor.formatOnSave": true,
+  "tailwindCSS.emmetCompletions": true,
+  "typescript.tsserver.maxTsServerMemory": 512,
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.quickSuggestions": {
+    "strings": "on",
+    "comments": "off",
+    "other": "on"
+  },
+  "files.exclude": {
+    "**/dist": true,
+    "**/.vercel": true,
+    "**/node_modules": true
+  },
+  "tailwindCSS.experimental.configFile": "src/index.css",
+  "git.ignoreLimitWarning": true
+}

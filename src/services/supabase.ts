@@ -1,9 +1,16 @@
 // src/services/supabase.ts
 // ✅ C-03: select('*') substituído por lista explícita de campos
 // ✅ C-03: Tipagem (c: any) em certifications substituída por interface explícita
+// ✅ Segurança: URLs assinadas com expiração de 24h para imagens médicas
 
 import { createClient } from '@supabase/supabase-js';
 import type { User } from '@/types/index';
+import { createLogger } from '@/utils/logger';
+
+const logger = createLogger('supabase');
+
+// Expiração padrão para URLs assinadas: 24 horas (86400 segundos)
+const SIGNED_URL_EXPIRY = 86400;
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -157,7 +164,7 @@ export async function upsertUserProfile(supaUser: {
 }
 
 
-/** P0.1 — Upload de radiografia para bucket radiografias; retorna publicUrl ou null */
+/** P0.1 — Upload de radiografia para bucket radiografias; retorna signedUrl ou null */
 export async function uploadRadiografia(
   dataUrl: string,
   storagePath: string
@@ -179,11 +186,13 @@ export async function uploadRadiografia(
     .upload(filePath, new Blob([ab], { type: mime }), { contentType: mime, upsert: true });
 
   if (error) {
-    console.error('[uploadRadiografia]', error.message);
+    logger.error('Erro no upload de radiografia', error.message);
     return null;
   }
-  const { data } = supabase.storage.from('radiografias').getPublicUrl(filePath);
-  return data.publicUrl;
+
+  // Gerar URL assinada com expiração de 24h (segurança LGPD)
+  const signedUrl = await getSignedImageUrl(filePath);
+  return signedUrl;
 }
 
 /** Upload genérico de imagem de caso para o bucket 'radiografias' */
@@ -210,9 +219,40 @@ export async function uploadCaseImage(
     .upload(filePath, new Blob([ab], { type: mime }), { contentType: mime, upsert: true });
 
   if (error) {
-    console.error('[uploadCaseImage]', error.message);
+    logger.error('Erro no upload de imagem de caso', error.message);
     return null;
   }
-  const { data } = supabase.storage.from('radiografias').getPublicUrl(filePath);
-  return data.publicUrl;
+
+  // Gerar URL assinada com expiração de 24h (segurança LGPD)
+  const signedUrl = await getSignedImageUrl(filePath);
+  return signedUrl;
+}
+
+/**
+ * Gera URL assinada para acesso temporário a imagens no Storage.
+ * URLs expiram em 24h por padrão (conformidade LGPD).
+ * 
+ * @param path - Caminho do arquivo no bucket
+ * @param expiresIn - Duração em segundos (padrão: 86400 = 24h)
+ * @returns URL assinada ou null se falhar
+ */
+export async function getSignedImageUrl(
+  path: string,
+  expiresIn: number = SIGNED_URL_EXPIRY
+): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.storage
+      .from('radiografias')
+      .createSignedUrl(path, expiresIn);
+
+  if (error) {
+    logger.error('Erro ao gerar URL assinada', error.message);
+    return null;
+  }
+
+  return data.signedUrl;
+  } catch (err) {
+    logger.error('Erro ao gerar URL assinada', err);
+    return null;
+  }
 }

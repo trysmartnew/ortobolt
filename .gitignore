@@ -60,3 +60,6 @@ ai_audit_input.txt
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# VS Code workspace settings
+.vscode/
