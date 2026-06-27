@@ -103,26 +103,26 @@ const AppContext = createContext<AppContextType | null>(null);
 // ── ✅ Mapeamento seguro: snake_case (Supabase) → camelCase (ClinicalCase) ────────
 function mapCaseFromDB(row: Record<string, unknown>): ClinicalCase {
   return {
-    id:             String(row.id             ?? ''),
-    title:          String(row.title           ?? ''),
-    patientName:    String(row.patient_name    ?? row.patientName    ?? ''),
-    species:        (row.species               ?? 'canine')  as AnimalSpecies,
-    breed:          String(row.breed           ?? ''),
-    ageYears:       Number(row.age_years       ?? row.ageYears       ?? 0),
-    weightKg:       Number(row.weight_kg       ?? row.weightKg       ?? 0),
-    procedure:      (row.procedure             ?? 'other')   as ProcedureType,
-    status:         (row.status                ?? 'pending') as CaseStatus,
+    id: String(row.id ?? ''),
+    title: String(row.title ?? ''),
+    patientName: String(row.patient_name ?? row.patientName ?? ''),
+    species: (row.species ?? 'canine') as AnimalSpecies,
+    breed: String(row.breed ?? ''),
+    ageYears: Number(row.age_years ?? row.ageYears ?? 0),
+    weightKg: Number(row.weight_kg ?? row.weightKg ?? 0),
+    procedure: (row.procedure ?? 'other') as ProcedureType,
+    status: (row.status ?? 'pending') as CaseStatus,
     precisionScore: row.precision_score != null ? Number(row.precision_score) : undefined,
-    riskLevel:      (row.risk_level            ?? row.riskLevel ?? 'low') as 'low'|'medium'|'high',
-    createdAt:      String(row.created_at      ?? row.createdAt      ?? new Date().toISOString()),
-    updatedAt:      String(row.updated_at      ?? row.updatedAt      ?? new Date().toISOString()),
-    tags:           Array.isArray(row.tags) ? row.tags as string[] : [],
-    imageUrl:       row.image_url != null ? String(row.image_url) : undefined,
-    avatarUrl:     row.avatar_url != null ? String(row.avatar_url) : undefined,
-    notes:          row.notes != null ? String(row.notes) : undefined,
+    riskLevel: (row.risk_level ?? row.riskLevel ?? 'low') as 'low' | 'medium' | 'high',
+    createdAt: String(row.created_at ?? row.createdAt ?? new Date().toISOString()),
+    updatedAt: String(row.updated_at ?? row.updatedAt ?? new Date().toISOString()),
+    tags: Array.isArray(row.tags) ? row.tags as string[] : [],
+    imageUrl: row.image_url != null ? String(row.image_url) : undefined,
+    avatarUrl: row.avatar_url != null ? String(row.avatar_url) : undefined,
+    notes: row.notes != null ? String(row.notes) : undefined,
     veterinarianId: String(row.veterinarian_id ?? row.veterinarianId ?? ''),
-    aiAnalysis:     loadAiAnalysisFromRow(row),
-    exams:          Array.isArray(row.exams) ? (row.exams as import('@/types').CaseExam[]) : undefined,
+    aiAnalysis: loadAiAnalysisFromRow(row),
+    exams: Array.isArray(row.exams) ? (row.exams as import('@/types').CaseExam[]) : undefined,
   };
 }
 
@@ -145,44 +145,44 @@ function loadAiAnalysisFromRow(row: Record<string, unknown>) {
 // ── ✅ NOVO: Mapeamento seguro para Notification (snake_case → camelCase) ────────
 function mapNotificationFromDB(row: Record<string, unknown>): Notification {
   return {
-    id:        String(row.id       ?? ''),
-    type:      (row.type ?? 'info') as NotificationType,
-    title:     String(row.title    ?? ''),
-    message:   String(row.message  ?? ''),
+    id: String(row.id ?? ''),
+    type: (row.type ?? 'info') as NotificationType,
+    title: String(row.title ?? ''),
+    message: String(row.message ?? ''),
     timestamp: String(row.created_at ?? row.timestamp ?? new Date().toISOString()),
-    read:      Boolean(row.read    ?? false),
-    caseId:    row.case_id != null ? String(row.case_id) : undefined,
+    read: Boolean(row.read ?? false),
+    caseId: row.case_id != null ? String(row.case_id) : undefined,
   };
 }
 
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [user, setUser]               = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn]   = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
-  
-  const [cases, setCases]           = useState<ClinicalCase[]>([]);
+
+  const [cases, setCases] = useState<ClinicalCase[]>([]);
   const [activeCase, setActiveCase] = useState<ClinicalCase | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [chatHistory, setChatHistory]     = useState<ChatMessage[]>([{
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([{
     id: 'init', role: 'assistant',
     content: '# Olá! Sou o OrthoAI 🐾\n\nSou seu assistente especializado em ortopedia veterinária. Como posso ajudar hoje?',
     timestamp: new Date().toISOString(),
   }]);
-  const [tourActive, setTourActive]       = useState(false);
+  const [tourActive, setTourActive] = useState(false);
   const [tourForceShow, setTourForceShow] = useState(false);
-  const [analysisMode, setAnalysisMode]   = useState<'analysis' | 'compare'>('analysis');
-  const [onboardingActive, setOnboardingActive]         = useState(false);
+  const [analysisMode, setAnalysisMode] = useState<'analysis' | 'compare'>('analysis');
+  const [onboardingActive, setOnboardingActive] = useState(false);
   const [onboardingStageIndex, setOnboardingStageIndex] = useState(0);
-  const [toasts, setToasts]               = useState<Toast[]>([]);
-  
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [loginAttempts, setLoginAttempts] = useState(0);
-  const [lockedUntil, setLockedUntil]     = useState<Date | null>(null);
-  const [, setLockTick]                   = useState(0);
-  
+  const [lockedUntil, setLockedUntil] = useState<Date | null>(null);
+  const [, setLockTick] = useState(0);
+
   const loginLocked = !!(lockedUntil && new Date() < lockedUntil);
   const loginLockSecondsLeft = loginLocked && lockedUntil
     ? Math.ceil((lockedUntil.getTime() - Date.now()) / 1000)
@@ -310,7 +310,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (isLoggingOut) {
       return;
     }
-    
+
     try {
       setIsLoggingOut(true);
       await supabase.auth.signOut();
@@ -323,7 +323,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setCases([]);
       setNotifications([]);
       setChatHistory([{
-        id: 'init', 
+        id: 'init',
         role: 'assistant',
         content: '# Olá! Sou o OrthoAI 🐾\n\nSou seu assistente especializado em ortopedia veterinária. Como posso ajudar hoje?',
         timestamp: new Date().toISOString(),
@@ -378,25 +378,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
       persistCaseAiAnalysis(enriched.id, enriched.aiAnalysis);
     }
     supabase.from('clinical_cases').insert({
-      id:              enriched.id,
-      title:           enriched.title,
-      patient_name:    enriched.patientName,
-      species:         enriched.species,
-      breed:           enriched.breed,
-      age_years:       enriched.ageYears,
-      weight_kg:       enriched.weightKg,
-      procedure:       enriched.procedure,
-      status:          enriched.status,
-      risk_level:      enriched.riskLevel,
+      id: enriched.id,
+      title: enriched.title,
+      patient_name: enriched.patientName,
+      species: enriched.species,
+      breed: enriched.breed,
+      age_years: enriched.ageYears,
+      weight_kg: enriched.weightKg,
+      procedure: enriched.procedure,
+      status: enriched.status,
+      risk_level: enriched.riskLevel,
       precision_score: enriched.precisionScore ?? null,
-      tags:            enriched.tags,
-      notes:           enriched.notes ?? null,
-      image_url:       enriched.imageUrl ?? null,
-      ai_analysis:     enriched.aiAnalysis ?? null,
-      exams:           enriched.exams ?? null,
+      tags: enriched.tags,
+      notes: enriched.notes ?? null,
+      image_url: enriched.imageUrl ?? null,
+      ai_analysis: enriched.aiAnalysis ?? null,
+      exams: enriched.exams ?? null,
       veterinarian_id: enriched.veterinarianId,
-      created_at:      enriched.createdAt,
-      updated_at:      enriched.updatedAt,
+      created_at: enriched.createdAt,
+      updated_at: enriched.updatedAt,
     }).then(({ error }) => {
       if (error) {
         console.error('addCase Supabase error:', error.message);
@@ -435,13 +435,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCases((prev) => prev.map((c) => (c.id === id ? merge(c) : c)));
     setActiveCase((prev) => (prev?.id === id && prev ? merge(prev) : prev));
     const dbUpdates: Record<string, unknown> = {};
-    if (updates.status        !== undefined) dbUpdates.status          = updates.status;
-    if (updates.riskLevel     !== undefined) dbUpdates.risk_level      = updates.riskLevel;
+    if (updates.status !== undefined) dbUpdates.status = updates.status;
+    if (updates.riskLevel !== undefined) dbUpdates.risk_level = updates.riskLevel;
     if (updates.precisionScore !== undefined) dbUpdates.precision_score = updates.precisionScore;
-    if (updates.notes         !== undefined) dbUpdates.notes           = updates.notes;
-    if (updates.title         !== undefined) dbUpdates.title           = updates.title;
-    if (updates.imageUrl      !== undefined) dbUpdates.image_url      = updates.imageUrl;
-    if (updates.avatarUrl      !== undefined) dbUpdates.avatar_url      = updates.avatarUrl;
+    if (updates.notes !== undefined) dbUpdates.notes = updates.notes;
+    if (updates.title !== undefined) dbUpdates.title = updates.title;
+    if (updates.imageUrl !== undefined) dbUpdates.image_url = updates.imageUrl;
+    if (updates.avatarUrl !== undefined) dbUpdates.avatar_url = updates.avatarUrl;
     if (updates.aiAnalysis !== undefined) {
       dbUpdates.ai_analysis = updates.aiAnalysis;
       persistCaseAiAnalysis(id, updates.aiAnalysis);
@@ -500,7 +500,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setTourForceShow(true);
     setTourActive(true);
   }, []);
-  
+
   const closeTour = useCallback(() => {
     setTourActive(false);
     setTourForceShow(false);
