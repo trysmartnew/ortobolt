@@ -26,7 +26,7 @@ export const useRadiographs = ({ caseId }: UseRadiographsProps) => {
     if (!caseId) return;
     setLoading(true);
     const { data, error } = await supabase
-      .from('cases')
+      .from('clinical_cases')
       .select('radiographs')
       .eq('id', caseId)
       .single();
@@ -67,7 +67,7 @@ export const useRadiographs = ({ caseId }: UseRadiographsProps) => {
       };
 
       const { data: currentCase } = await supabase
-        .from('cases')
+        .from('clinical_cases')
         .select('radiographs')
         .eq('id', caseId)
         .single();
@@ -75,7 +75,7 @@ export const useRadiographs = ({ caseId }: UseRadiographsProps) => {
       const updatedList = [...((currentCase?.radiographs as RadiographItem[]) || []), newItem];
 
       const { error: updateError } = await supabase
-        .from('cases')
+        .from('clinical_cases')
         .update({ radiographs: updatedList })
         .eq('id', caseId);
 
@@ -97,7 +97,7 @@ export const useRadiographs = ({ caseId }: UseRadiographsProps) => {
       await supabase.storage.from('radiografias').remove([item.filepath]);
       const updatedList = radiographs.filter(r => r.id !== radiographId);
 
-      await supabase.from('cases').update({ radiographs: updatedList }).eq('id', caseId);
+      await supabase.from('clinical_cases').update({ radiographs: updatedList }).eq('id', caseId);
       await fetchRadiographs();
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Removal failed'));

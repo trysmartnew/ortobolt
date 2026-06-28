@@ -1,4 +1,4 @@
-﻿// src/services/backupService.ts
+// src/services/backupService.ts
 import { supabase } from './supabase';
 
 export async function exportUserData(userId: string): Promise<void> {
@@ -7,7 +7,7 @@ export async function exportUserData(userId: string): Promise<void> {
       .select('id, name, email, role, crmv, specialty, institution')
       .eq('id', userId)
       .single(),
-    supabase.from('cases')
+    supabase.from('clinical_cases')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false }),
