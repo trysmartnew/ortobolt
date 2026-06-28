@@ -1,5 +1,6 @@
 import { ClinicalEvidenceView } from '@/components/ClinicalEvidenceView';
 import { useCaseRealtime } from '@/hooks/useCaseRealtime';
+import { RadiographViewer } from '@/components/radiographs/RadiographViewer';
 // src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
 import { useState, useMemo, useRef } from 'react';
@@ -574,12 +575,13 @@ export default function CasePage() {
             </Card>
           )}
 
-          {/* Exibição em Tempo Real (Fase 2 CEP) */}
-          {activeCase.clinicalEvidence && (
-            <div className="mb-6">
-              <ClinicalEvidenceView evidence={activeCase.clinicalEvidence} />
-            </div>
-          )}
+          {/* Galeria de Radiografias */}
+          <Card className="p-5">
+            <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <Activity size={16} /> Galeria de Radiografias
+            </h2>
+            <RadiographViewer caseId={activeCase.id} />
+          </Card>
 
           <Card className="p-5">
             <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-3">
