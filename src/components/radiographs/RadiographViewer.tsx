@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRadiographs, RadiographItem } from '../../hooks/useRadiographs';
 import { RadiographUploader } from './RadiographUploader';
+import { MarkingToolbar } from '../markings/MarkingToolbar';
+import { MarkingCanvas } from '../markings/MarkingCanvas';
+import type { MarkingTool, MarkingsData, AlignmentCircle, AngleMeasurement, FractureMarker, ROI, Point } from '../../types/markings';
 
 interface RadiographViewerProps {
   caseId: string;
@@ -8,7 +11,49 @@ interface RadiographViewerProps {
 
 export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId }) => {
   const { radiographs, loading, error, remove, getSignedUrl } = useRadiographs({ caseId });
-  const [selectedSrc, setSelectedSrc] = useState<string | null>(null);
+  const [selectedRadiographItem, setSelectedRadiographItem] = useState<RadiographItem | null>(null);
+  const [isAnnotating, setIsAnnotating] = useState<boolean>(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
+  const [activeTool, setActiveTool] = useState<MarkingTool | null>(null);
+  const [markings, setMarkings] = useState<MarkingsData>({
+    circles: [],
+    angles: [],
+    markers: [],
+    rois: [],
+  });
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchImageUrl = async () => {
+      if (selectedRadiographItem) {
+        const url = await getSignedUrl(selectedRadiographItem.filepath);
+        setImageUrl(url);
+      } else {
+        setImageUrl(null);
+        setImageDimensions(null);
+      }
+    };
+    fetchImageUrl();
+  }, [selectedRadiographItem, getSignedUrl]);
+
+  useEffect(() => {
+    if (imageUrl) {
+      const img = new window.Image();
+      img.src = imageUrl;
+      img.onload = () => {
+        setImageElement(img);
+        setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+      img.onerror = () => {
+        console.error("Failed to load image for annotation.");
+        setImageElement(null);
+      };
+    } else {
+      setImageElement(null);
+    }
+  }, [imageUrl]);
 
   const handleRemove = async (item: RadiographItem) => {
     if (confirm(`Remover ${item.filename}?`)) {
@@ -17,9 +62,73 @@ export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId }) =>
   };
 
   const handleView = async (item: RadiographItem) => {
-    const url = await getSignedUrl(item.filepath);
-    if (url) setSelectedSrc(url);
+    setSelectedRadiographItem(item);
+    setIsAnnotating(false); // Ensure not in annotating mode when just viewing
   };
+
+  const handleAnnotate = (item: RadiographItem) => {
+    setSelectedRadiographItem(item);
+    setIsAnnotating(true);
+  };
+
+  const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    // This handler is for the non-annotating mode image display, not the Konva image
+    // The imageElement useEffect already handles dimensions for Konva
+    // We keep it here in case the direct image tag is ever used for rendering
+    // and its dimensions are needed.
+  };
+
+  const handleToolChange = (tool: MarkingTool | null) => {
+    setActiveTool(tool);
+  };
+
+  const handleClearMarkings = () => {
+    setMarkings({
+      circles: [],
+      angles: [],
+      markers: [],
+      rois: [],
+    });
+    setHasUnsavedChanges(true);
+  };
+
+  const handleSaveMarkings = () => {
+    // TODO: Implement actual save logic to backend
+    console.log("Saving markings:", markings);
+    setHasUnsavedChanges(false);
+  };
+
+  const handleAddCircle = (circle: AlignmentCircle) => {
+    setMarkings(prev => ({ ...prev, circles: [...prev.circles, circle] }));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleAddAngle = (angle: AngleMeasurement) => {
+    setMarkings(prev => ({ ...prev, angles: [...prev.angles, angle] }));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleAddMarker = (marker: FractureMarker) => {
+    setMarkings(prev => ({ ...prev, markers: [...prev.markers, marker] }));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleAddROI = (roi: ROI) => {
+    setMarkings(prev => ({ ...prev, rois: [...prev.rois, roi] }));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleUpdateMarking = (id: string, updates: any) => {
+    setMarkings(prev => ({
+      ...prev,
+      circles: prev.circles.map(m => m.id === id ? { ...m, ...updates } : m),
+      angles: prev.angles.map(m => m.id === id ? { ...m, ...updates } : m),
+      markers: prev.markers.map(m => m.id === id ? { ...m, ...updates } : m),
+      rois: prev.rois.map(m => m.id === id ? { ...m, ...updates } : m),
+    }));
+    setHasUnsavedChanges(true);
+  };
+  
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div className="text-red-500">Erro: {error.message}</div>;
@@ -36,15 +145,63 @@ export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId }) =>
             </div>
             <div className="flex gap-2">
               <button onClick={() => handleView(item)} className="text-blue-600 text-sm">Visualizar</button>
+              <button onClick={() => handleAnnotate(item)} className="text-green-600 text-sm">Anotar</button>
               <button onClick={() => handleRemove(item)} className="text-red-600 text-sm">Remover</button>
             </div>
           </div>
         ))}
       </div>
 
-      {selectedSrc && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" onClick={() => setSelectedSrc(null)}>
-          <img src={selectedSrc} alt="Radiografia" className="max-w-full max-h-full rounded" />
+      {selectedRadiographItem && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="relative" onClick={(e) => e.stopPropagation()}> {/* Prevent closing when clicking on the image area */}
+            <button 
+              className="absolute top-2 right-2 text-white text-3xl" 
+              onClick={() => { setSelectedRadiographItem(null); setIsAnnotating(false); setImageUrl(null); }}
+            >
+              &times;
+            </button>
+            {imageUrl && imageElement && imageDimensions ? (
+              <>
+                {!isAnnotating && (
+                  <img src={imageUrl} alt="Radiografia" className="max-w-full max-h-full rounded" onLoad={handleImageLoad} />
+                )}
+                {isAnnotating && (
+                  <div className="relative">
+                    <MarkingToolbar 
+                      activeTool={activeTool}
+                      onToolChange={handleToolChange}
+                      onClear={handleClearMarkings}
+                      onSave={handleSaveMarkings}
+                      hasUnsavedChanges={hasUnsavedChanges}
+                    />
+                    <MarkingCanvas 
+                      image={imageElement} 
+                      width={imageDimensions.width} 
+                      height={imageDimensions.height}
+                      markings={markings}
+                      activeTool={activeTool}
+                      onAddCircle={handleAddCircle}
+                      onAddAngle={handleAddAngle}
+                      onAddMarker={handleAddMarker}
+                      onAddROI={handleAddROI}
+                      onUpdateMarking={handleUpdateMarking}
+                    />
+                  </div>
+                )}
+                {!isAnnotating && (
+                  <button 
+                    className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded"
+                    onClick={() => setIsAnnotating(true)}
+                  >
+                    Anotar
+                  </button>
+                )}
+              </>
+            ) : (
+              <div>Carregando imagem...</div>
+            )}
+          </div>
         </div>
       )}
     </div>
