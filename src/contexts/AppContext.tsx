@@ -212,11 +212,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     let retryCount = 0;
     const maxRetries = 3;
+    let isMounted = true;
 
     const syncProfile = async () => {
+      if (!isMounted) return;
+
       try {
         setProfileSyncStatus('syncing');
         const profile = await fetchUserProfile(pendingProfileSync.id);
+
+        if (!isMounted) return;
 
         if (profile) {
           setUser(profile);
@@ -232,6 +237,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
           throw new Error('Perfil vazio');
         }
       } catch (err) {
+        if (!isMounted) return;
+
         retryCount += 1;
         if (retryCount < maxRetries) {
           const waitMs = Math.pow(2, retryCount) * 1000;
@@ -247,6 +254,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
 
     syncProfile();
+
+    return () => {
+      isMounted = false;
+    };
   }, [pendingProfileSync, addToast]);
 
   // ✅ D-01: Fetch casos reais COM mapeamento seguro

@@ -75,6 +75,8 @@ function AppInner() {
         return;
       }
 
+      // ✅ SIGNED_IN é disparado APÓS login() já ter setado user+view
+      // Evitar race condition: não chamar setUserFromSession aqui se isLoggedIn já é true
       if (event === 'SIGNED_IN' && session?.user) {
         const remember = sessionStorage.getItem('ortobolt_remember_me');
         if (remember === '0') {
@@ -88,7 +90,7 @@ function AppInner() {
           }
           sessionStorage.removeItem('ortobolt_remember_me');
         }
-        setSessionRef.current(session.user);
+        // ✅ Não chamar setUserFromSession; deixar login() e syncProfile em AppContext handlearem
         return;
       }
 
