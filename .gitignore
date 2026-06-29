@@ -63,3 +63,4 @@ yarn-error.log*
 
 # VS Code workspace settings
 .vscode/
+.env*

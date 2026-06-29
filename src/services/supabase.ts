@@ -182,7 +182,7 @@ export async function uploadRadiografia(
   for (let i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
 
   const { error } = await supabase.storage
-    .from('radiografias')
+    .from('case-images')
     .upload(filePath, new Blob([ab], { type: mime }), { contentType: mime, upsert: true });
 
   if (error) {
@@ -215,7 +215,7 @@ export async function uploadCaseImage(
   for (let i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
 
   const { error } = await supabase.storage
-    .from('radiografias')
+    .from('case-images')
     .upload(filePath, new Blob([ab], { type: mime }), { contentType: mime, upsert: true });
 
   if (error) {
@@ -242,7 +242,7 @@ export async function getSignedImageUrl(
 ): Promise<string | null> {
   try {
     const { data, error } = await supabase.storage
-      .from('radiografias')
+      .from('case-images')
       .createSignedUrl(path, expiresIn);
 
   if (error) {
