@@ -1,5 +1,5 @@
 // api/ai.ts — Vercel Serverless Function (Node.js Runtime)
-// Gemini API via proxy — cascade flash-lite → flash
+// Real-time fallback chain: Gemini Flash Lite → Gemini Flash → OpenRouter → Groq
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { verifySupabaseBearer } from './lib/verifySupabaseJwt.js';
@@ -8,11 +8,22 @@ import { checkRateLimit, userIdFromBearer } from './lib/rateLimit.js';
 import { applyCors } from './lib/cors.js';
 
 const RL_WINDOW_MS = 60_000;
-const RL_MAX = 30;
+const RL_MAX = 30; // Rate limit per user, per minute
 
-const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/openai';
+// Provider Endpoints
+const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+const OPENROUTER_BASE = 'https://openrouter.ai/api/v1/chat/completions';
+const GROQ_BASE = 'https://api.groq.com/openai/v1/chat/completions';
+
+// Fallback Model Chain
 const PRIMARY_MODEL = 'gemini-2.5-flash-lite';
-const FALLBACK_MODEL = 'gemini-2.5-flash';
+const GEMINI_FALLBACK_MODEL = 'gemini-2.5-flash';
+const OPENROUTER_MODEL = 'openai/gpt-4o'; // Standard model name for OpenRouter
+const GROQ_MODEL = 'llama3-70b-8192'; // Standard model name for Groq
+
+const OPENROUTER_REFERRER = 'https://ortobolt.vercel.app';
+
+// --- API Callers with Retry Logic ---
 
 async function callGemini(
   model: string,
@@ -27,7 +38,7 @@ async function callGemini(
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      const response = await fetch(`${GEMINI_BASE}/chat/completions`, {
+      const response = await fetch(GEMINI_BASE, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${key}`,
@@ -59,6 +70,95 @@ async function callGemini(
   throw lastError ?? new Error('Gemini unreachable');
 }
 
+async function callOpenRouter(
+  messages: Array<{ role: string; content: unknown }>,
+  maxTokens: number,
+  key: string,
+  options: { stream?: boolean; jsonMode?: boolean } = {}
+): Promise<Response> {
+  const maxAttempts = 3;
+  let lastResponse: Response | null = null;
+  let lastError: unknown = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await fetch(OPENROUTER_BASE, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': OPENROUTER_REFERRER,
+        },
+        body: JSON.stringify({
+          model: OPENROUTER_MODEL,
+          messages,
+          max_tokens: maxTokens,
+          ...(options.stream && { stream: true }),
+          ...(options.jsonMode && { response_format: { type: 'json_object' } }),
+        }),
+      });
+
+      if (response.status !== 429 && response.status !== 503 && response.status !== 500) {
+        return response;
+      }
+      lastResponse = response;
+    } catch (err) {
+      lastError = err;
+    }
+
+    if (attempt < maxAttempts) {
+      await new Promise((r) => setTimeout(r, 2000 * attempt));
+    }
+  }
+
+  if (lastResponse) return lastResponse;
+  throw lastError ?? new Error('OpenRouter unreachable');
+}
+
+async function callGroq(
+  messages: Array<{ role: string; content: unknown }>,
+  maxTokens: number,
+  key: string,
+  options: { stream?: boolean; jsonMode?: boolean } = {}
+): Promise<Response> {
+  const maxAttempts = 3;
+  let lastResponse: Response | null = null;
+  let lastError: unknown = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await fetch(GROQ_BASE, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          messages,
+          max_tokens: maxTokens,
+          ...(options.stream && { stream: true }),
+          ...(options.jsonMode && { response_format: { type: 'json_object' } }),
+        }),
+      });
+
+      if (response.status !== 429 && response.status !== 503 && response.status !== 500) {
+        return response;
+      }
+      lastResponse = response;
+    } catch (err) {
+      lastError = err;
+    }
+
+    if (attempt < maxAttempts) {
+      await new Promise((r) => setTimeout(r, 2000 * attempt));
+    }
+  }
+
+  if (lastResponse) return lastResponse;
+  throw lastError ?? new Error('Groq unreachable');
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   applyCors(res, req.headers.origin || '');
 
@@ -85,15 +185,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) {
-    console.error('[AI Proxy] GEMINI_API_KEY não configurada');
-    return res.status(500).json({ error: 'Gemini API key not configured on server' });
-  }
+  const { GEMINI_API_KEY, OPENROUTER_API_KEY, GROQ_API_KEY } = process.env;
 
   try {
     const body = req.body as {
-      model?: string;
       messages: { role: string; content: unknown }[];
       max_tokens?: number;
       stream?: boolean;
@@ -109,33 +204,68 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const isStream = body.stream === true;
     const jsonMode = body.json_mode === true;
 
+    let response: Response | null = null;
+    const options = { stream: isStream, jsonMode };
+
+    // --- Fallback Chain ---
+    
+    // 1. Gemini Primary
+    if (GEMINI_API_KEY) {
+      console.log('[AI Proxy] Trying provider: Gemini Primary');
+      response = await callGemini(PRIMARY_MODEL, sanitizedMessages, maxTokens, GEMINI_API_KEY, options)
+        .catch(err => {
+          console.warn(`[AI Proxy] Gemini Primary failed (network error: ${err.message})`);
+          return null;
+        });
+    }
+
+    // 2. Gemini Fallback
+    if (GEMINI_API_KEY && (!response || !response.ok)) {
+      if(response) console.warn(`[AI Proxy] Gemini Primary failed (status: ${response.status})`);
+      console.log('[AI Proxy] Falling back to: Gemini Fallback');
+      response = await callGemini(GEMINI_FALLBACK_MODEL, sanitizedMessages, maxTokens, GEMINI_API_KEY, options)
+        .catch(err => {
+          console.warn(`[AI Proxy] Gemini Fallback failed (network error: ${err.message})`);
+          return null;
+        });
+    }
+
+    // 3. OpenRouter
+    if (OPENROUTER_API_KEY && (!response || !response.ok)) {
+      if(response) console.warn(`[AI Proxy] Gemini Fallback failed (status: ${response.status})`);
+      console.log('[AI Proxy] Falling back to: OpenRouter');
+      response = await callOpenRouter(sanitizedMessages, maxTokens, OPENROUTER_API_KEY, options)
+        .catch(err => {
+          console.warn(`[AI Proxy] OpenRouter failed (network error: ${err.message})`);
+          return null;
+        });
+    }
+
+    // 4. Groq
+    if (GROQ_API_KEY && (!response || !response.ok)) {
+       if(response) console.warn(`[AI Proxy] OpenRouter failed (status: ${response.status})`);
+       console.log('[AI Proxy] Falling back to: Groq');
+       response = await callGroq(sanitizedMessages, maxTokens, GROQ_API_KEY, options)
+        .catch(err => {
+          console.warn(`[AI Proxy] Groq failed (network error: ${err.message})`);
+          return null;
+        });
+    }
+
+    // --- End of Fallback Chain ---
+
+    if (!response || !response.ok) {
+      if(response) console.warn(`[AI Proxy] Groq failed (status: ${response.status})`);
+      console.error('[AI Proxy] All providers failed');
+      return res.status(503).json({ error: 'All AI providers unavailable. Please try again in a few moments.' });
+    }
+
+    // Handle successful response
     if (isStream) {
-      let streamRes = await callGemini(
-        PRIMARY_MODEL,
-        sanitizedMessages,
-        maxTokens,
-        key,
-        { stream: true }
-      ).catch(() => new Response(null, { status: 503 }));
-
-      if (!streamRes.ok && [429, 503, 500].includes(streamRes.status)) {
-        console.warn(
-          `[AI Proxy] Stream primary failed (${streamRes.status}). Fallback → ${FALLBACK_MODEL}`
-        );
-        streamRes = await callGemini(FALLBACK_MODEL, sanitizedMessages, maxTokens, key, {
-          stream: true,
-        }).catch(() => new Response(null, { status: 503 }));
-      }
-
-      if (!streamRes.ok) {
-        const errText = await streamRes.text();
-        return res.status(streamRes.status).json({ error: errText });
-      }
-
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('X-Accel-Buffering', 'no');
-      const reader = streamRes.body!.getReader();
+      const reader = response.body!.getReader();
       const decoder = new TextDecoder();
       try {
         while (true) {
@@ -147,39 +277,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         reader.releaseLock();
         res.end();
       }
-      return;
+    } else {
+      const data = await response.json();
+      return res.status(200).json(data);
     }
-
-    let response: Response;
-    try {
-      response = await callGemini(PRIMARY_MODEL, sanitizedMessages, maxTokens, key, { jsonMode });
-    } catch (err) {
-      console.error('[AI Proxy] Primary network error:', err);
-      response = new Response(null, { status: 503 });
-    }
-
-    if (!response.ok && [429, 503, 500].includes(response.status)) {
-      console.warn(
-        `[AI Proxy] Primary failed (${response.status}). Fallback → ${FALLBACK_MODEL}`
-      );
-      try {
-        response = await callGemini(FALLBACK_MODEL, sanitizedMessages, maxTokens, key, {
-          jsonMode,
-        });
-      } catch (err) {
-        console.error('[AI Proxy] Fallback network error:', err);
-        return res.status(503).json({ error: 'All Gemini providers unreachable' });
-      }
-    }
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error(`[AI Proxy] Final error ${response.status}: ${errText}`);
-      return res.status(response.status).json({ error: errText });
-    }
-
-    const data = await response.json();
-    return res.status(200).json(data);
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Erro desconhecido';
     console.error('[AI Proxy] Internal error:', msg);
