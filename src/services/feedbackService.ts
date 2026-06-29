@@ -1,12 +1,8 @@
 // src/services/feedbackService.ts
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/services/supabase';
 import { getSupabaseAccessToken } from '@/services/supabase';
 import { anonymizeClinicalText } from '@/lib/anonymizeClinical';
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
 
 /** Cache curto para evitar re-indexação duplicada na mesma sessão. */
 const indexedCases = new Set<string>();

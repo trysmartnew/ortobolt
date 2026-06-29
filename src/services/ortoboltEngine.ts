@@ -4,7 +4,7 @@
 // ✅ Importar em: AIAssistant.tsx, AnalysisPage.tsx
 
 import { z } from 'zod';
-import { getSupabaseAccessToken } from '@/services/supabase';
+import { supabase, getSupabaseAccessToken } from '@/services/supabase';
 
 // Schema rígido para respostas ortopédicas estruturadas
 export const RespostaOrtopedicaSchema = z.object({
@@ -188,10 +188,6 @@ export async function getEmbedding(text: string): Promise<number[]> {
 
 export async function buscarContextoRAG(descricaoCaso: string): Promise<string> {
   try {
-    const { createClient } = await import('@supabase/supabase-js');
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const embedding = await getEmbedding(descricaoCaso);
 
