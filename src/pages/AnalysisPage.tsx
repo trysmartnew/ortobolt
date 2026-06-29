@@ -1,7 +1,7 @@
 // src/pages/AnalysisPage.tsx
 // Upload → Análise → Copiloto → Aprovar Caso Completo → pipeline integrado
 
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
 import { analyzeImage, PRIMARY_MODEL } from '@/services/aiService';
@@ -15,6 +15,10 @@ import { lazy, Suspense } from 'react';
 const PrePostComparison = lazy(
   () => import('@/components/analysis/PrePostComparison')
 );
+import { MarkingToolbar } from '@/components/markings/MarkingToolbar';
+import { MarkingCanvas } from '@/components/markings/MarkingCanvas';
+import { useMarkings } from '@/hooks/useMarkings';
+import type { MarkingTool, MarkingsData } from '@/types/markings';
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import { useApp } from '@/contexts/AppContext';
 import { buildCaseTitle } from '@/services/clinicalCaseIntegrationService';
@@ -34,6 +38,33 @@ export default function AnalysisPage() {
   const [imageData, setImageData] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [streamError, setStreamError] = useState('');
+  const [isAnnotating, setIsAnnotating] = useState<boolean>(false);
+  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
+  const [imageDimensions, setImageDimensions] = useState<{width: number; height: number} | null>(null);
+  const { 
+    markings, activeTool, setActiveTool, 
+    addCircle, addAngle, addMarker, addROI, 
+    clearAll, hasUnsavedChanges 
+  } = useMarkings();
+
+
+  useEffect(() => {
+    if (imageData) {
+      const img = new window.Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageData;
+      img.onload = () => {
+        setImageElement(img);
+        setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+    } else {
+      setImageElement(null);
+    }
+  }, [imageData]);
+
+
+  const handleClearMarkings = () => clearAll();
+  const handleSaveNow = () => { /* marcações ficam em estado local */ };
 
   const handleSaveComparisonCase = async (beforeImage: string, afterImage: string, aiReport: any): Promise<ClinicalCase | null> => {
     try {
@@ -489,4 +520,6 @@ export default function AnalysisPage() {
     </div>
   );
 }
+
+
 
