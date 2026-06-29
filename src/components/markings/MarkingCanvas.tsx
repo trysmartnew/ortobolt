@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Stage, Layer, Image, Circle, Line, Rect, Text, Group } from 'react-konva';
 import type { MarkingsData, MarkingTool, AlignmentCircle, AngleMeasurement, FractureMarker, ROI, Point } from '../../types/markings';
 import { calculateAngle, classifyNorberg, classifyTPA } from '../../utils/geometry';
@@ -9,22 +9,53 @@ interface MarkingCanvasProps {
   height: number;
   markings: MarkingsData;
   activeTool: MarkingTool | null;
+  mode?: 'annotate' | 'review';
   onAddCircle: (circle: AlignmentCircle) => void;
   onAddAngle: (angle: AngleMeasurement) => void;
   onAddMarker: (marker: FractureMarker) => void;
   onAddROI: (roi: ROI) => void;
   onUpdateMarking: (id: string, updates: any) => void;
+  onToolChange?: (tool: MarkingTool | null) => void;
 }
 
-export function MarkingCanvas({ image, width, height, markings, activeTool, onAddCircle, onAddAngle, onAddMarker, onAddROI }: MarkingCanvasProps) {
+export function MarkingCanvas({ 
+  image, width, height, markings, activeTool, mode = 'annotate',
+  onAddCircle, onAddAngle, onAddMarker, onAddROI, onToolChange 
+}: MarkingCanvasProps) {
   const [pendingPoints, setPendingPoints] = useState<Point[]>([]);
+
+  // ✅ Hotkeys veterinárias: A=TPA, N=Norberg, M=Marker, C=Circle, R=ROI
+  useEffect(() => {
+    if (mode !== 'annotate') return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      
+      const keyMap: Record<string, MarkingTool> = {
+        'a': 'angle-tpa',
+        'n': 'angle-norberg',
+        'm': 'marker',
+        'c': 'circle',
+        'r': 'roi',
+      };
+
+      const tool = keyMap[e.key.toLowerCase()];
+      if (tool && onToolChange) {
+        e.preventDefault();
+        onToolChange(tool);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mode, onToolChange]);
 
   return (
     <Stage 
       width={width} 
       height={height} 
       onClick={(e) => {
-        if (!activeTool || activeTool === 'select') return;
+        if (mode === 'review' || !activeTool || activeTool === 'select') return;
         const stage = e.target.getStage();
         const pos = stage?.getPointerPosition();
         if (!pos) return;
@@ -57,7 +88,7 @@ export function MarkingCanvas({ image, width, height, markings, activeTool, onAd
       <Layer>
         {image && <Image image={image} width={width} height={height} listening={false} />}
       </Layer>
-      <Layer>
+      <Layer opacity={mode === 'review' ? 1 : 0.8}>
         {markings.circles.map((c: AlignmentCircle) => (
           <Group key={c.id}>
             <Circle x={c.cx} y={c.cy} radius={c.radius} stroke="cyan" strokeWidth={2} fill="rgba(0,255,255,0.1)" />
@@ -70,7 +101,7 @@ export function MarkingCanvas({ image, width, height, markings, activeTool, onAd
           return (
             <Group key={a.id}>
               <Line points={[a.points[0].x, a.points[0].y, a.points[1].x, a.points[1].y, a.points[2].x, a.points[2].y]} stroke={color} strokeWidth={2} />
-              {a.value !== null && <Text x={a.points[1].x} y={a.points[1].y - 15} text={`${a.value.toFixed(1)}°`} fill={color} fontSize={14} />}
+              {a.value !== null && <Text x={a.points[1].x} y={a.points[1].y - 15} text={`${a.value.toFixed(1)}°`} fill={color} fontSize={14} fontStyle="bold" />}
             </Group>
           );
         })}
@@ -81,9 +112,20 @@ export function MarkingCanvas({ image, width, height, markings, activeTool, onAd
           </Group>
         ))}
         {markings.rois.map((r: ROI) => (
-          <Rect key={r.id} x={r.x} y={r.y} width={r.width} height={r.height} stroke="green" strokeWidth={2} />
+          <Rect key={r.id} x={r.x} y={r.y} width={r.width} height={r.height} stroke="green" strokeWidth={2} fill="rgba(0,255,0,0.05)" />
         ))}
       </Layer>
+      {mode === 'review' && markings.circles.length === 0 && markings.angles.length === 0 && (
+        <Layer>
+          <Text 
+            x={width / 2 - 80} 
+            y={height / 2 - 10} 
+            text="Sem marcações nesta radiografia" 
+            fill="rgba(255,255,255,0.5)" 
+            fontSize={14} 
+          />
+        </Layer>
+      )}
     </Stage>
   );
 }

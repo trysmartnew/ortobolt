@@ -9,7 +9,7 @@ export type CaseStatus = 'pending'|'in_analysis'|'completed'|'critical';
 export type AnimalSpecies = 'canine'|'feline'|'equine'|'bovine'|'other';
 export type ProcedureType = 'TPLO'|'FHO'|'TTA'|'LCP_repair'|'fracture_fixation'|'joint_replacement'|'spinal_surgery'|'other';
 export type ExamModality = 'radiograph'|'clinical_photo'|'comparative_study'|'multimodal';
-export interface CaseExam { id:string; modality:ExamModality; imageUrls:string[]; aiAnalysis?:AIAnalysisResult; analysisText?:string; createdAt:string; }
+export interface CaseExam { id:string; modality:ExamModality; imageUrls:string[]; aiAnalysis?:AIAnalysisResult; analysisText?:string; markings?:import('@/types/markings').MarkingsData; createdAt:string; markedAt?:string; markedBy?:string; }
 export interface ClinicalCase { id:string; title:string; patientName:string; species:AnimalSpecies; breed:string; ageYears:number; weightKg:number; procedure:ProcedureType; status:CaseStatus; precisionScore?:number; riskLevel:'low'|'medium'|'high'; createdAt:string; updatedAt:string; tags:string[]; imageUrl?:string; aiAnalysis?:AIAnalysisResult; notes?:string; avatarUrl?:string; veterinarianId:string; clinicalEvidence?:import('@/schemas/clinicalEvidence').ClinicalEvidence; exams?:CaseExam[]; }
 export interface AIAnalysisResult { id:string; timestamp:string; precisionScore:number; riskFactors:RiskFactor[]; recommendations:string[]; anatomicalLandmarks:AnatomicalLandmark[]; confidence:number; processingTimeMs:number; }
 export interface RiskFactor { category:string; description:string; severity:'low'|'medium'|'high'; }
