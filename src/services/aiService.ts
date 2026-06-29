@@ -26,6 +26,7 @@ import {
   buscarContextoRAG,
   type RespostaOrtopedica,
 } from './ortoboltEngine';
+import type { MarkingsData, AlignmentCircle, AngleMeasurement, FractureMarker, ROI } from '@/types/markings';
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
 interface CacheEntry {
@@ -52,6 +53,16 @@ interface AIResponse {
     finish_reason?: string;
   }>;
   error?: { message?: string };
+}
+
+export interface AnalysisWithMarkings {
+  analysisText: string;
+  markings: MarkingsData;
+  metrics?: {
+    norbergAngle?: number;
+    tpaAngle?: number;
+    boneDensityPercent?: number;
+  };
 }
 
 // ── Cache ─────────────────────────────────────────────────────────────────────
@@ -389,14 +400,124 @@ export async function sendChatMessageStream(
   }
 }
 
-// ── analyzeImage — ✅ COM COMPRESSÃO DE IMAGEM ───────────────────────────────
+// ── extractMarkingsFromAnalysis — Parse IA response to generate marking data ──
+function extractMarkingsFromAnalysis(
+  analysisText: string,
+  imageWidth: number,
+  imageHeight: number
+): MarkingsData {
+  const markings: MarkingsData = {
+    circles: [],
+    angles: [],
+    markers: [],
+    rois: [],
+  };
+
+  const h = imageHeight;
+  const w = imageWidth;
+
+  // Extract key metrics from analysis text
+  const norbergMatch = analysisText.match(/Norberg[:\s]+(\d+[.,]\d*)/i);
+  const tpaMatch = analysisText.match(/TPA[:\s]+(\d+[.,]\d*)/i);
+  const fractureMatch = analysisText.match(/fratura|fraturas|quebra/i);
+  const displasiaMatch = analysisText.match(/displasia|artrite|osteoartrite/i);
+
+  // Norberg angle (hip dysplasia metric) — mark center-left
+  if (norbergMatch) {
+    const angle = parseFloat(norbergMatch[1].replace(',', '.'));
+    const isNormal = angle >= 105;
+    markings.circles.push({
+      id: `norberg-${Date.now()}`,
+      cx: w * 0.25,
+      cy: h * 0.4,
+      radius: Math.min(w, h) * 0.08,
+      label: `Norberg: ${angle}°`,
+      stage: isNormal ? 'normal' : 'abnormal',
+    });
+    markings.angles.push({
+      id: `angle-norberg-${Date.now()}`,
+      points: [
+        { x: w * 0.25, y: h * 0.3 },
+        { x: w * 0.25, y: h * 0.4 },
+        { x: w * 0.35, y: h * 0.4 },
+      ],
+      value: angle,
+      type: 'Norberg',
+    });
+  }
+
+  // TPA angle (tibial plateau angle) — mark right-center
+  if (tpaMatch) {
+    const angle = parseFloat(tpaMatch[1].replace(',', '.'));
+    const isNormal = angle >= 18 && angle <= 25;
+    markings.circles.push({
+      id: `tpa-${Date.now()}`,
+      cx: w * 0.75,
+      cy: h * 0.45,
+      radius: Math.min(w, h) * 0.08,
+      label: `TPA: ${angle}°`,
+      stage: isNormal ? 'normal' : 'abnormal',
+    });
+    markings.angles.push({
+      id: `angle-tpa-${Date.now()}`,
+      points: [
+        { x: w * 0.65, y: h * 0.35 },
+        { x: w * 0.75, y: h * 0.45 },
+        { x: w * 0.85, y: h * 0.45 },
+      ],
+      value: angle,
+      type: 'TPA',
+    });
+  }
+
+  // Fracture markers — high severity
+  if (fractureMatch) {
+    markings.markers.push({
+      id: `fracture-${Date.now()}`,
+      x: w * 0.5,
+      y: h * 0.6,
+      label: '⚠️ Fratura',
+      type: 'fracture',
+    });
+    markings.rois.push({
+      id: `roi-fracture-${Date.now()}`,
+      x: w * 0.4,
+      y: h * 0.5,
+      width: w * 0.2,
+      height: h * 0.2,
+      label: 'Região de fratura',
+      severity: 'high',
+    });
+  }
+
+  // Dysplasia/Arthritis ROI — medium severity
+  if (displasiaMatch) {
+    markings.rois.push({
+      id: `roi-dysplasia-${Date.now()}`,
+      x: w * 0.2,
+      y: h * 0.35,
+      width: w * 0.15,
+      height: h * 0.15,
+      label: 'Displasia/Artrite',
+      severity: 'medium',
+    });
+  }
+
+  return markings;
+}
+
+// ── analyzeImage — ✅ COM COMPRESSÃO DE IMAGEM + MARKINGS ────────────────────
 export async function analyzeImage(
   imageBase64: string,
-  caseInfo?: Partial<ClinicalCase>
-): Promise<string> {
+  caseInfo?: Partial<ClinicalCase>,
+  imageDimensions?: { width: number; height: number }
+): Promise<AnalysisWithMarkings> {
   try {
     // ✅ Comprimir imagem antes de enviar (reduz payload em ~70%)
     const compressed = await compressImageBase64(imageBase64);
+
+    // Default dimensions if not provided
+    const dims = imageDimensions || { width: 800, height: 600 };
 
     const ctx = caseInfo ? anonymizeCaseContext(caseInfo) : '';
 
@@ -407,11 +528,30 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
 
     const promptText = caseInfo
       ? caseInfo.status === 'completed'
-        ? `\n\n${patientContext}\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
-        : `\n\n${patientContext}\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.`
-      : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.`;
+        ? `\n\n${patientContext}\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.
 
-    return await proxyRequest({
+MÉTRICAS VETERINÁRIAS (se detectadas):
+- Ângulo de Norberg (displasia coxofemoral): normal ≥ 105°
+- Ângulo do Platô Tibial (TPA, ligamento cruzado): normal 18-25°
+- Densidade óssea (escala 0-100%)
+
+Inclua no texto: "Ângulo de Norberg: XXX°" ou "TPA: XXX°" se detectados.`
+        : `\n\n${patientContext}\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.
+
+MÉTRICAS VETERINÁRIAS (se aplicável):
+- Ângulo de Norberg (displasia coxofemoral): normal ≥ 105°
+- Ângulo do Platô Tibial (TPA): normal 18-25°
+
+Inclua no texto: "Ângulo de Norberg: XXX°" ou "TPA: XXX°" se detectados.`
+      : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.
+
+MÉTRICAS VETERINÁRIAS (se aplicável):
+- Ângulo de Norberg (displasia): normal ≥ 105°
+- Ângulo do Platô Tibial (TPA): normal 18-25°
+
+Inclua no texto: "Ângulo de Norberg: XXX°" ou "TPA: XXX°" se detectados.`;
+
+    const analysisText = await proxyRequest({
       model: PRIMARY_MODEL,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
@@ -425,13 +565,37 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
       ],
       max_tokens: 1000,
     });
+
+    // Extract markings from AI analysis
+    const markings = extractMarkingsFromAnalysis(
+      analysisText,
+      dims.width,
+      dims.height
+    );
+
+    return {
+      analysisText,
+      markings,
+      metrics: {
+        // Could be populated from extracted IA data in future
+      },
+    };
   } catch (err) {
     console.error('Vision error:', err);
-    if (err instanceof AiConsentDeniedError) return err.message;
-    return mapAiProxyError(
+    if (err instanceof AiConsentDeniedError) {
+      return {
+        analysisText: err.message,
+        markings: { circles: [], angles: [], markers: [], rois: [] },
+      };
+    }
+    const errorMsg = mapAiProxyError(
       err,
       '⚠️ Erro na análise de imagem. Verifique o formato (JPG/PNG/WEBP, máx. 15MB) e tente novamente.'
     );
+    return {
+      analysisText: errorMsg,
+      markings: { circles: [], angles: [], markers: [], rois: [] },
+    };
   }
 }
 

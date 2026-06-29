@@ -4,7 +4,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
-import { analyzeImage, PRIMARY_MODEL } from '@/services/aiService';
+import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings } from '@/services/aiService';
 import { uploadRadiografia } from '@/services/supabase';
 import { uploadImageToStorage } from '@/services/imageService';
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
@@ -15,8 +15,6 @@ import { lazy, Suspense } from 'react';
 const PrePostComparison = lazy(
   () => import('@/components/analysis/PrePostComparison')
 );
-import { MarkingToolbar } from '@/components/markings/MarkingToolbar';
-import { MarkingCanvas } from '@/components/markings/MarkingCanvas';
 import { useMarkings } from '@/hooks/useMarkings';
 import type { MarkingTool, MarkingsData } from '@/types/markings';
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
@@ -41,6 +39,7 @@ export default function AnalysisPage() {
   const [isAnnotating, setIsAnnotating] = useState<boolean>(false);
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
   const [imageDimensions, setImageDimensions] = useState<{width: number; height: number} | null>(null);
+  const [aiGeneratedMarkings, setAiGeneratedMarkings] = useState<MarkingsData | null>(null);
   const { 
     markings, activeTool, setActiveTool, 
     addCircle, addAngle, addMarker, addROI, 
@@ -194,10 +193,15 @@ export default function AnalysisPage() {
     if (!imageBase64 || mode === 'analyzing') return;
     setMode('analyzing');
     try {
-      const res = await analyzeImage(imageBase64);
-      setResult(res);
+      const res = await analyzeImage(
+        imageBase64,
+        undefined,
+        imageDimensions || undefined
+      );
+      setResult(res.analysisText);
+      setAiGeneratedMarkings(res.markings);
       setMode('result');
-      initSession(res);
+      initSession(res.analysisText);
     } catch {
       setStreamError('Falha na análise visual. Tente novamente.');
       setMode('preview');
@@ -208,6 +212,7 @@ export default function AnalysisPage() {
     setMode('idle');
     setImageData(null);
     setResult(null);
+    setAiGeneratedMarkings(null);
     setStreamError('');
     resetCopilot();
     if (fileRef.current) fileRef.current.value = '';
@@ -430,15 +435,38 @@ export default function AnalysisPage() {
         <div className="space-y-5">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <Card className="p-4">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                Imagem Analisada
-              </p>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Imagem Analisada
+                </p>
+                {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 || 
+                  aiGeneratedMarkings.angles.length > 0 || 
+                  aiGeneratedMarkings.markers.length > 0) && (
+                  <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
+                    ⚡ {aiGeneratedMarkings.circles.length + aiGeneratedMarkings.angles.length} marcações
+                  </span>
+                )}
+              </div>
               {imageData && (
                 <img
                   src={imageData}
                   alt="Resultado"
                   className="w-full rounded-2xl border object-contain max-h-80"
                 />
+              )}
+              {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 || aiGeneratedMarkings.angles.length > 0) && (
+                <div className="mt-3 pt-3 border-t border-slate-100 space-y-1 text-xs">
+                  {aiGeneratedMarkings.circles.map((c) => (
+                    <div key={c.id} className="text-slate-700">
+                      <span className="font-semibold text-slate-900">{c.label || 'Círculo'}</span> — {c.stage === 'abnormal' ? '⚠️ Anormal' : '✓ Normal'}
+                    </div>
+                  ))}
+                  {aiGeneratedMarkings.angles.map((a) => (
+                    <div key={a.id} className="text-slate-700">
+                      <span className="font-semibold text-slate-900">Ângulo {a.type}:</span> {a.value.toFixed(1)}°
+                    </div>
+                  ))}
+                </div>
               )}
             </Card>
 
