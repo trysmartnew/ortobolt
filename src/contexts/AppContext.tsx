@@ -58,6 +58,7 @@ interface AppContextType {
   user: User | null;
   isLoggedIn: boolean;
   authLoading: boolean;
+  profileSyncStatus: 'idle' | 'syncing' | 'done' | 'error';
   currentView: AppView;
   setCurrentView: (v: AppView) => void;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<boolean>;
@@ -160,6 +161,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
+  const [profileSyncStatus, setProfileSyncStatus] = useState<'idle' | 'syncing' | 'done' | 'error'>('idle');
+  const [pendingProfileSync, setPendingProfileSync] = useState<{ id: string; email: string } | null>(null);
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
 
@@ -202,6 +205,49 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const removeToast = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
+
+  // ✅ FASE 2: Sincronização de perfil com retry automático (backoff exponencial)
+  useEffect(() => {
+    if (!pendingProfileSync) return;
+
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    const syncProfile = async () => {
+      try {
+        setProfileSyncStatus('syncing');
+        const profile = await fetchUserProfile(pendingProfileSync.id);
+
+        if (profile) {
+          setUser(profile);
+          setAiConsentFromProfile(profile.preferences?.autoAnalysis);
+          setProfileSyncStatus('done');
+          addToast(`Bem-vindo(a), ${profile.name.split(' ')[0]}!`, 'success');
+          const hasSeenTour = localStorage.getItem(`ortobolt_tour_v1_${profile.id}`);
+          if (!hasSeenTour) {
+            setTimeout(() => setTourActive(true), 600);
+          }
+          setPendingProfileSync(null);
+        } else {
+          throw new Error('Perfil vazio');
+        }
+      } catch (err) {
+        retryCount += 1;
+        if (retryCount < maxRetries) {
+          const waitMs = Math.pow(2, retryCount) * 1000;
+          addToast(`Sincronizando perfil (tentativa ${retryCount}/${maxRetries})...`, 'info');
+          setTimeout(syncProfile, waitMs);
+        } else {
+          console.warn('Perfil incompleto após 3 tentativas; usando mínimo', err);
+          setProfileSyncStatus('error');
+          addToast('Perfil sincronizando em background...', 'warning');
+          setPendingProfileSync(null);
+        }
+      }
+    };
+
+    syncProfile();
+  }, [pendingProfileSync, addToast]);
 
   // ✅ D-01: Fetch casos reais COM mapeamento seguro
   useEffect(() => {
@@ -287,22 +333,46 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     setLoginAttempts(0);
     setLockedUntil(null);
-
     sessionStorage.setItem('ortobolt_remember_me', rememberMe ? '1' : '0');
 
-    await upsertUserProfile(data.user);
-    const profile = await fetchUserProfile(data.user.id);
-    if (!profile) return false;
+    // ✅ FASE 1: Autenticação (bloqueante) — rápida
+    // Criar perfil mínimo in-memory com email extraído do JWT
+    const minimalProfile: User = {
+      id: data.user.id,
+      email: data.user.email || '',
+      name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Usuário',
+      role: 'veterinarian',
+      specialty: 'Ortopedia Veterinária',
+      crmv: '',
+      institution: '',
+      avatar: data.user.user_metadata?.avatar_url || undefined,
+      certifications: [],
+      stats: {
+        totalCases: 0,
+        successRate: 0,
+        avgPrecision: 0,
+        monthlyProcedures: 0,
+      },
+      preferences: {
+        notifications: true,
+        theme: 'light',
+        language: 'pt',
+        autoAnalysis: true,
+        reportFormat: 'pdf',
+      },
+    };
 
-    setUser(profile);
-    setAiConsentFromProfile(profile.preferences?.autoAnalysis);
+    setUser(minimalProfile);
     setIsLoggedIn(true);
     setCurrentView((prev) => prev === 'reset' ? 'reset' : 'app');
-    const hasSeenTour = localStorage.getItem(`ortobolt_tour_v1_${profile.id}`);
-    if (!hasSeenTour) {
-      setTimeout(() => setTourActive(true), 600);
-    }
-    addToast(`Bem-vindo(a), ${profile.name.split(' ')[0]}!`, 'success');
+    setProfileSyncStatus('syncing');
+    addToast('Entrando...', 'info');
+
+    // ✅ FASE 2: Sincronização de perfil (assíncrona, em background)
+    // Dispara useEffect que faz retry com backoff
+    setPendingProfileSync({ id: data.user.id, email: data.user.email || '' });
+    await upsertUserProfile(data.user);
+
     return true;
   }, [loginAttempts, lockedUntil, addToast]);
 
@@ -553,7 +623,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppContext.Provider value={{
-      user, isLoggedIn, authLoading, currentView, setCurrentView,
+      user, isLoggedIn, authLoading, profileSyncStatus, currentView, setCurrentView,
       login, logout, setUserFromSession,
       currentPage, setCurrentPage,
       cases, addCase, approveAndIntegrateCase, updateCase, deleteCase,
