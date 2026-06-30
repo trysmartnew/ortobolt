@@ -7,6 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { User } from '@/types/index';
 import type { MarkingsData } from '@/types/markings';
 import { createLogger } from '@/utils/logger';
+import { compressImage } from '@/utils/imageCompression';
 
 const logger = createLogger('supabase');
 
@@ -182,9 +183,16 @@ export async function uploadRadiografia(
   const view = new Uint8Array(ab);
   for (let i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
 
+  let uploadBlob: Blob = new Blob([ab], { type: mime });
+  try {
+    uploadBlob = await compressImage(uploadBlob);
+  } catch (err) {
+    logger.warn('Falha na compressão da imagem, enviando original', err);
+  }
+
   const { error } = await supabase.storage
     .from('case-images')
-    .upload(filePath, new Blob([ab], { type: mime }), { contentType: mime, upsert: true });
+    .upload(filePath, uploadBlob, { contentType: uploadBlob.type || mime, upsert: true });
 
   if (error) {
     logger.error('Erro no upload de radiografia', error.message);
@@ -215,9 +223,16 @@ export async function uploadCaseImage(
   const view = new Uint8Array(ab);
   for (let i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
 
+  let uploadBlob: Blob = new Blob([ab], { type: mime });
+  try {
+    uploadBlob = await compressImage(uploadBlob);
+  } catch (err) {
+    logger.warn('Falha na compressão da imagem, enviando original', err);
+  }
+
   const { error } = await supabase.storage
     .from('case-images')
-    .upload(filePath, new Blob([ab], { type: mime }), { contentType: mime, upsert: true });
+    .upload(filePath, uploadBlob, { contentType: uploadBlob.type || mime, upsert: true });
 
   if (error) {
     logger.error('Erro no upload de imagem de caso', error.message);
