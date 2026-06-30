@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRadiographs, RadiographItem } from '../../hooks/useRadiographs';
 import { RadiographUploader } from './RadiographUploader';
 import { MarkingToolbar } from '../markings/MarkingToolbar';
 import { MarkingCanvas } from '../markings/MarkingCanvas';
 import type { MarkingTool, MarkingsData, AlignmentCircle, AngleMeasurement, FractureMarker, ROI, Point } from '../../types/markings';
+import { supabase } from '../../services/supabase';
+import { validateMarkings } from '../../schemas/markings';
 
 interface RadiographViewerProps {
   caseId: string;
+  markings?: MarkingsData;
 }
 
-export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId }) => {
+export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId, markings: externalMarkings }) => {
   const { radiographs, loading, error, remove, getSignedUrl } = useRadiographs({ caseId });
   const [selectedRadiographItem, setSelectedRadiographItem] = useState<RadiographItem | null>(null);
   const [isAnnotating, setIsAnnotating] = useState<boolean>(false);
@@ -17,12 +20,8 @@ export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId }) =>
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
   const [activeTool, setActiveTool] = useState<MarkingTool | null>(null);
-  const [markings, setMarkings] = useState<MarkingsData>({
-    circles: [],
-    angles: [],
-    markers: [],
-    rois: [],
-  });
+  const initialMarkings = useMemo(() => externalMarkings || { circles: [], angles: [], markers: [], rois: [] } as MarkingsData, [externalMarkings]);
+  const [markings, setMarkings] = useState<MarkingsData>(initialMarkings);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
 
   useEffect(() => {
@@ -92,11 +91,59 @@ export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId }) =>
     setHasUnsavedChanges(true);
   };
 
-  const handleSaveMarkings = () => {
-    // TODO: Implement actual save logic to backend
-    console.log("Saving markings:", markings);
-    setHasUnsavedChanges(false);
-  };
+  const handleSaveMarkings = useCallback(async () => {
+    try {
+      const validated = validateMarkings(markings);
+      if (!validated) {
+        console.error('Marcações inválidas');
+        return;
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.error('Usuário não autenticado');
+        return;
+      }
+
+      const { data: currentCase, error: fetchError } = await supabase
+        .from('clinical_cases')
+        .select('exams')
+        .eq('id', caseId)
+        .single();
+
+      if (fetchError || !currentCase?.exams) {
+        console.error('Erro ao carregar exame para salvamento:', fetchError?.message);
+        return;
+      }
+
+      const exams = currentCase.exams as any[];
+      const targetExam = imageUrl
+        ? exams.find((e: any) => Array.isArray(e.imageUrls) && e.imageUrls[0] === imageUrl)
+        : exams.find((e: any) => e.modality === 'radiograph');
+
+      if (!targetExam) {
+        console.error('Exame correspondente não encontrado para salvamento de marcações');
+        return;
+      }
+
+      const updatedExams = exams.map((e: any) =>
+        e.id === targetExam.id
+          ? { ...e, markings: validated, markedAt: new Date().toISOString() }
+          : e
+      );
+
+      const { error: updateError } = await supabase
+        .from('clinical_cases')
+        .update({ exams: updatedExams })
+        .eq('id', caseId);
+
+      if (updateError) throw updateError;
+
+      setHasUnsavedChanges(false);
+    } catch (error: any) {
+      console.error('Erro ao salvar marcações:', error.message);
+    }
+  }, [caseId, imageUrl, markings]);
 
   const handleAddCircle = (circle: AlignmentCircle) => {
     setMarkings(prev => ({ ...prev, circles: [...prev.circles, circle] }));
