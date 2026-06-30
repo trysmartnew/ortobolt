@@ -25,6 +25,12 @@ export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId, mark
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
 
   useEffect(() => {
+    if (externalMarkings) {
+      setMarkings(externalMarkings);
+    }
+  }, [externalMarkings]);
+
+  useEffect(() => {
     const fetchImageUrl = async () => {
       if (selectedRadiographItem) {
         const url = await getSignedUrl(selectedRadiographItem.filepath);
