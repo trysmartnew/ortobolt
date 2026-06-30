@@ -1,4 +1,5 @@
 import { Point } from '../types/markings';
+import { NORBERG_THRESHOLDS, TPA_THRESHOLDS } from '../constants/markingThresholds';
 
 /** 
  * Calcula o ângulo (em graus) entre três pontos, com o vertex como ponto central.
@@ -28,9 +29,9 @@ export function calculateDistance(p1: Point, p2: Point): number {
  * Ex: classifyNorberg(110) => 'normal'
  */
 export function classifyNorberg(angle: number): 'normal' | 'mild' | 'moderate' | 'severe' {
-  if (angle > 105) return 'normal';
-  if (angle >= 100) return 'mild';
-  if (angle >= 90) return 'moderate';
+  if (angle > NORBERG_THRESHOLDS.NORMAL) return 'normal';
+  if (angle >= NORBERG_THRESHOLDS.MILD) return 'mild';
+  if (angle >= NORBERG_THRESHOLDS.MODERATE) return 'moderate';
   return 'severe';
 }
 
@@ -39,5 +40,5 @@ export function classifyNorberg(angle: number): 'normal' | 'mild' | 'moderate' |
  * Ex: classifyTPA(20) => 'normal'
  */
 export function classifyTPA(angle: number): 'normal' | 'elevated' {
-  return angle < 22 ? 'normal' : 'elevated';
+  return angle < TPA_THRESHOLDS.ELEVATED ? 'normal' : 'elevated';
 }

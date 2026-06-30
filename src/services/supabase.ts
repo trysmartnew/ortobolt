@@ -5,6 +5,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type { User } from '@/types/index';
+import type { MarkingsData } from '@/types/markings';
 import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('supabase');
@@ -255,4 +256,15 @@ export async function getSignedImageUrl(
     logger.error('Erro ao gerar URL assinada', err);
     return null;
   }
+}
+
+export async function updateCaseMarkings(
+  caseId: string,
+  markings: MarkingsData
+): Promise<void> {
+  const { error } = await supabase
+    .from('clinical_cases')
+    .update({ markings })
+    .eq('id', caseId);
+  if (error) throw error;
 }
