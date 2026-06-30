@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Eye, EyeOff, ArrowLeft, Shield, CheckCircle } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
+import { RegisterSchema, type RegisterInput } from '@/schemas/auth';
 
 // ── Cálculo de força da senha ─────────────────────────────────────────────────
 function calcPasswordStrength(pwd: string): number {
@@ -67,41 +68,45 @@ export default function RegisterPage() {
   const passwordStrength = calcPasswordStrength(form.password);
 
   const handleSubmit = async () => {
-    setError('');
-    setShowLoginButton(false);
+      setError('');
+      setShowLoginButton(false);
 
-    // Validações básicas
-    if (!form.name.trim())     { setError('Informe seu nome completo.'); return; }
-    if (!form.email.trim())    { setError('Informe seu e-mail.'); return; }
-    
-    // Lógica de validação do CRMV
-    if (form.role === 'veterinarian' || form.role === 'resident') {
-      if (!form.crmv.trim())     { setError('Informe seu CRMV.'); return; }
-      if (!/^\d+\/[A-Z]{2}$/.test(form.crmv.trim())) {
-        setError('Formato inválido. Use: 12345/SP');
+      // Validação Zod (campos comuns)
+      const validation = RegisterSchema.safeParse({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        confirmPassword: form.confirmPassword,
+      });
+      if (!validation.success) {
+        const firstError = validation.error.issues?.[0]?.message ?? 'Verifique os dados do formulário.';
+        setError(firstError);
         return;
       }
-    }
 
-    if (!form.specialty)       { setError('Selecione sua especialidade.'); return; }
-    if (!form.password)        { setError('Crie uma senha.'); return; }
+      // Validação CRMV (condicional por role)
+      if (form.role === 'veterinarian' || form.role === 'resident') {
+        if (!form.crmv.trim())     { setError('Informe seu CRMV.'); return; }
+        if (!/^\d+\/[A-Z]{2}$/.test(form.crmv.trim())) {
+          setError('Formato inválido. Use: 12345/SP');
+          return;
+        }
+      }
 
-    // ✅ U-03: Bloquear senha fraca (score mínimo 2)
-    if (passwordStrength < 2) {
-      setError('Senha muito fraca. Use ao menos 8 caracteres, uma letra maiúscula e um número.');
-      return;
-    }
+      if (!form.specialty)       { setError('Selecione sua especialidade.'); return; }
 
-    if (form.password !== form.confirmPassword) {
-      setError('As senhas não coincidem.');
-      return;
-    }
-    if (!form.acceptTerms) {
-      setError('Aceite os Termos de Uso para continuar.');
-      return;
-    }
+      // Regra de negócio: força da senha
+      if (passwordStrength < 2) {
+        setError('Senha muito fraca. Use ao menos 8 caracteres, uma letra maiúscula e um número.');
+        return;
+      }
 
-    setLoading(true);
+      if (!form.acceptTerms) {
+        setError('Aceite os Termos de Uso para continuar.');
+        return;
+      }
+
+      setLoading(true);
     try {
       // 1. Criar usuário no Supabase Auth
       const { data, error: signUpErr } = await supabase.auth.signUp({

@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Eye, EyeOff, Shield, ArrowLeft, Lock } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
+import { LoginSchema, type LoginInput } from '@/schemas/auth';
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 24 24" width="18" height="18">
@@ -32,27 +33,29 @@ export default function LoginPage() {
   const [forgotLoading, setForgotLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (loginLocked) {
-      setError(`Muitas tentativas incorretas. Aguarde ${loginLockSecondsLeft}s para tentar novamente.`);
-      return;
-    }
-    if (!email.trim() || !password.trim()) {
-      setError('Preencha o e-mail e a senha.');
-      return;
-    }
-    setLoading(true);
-    setError('');
-    try {
-      const ok = await login(email, password, rememberMe);
-      if (!ok && !loginLocked) {
-        setError('E-mail ou senha incorretos. Verifique suas credenciais.');
+      if (loginLocked) {
+        setError(`Muitas tentativas incorretas. Aguarde ${loginLockSecondsLeft}s para tentar novamente.`);
+        return;
       }
-    } catch {
-      setError('Erro de conexão. Verifique sua internet e tente novamente.');
-    } finally {
-      setLoading(false);
-    }
-  };
+      const validation = LoginSchema.safeParse({ email, password });
+      if (!validation.success) {
+        const firstError = validation.error.issues?.[0]?.message ?? 'Preencha o e-mail e a senha.';
+        setError(firstError);
+        return;
+      }
+      setLoading(true);
+      setError('');
+      try {
+        const ok = await login(validation.data.email, validation.data.password, rememberMe);
+        if (!ok && !loginLocked) {
+          setError('E-mail ou senha incorretos. Verifique suas credenciais.');
+        }
+      } catch {
+        setError('Erro de conexão. Verifique sua internet e tente novamente.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const handleSocialLogin = async (provider: 'google') => {
     setSocialLoading(provider);
