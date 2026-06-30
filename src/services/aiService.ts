@@ -503,6 +503,16 @@ function extractMarkingsFromAnalysis(
     });
   }
 
+  const hasAnyMarkings =
+    markings.circles.length > 0 ||
+    markings.angles.length > 0 ||
+    markings.markers.length > 0 ||
+    markings.rois.length > 0;
+
+  if (!hasAnyMarkings) {
+    console.warn('extractMarkingsFromAnalysis: nenhum padrão reconhecido na resposta da IA');
+  }
+
   return markings;
 }
 

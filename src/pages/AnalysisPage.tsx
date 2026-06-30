@@ -200,6 +200,7 @@ export default function AnalysisPage() {
       );
       setResult(res.analysisText);
       setAiGeneratedMarkings(res.markings);
+      sessionStorage.setItem('ortobolt_ai_markings', JSON.stringify(res.markings));
       setMode('result');
       initSession(res.analysisText);
     } catch {
@@ -213,6 +214,7 @@ export default function AnalysisPage() {
     setImageData(null);
     setResult(null);
     setAiGeneratedMarkings(null);
+    sessionStorage.removeItem('ortobolt_ai_markings');
     setStreamError('');
     resetCopilot();
     if (fileRef.current) fileRef.current.value = '';
@@ -251,6 +253,7 @@ export default function AnalysisPage() {
         copilotSessionId: session?.sessionId,
         titleOverride: title,
         status: 'completed',
+        markings: aiGeneratedMarkings ?? undefined,
       });
 
       addAnalysisToHistory({

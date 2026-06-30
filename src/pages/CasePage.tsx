@@ -3,7 +3,7 @@ import { useCaseRealtime } from '@/hooks/useCaseRealtime';
 import { RadiographViewer } from '@/components/radiographs/RadiographViewer';
 // src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import CaseAnalysisTab from '@/components/CaseAnalysisTab';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity } from 'lucide-react';
@@ -12,6 +12,7 @@ import { uploadCaseImage } from '@/services/supabase';
 import { uploadImageToStorage } from '@/services/imageService';
 import { Card, Button, StatusBadge, RiskTag } from '@/components/ui';
 import type { ClinicalCase, ProcedureType } from '@/types/index';
+import type { MarkingsData } from '@/types/markings';
 
 // ── PROTOCOLOS PÓS-OPERATÓRIOS POR PROCEDIMENTO ─────────────────────────────
 interface ProtocolStep {
@@ -286,6 +287,27 @@ function TutorGuideModal({ caseData, protocol, onClose }: { caseData: ClinicalCa
 // ── COMPONENTE PRINCIPAL ────────────────────────────────────────────────────
 export default function CasePage() {
   const { activeCase, closeCase, deleteCase, updateCase, addToast, setCurrentPage, user } = useApp();
+  const [aiMarkingsFromSession, setAiMarkingsFromSession] = useState<MarkingsData | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('ortobolt_ai_markings');
+      if (raw) {
+        const parsed = JSON.parse(raw) as MarkingsData;
+        setAiMarkingsFromSession(parsed);
+        sessionStorage.removeItem('ortobolt_ai_markings');
+      }
+    } catch {
+      setAiMarkingsFromSession(null);
+    }
+  }, []);
+
+  const persistedAiMarkings = useMemo<MarkingsData | undefined>(() => {
+    const exam = activeCase?.exams?.find(e => e.markings && (e.markings.circles.length > 0 || e.markings.angles.length > 0 || e.markings.markers.length > 0 || e.markings.rois.length > 0));
+    return exam?.markings;
+  }, [activeCase]);
+
+  const aiMarkingsToViewer = aiMarkingsFromSession ?? persistedAiMarkings;
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -580,7 +602,7 @@ export default function CasePage() {
             <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
               <Activity size={16} /> Galeria de Radiografias
             </h2>
-            <RadiographViewer caseId={activeCase.id} />
+            <RadiographViewer caseId={activeCase.id} markings={aiMarkingsToViewer ?? undefined} />
           </Card>
 
           <Card className="p-5">

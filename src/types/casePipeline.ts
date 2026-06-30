@@ -1,5 +1,6 @@
 import type { ChatMessage, CaseStatus, CaseExam } from '@/types/index';
 import type { ClinicalContextDraft } from '@/types/clinicalCopilot';
+import type { MarkingsData } from '@/types/markings';
 
 /** Entrada unificada ao aprovar Caso Completo na Análise */
 export interface ApproveCompleteCaseInput {
@@ -13,6 +14,7 @@ export interface ApproveCompleteCaseInput {
   titleOverride?: string;
   status?: CaseStatus;
   additionalExams?: CaseExam[];
+  markings?: MarkingsData;
 }
 
 export const PIPELINE_TAG_INTEGRATED = 'integrado';

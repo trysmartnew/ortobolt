@@ -187,6 +187,7 @@ export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): Cl
     imageUrls: input.imageStorageUrl ? [input.imageStorageUrl] : [],
     aiAnalysis,
     analysisText: input.analysisText,
+    markings: input.markings,
     createdAt: now,
   };
 
