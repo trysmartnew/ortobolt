@@ -359,7 +359,7 @@ export default function ReportsPage() {
           </div>
           <p className="text-xs text-slate-500 mb-3 font-mono">
             {tutorMode 
-              ? "Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao proprietário do pet." 
+              ? "Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal." 
               : "Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco."}
           </p>
           <label className="flex items-center gap-2 mb-4 cursor-pointer select-none">

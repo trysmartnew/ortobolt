@@ -44,7 +44,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   ],
   case: [
     { target: '__welcome__', title: '🏥 Caso Clínico', content: 'Aqui você gerencia o paciente, visualiza a análise da IA e aplica o protocolo pós-operatório.', placement: 'center' },
-    { target: 'tour-case-patient', title: '🩺 Dados do Paciente', content: 'Informações do pet e status atual do atendimento.', placement: 'bottom', highlight: true },
+    { target: 'tour-case-patient', title: '🩺 Dados do Paciente', content: 'Informações do paciente e status atual do atendimento.', placement: 'bottom', highlight: true },
     { target: 'tour-case-image', title: '📷 Imagem Analisada', content: 'A radiografia do caso. Os landmarks anatômicos detectados pela IA estão marcados em verde sobre a imagem.', placement: 'bottom', highlight: true },
     { target: 'tour-case-ai-result', title: '🤖 Laudo da IA', content: 'Diagnóstico sugerido, fatores de risco e recomendações da inteligência artificial.', placement: 'bottom', highlight: true },
     { target: 'tour-case-notes', title: '📝 Notas Clínicas', content: 'Registre a evolução do paciente e observações da equipe.', placement: 'top', highlight: true },
