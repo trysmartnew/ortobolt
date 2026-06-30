@@ -244,7 +244,7 @@ export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId, mark
                 )}
                 {!isAnnotating && (
                   <button 
-                    className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded"
+                    className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-primary text-white px-4 py-2 rounded"
                     onClick={() => setIsAnnotating(true)}
                   >
                     Anotar

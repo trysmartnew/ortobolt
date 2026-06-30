@@ -27,7 +27,7 @@ export function MarkingToolbar({ activeTool, onToolChange, onClear, onSave, onEx
         {onExport && (
           <button
             onClick={onExport}
-            className='px-3 py-1.5 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-md'
+             className='px-3 py-1.5 text-sm bg-primary text-white hover:bg-primary-dark rounded-md'
           >
             📥 Exportar Marcações
           </button>
@@ -45,7 +45,7 @@ export function MarkingToolbar({ activeTool, onToolChange, onClear, onSave, onEx
           onClick={() => onToolChange(tool.id === 'select' ? null : tool.id)}
           title={`Hotkey: ${tool.hotkey}`}
           className={`px-3 py-1.5 text-sm transition-colors relative ${activeTool === tool.id
-            ? 'bg-blue-600 text-white'
+            ? 'bg-primary text-white'
             : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
             } rounded-md`}
         >

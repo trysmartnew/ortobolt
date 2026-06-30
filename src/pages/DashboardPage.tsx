@@ -35,7 +35,7 @@ function SurgeryCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-mono font-bold text-slate-500">{formatDate(c.createdAt)}</span>
             {isDone && <CheckCircle2 size={14} className="text-emerald-500" />}
-            {isNext && !isDone && <Clock size={14} className="text-blue-500 animate-pulse" />}
+            {isNext && !isDone && <Clock size={14} className="text-primary animate-pulse" />}
           </div>
           <p className="text-sm font-semibold text-slate-900 truncate">{c.patientName}</p>
           <p className="text-xs text-slate-500 capitalize">{c.species} · {c.breed} · {c.weightKg}kg</p>
