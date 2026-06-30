@@ -1,5 +1,51 @@
 // src/services/backupService.ts
 import { supabase } from './supabase';
+import type { User, ClinicalCase, CaseExam } from '@/types/index';
+
+type SanitizedUser = Pick<User, 'id' | 'name' | 'role' | 'specialty' | 'institution'>;
+type SanitizedCase = Omit<ClinicalCase, 'veterinarianId' | 'notes' | 'aiAnalysis' | 'clinicalEvidence'> & {
+  exams?: Array<Omit<CaseExam, 'markings' | 'markedAt' | 'markedBy'>>;
+};
+
+function sanitizeUser(u: User): SanitizedUser {
+  return {
+    id: u.id,
+    name: u.name,
+    role: u.role,
+    specialty: u.specialty,
+    institution: u.institution,
+  };
+}
+
+function sanitizeCase(c: ClinicalCase): SanitizedCase {
+  const { id, title, patientName, species, breed, ageYears, weightKg, procedure, status, precisionScore, riskLevel, createdAt, updatedAt, tags, imageUrl, avatarUrl, exams } = c;
+  const cleanExams = (exams as CaseExam[] | undefined)?.map(({ id, modality, imageUrls, analysisText, createdAt }) => ({
+    id,
+    modality,
+    imageUrls,
+    analysisText,
+    createdAt,
+  }));
+  return {
+    id,
+    title,
+    patientName,
+    species,
+    breed,
+    ageYears,
+    weightKg,
+    procedure,
+    status,
+    precisionScore,
+    riskLevel,
+    createdAt,
+    updatedAt,
+    tags,
+    imageUrl,
+    avatarUrl,
+    exams: cleanExams,
+  };
+}
 
 export async function exportUserData(userId: string): Promise<void> {
   const [profileResult, casesResult] = await Promise.all([
@@ -19,8 +65,8 @@ export async function exportUserData(userId: string): Promise<void> {
   const backup = {
     version: '1.0',
     exported_at: new Date().toISOString(),
-    user: profileResult.data,
-    cases: casesResult.data ?? [],
+    user: sanitizeUser(profileResult.data as User),
+    cases: (casesResult.data ?? []).map(sanitizeCase),
     total_cases: casesResult.data?.length ?? 0,
   };
 
