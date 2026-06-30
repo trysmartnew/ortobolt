@@ -2,6 +2,7 @@
 // Upload → Análise → Copiloto → Aprovar Caso Completo → pipeline integrado
 
 import React, { useState, useRef, useMemo, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
 import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings } from '@/services/aiService';
@@ -306,7 +307,7 @@ export default function AnalysisPage() {
           </h3>
         );
       if (line === '') return <br key={i} />;
-      return <p key={i} className="text-sm text-slate-700">{line}</p>;
+      return <p key={i} className="text-sm text-slate-700" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(line) }} />;
     });
 
   return (

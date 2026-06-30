@@ -1,6 +1,7 @@
 // src/components/AIAssistant.tsx
 // 🤖 OrthoAI Copiloto Global — Widget flutuante com diretrizes veterinárias
 import { useState, useRef, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
 import { sendChatMessageStream } from '@/services/aiService';
 import { buildVetMessage } from '@/services/veterinaryPrompts';
@@ -141,7 +142,9 @@ export default function AIAssistant() {
                     ? 'bg-primary text-white rounded-br-sm'
                     : 'bg-white text-slate-800 border border-slate-200 rounded-bl-sm shadow-sm'
                 }`}>
-                  {msg.content || (isStreaming && i === messages.length - 1 && (
+                  {msg.content ? (
+                    <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg.content) }} />
+                  ) : (isStreaming && i === messages.length - 1 && (
                     <span className="inline-flex items-center gap-1 text-slate-400">
                       <Loader2 size={12} className="animate-spin" /> Pensando...
                     </span>
