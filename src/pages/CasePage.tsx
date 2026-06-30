@@ -288,6 +288,7 @@ function TutorGuideModal({ caseData, protocol, onClose }: { caseData: ClinicalCa
 export default function CasePage() {
   const { activeCase, closeCase, deleteCase, updateCase, addToast, setCurrentPage, user } = useApp();
   const [aiMarkingsFromSession, setAiMarkingsFromSession] = useState<MarkingsData | null>(null);
+  const [saving, setSaving] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -315,44 +316,54 @@ export default function CasePage() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !activeCase) return;
-    addToast('Processando radiografia...', 'info');
-    const base64 = await new Promise<string>((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.readAsDataURL(file);
-    });
-    const uploadResult = await uploadImageToStorage(base64, {
-      storagePath: `xray-${activeCase.id}-${Date.now()}`,
-      type: 'xray',
-      caseId: activeCase.id
-    });
-    if (uploadResult.url) {
-      updateCase(activeCase.id, { imageUrl: uploadResult.url, updatedAt: new Date().toISOString() });
-      addToast('Radiografia salva na nuvem.', 'success');
-    } else {
-      addToast('Falha no upload da radiografia.', 'warning');
+    setSaving(true);
+    try {
+      addToast('Processando radiografia...', 'info');
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+      const uploadResult = await uploadImageToStorage(base64, {
+        storagePath: `xray-${activeCase.id}-${Date.now()}`,
+        type: 'xray',
+        caseId: activeCase.id
+      });
+      if (uploadResult.url) {
+        updateCase(activeCase.id, { imageUrl: uploadResult.url, updatedAt: new Date().toISOString() });
+        addToast('Radiografia salva na nuvem.', 'success');
+      } else {
+        addToast('Falha no upload da radiografia.', 'warning');
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !activeCase) return;
-    addToast('Processando avatar...', 'info');
-    const base64 = await new Promise<string>((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.readAsDataURL(file);
-    });
-    const uploadResult = await uploadImageToStorage(base64, {
-      storagePath: `avatar-${activeCase.id}-${Date.now()}`,
-      type: 'avatar',
-      caseId: activeCase.id
-    });
-    if (uploadResult.url) {
-      updateCase(activeCase.id, { avatarUrl: uploadResult.url, updatedAt: new Date().toISOString() });
-      addToast('Avatar salvo na nuvem.', 'success');
-    } else {
-      addToast('Falha no upload do avatar.', 'warning');
+    setSaving(true);
+    try {
+      addToast('Processando avatar...', 'info');
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+      const uploadResult = await uploadImageToStorage(base64, {
+        storagePath: `avatar-${activeCase.id}-${Date.now()}`,
+        type: 'avatar',
+        caseId: activeCase.id
+      });
+      if (uploadResult.url) {
+        updateCase(activeCase.id, { avatarUrl: uploadResult.url, updatedAt: new Date().toISOString() });
+        addToast('Avatar salvo na nuvem.', 'success');
+      } else {
+        addToast('Falha no upload do avatar.', 'warning');
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -396,8 +407,13 @@ export default function CasePage() {
   };
 
   const handleSaveEdit = (updates: Partial<ClinicalCase>) => {
-    updateCase(activeCase.id, { ...updates, updatedAt: new Date().toISOString() });
-    addToast('Dados atualizados com sucesso.', 'success');
+    setSaving(true);
+    try {
+      updateCase(activeCase.id, { ...updates, updatedAt: new Date().toISOString() });
+      addToast('Dados atualizados com sucesso.', 'success');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const addClinicalNote = () => {
@@ -475,11 +491,11 @@ export default function CasePage() {
                 <span className="text-xs font-mono text-slate-500 w-10 text-center">{zoom}%</span>
                 <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-bold">+</button>
                 <button onClick={() => setZoom(100)} className="text-xs text-slate-500 hover:text-primary px-2">Reset</button>
-                <button onClick={() => fileInputRef.current?.click()} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
-                  <Upload size={14} /> Upload
-                </button>
+                  <button onClick={() => fileInputRef.current?.click()} disabled={saving} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
+                    <Upload size={14} /> Upload
+                  </button>
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
-                <button onClick={() => avatarInputRef.current?.click()} className="text-xs text-emerald-600 hover:text-emerald-800 px-2 flex items-center gap-1 font-medium">
+                <button onClick={() => avatarInputRef.current?.click()} disabled={saving} className="text-xs text-emerald-600 hover:text-emerald-800 px-2 flex items-center gap-1 font-medium">
                   <Upload size={14} /> Avatar
                 </button>
                 <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />

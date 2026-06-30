@@ -1,11 +1,11 @@
 // ✅ U-02: addToast no handleAdd — feedback visual ao criar caso
 // ✅ D-01: veterinarianId usa user?.id em vez de hardcoded 'vet-001'
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2, Upload } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { uploadCaseImage } from '@/services/supabase';
 import { uploadImageToStorage } from '@/services/imageService';
-import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge } from '@/components/ui';
+import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge, Spinner } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/constants/labels';
 import type { ClinicalCase, CaseStatus, ProcedureType, AnimalSpecies } from '@/types/index';
 
@@ -203,6 +203,14 @@ export default function GalleryPage() {
     imageFile: null as File | null
   });
   const [formErrors, setFormErrors] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (cases !== undefined) {
+      const timer = setTimeout(() => setLoading(false), 200);
+      return () => clearTimeout(timer);
+    }
+  }, [cases]);
 
   const filtered = useMemo(() => {
     return cases.filter(c => {
@@ -389,7 +397,11 @@ export default function GalleryPage() {
       </div>
 
       {/* Grid */}
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Spinner />
+        </div>
+      ) : filtered.length === 0 ? (
         <EmptyState
           icon={<Filter size={48} />}
           title="Nenhum caso encontrado"
