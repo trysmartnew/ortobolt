@@ -120,7 +120,7 @@ export default function CopilotClinical({
         {messages.length > 0 && (
           <button
             onClick={handleClear}
-            className="text-[10px] text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1"
+            className="text-[10px] text-slate-400 hover:text-error transition-colors flex items-center gap-1"
             title="Limpar conversa"
           >
             <RefreshCw size={10} />
@@ -179,7 +179,7 @@ export default function CopilotClinical({
                   onClick={() => handleCopy(msg.content, i)}
                   className="text-[10px] text-slate-400 hover:text-primary transition-colors flex items-center gap-1"
                 >
-                  {copiedId === i ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
+                  {copiedId === i ? <Check size={10} className="text-success" /> : <Copy size={10} />}
                   {copiedId === i ? 'Copiado' : 'Copiar'}
                 </button>
               )}

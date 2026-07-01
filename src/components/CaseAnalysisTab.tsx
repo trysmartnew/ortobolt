@@ -1,13 +1,13 @@
 // src/components/CaseAnalysisTab.tsx
 // ✅ Componente isolado para exibir Análise IA e Copiloto dentro do Caso Clínico
-import React from 'react';
+import React, { memo } from 'react';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { useApp } from '@/contexts/AppContext';
 import CopilotClinical from './CopilotClinical';
 import { Card } from '@/components/ui';
 import { Scan, AlertCircle } from 'lucide-react';
 
-export default function CaseAnalysisTab() {
+export default memo(function CaseAnalysisTab() {
   const { activeCase } = useApp();
   const { getAnalysisByCaseId } = useAnalysis();
 
@@ -58,4 +58,4 @@ export default function CaseAnalysisTab() {
       />
     </div>
   );
-}
+});

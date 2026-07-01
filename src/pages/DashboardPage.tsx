@@ -2,7 +2,7 @@
 // 🏥 Centro de Comando Cirúrgico — Foco em ações operacionais de HOJE
 import { useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
-import { Card, StatusBadge, RiskTag, Spinner } from '@/components/ui';
+import { Card, StatusBadge, RiskTag, Spinner, EmptyState } from '@/components/ui';
 import { AlertTriangle, Clock, CheckCircle2, Calendar, PawPrint, Stethoscope, Pill, Activity } from 'lucide-react';
 import type { CaseStatus, ClinicalCase } from '@/types/index';
 
@@ -34,7 +34,7 @@ function SurgeryCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-mono font-bold text-slate-500">{formatDate(c.createdAt)}</span>
-            {isDone && <CheckCircle2 size={14} className="text-emerald-500" />}
+            {isDone && <CheckCircle2 size={14} className="text-success" />}
             {isNext && !isDone && <Clock size={14} className="text-primary animate-pulse" />}
           </div>
           <p className="text-sm font-semibold text-slate-900 truncate">{c.patientName}</p>
@@ -145,7 +145,7 @@ export default function DashboardPage() {
             </div>
             <div className="space-y-3">
               {surgeriesToday.length === 0 ? (
-                <p className="text-sm text-slate-400 italic">Nenhuma cirurgia registrada hoje.</p>
+                <EmptyState icon={<Calendar size={32} />} title="Sem Cirurgias" description="Nenhuma cirurgia registrada hoje." />
               ) : (
                 surgeriesToday.map(c => (
                   <SurgeryCard key={c.id} c={c} onOpen={() => openCase(c)} />

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Shield, CheckCircle, Loader2 } from 'lucide-react';
 import { supabase } from '@/services/supabase';
 import { useApp } from '@/contexts/AppContext';
+import { Input } from '@/components/forms/Input';
 
 export default function ResetPasswordPage() {
   const { setCurrentView, addToast } = useApp();
@@ -67,7 +68,7 @@ export default function ResetPasswordPage() {
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-emerald-50">
-            <CheckCircle size={32} className="text-emerald-500" />
+            <CheckCircle size={32} className="text-success" />
           </div>
           <h2 className="font-bold text-slate-800 text-xl mb-2">Senha redefinida!</h2>
           <p className="text-sm text-slate-500 mb-6">Faça login com sua nova senha.</p>
@@ -86,7 +87,7 @@ export default function ResetPasswordPage() {
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 bg-red-50">
-            <Shield size={24} className="text-red-500" />
+            <Shield size={24} className="text-error" />
           </div>
           <h2 className="font-bold text-slate-800 text-lg mb-2">Link inválido ou expirado</h2>
           <p className="text-sm text-slate-500 mb-6">Solicite um novo link de recuperação de senha.</p>
@@ -112,25 +113,31 @@ export default function ResetPasswordPage() {
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Nova senha</label>
-              <div className="relative">
-                <input type={showPass ? 'text' : 'password'} value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  className="w-full px-3 py-2.5 pr-10 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-                  placeholder="Mínimo 8 caracteres"
-                  onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
-                <button type="button" onClick={() => setShowPass(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                  {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
-              </div>
+                <div className="relative">
+                  <Input
+                    type={showPass ? 'text' : 'password'}
+                    label="Nova senha"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Mínimo 8 caracteres"
+                    onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                    className="pr-10"
+                  />
+                  <button type="button" onClick={() => setShowPass(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                    {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Confirmar senha</label>
-              <input type="password" value={confirm}
+              <Input
+                type="password"
+                label="Confirmar senha"
+                value={confirm}
                 onChange={e => setConfirm(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                 placeholder="Repita a senha"
-                onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
+                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+              />
             </div>
             {error && (
               <div className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">

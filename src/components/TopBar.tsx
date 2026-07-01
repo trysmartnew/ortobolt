@@ -78,7 +78,7 @@ export default React.memo(function TopBar() {
             Tour
           </button>
         )}
-        <div className={`flex items-center gap-1.5 text-xs font-mono px-2 py-1 rounded-md ${online ? 'text-emerald-600 bg-emerald-50' : 'text-red-500 bg-red-50'}`}>
+        <div className={`flex items-center gap-1.5 text-xs font-mono px-2 py-1 rounded-md ${online ? 'text-success bg-success-bg' : 'text-error bg-error-bg'}`}>
           {online ? <Wifi size={11} /> : <WifiOff size={11} />}
           {online ? 'Online' : 'Offline'}
         </div>

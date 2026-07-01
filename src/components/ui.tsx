@@ -62,7 +62,7 @@ export function Card({ children, className='', ...props }: React.HTMLAttributes<
 // ── KPI Widget ───────────────────────────────────────────────────────────────
 export const KPIWidget = React.memo(function KPIWidget({ label, value, unit, trend, trendDirection, color }: { label: string; value: number|string; unit?: string; trend: number; trendDirection: 'up'|'down'|'stable'; color: string }) {
   const TrendIcon = trendDirection === 'up' ? TrendingUp : trendDirection === 'down' ? TrendingDown : Minus;
-  const trendColor = trendDirection === 'up' ? 'text-emerald-600' : trendDirection === 'down' ? 'text-red-500' : 'text-slate-500';
+  const trendColor = trendDirection === 'up' ? 'text-success' : trendDirection === 'down' ? 'text-error' : 'text-slate-500';
   return (
     <Card className="p-5 relative overflow-hidden group hover:shadow-md transition-shadow">
       <div className="absolute top-0 left-0 w-1 h-full rounded-l-xl" style={{ backgroundColor: color }} />

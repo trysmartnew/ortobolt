@@ -5,7 +5,7 @@ import { Button, NotifBadge, SectionHeader, EmptyState } from '@/components/ui';
 import type { Notification } from '@/types/index';
 
 const NOTIF_ICONS: Record<string, React.ElementType> = { alert: AlertTriangle, success: CheckCircle, info: Info, warning: AlertCircle };
-const NOTIF_COLORS: Record<string, string> = { alert: 'text-red-500 bg-red-50', success: 'text-emerald-500 bg-emerald-50', info: 'text-sky-500 bg-sky-50', warning: 'text-amber-500 bg-amber-50' };
+const NOTIF_COLORS: Record<string, string> = { alert: 'text-error bg-red-50', success: 'text-success bg-emerald-50', info: 'text-sky-500 bg-sky-50', warning: 'text-warning bg-amber-50' };
 
 function NotifRow({ n, onRead }: { n: Notification; onRead: (id: string) => void }) {
   const Icon = NOTIF_ICONS[n.type] || Info;

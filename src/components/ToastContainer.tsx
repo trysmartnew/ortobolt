@@ -10,10 +10,10 @@ interface Props {
 }
 
 const ICONS = {
-  success: <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />,
-  error:   <XCircle    className="w-4 h-4 text-red-500 flex-shrink-0" />,
+  success: <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />,
+  error:   <XCircle    className="w-4 h-4 text-error flex-shrink-0" />,
   info:    <Info       className="w-4 h-4 text-primary flex-shrink-0" />,
-  warning: <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />,
+  warning: <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />,
 };
 
 const STYLES = {

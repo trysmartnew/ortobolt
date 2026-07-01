@@ -53,7 +53,7 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
         <div className="flex items-center gap-2">
           {!isUser && !msg.isLoading && (
             <button onClick={copy} className="text-[10px] text-slate-400 hover:text-primary transition-colors">
-              {copied ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
+              {copied ? <Check size={10} className="text-success" /> : <Copy size={10} />}
             </button>
           )}
           <span className="text-[10px] text-slate-400 font-mono">
@@ -133,7 +133,7 @@ export default function ChatPage() {
         </div>
         <button
           onClick={() => setChatHistory(h => h.length > 0 ? [h[0]] : h)}
-          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-red-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
+          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-error transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
         >
           <Trash2 size={13} /> Limpar conversa
         </button>

@@ -10,6 +10,7 @@ import type {
 import type { ChatMessage } from '@/types/index';
 import type { ApproveCompleteCaseInput } from '@/types/casePipeline';
 import { PIPELINE_TAG_ANALYSIS, PIPELINE_TAG_INTEGRATED } from '@/types/casePipeline';
+import { ApproveCompleteCaseInputSchema } from '@/schemas/casePipeline';
 import { deriveClinicalEvidence } from './clinicalEngine';
 
 const AI_STORAGE_PREFIX = 'ortobolt-case-ai-';
@@ -169,7 +170,11 @@ export function formatIntegratedNotes(
 }
 
 export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): ClinicalCase {
-  const procedure = input.clinicalContext.procedure ?? 'other';
+    const parsed = ApproveCompleteCaseInputSchema.safeParse(input);
+    if (!parsed.success) {
+      throw new Error(`Dados inválidos em buildIntegratedClinicalCase: ${parsed.error.message}`);
+    }
+    const procedure = parsed.data.clinicalContext.procedure ?? 'other';
   const species = input.clinicalContext.species ?? 'canine';
   const now = new Date().toISOString();
   const id = crypto.randomUUID();

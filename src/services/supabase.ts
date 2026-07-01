@@ -168,10 +168,19 @@ export async function upsertUserProfile(supaUser: {
 
 /** P0.1 — Upload de radiografia para bucket radiografias; retorna signedUrl ou null */
 export async function uploadRadiografia(
-  dataUrl: string,
-  storagePath: string
-): Promise<string | null> {
-  const sep    = dataUrl.indexOf(',');
+    dataUrl: string,
+    storagePath: string
+  ): Promise<string | null> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || !user.id) {
+      throw new Error('Usuário não autenticado');
+    }
+
+    if (user.role === 'student') {
+      throw new Error('Estudantes não podem fazer upload de radiografias');
+    }
+
+    const sep    = dataUrl.indexOf(',');
   const header = sep >= 0 ? dataUrl.slice(0, sep) : 'data:image/jpeg;base64';
   const b64    = sep >= 0 ? dataUrl.slice(sep + 1) : dataUrl;
   const mime   = header.match(/:(.*?);/)?.[1] ?? 'image/jpeg';
@@ -274,10 +283,19 @@ export async function getSignedImageUrl(
 }
 
 export async function updateCaseMarkings(
-  caseId: string,
-  markings: MarkingsData
-): Promise<void> {
-  const { error } = await supabase
+    caseId: string,
+    markings: MarkingsData
+  ): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || !user.id) {
+      throw new Error('Usuário não autenticado');
+    }
+
+    if (user.role === 'student') {
+      throw new Error('Estudantes não podem atualizar marcações');
+    }
+
+    const { error } = await supabase
     .from('clinical_cases')
     .update({ markings })
     .eq('id', caseId);

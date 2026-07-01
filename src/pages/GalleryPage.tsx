@@ -47,7 +47,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
           {c.aiAnalysis.anatomicalLandmarks.map(l => (
             <div key={l.name} className="flex items-center justify-between text-xs">
               <span className="text-slate-600">{l.name}</span>
-              <span className={`font-mono font-semibold ${l.detected ? 'text-emerald-600' : 'text-red-500'}`}>
+              <span className={`font-mono font-semibold ${l.detected ? 'text-success' : 'text-error'}`}>
                 {l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗'}
               </span>
             </div>
@@ -479,7 +479,7 @@ export default function GalleryPage() {
                       avatarInputRef.current?.click();
                     }}
                     title="Upload Avatar"
-                    className="p-1.5 rounded-lg text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                    className="p-1.5 rounded-lg text-slate-300 hover:text-success hover:bg-emerald-50 transition-colors"
                   >
                     <Upload size={13} />
                   </button>
@@ -491,7 +491,7 @@ export default function GalleryPage() {
                       }
                     }}
                     title="Excluir caso"
-                    className="p-1.5 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                    className="p-1.5 rounded-lg text-slate-300 hover:text-error hover:bg-red-50 transition-colors"
                   >
                     <Trash2 size={13} />
                   </button>

@@ -3,14 +3,14 @@ import { useCaseRealtime } from '@/hooks/useCaseRealtime';
 import { RadiographViewer } from '@/components/radiographs/RadiographViewer';
 // src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback, memo } from 'react';
 import CaseAnalysisTab from '@/components/CaseAnalysisTab';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { uploadCaseImage } from '@/services/supabase';
 import { uploadImageToStorage } from '@/services/imageService';
-import { Card, Button, StatusBadge, RiskTag } from '@/components/ui';
+import { Card, Button, StatusBadge, RiskTag, EmptyState } from '@/components/ui';
 import type { ClinicalCase, ProcedureType } from '@/types/index';
 import type { MarkingsData } from '@/types/markings';
 
@@ -187,7 +187,7 @@ function generateTutorGuide(c: ClinicalCase, protocol: typeof POST_OP_PROTOCOLS.
 }
 
 // ── MODAL DE EDIÇÃO ─────────────────────────────────────────────────────────
-function EditCaseModal({ caseData, onClose, onSave }: { caseData: ClinicalCase; onClose: () => void; onSave: (updates: Partial<ClinicalCase>) => void }) {
+const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave }: { caseData: ClinicalCase; onClose: () => void; onSave: (updates: Partial<ClinicalCase>) => void }) {
   const [form, setForm] = useState({
     title: caseData.title,
     patientName: caseData.patientName,
@@ -250,10 +250,10 @@ function EditCaseModal({ caseData, onClose, onSave }: { caseData: ClinicalCase; 
       </div>
     </div>
   );
-}
+});
 
 // ── MODAL DE ORIENTAÇÕES AO TUTOR ───────────────────────────────────────────
-function TutorGuideModal({ caseData, protocol, onClose }: { caseData: ClinicalCase; protocol: typeof POST_OP_PROTOCOLS.TPLO; onClose: () => void }) {
+const TutorGuideModal = memo(function TutorGuideModal({ caseData, protocol, onClose }: { caseData: ClinicalCase; protocol: typeof POST_OP_PROTOCOLS.TPLO; onClose: () => void }) {
   const guide = useMemo(() => generateTutorGuide(caseData, protocol), [caseData, protocol]);
   const [copied, setCopied] = useState(false);
 
@@ -282,13 +282,14 @@ function TutorGuideModal({ caseData, protocol, onClose }: { caseData: ClinicalCa
       </div>
     </div>
   );
-}
+});
 
 // ── COMPONENTE PRINCIPAL ────────────────────────────────────────────────────
 export default function CasePage() {
   const { activeCase, closeCase, deleteCase, updateCase, addToast, setCurrentPage, user } = useApp();
   const [aiMarkingsFromSession, setAiMarkingsFromSession] = useState<MarkingsData | null>(null);
   const [saving, setSaving] = useState<boolean>(false);
+  const [uploading, setUploading] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -313,10 +314,10 @@ export default function CasePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !activeCase) return;
-    setSaving(true);
+    setUploading(true);
     try {
       addToast('Processando radiografia...', 'info');
       const base64 = await new Promise<string>((resolve) => {
@@ -336,14 +337,14 @@ export default function CasePage() {
         addToast('Falha no upload da radiografia.', 'warning');
       }
     } finally {
-      setSaving(false);
+      setUploading(false);
     }
-  };
+  }, [activeCase, setUploading, addToast]);
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !activeCase) return;
-    setSaving(true);
+    setUploading(true);
     try {
       addToast('Processando avatar...', 'info');
       const base64 = await new Promise<string>((resolve) => {
@@ -363,9 +364,9 @@ export default function CasePage() {
         addToast('Falha no upload do avatar.', 'warning');
       }
     } finally {
-      setSaving(false);
+      setUploading(false);
     }
-  };
+  }, [activeCase, setUploading, addToast]);
 
   const [zoom, setZoom] = useState(100);
   const [showEdit, setShowEdit] = useState(false);
@@ -378,7 +379,7 @@ export default function CasePage() {
       <div className="p-6 flex items-center justify-center h-full">
         <div className="text-center">
           <AlertCircle size={40} className="mx-auto mb-3 text-slate-300" />
-          <p className="text-slate-500">Nenhum caso selecionado.</p>
+          <EmptyState icon={<AlertCircle size={40} />} title="Sem Casos" description="Nenhum caso selecionado." />
           <Button onClick={() => setCurrentPage('gallery')} className="mt-4">Ir para Galeria</Button>
         </div>
       </div>
@@ -406,7 +407,7 @@ export default function CasePage() {
     }
   };
 
-  const handleSaveEdit = (updates: Partial<ClinicalCase>) => {
+  const handleSaveEdit = useCallback((updates: Partial<ClinicalCase>) => {
     setSaving(true);
     try {
       updateCase(activeCase.id, { ...updates, updatedAt: new Date().toISOString() });
@@ -414,7 +415,7 @@ export default function CasePage() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [activeCase, setSaving, addToast, updateCase]);
 
   const addClinicalNote = () => {
     if (!newNote.trim()) return;
@@ -491,12 +492,14 @@ export default function CasePage() {
                 <span className="text-xs font-mono text-slate-500 w-10 text-center">{zoom}%</span>
                 <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-bold">+</button>
                 <button onClick={() => setZoom(100)} className="text-xs text-slate-500 hover:text-primary px-2">Reset</button>
-                  <button onClick={() => fileInputRef.current?.click()} disabled={saving} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
-                    <Upload size={14} /> Upload
+                  <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
+                    {uploading ? <span className="animate-spin inline-block h-3 w-3 border border-current border-t-transparent rounded-full" /> : <Upload size={14} />}
+                    {uploading ? 'Enviando...' : 'Upload'}
                   </button>
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
-                <button onClick={() => avatarInputRef.current?.click()} disabled={saving} className="text-xs text-emerald-600 hover:text-emerald-800 px-2 flex items-center gap-1 font-medium">
-                  <Upload size={14} /> Avatar
+                <button onClick={() => avatarInputRef.current?.click()} disabled={uploading} className="text-xs text-emerald-600 hover:text-emerald-800 px-2 flex items-center gap-1 font-medium">
+                  {uploading ? <span className="animate-spin inline-block h-3 w-3 border border-current border-t-transparent rounded-full" /> : <Upload size={14} />}
+                  {uploading ? 'Enviando...' : 'Avatar'}
                 </button>
                 <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
               </div>
@@ -521,7 +524,7 @@ export default function CasePage() {
               ) : (
                 <div className="flex flex-col items-center gap-2 text-slate-500">
                   <Upload size={32} />
-                  <p className="text-sm">Nenhuma radiografia</p>
+                  <EmptyState icon={<Upload size={32} />} title="Sem Radiografias" description="Nenhuma radiografia" />
                 </div>
               )}
             </div>

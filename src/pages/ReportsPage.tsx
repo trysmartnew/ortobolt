@@ -7,7 +7,8 @@ import { supabase } from '@/services/supabase';
 import type { Report, KPIMetric, ChartDataPoint, ClinicalCase } from '@/types/index';
 import { Download, FileText, Clock, CheckCircle, AlertCircle, Upload, Settings, Search, Calendar, User, X } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { Button, Card, Badge, SectionHeader, Spinner, InlineToast } from '@/components/ui';
+import { Button, Card, Badge, SectionHeader, Spinner, InlineToast, EmptyState } from '@/components/ui';
+import { RequireRole } from '@/components/auth/RequireRole';
 import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
 
 const TYPE_LABELS: Record<string, string> = {
@@ -199,10 +200,7 @@ export default function ReportsPage() {
   }, [user]);
 
   const downloadMonthly = async () => {
-    if (!user || user.role === 'student') {
-      alert('Funcionalidade exclusiva para profissionais com CRMV verificado.');
-      return;
-    }
+    if (!user) return;
     setGenerating('monthly');
     try {
       await generateMonthlyReport(user, kpiMetrics, chartData, cases);
@@ -212,10 +210,7 @@ export default function ReportsPage() {
   };
 
   const downloadCase = async () => {
-    if (!user || user.role === 'student') {
-      alert('Funcionalidade exclusiva para profissionais com CRMV verificado.');
-      return;
-    }
+    if (!user) return;
     if (!reportableCase) {
       setNoCaseToast(true);
       setTimeout(() => setNoCaseToast(false), 3000);
@@ -230,10 +225,7 @@ export default function ReportsPage() {
   };
 
   const downloadHistoryReport = async (r: Report) => {
-    if (!user || user.role === 'student' || downloadingId) {
-      if (user?.role === 'student') alert('Funcionalidade exclusiva para profissionais com CRMV verificado.');
-      return;
-    }
+    if (!user || downloadingId) return;
     setDownloadingId(r.id);
     try {
       if (r.type === 'monthly') {
@@ -247,9 +239,9 @@ export default function ReportsPage() {
   };
 
   const StatusIcon = ({ status }: { status: string }) => {
-    if (status === 'ready') return <CheckCircle className="h-4 w-4 text-emerald-500" />;
+    if (status === 'ready') return <CheckCircle className="h-4 w-4 text-success" />;
     if (status === 'generating') return <Spinner size="sm" />;
-    return <AlertCircle className="h-4 w-4 text-red-500" />;
+    return <AlertCircle className="h-4 w-4 text-error" />;
   };
 
   if (loading) {
@@ -333,16 +325,20 @@ export default function ReportsPage() {
           <p className="text-xs text-slate-500 mb-4 font-mono">
             Inclui métricas de precisão, volume de casos, taxa de sucesso e evolução temporal dos últimos 7 meses.
           </p>
-          <Button
-            className="w-full"
-            loading={generating === 'monthly' || metricsLoading}
-            onClick={downloadMonthly}
-            disabled={user?.role === 'student'}
-            title={user?.role === 'student' ? 'Exclusivo para profissionais' : ''}
-          >
-            <Download size={14} />
-            {generating === 'monthly' ? 'Gerando...' : metricsLoading ? 'Carregando dados...' : 'Gerar e Baixar PDF'}
-          </Button>
+          <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
+            <Button className="w-full" disabled title="Exclusivo para profissionais">
+              <Download size={14} /> Gerar e Baixar PDF
+            </Button>
+          }>
+            <Button
+              className="w-full"
+              loading={generating === 'monthly' || metricsLoading}
+              onClick={downloadMonthly}
+            >
+              <Download size={14} />
+              {generating === 'monthly' ? 'Gerando...' : metricsLoading ? 'Carregando dados...' : 'Gerar e Baixar PDF'}
+            </Button>
+          </RequireRole>
         </Card>
 
         <Card data-tour="tour-case-report" className="p-5">
@@ -371,17 +367,23 @@ export default function ReportsPage() {
             />
             <span className="text-sm font-medium text-slate-700">Ativar Modo Tutor (Linguagem simplificada)</span>
           </label>
-          <Button
-            className="w-full"
-            variant={tutorMode ? "primary" : "secondary"}
-            loading={generating === 'case'}
-            onClick={() => setShowCaseSelector(true)}
-            disabled={!cases || cases.length === 0 || user?.role === 'student'}
-            title={user?.role === 'student' ? 'Exclusivo para profissionais' : 'Selecionar caso e gerar laudo'}
-          >
-            <FileText size={14} />
-            {generating === 'case' ? 'Gerando...' : (tutorMode ? 'Selecionar Caso e Gerar Guia para o Tutor' : 'Selecionar Caso e Gerar Laudo Técnico')}
-          </Button>
+          <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
+            <Button className="w-full" variant={tutorMode ? "primary" : "secondary"} disabled title="Exclusivo para profissionais">
+              <FileText size={14} /> {tutorMode ? 'Selecionar Caso e Gerar Guia para o Tutor' : 'Selecionar Caso e Gerar Laudo Técnico'}
+            </Button>
+          }>
+            <Button
+              className="w-full"
+              variant={tutorMode ? "primary" : "secondary"}
+              loading={generating === 'case'}
+              onClick={() => setShowCaseSelector(true)}
+              disabled={!cases || cases.length === 0}
+              title="Selecionar caso e gerar laudo"
+            >
+              <FileText size={14} />
+              {generating === 'case' ? 'Gerando...' : (tutorMode ? 'Selecionar Caso e Gerar Guia para o Tutor' : 'Selecionar Caso e Gerar Laudo Técnico')}
+            </Button>
+          </RequireRole>
         </Card>
       </div>
 
@@ -425,18 +427,24 @@ export default function ReportsPage() {
                 {TYPE_LABELS[r.type] || r.type}
               </Badge>
               {r.status === 'ready' && (
-                <button
-                  onClick={() => downloadHistoryReport(r)}
-                  disabled={downloadingId === r.id}
-                  title="Baixar relatório"
-                  className="text-primary hover:text-primary-dark transition-colors p-1.5 rounded-lg hover:bg-blue-50 disabled:opacity-50"
-                >
-                  {downloadingId === r.id ? (
-                    <Spinner size="sm" />
-                  ) : (
+                <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
+                  <button disabled title="Exclusivo para profissionais" className="text-slate-300 p-1.5 rounded-lg">
                     <Download size={15} />
-                  )}
-                </button>
+                  </button>
+                }>
+                  <button
+                    onClick={() => downloadHistoryReport(r)}
+                    disabled={downloadingId === r.id}
+                    title="Baixar relatório"
+                    className="text-primary hover:text-primary-dark transition-colors p-1.5 rounded-lg hover:bg-blue-50 disabled:opacity-50"
+                  >
+                    {downloadingId === r.id ? (
+                      <Spinner size="sm" />
+                    ) : (
+                      <Download size={15} />
+                    )}
+                  </button>
+                </RequireRole>
               )}
             </div>
           ))}
@@ -486,9 +494,7 @@ export default function ReportsPage() {
 
             <div className="flex-1 overflow-y-auto p-2">
               {filteredAndSortedCases.length === 0 ? (
-                <div className="text-center py-8 text-slate-500">
-                  <p>Nenhum caso encontrado com os filtros atuais.</p>
-                </div>
+                <EmptyState icon={<Search size={32} />} title="Sem Casos" description="Nenhum caso encontrado com os filtros atuais." />
               ) : (
                 <div className="space-y-2">
                   {filteredAndSortedCases.map((c: ClinicalCase) => (

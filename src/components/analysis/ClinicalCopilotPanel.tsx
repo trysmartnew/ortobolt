@@ -54,7 +54,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
             onClick={copy}
             className="text-[10px] text-slate-400 hover:text-primary flex items-center gap-1"
           >
-            {copied ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
+            {copied ? <Check size={10} className="text-success" /> : <Copy size={10} />}
             Copiar
           </button>
         )}

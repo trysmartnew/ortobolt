@@ -46,7 +46,7 @@ export default function OrthoDeepAnalysis({ analysis, casoClinico, onClose }: Pr
         {analysis.alertas_criticos.length > 0 && (
           <div className="bg-red-50 border border-red-200 text-red-800 p-3 rounded-md mb-4 text-sm flex items-start gap-2">
             <AlertTriangle size={16} className="mt-0.5" />
-            <ul className="list-disc ml-4">{analysis.alertas_criticos.map((a, i) => <li key={i}>{a}</li>)}</ul>
+            <ul className="list-disc ml-4">{analysis.alertas_criticos.map((a) => <li key={a}>{a}</li>)}</ul>
           </div>
         )}
 
@@ -54,7 +54,7 @@ export default function OrthoDeepAnalysis({ analysis, casoClinico, onClose }: Pr
           <div><strong>Diagnóstico Principal:</strong> {analysis.diagnostico_principal}</div>
           <div><strong>Diferenciais:</strong> {analysis.diagnosticos_diferenciais.join(', ')}</div>
           <div><strong>Próximos Passos:</strong>
-            <ul className="list-disc ml-5">{analysis.proximos_passos.map((p, i) => <li key={i}>{p}</li>)}</ul>
+            <ul className="list-disc ml-5">{analysis.proximos_passos.map((p) => <li key={p}>{p}</li>)}</ul>
           </div>
           <div><strong>Tratamento Sugerido:</strong> {analysis.tratamento_inicial_sugerido}</div>
         </div>

@@ -78,7 +78,7 @@ export default function ProfilePage() {
                   <input value={editSpec} onChange={e => setEditSpec(e.target.value)}
                     className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
-                {!editName.trim() && <p className="text-xs text-red-500 font-semibold">Nome não pode estar vazio.</p>}
+                {!editName.trim() && <p className="text-xs text-error font-semibold">Nome não pode estar vazio.</p>}
                 <div className="flex gap-2">
                   <Button size="sm" onClick={handleSave} disabled={!editName.trim()}><Check size={13} /> Salvar</Button>
                   <Button size="sm" variant="secondary" onClick={handleCancelEdit}><X size={13} /> Cancelar</Button>

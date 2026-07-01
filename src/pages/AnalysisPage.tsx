@@ -348,7 +348,7 @@ export default function AnalysisPage() {
 
       {mode === 'idle' && (
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 w-fit">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+          <ShieldCheck className="w-3.5 h-3.5 text-success" />
           Formatos: JPG, PNG, WEBP · Máx. {MAX_FILE_SIZE_MB}MB · Fluxo integrado com Galeria e Relatórios
         </div>
       )}
@@ -476,7 +476,7 @@ export default function AnalysisPage() {
 
             <Card className="p-5" data-tour="tour-analysis-result">
               <div className="flex items-center gap-2 mb-4">
-                <CheckCircle className="h-5 w-5 text-emerald-500" />
+                <CheckCircle className="h-5 w-5 text-success" />
                 <p className="font-bold text-slate-900">
                   {session?.refinedAnalysis ? 'Análise Refinada' : 'Análise Concluída'}
                 </p>

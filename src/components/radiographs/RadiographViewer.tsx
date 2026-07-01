@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { useRadiographs, RadiographItem } from '../../hooks/useRadiographs';
 import { RadiographUploader } from './RadiographUploader';
 import { MarkingToolbar } from '../markings/MarkingToolbar';
@@ -12,7 +12,7 @@ interface RadiographViewerProps {
   markings?: MarkingsData;
 }
 
-export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId, markings: externalMarkings }) => {
+export const RadiographViewer = memo(({ caseId, markings: externalMarkings }: RadiographViewerProps) => {
   const { radiographs, loading, error, remove, getSignedUrl } = useRadiographs({ caseId });
   const [selectedRadiographItem, setSelectedRadiographItem] = useState<RadiographItem | null>(null);
   const [isAnnotating, setIsAnnotating] = useState<boolean>(false);
@@ -184,7 +184,7 @@ export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId, mark
   
 
   if (loading) return <div>Carregando...</div>;
-  if (error) return <div className="text-red-500">Erro: {error.message}</div>;
+  if (error) return <div className="text-error">Erro: {error.message}</div>;
 
   return (
     <div className="space-y-4">
@@ -259,4 +259,4 @@ export const RadiographViewer: React.FC<RadiographViewerProps> = ({ caseId, mark
       )}
     </div>
   );
-};
+});

@@ -5,6 +5,7 @@
 
 import type { ClinicalCase } from '@/types/index';
 import type { ClinicalCopilotPayload } from '@/types/clinicalCopilot';
+import { MarkingsDataSchema } from '@/schemas/markings';
 import {
   buildClinicalCopilotSystemMessage,
   REFINE_ANALYSIS_PROMPT,
@@ -513,7 +514,12 @@ function extractMarkingsFromAnalysis(
     console.warn('extractMarkingsFromAnalysis: nenhum padrão reconhecido na resposta da IA');
   }
 
-  return markings;
+    const validated = MarkingsDataSchema.safeParse(markings);
+    if (!validated.success) {
+      console.error('Validação de markings falhou:', validated.error.message);
+      throw new Error(`Markings inválidas retornadas pela IA: ${validated.error.message}`);
+    }
+    return validated.data;
 }
 
 // ── analyzeImage — ✅ COM COMPRESSÃO DE IMAGEM + MARKINGS ────────────────────

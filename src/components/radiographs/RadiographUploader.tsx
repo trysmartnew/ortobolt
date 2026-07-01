@@ -59,7 +59,7 @@ export const RadiographUploader: React.FC<RadiographUploaderProps> = ({ caseId, 
       >
         {isUploading ? 'Enviando...' : 'Adicionar Radiografia'}
       </button>
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && <p className="text-error text-sm">{error}</p>}
     </div>
   );
 };

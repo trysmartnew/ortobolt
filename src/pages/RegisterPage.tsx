@@ -8,6 +8,7 @@ import { Eye, EyeOff, ArrowLeft, Shield, CheckCircle } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
 import { RegisterSchema, type RegisterInput } from '@/schemas/auth';
+import { Input } from '@/components/forms/Input';
 
 // ── Cálculo de força da senha ─────────────────────────────────────────────────
 function calcPasswordStrength(pwd: string): number {
@@ -172,7 +173,7 @@ export default function RegisterPage() {
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)', fontFamily: 'Montserrat, sans-serif' }}>
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-success-bg)' }}>
-            <CheckCircle size={32} className="text-emerald-500" />
+            <CheckCircle size={32} className="text-success" />
           </div>
           <h2 className="font-bold text-slate-800 text-xl mb-2">Cadastro realizado!</h2>
           <p className="text-sm text-slate-500 mb-6">
@@ -234,28 +235,37 @@ export default function RegisterPage() {
             </div>
 
             {/* Nome */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Nome completo</label>
-              <input type="text" value={form.name} onChange={e => update('name', e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
-                placeholder="Dra. Maria Silva" />
-            </div>
+              <div>
+                <Input
+                  type="text"
+                  label="Nome completo"
+                  value={form.name}
+                  onChange={e => update('name', e.target.value)}
+                  placeholder="Dra. Maria Silva"
+                />
+              </div>
 
             {/* E-mail */}
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">E-mail profissional</label>
-              <input type="email" value={form.email} onChange={e => update('email', e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
-                placeholder="seu@email.com" />
+                <Input
+                  type="email"
+                  label="E-mail profissional"
+                  value={form.email}
+                  onChange={e => update('email', e.target.value)}
+                  placeholder="seu@email.com"
+                />
             </div>
 
             {/* CRMV */}
             {(form.role === 'veterinarian' || form.role === 'resident') && (
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">CRMV</label>
-                <input type="text" value={form.crmv} onChange={e => update('crmv', e.target.value.toUpperCase().replace(/\s/g, ''))}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
-                  placeholder="Ex: 12345/SP" />
+                  <Input
+                    type="text"
+                    label="CRMV"
+                    value={form.crmv}
+                    onChange={e => update('crmv', e.target.value.toUpperCase().replace(/\s/g, ''))}
+                    placeholder="Ex: 12345/SP"
+                  />
               </div>
             )}
 
@@ -283,16 +293,20 @@ export default function RegisterPage() {
             {/* Senha */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Senha</label>
-              <div className="relative">
-                <input type={showPass ? 'text' : 'password'} value={form.password}
-                  onChange={e => update('password', e.target.value)}
-                  className="w-full px-3 py-2.5 pr-10 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
-                  placeholder="Mínimo 8 caracteres" />
-                <button type="button" onClick={() => setShowPass(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                  {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
-              </div>
+                <div className="relative">
+                  <Input
+                    type={showPass ? 'text' : 'password'}
+                    label="Senha"
+                    value={form.password}
+                    onChange={e => update('password', e.target.value)}
+                    placeholder="Mínimo 8 caracteres"
+                    className="pr-10"
+                  />
+                  <button type="button" onClick={() => setShowPass(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                    {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
               {/* ✅ U-03: Indicador de força */}
               {form.password && (
                 <div className="mt-2">
@@ -313,16 +327,20 @@ export default function RegisterPage() {
             {/* Confirmar senha */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Confirmar senha</label>
-              <div className="relative">
-                <input type={showConfirm ? 'text' : 'password'} value={form.confirmPassword}
-                  onChange={e => update('confirmPassword', e.target.value)}
-                  className="w-full px-3 py-2.5 pr-10 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
-                  placeholder="Repita a senha" />
-                <button type="button" onClick={() => setShowConfirm(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                  {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
-              </div>
+                <div className="relative">
+                  <Input
+                    type={showConfirm ? 'text' : 'password'}
+                    label="Confirmar senha"
+                    value={form.confirmPassword}
+                    onChange={e => update('confirmPassword', e.target.value)}
+                    placeholder="Repita a senha"
+                    className="pr-10"
+                  />
+                  <button type="button" onClick={() => setShowConfirm(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                    {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
             </div>
 
             {/* Termos */}
@@ -388,7 +406,7 @@ export default function RegisterPage() {
 
           <div className="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-slate-400">
-              <Shield size={12} className="text-emerald-500" /> SSL/TLS · LGPD
+              <Shield size={12} className="text-success" /> SSL/TLS · LGPD
             </div>
             <button onClick={() => setCurrentView('home')}
               className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1">

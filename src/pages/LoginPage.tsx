@@ -8,6 +8,7 @@ import { Eye, EyeOff, Shield, ArrowLeft, Lock } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
 import { LoginSchema, type LoginInput } from '@/schemas/auth';
+import { Input } from '@/components/forms/Input';
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 24 24" width="18" height="18">
@@ -105,7 +106,7 @@ export default function LoginPage() {
             {forgotSent ? (
               <div className="text-center py-4">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#ECFDF5' }}>
-                  <Shield size={24} className="text-emerald-500" />
+                  <Shield size={24} className="text-success" />
                 </div>
                 <h2 className="font-bold text-slate-800 mb-2">E-mail enviado!</h2>
                 <p className="text-sm text-slate-500 mb-6">Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.</p>
@@ -119,12 +120,16 @@ export default function LoginPage() {
                 <h2 className="font-bold text-slate-800 text-lg mb-1">Recuperar senha</h2>
                 <p className="text-xs text-slate-400 mb-6">Informe seu e-mail e enviaremos um link para redefinir sua senha.</p>
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1.5">E-mail</label>
-                    <input type="email" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
-                      placeholder="seu@email.com" onKeyDown={e => e.key === 'Enter' && handleForgotPassword()} />
-                  </div>
+                    <div>
+                      <Input
+                        type="email"
+                        label="E-mail"
+                        value={forgotEmail}
+                        onChange={e => setForgotEmail(e.target.value)}
+                        placeholder="seu@email.com"
+                        onKeyDown={e => e.key === 'Enter' && handleForgotPassword()}
+                      />
+                    </div>
                   {error && <div className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</div>}
                   <button onClick={handleForgotPassword} disabled={forgotLoading}
                     className="w-full py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-60" style={{ background: 'var(--color-primary)' }}>
@@ -186,10 +191,10 @@ export default function LoginPage() {
           {/* ✅ C-02: Banner de bloqueio */}
           {loginLocked && (
             <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-5">
-              <Lock size={16} className="text-red-500 flex-shrink-0" />
+              <Lock size={16} className="text-error flex-shrink-0" />
               <div>
                 <p className="text-xs font-bold text-red-700">Acesso temporariamente bloqueado</p>
-                <p className="text-xs text-red-500">Muitas tentativas incorretas. Aguarde {loginLockSecondsLeft}s.</p>
+                <p className="text-xs text-error">Muitas tentativas incorretas. Aguarde {loginLockSecondsLeft}s.</p>
               </div>
             </div>
           )}
@@ -217,14 +222,15 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">E-mail</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
+              <Input
+                type="email"
+                label="E-mail"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="seu@email.com"
                 disabled={loginLocked}
-                onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
-            </div>
+                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+              />
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
@@ -234,11 +240,16 @@ export default function LoginPage() {
                 </button>
               </div>
               <div className="relative">
-                <input type={showPass ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
-                  className="w-full px-3 py-2.5 pr-10 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all"
+                <Input
+                  type={showPass ? 'text' : 'password'}
+                  label="Senha"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
                   disabled={loginLocked}
-                  onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
+                  onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                  className="pr-10"
+                />
                 <button type="button" onClick={() => setShowPass(v => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                   {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -276,7 +287,7 @@ export default function LoginPage() {
 
           <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-slate-400">
-              <Shield size={12} className="text-emerald-500" /> SSL/TLS · LGPD
+              <Shield size={12} className="text-success" /> SSL/TLS · LGPD
             </div>
             <button onClick={() => setCurrentView('home')}
               className="text-xs text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1">
