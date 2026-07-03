@@ -6,7 +6,7 @@ import { RadiographViewer } from '@/components/radiographs/RadiographViewer';
 import { useState, useMemo, useRef, useEffect, useCallback, memo } from 'react';
 import CaseAnalysisTab from '@/components/CaseAnalysisTab';
 import { useAnalysis } from '@/contexts/AnalysisContext';
-import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity } from 'lucide-react';
+import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity, GitCompare, LineChart, Ruler as RulerIcon } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { uploadCaseImage } from '@/services/supabase';
 import { uploadImageToStorage } from '@/services/imageService';
@@ -373,6 +373,16 @@ export default function CasePage() {
   const [showGuide, setShowGuide] = useState(false);
   const [newNote, setNewNote] = useState('');
   const [showNoteInput, setShowNoteInput] = useState(false);
+  const [analysisTool, setAnalysisTool] = useState<string | null>(null);
+
+  const handleSelectAnalysis = useCallback((tool: string) => {
+    setAnalysisTool(tool);
+    addToast(`Ferramenta de análise selecionada: ${tool}`, 'info');
+  }, [addToast]);
+
+  const handleBackToPatient = useCallback(() => {
+    setAnalysisTool(null);
+  }, []);
 
   if (!activeCase) {
     return (
@@ -443,20 +453,74 @@ export default function CasePage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <button onClick={() => { closeCase(); setCurrentPage('gallery'); }} className="flex items-center gap-2 text-sm text-slate-600 hover:text-primary font-semibold transition-colors">
-          <ArrowLeft size={16} /> Voltar à Galeria
-        </button>
-        <div className="flex gap-2">
-          <Button variant="secondary" size="sm" onClick={() => setShowEdit(true)}><Edit3 size={14} /> Editar</Button>
-          <Button variant="secondary" size="sm" onClick={handleGoToReports} disabled={user?.role === 'student'} title={user?.role === 'student' ? 'Exclusivo para profissionais com CRMV verificado' : ''}><FileText size={14} /> Gerar PDF</Button>
-          <Button variant="secondary" size="sm" onClick={() => setShowGuide(true)}><Printer size={14} /> Guia Tutor</Button>
-          <button onClick={handleDelete} className="px-4 py-2 text-[15px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-1">
-            <Trash2 size={14} /> Excluir
+      {!analysisTool ? (
+        <>
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+            <button type="button" onClick={() => { closeCase(); setCurrentPage('gallery'); }} className="hover:text-[var(--color-accent)]">Prontuário</button>
+            <span>/</span>
+            <span className="text-slate-900">Mesa de Luz Digital</span>
+          </div>
+
+          {/* Header do Paciente */}
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <button type="button" onClick={handleBackToPatient} className="px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-slate-700 hover:text-[var(--color-accent)] transition-colors">
+                <ArrowLeft size={14} className="inline mr-1" /> Voltar ao Prontuário
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[var(--color-surface-muted)] border border-[var(--color-border)] flex items-center justify-center overflow-hidden">
+                  {activeCase.avatarUrl ? <img src={activeCase.avatarUrl} alt={activeCase.patientName} className="w-full h-full object-cover" /> : <UserIcon size={18} className="text-slate-400" />}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">{activeCase.patientName}</p>
+                  <p className="text-xs text-slate-500 capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-xs text-slate-500">
+              <span className="flex items-center gap-1"><Ruler size={14} /> {activeCase.ageYears} anos</span>
+              <span className="flex items-center gap-1"><Weight size={14} /> {activeCase.weightKg} kg</span>
+              <span className="flex items-center gap-1"><Activity size={14} /> {activeCase.status}</span>
+            </div>
+          </div>
+
+          {/* Seleção de Ferramentas de Análise IA */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button type="button" onClick={() => handleSelectAnalysis('comparativa')} className="flex flex-col gap-2 p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] transition-colors text-left">
+              <GitCompare className="text-[var(--color-accent)]" size={24} />
+              <p className="text-sm font-bold text-slate-900">Iniciar Análise Comparativa por IA</p>
+              <p className="text-xs text-slate-500">Comparação visual e métrica de múltiplos exames</p>
+            </button>
+            <button type="button" onClick={() => handleSelectAnalysis('evolutiva')} className="flex flex-col gap-2 p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] transition-colors text-left">
+              <LineChart className="text-[var(--color-accent)]" size={24} />
+              <p className="text-sm font-bold text-slate-900">Iniciar Análise Evolutiva por IA</p>
+              <p className="text-xs text-slate-500">Acompanhamento do progresso e tendências ao longo do tempo</p>
+            </button>
+            <button type="button" onClick={() => handleSelectAnalysis('alinhamento')} className="flex flex-col gap-2 p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] transition-colors text-left">
+              <RulerIcon className="text-[var(--color-accent)]" size={24} />
+              <p className="text-sm font-bold text-slate-900">Iniciar Análise de Alinhamento e Medição por IA</p>
+              <p className="text-xs text-slate-500">Medições automáticas e detecção de desvios articulares</p>
+            </button>
+          </div>
+
+          <p className="text-xs text-slate-500 text-center">Selecione uma análise para começar ou arraste imagens da galeria (não visível) para o canvas.</p>
+        </>
+      ) : (
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <button type="button" onClick={handleBackToPatient} className="flex items-center gap-2 text-sm text-slate-600 hover:text-[var(--color-accent)] font-semibold transition-colors">
+            <ArrowLeft size={16} /> Voltar às Ferramentas
           </button>
+          <div className="flex gap-2">
+            <Button variant="secondary" size="sm" onClick={() => setShowEdit(true)}><Edit3 size={14} /> Editar</Button>
+            <Button variant="secondary" size="sm" onClick={handleGoToReports} disabled={user?.role === 'student'} title={user?.role === 'student' ? 'Exclusivo para profissionais com CRMV verificado' : ''}><FileText size={14} /> Gerar PDF</Button>
+            <Button variant="secondary" size="sm" onClick={() => setShowGuide(true)}><Printer size={14} /> Guia Tutor</Button>
+            <button type="button" onClick={handleDelete} className="px-4 py-2 text-[15px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-1">
+              <Trash2 size={14} /> Excluir
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Título + Status */}
       <Card data-tour="tour-case-patient" className="p-5">
