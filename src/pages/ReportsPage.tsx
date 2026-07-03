@@ -10,6 +10,14 @@ import { useApp } from '@/contexts/AppContext';
 import { Button, Card, Badge, SectionHeader, Spinner, InlineToast, EmptyState } from '@/components/ui';
 import { RequireRole } from '@/components/auth/RequireRole';
 import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from 'recharts';
 
 const TYPE_LABELS: Record<string, string> = {
   monthly: 'Mensal',
@@ -33,6 +41,42 @@ export default function ReportsPage() {
     [cases, activeCase]
   );
 
+  const precisionMetric = useMemo(() => {
+    const completedCases = cases.filter(c => c.status === 'completed');
+    if (completedCases.length === 0) return 0;
+    const casesWithAnalysis = completedCases.filter(c => c.aiAnalysis !== null && c.exams?.some(e => e.markings !== null));
+    return (casesWithAnalysis.length / completedCases.length) * 100;
+  }, [cases]);
+
+  const caseVolume = useMemo(() => {
+    const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+    return cases.filter(c => new Date(c.createdAt).getTime() >= thirtyDaysAgo).length;
+  }, [cases]);
+
+  const successRate = useMemo(() => {
+    const closedCases = cases.filter(c => c.status === 'completed');
+    return cases.length > 0 ? (closedCases.length / cases.length) * 100 : 0;
+  }, [cases]);
+
+  const availableCasesCount = useMemo(() => cases.length, [cases]);
+
+  const monthlyData = useMemo(() => {
+    const months = ['Dez', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Sep', 'Out', 'Nov'];
+    const last7Months = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      return { monthIndex: date.getMonth(), year: date.getFullYear(), label: months[date.getMonth()] };
+    }).reverse();
+
+    return last7Months.map(m => {
+      const count = cases.filter(c => {
+        const caseDate = new Date(c.createdAt);
+        return caseDate.getMonth() === m.monthIndex && caseDate.getFullYear() === m.year;
+      }).length;
+      return { name: m.label, value: count };
+    });
+  }, [cases]);
+
   // ── Personalização de Laudos (Logo e Cabeçalho) ──
   const [clinicName, setClinicName] = useState(localStorage.getItem('ortobolt_pdf_clinic_name') || 'OrtoBolt');
   const [clinicSubtitle, setClinicSubtitle] = useState(localStorage.getItem('ortobolt_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente');
@@ -45,7 +89,7 @@ export default function ReportsPage() {
     addToast('Preferências de Laudo salvas.', 'success');
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -58,17 +102,25 @@ export default function ReportsPage() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result as string;
-      setLogoPreview(base64);
-      localStorage.setItem('ortobolt_pdf_logo', base64);
-      addToast('Logo atualizada.', 'success');
-    };
-    reader.onerror = () => {
-      addToast('Erro ao processar imagem.', 'error');
-    };
-    reader.readAsDataURL(file);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${crypto.randomUUID()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from('case-images')
+        .upload(fileName, file, { contentType: file.type, upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('case-images')
+        .getPublicUrl(fileName);
+
+      setLogoPreview(publicUrl);
+      localStorage.setItem('ortobolt_pdf_logo', publicUrl);
+      addToast('Logo enviada com sucesso.', 'success');
+    } catch {
+      addToast('Erro ao enviar logo.', 'error');
+    }
   };
 
   const handleRemoveLogo = () => {
@@ -204,6 +256,7 @@ export default function ReportsPage() {
     setGenerating('monthly');
     try {
       await generateMonthlyReport(user, kpiMetrics, chartData, cases);
+      addToast('Relatório mensal gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
     }
@@ -235,6 +288,47 @@ export default function ReportsPage() {
       }
     } finally {
       setDownloadingId(null);
+    }
+  };
+
+  const handleGenerateTechnicalReport = async () => {
+    if (!reportableCase) {
+      setNoCaseToast(true);
+      setTimeout(() => setNoCaseToast(false), 3000);
+      return;
+    }
+    setGenerating('case');
+    try {
+      await generateCaseReport(reportableCase);
+      addToast('Laudo técnico gerado com sucesso.', 'success');
+    } finally {
+      setGenerating(null);
+    }
+  };
+
+  const handleGenerateTutorGuide = async () => {
+    if (!reportableCase) {
+      setNoCaseToast(true);
+      setTimeout(() => setNoCaseToast(false), 3000);
+      return;
+    }
+    setGenerating('case');
+    try {
+      await generateCaseReport(reportableCase);
+      addToast('Guia para o tutor gerado com sucesso.', 'success');
+    } finally {
+      setGenerating(null);
+    }
+  };
+
+  const handleGenerateMonthlyPdf = async () => {
+    if (!user) return;
+    setGenerating('monthly');
+    try {
+      await generateMonthlyReport(user, kpiMetrics, chartData, cases);
+      addToast('Relatório mensal gerado com sucesso.', 'success');
+    } finally {
+      setGenerating(null);
     }
   };
 
@@ -353,33 +447,28 @@ export default function ReportsPage() {
             <div className="grid grid-cols-3 gap-3 mb-4">
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
                 <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Métricas de Precisão</p>
-                <p className="text-lg font-bold text-slate-900">94.5%</p>
+                <p className="text-lg font-bold text-slate-900">{precisionMetric.toFixed(1)}%</p>
               </div>
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
                 <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Volume de Casos</p>
-                <p className="text-lg font-bold text-slate-900">120</p>
+                <p className="text-lg font-bold text-slate-900">{caseVolume}</p>
               </div>
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
                 <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Taxa de Sucesso</p>
-                <p className="text-lg font-bold text-slate-900">88.2%</p>
+                <p className="text-lg font-bold text-slate-900">{successRate.toFixed(1)}%</p>
               </div>
             </div>
 
             <div className="mb-4">
               <p className="text-xs font-semibold text-slate-700 mb-2">Evolução Temporal dos últimos 7 meses</p>
-              <div className="h-48 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] overflow-hidden">
-                <div className="h-full w-full flex items-end px-2 pb-2 pt-6 gap-1">
-                  {[65, 78, 90, 85, 95, 110, 130].map((value, i, arr) => {
-                    const height = (value / Math.max(...arr)) * 100;
-                    return (
-                      <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                        <div className="w-full rounded-t bg-[var(--color-accent)]" style={{ height: `${height}%` }} />
-                        <span className="text-[8px] font-mono text-slate-500">{['Dez','Fev','Mar','Abr','Mai','Jun','Sep'][i]}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={monthlyData}>
+                  <XAxis dataKey="name" stroke="var(--color-text-secondary)" fontSize={12} />
+                  <YAxis stroke="var(--color-text-secondary)" label={{ value: 'Casos', angle: -90, position: 'insideLeft' }} domain={[0, 'auto']} />
+                  <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text-primary)' }} />
+                  <Line type="monotone" dataKey="value" stroke="var(--color-accent)" strokeWidth={2} dot={{ fill: 'var(--color-accent)', r: 4 }} activeDot={{ r: 6 }} />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
 
             <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
@@ -407,7 +496,7 @@ export default function ReportsPage() {
                 <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Clinical Reports & Tutor Guides</h3>
                 <p className="text-xs text-slate-500 mt-0.5">Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco.</p>
               </div>
-              <Badge variant="info" className="border-0">{cases?.length ?? 0} casos disponíveis</Badge>
+              <Badge variant="info" className="border-0">{availableCasesCount} casos disponíveis</Badge>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -420,7 +509,7 @@ export default function ReportsPage() {
                 <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
                   <Button className="w-full" variant="secondary" disabled title="Exclusivo para profissionais">Selecionar Caso</Button>
                 }>
-                  <Button className="w-full" variant="secondary" onClick={() => setShowCaseSelector(true)} disabled={!cases || cases.length === 0}>
+                  <Button className="w-full" variant="secondary" onClick={() => { setTutorMode(false); setShowCaseSelector(true); }} disabled={!cases || cases.length === 0}>
                     <FileText size={14} /> Selecionar Caso
                   </Button>
                 </RequireRole>
