@@ -374,6 +374,27 @@ export default function CasePage() {
   const [newNote, setNewNote] = useState('');
   const [showNoteInput, setShowNoteInput] = useState(false);
   const [analysisTool, setAnalysisTool] = useState<string | null>(null);
+  const [comparisonImages, setComparisonImages] = useState<{ left: string | null; right: string | null }>({ left: null, right: null });
+
+  const availableImages = useMemo(() => {
+    if (!activeCase) return [];
+    const list: Array<{ id: string; url: string; label: string }> = [];
+    if (activeCase.imageUrl) {
+      list.push({ id: `${activeCase.id}-main`, url: activeCase.imageUrl, label: 'Principal' });
+    }
+    if (activeCase.exams) {
+      for (const exam of activeCase.exams) {
+        for (const url of exam.imageUrls) {
+          list.push({ id: `${exam.id}-${url}`, url, label: exam.modality });
+        }
+      }
+    }
+    return list;
+  }, [activeCase]);
+
+  const handleSelectComparisonImage = useCallback((side: 'left' | 'right', imageUrl: string) => {
+    setComparisonImages(prev => ({ ...prev, [side]: imageUrl }));
+  }, []);
 
   const handleSelectAnalysis = useCallback((tool: string) => {
     setAnalysisTool(tool);
@@ -505,6 +526,134 @@ export default function CasePage() {
           </div>
 
           <p className="text-xs text-slate-500 text-center">Selecione uma análise para começar ou arraste imagens da galeria (não visível) para o canvas.</p>
+        </>
+      ) : analysisTool === 'comparativa' ? (
+        <>
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+            <button type="button" onClick={handleBackToPatient} className="hover:text-[var(--color-accent)]">Mesa de Luz Digital</button>
+            <span>/</span>
+            <span className="text-slate-900">Análise Comparativa por IA</span>
+          </div>
+
+          {/* Header do Paciente */}
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <button type="button" onClick={handleBackToPatient} className="px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-slate-700 hover:text-[var(--color-accent)] transition-colors">
+                <ArrowLeft size={14} className="inline mr-1" /> Voltar ao Prontuário
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[var(--color-surface-muted)] border border-[var(--color-border)] flex items-center justify-center overflow-hidden">
+                  {activeCase.avatarUrl ? <img src={activeCase.avatarUrl} alt={activeCase.patientName} className="w-full h-full object-cover" /> : <UserIcon size={18} className="text-slate-400" />}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">{activeCase.patientName}</p>
+                  <p className="text-xs text-slate-500 capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-xs text-slate-500">
+              <span className="flex items-center gap-1"><Ruler size={14} /> {activeCase.ageYears} anos</span>
+              <span className="flex items-center gap-1"><Weight size={14} /> {activeCase.weightKg} kg</span>
+              <span className="flex items-center gap-1"><Activity size={14} /> {activeCase.status}</span>
+            </div>
+          </div>
+
+          {/* Área de Comparação Lado a Lado */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div className="lg:col-span-5">
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Painel A</h3>
+                  <div className="flex items-center gap-1">
+                    <Button variant="secondary" size="sm" onClick={() => setComparisonImages(prev => ({ ...prev, left: null }))}>Limpar</Button>
+                  </div>
+                </div>
+                <div className="aspect-[4/3] bg-[var(--color-surface-muted)] border border-[var(--color-border)] rounded-xl overflow-hidden flex items-center justify-center">
+                  {comparisonImages.left ? (
+                    <img src={comparisonImages.left} alt="Painel A" className="w-full h-full object-contain" />
+                  ) : (
+                    <p className="text-xs text-slate-500">Selecione uma imagem na galeria</p>
+                  )}
+                </div>
+              </Card>
+            </div>
+
+            <div className="lg:col-span-2 flex items-center justify-center">
+              <Card className="p-4 w-full">
+                <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 text-center">Controle</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-semibold text-slate-500 uppercase">Controle de comparação</span>
+                    <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">ON</span>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-semibold text-slate-500 uppercase">Densidad de bone mudange</p>
+                    <p className="text-xs font-mono text-slate-700">-3.6% / -5.5 mm</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-semibold text-slate-500 uppercase">Mudança de espaço de joints</p>
+                    <p className="text-xs font-mono text-slate-700">3.8% / -3.5 mm</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-semibold text-slate-500 uppercase">Parâmetros de IA</span>
+                    <span className="text-[10px] font-mono bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">AUTO</span>
+                  </div>
+                  <Button variant="primary" size="sm" className="w-full">Iniciar Análise Comparativa por IA</Button>
+                </div>
+              </Card>
+            </div>
+
+            <div className="lg:col-span-5">
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Painel B</h3>
+                  <div className="flex items-center gap-1">
+                    <Button variant="secondary" size="sm" onClick={() => setComparisonImages(prev => ({ ...prev, right: null }))}>Limpar</Button>
+                  </div>
+                </div>
+                <div className="aspect-[4/3] bg-[var(--color-surface-muted)] border border-[var(--color-border)] rounded-xl overflow-hidden flex items-center justify-center">
+                  {comparisonImages.right ? (
+                    <img src={comparisonImages.right} alt="Painel B" className="w-full h-full object-contain" />
+                  ) : (
+                    <p className="text-xs text-slate-500">Selecione uma imagem na galeria</p>
+                  )}
+                </div>
+              </Card>
+            </div>
+          </div>
+
+          {/* Galeria de Thumbnails */}
+          <Card className="p-4">
+            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Selecionar Exames para Comparação</h3>
+            <div className="flex gap-3 overflow-x-auto pb-2">
+              {availableImages.map((img) => (
+                <button
+                  key={img.id}
+                  type="button"
+                  onClick={() => {
+                    if (!comparisonImages.left) {
+                      handleSelectComparisonImage('left', img.url);
+                    } else if (!comparisonImages.right) {
+                      handleSelectComparisonImage('right', img.url);
+                    } else {
+                      handleSelectComparisonImage('left', img.url);
+                    }
+                  }}
+                  className={`flex-shrink-0 w-24 h-24 rounded-lg border-2 overflow-hidden transition-colors ${
+                    comparisonImages.left === img.url || comparisonImages.right === img.url
+                      ? 'border-[var(--color-accent)]'
+                      : 'border-[var(--color-border)] hover:border-[var(--color-accent)]'
+                  }`}
+                >
+                  <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] text-slate-500 mt-2">Toque para alternar entre Painel A e B automaticamente.</p>
+          </Card>
+
+          <p className="text-xs text-slate-500 text-center">Selecione e arraste mais exames para comparar ou ajuste os parâmetros de IA.</p>
         </>
       ) : (
         <div className="flex items-center justify-between flex-wrap gap-3">
