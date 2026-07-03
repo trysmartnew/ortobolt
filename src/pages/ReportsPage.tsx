@@ -254,44 +254,48 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-4xl">
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
       {noCaseToast && (
         <InlineToast message="Nenhum caso com análise IA disponível para gerar relatório de caso." type="info" />
       )}
 
-      {/* Personalização de Laudos */}
-      <Card data-tour="tour-report-customize" className="p-5 mb-4 border-l-4 border-l-primary">
-        <div className="flex items-center gap-2 mb-4">
-          <Settings size={18} className="text-primary" />
-          <h3 className="font-bold text-slate-900 text-sm">Personalização de Laudos e Relatórios</h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-          <div>
-            <label className="text-xs font-semibold text-slate-600 mb-1 block">Nome da Clínica</label>
-            <input
-              type="text"
-              value={clinicName}
-              onChange={e => setClinicName(e.target.value)}
-              onBlur={handleSavePrefs}
-              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
-            />
+      {/* Report Customization */}
+      <Card className="p-5">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <Settings size={18} className="text-[var(--color-accent)]" />
+              <h3 className="font-bold text-slate-900 text-sm">Report Customization</h3>
+            </div>
+            <p className="text-xs text-slate-500">Personalização de Laudos e Relatórios</p>
           </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600 mb-1 block">Subtítulo / Especialidade</label>
-            <input
-              type="text"
-              value={clinicSubtitle}
-              onChange={e => setClinicSubtitle(e.target.value)}
-              onBlur={handleSavePrefs}
-              className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
-            />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-600 mb-1 block">Logo da Clínica</label>
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-4">
+              <div>
+                <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Nome da Clínica</label>
+                <input
+                  type="text"
+                  value={clinicName}
+                  onChange={e => setClinicName(e.target.value)}
+                  onBlur={handleSavePrefs}
+                  className="w-48 px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Subtítulo / Especialidade</label>
+                <input
+                  type="text"
+                  value={clinicSubtitle}
+                  onChange={e => setClinicSubtitle(e.target.value)}
+                  onBlur={handleSavePrefs}
+                  className="w-48 px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                />
+              </div>
+            </div>
             <div className="flex items-center gap-2">
               {logoPreview ? (
                 <div className="relative">
-                  <img src={logoPreview} alt="Logo" className="w-10 h-10 object-contain rounded border border-slate-200 bg-white p-1" />
+                  <img src={logoPreview} alt="Logo" className="w-10 h-10 object-contain rounded border border-[var(--color-border)] bg-white p-1" />
                   <button
                     onClick={handleRemoveLogo}
                     className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-600"
@@ -300,91 +304,145 @@ export default function ReportsPage() {
                   </button>
                 </div>
               ) : (
-                <label className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-primary bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer transition">
-                  <Upload size={14} /> Upload
+                <label className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[var(--color-accent)] bg-[var(--color-surface-muted)] hover:bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-lg cursor-pointer transition">
+                  <Upload size={14} /> Fazer Upload do Logo (PNG, JPG)
                   <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
                 </label>
               )}
+              <Button variant="primary" size="sm" onClick={handleSavePrefs}>Gerar Relatório</Button>
             </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 md:hidden">
+          <div>
+            <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Nome da Clínica</label>
+            <input
+              type="text"
+              value={clinicName}
+              onChange={e => setClinicName(e.target.value)}
+              onBlur={handleSavePrefs}
+              className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+            />
+          </div>
+          <div>
+            <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Subtítulo / Especialidade</label>
+            <input
+              type="text"
+              value={clinicSubtitle}
+              onChange={e => setClinicSubtitle(e.target.value)}
+              onBlur={handleSavePrefs}
+              className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+            />
           </div>
         </div>
       </Card>
 
-      {/* Generate section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card data-tour="tour-monthly-report" className="p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-primary/10 rounded-2xl flex items-center justify-center shadow-sm">
-              <FileText className="h-5 w-5 text-primary" />
+      {/* Grid Principal */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Coluna ESQUERDA: Relatório Mensal */}
+        <div className="lg:col-span-5 space-y-4">
+          <Card className="p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="text-[var(--color-accent)]" size={18} />
+              <div>
+                <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Relatório Mensal</h3>
+                <p className="text-xs text-slate-500">KPIs, evolução e casos do período</p>
+              </div>
             </div>
-            <div>
-              <p className="font-bold text-slate-900 text-sm">Relatório Mensal</p>
-              <p className="text-xs text-slate-500">KPIs, evolução e casos do período</p>
-            </div>
-          </div>
-          <p className="text-xs text-slate-500 mb-4 font-mono">
-            Inclui métricas de precisão, volume de casos, taxa de sucesso e evolução temporal dos últimos 7 meses.
-          </p>
-          <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
-            <Button className="w-full" disabled title="Exclusivo para profissionais">
-              <Download size={14} /> Gerar e Baixar PDF
-            </Button>
-          }>
-            <Button
-              className="w-full"
-              loading={generating === 'monthly' || metricsLoading}
-              onClick={downloadMonthly}
-            >
-              <Download size={14} />
-              {generating === 'monthly' ? 'Gerando...' : metricsLoading ? 'Carregando dados...' : 'Gerar e Baixar PDF'}
-            </Button>
-          </RequireRole>
-        </Card>
 
-        <Card data-tour="tour-case-report" className="p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center shadow-sm">
-              <CheckCircle className="h-5 w-5 text-emerald-600" />
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
+                <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Métricas de Precisão</p>
+                <p className="text-lg font-bold text-slate-900">94.5%</p>
+              </div>
+              <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
+                <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Volume de Casos</p>
+                <p className="text-lg font-bold text-slate-900">120</p>
+              </div>
+              <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
+                <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Taxa de Sucesso</p>
+                <p className="text-lg font-bold text-slate-900">88.2%</p>
+              </div>
             </div>
-            <div>
-              <p className="font-bold text-slate-900 text-sm">Laudo Clínico</p>
-              <p className="text-xs text-slate-500">
-                {cases && cases.length > 0 ? `${cases.length} casos disponíveis` : 'Nenhum caso registrado'}
-              </p>
+
+            <div className="mb-4">
+              <p className="text-xs font-semibold text-slate-700 mb-2">Evolução Temporal dos últimos 7 meses</p>
+              <div className="h-48 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] overflow-hidden">
+                <div className="h-full w-full flex items-end px-2 pb-2 pt-6 gap-1">
+                  {[65, 78, 90, 85, 95, 110, 130].map((value, i, arr) => {
+                    const height = (value / Math.max(...arr)) * 100;
+                    return (
+                      <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                        <div className="w-full rounded-t bg-[var(--color-accent)]" style={{ height: `${height}%` }} />
+                        <span className="text-[8px] font-mono text-slate-500">{['Dez','Fev','Mar','Abr','Mai','Jun','Sep'][i]}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-          </div>
-          <p className="text-xs text-slate-500 mb-3 font-mono">
-            {tutorMode 
-              ? "Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal." 
-              : "Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco."}
-          </p>
-          <label className="flex items-center gap-2 mb-4 cursor-pointer select-none">
-            <input 
-              type="checkbox" 
-              checked={tutorMode} 
-              onChange={(e) => setTutorMode(e.target.checked)} 
-              className="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary" 
-            />
-            <span className="text-sm font-medium text-slate-700">Ativar Modo Tutor (Linguagem simplificada)</span>
-          </label>
-          <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
-            <Button className="w-full" variant={tutorMode ? "primary" : "secondary"} disabled title="Exclusivo para profissionais">
-              <FileText size={14} /> {tutorMode ? 'Selecionar Caso e Gerar Guia para o Tutor' : 'Selecionar Caso e Gerar Laudo Técnico'}
-            </Button>
-          }>
-            <Button
-              className="w-full"
-              variant={tutorMode ? "primary" : "secondary"}
-              loading={generating === 'case'}
-              onClick={() => setShowCaseSelector(true)}
-              disabled={!cases || cases.length === 0}
-              title="Selecionar caso e gerar laudo"
-            >
-              <FileText size={14} />
-              {generating === 'case' ? 'Gerando...' : (tutorMode ? 'Selecionar Caso e Gerar Guia para o Tutor' : 'Selecionar Caso e Gerar Laudo Técnico')}
-            </Button>
-          </RequireRole>
-        </Card>
+
+            <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
+              <Button className="w-full" disabled title="Exclusivo para profissionais">
+                <Download size={14} /> Gerar e Baixar PDF
+              </Button>
+            }>
+              <Button
+                className="w-full"
+                loading={generating === 'monthly' || metricsLoading}
+                onClick={downloadMonthly}
+              >
+                <Download size={14} />
+                {generating === 'monthly' ? 'Gerando...' : metricsLoading ? 'Carregando dados...' : 'Gerar e Baixar PDF'}
+              </Button>
+            </RequireRole>
+          </Card>
+        </div>
+
+        {/* Coluna DIREITA: Clinical Reports & Tutor Guides */}
+        <div className="lg:col-span-7 space-y-4">
+          <Card className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Clinical Reports & Tutor Guides</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco.</p>
+              </div>
+              <Badge variant="info" className="border-0">{cases?.length ?? 0} casos disponíveis</Badge>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-colors">
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText className="text-[var(--color-accent)]" size={18} />
+                  <h4 className="text-xs font-bold text-slate-900">Selecionar Caso e Gerar Laudo Técnico</h4>
+                </div>
+                <p className="text-[11px] text-slate-500 mb-3">Gera o laudo técnico completo com métricas de IA, landmarks anatômicos e fatores de risco identificados.</p>
+                <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
+                  <Button className="w-full" variant="secondary" disabled title="Exclusivo para profissionais">Selecionar Caso</Button>
+                }>
+                  <Button className="w-full" variant="secondary" onClick={() => setShowCaseSelector(true)} disabled={!cases || cases.length === 0}>
+                    <FileText size={14} /> Selecionar Caso
+                  </Button>
+                </RequireRole>
+              </div>
+
+              <div className="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-colors">
+                <div className="flex items-center gap-2 mb-2">
+                  <User className="text-[var(--color-accent)]" size={18} />
+                  <h4 className="text-xs font-bold text-slate-900">Selecionar Caso e Gerar Guia para o Tutor</h4>
+                </div>
+                <p className="text-[11px] text-slate-500 mb-3">Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal com instruções pós-operatórias.</p>
+                <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
+                  <Button className="w-full" variant="secondary" disabled title="Exclusivo para profissionais">Selecionar Caso</Button>
+                }>
+                  <Button className="w-full" variant="secondary" onClick={() => { setTutorMode(true); setShowCaseSelector(true); }} disabled={!cases || cases.length === 0}>
+                    <User size={14} /> Selecionar Caso
+                  </Button>
+                </RequireRole>
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
 
       {/* Reports list */}
