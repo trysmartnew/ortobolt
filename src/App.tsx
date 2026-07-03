@@ -17,6 +17,7 @@ const ReportsPage       = lazy(() => import('@/pages/ReportsPage'));
 const SettingsPage      = lazy(() => import('@/pages/SettingsPage'));
 const NotificationsPage = lazy(() => import('@/pages/NotificationsPage'));
 const PatientsPage       = lazy(() => import('@/pages/PatientsPage'));
+const PatientDetailPage  = lazy(() => import('@/pages/PatientDetailPage'));
 import Sidebar           from '@/components/Sidebar';
 import TopBar            from '@/components/TopBar';
 import ProductTour       from '@/components/ProductTour';
@@ -37,6 +38,7 @@ const PAGE_MAP = {
   settings:      SettingsPage,
     notifications: NotificationsPage,
     patients:       PatientsPage,
+    patientDetail:  PatientDetailPage,
   } as const;
 
 function AppInner() {
