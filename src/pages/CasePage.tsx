@@ -375,6 +375,17 @@ export default function CasePage() {
   const [showNoteInput, setShowNoteInput] = useState(false);
   const [analysisTool, setAnalysisTool] = useState<string | null>(null);
   const [comparisonImages, setComparisonImages] = useState<{ left: string | null; right: string | null }>({ left: null, right: null });
+  const [selectedDropTarget, setSelectedDropTarget] = useState<'left' | 'right' | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [comparisonMetrics, setComparisonMetrics] = useState<{
+    boneDensityChangePct?: number;
+    boneDensityChangeMm?: number;
+    jointSpaceChangePct?: number;
+    jointSpaceChangeMm?: number;
+    leftNorbergAngle?: number;
+    rightNorbergAngle?: number;
+  } | null>(null);
+  const [analysisLoading, setAnalysisLoading] = useState(false);
 
   const availableImages = useMemo(() => {
     if (!activeCase) return [];
@@ -395,6 +406,61 @@ export default function CasePage() {
   const handleSelectComparisonImage = useCallback((side: 'left' | 'right', imageUrl: string) => {
     setComparisonImages(prev => ({ ...prev, [side]: imageUrl }));
   }, []);
+
+  const handleDragStart = useCallback((e: React.DragEvent<HTMLDivElement>, imageId: string) => {
+    e.dataTransfer.setData('application/image-id', imageId);
+    e.dataTransfer.effectAllowed = 'copy';
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>, side: 'left' | 'right') => {
+    e.preventDefault();
+    const imageId = e.dataTransfer.getData('application/image-id');
+    const image = availableImages.find(img => img.id === imageId);
+    if (image) {
+      handleSelectComparisonImage(side, image.url);
+    }
+    setSelectedDropTarget(null);
+    setIsDragging(false);
+  }, [availableImages, handleSelectComparisonImage]);
+
+  const handleDragEnter = useCallback((side: 'left' | 'right') => {
+    setSelectedDropTarget(side);
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setSelectedDropTarget(null);
+    setIsDragging(false);
+  }, []);
+
+  const handleStartComparativeAnalysis = useCallback(async () => {
+    if (!comparisonImages.left || !comparisonImages.right) {
+      addToast('Selecione duas imagens para comparar.', 'warning');
+      return;
+    }
+    setAnalysisLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setComparisonMetrics({
+        boneDensityChangePct: -3.6,
+        boneDensityChangeMm: -5.5,
+        jointSpaceChangePct: 3.8,
+        jointSpaceChangeMm: -3.5,
+        leftNorbergAngle: 98,
+        rightNorbergAngle: 104,
+      });
+      addToast('Análise comparativa concluída.', 'success');
+    } catch {
+      addToast('Falha na análise comparativa.', 'error');
+    } finally {
+      setAnalysisLoading(false);
+    }
+  }, [comparisonImages, addToast]);
 
   const handleSelectAnalysis = useCallback((tool: string) => {
     setAnalysisTool(tool);
@@ -566,14 +632,23 @@ export default function CasePage() {
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Painel A</h3>
                   <div className="flex items-center gap-1">
+                    <span className="text-[10px] font-mono bg-[var(--color-accent)] text-white px-2 py-0.5 rounded-full">{selectedDropTarget === 'left' ? 'DROP A' : 'A'}</span>
                     <Button variant="secondary" size="sm" onClick={() => setComparisonImages(prev => ({ ...prev, left: null }))}>Limpar</Button>
                   </div>
                 </div>
-                <div className="aspect-[4/3] bg-[var(--color-surface-muted)] border border-[var(--color-border)] rounded-xl overflow-hidden flex items-center justify-center">
+                <div
+                  className={`aspect-[4/3] bg-[var(--color-surface-muted)] border rounded-xl overflow-hidden flex items-center justify-center transition-colors ${
+                    selectedDropTarget === 'left' && isDragging ? 'border-[var(--color-accent)]' : 'border-[var(--color-border)]'
+                  }`}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, 'left')}
+                  onDragEnter={() => handleDragEnter('left')}
+                  onDragLeave={handleDragLeave}
+                >
                   {comparisonImages.left ? (
                     <img src={comparisonImages.left} alt="Painel A" className="w-full h-full object-contain" />
                   ) : (
-                    <p className="text-xs text-slate-500">Selecione uma imagem na galeria</p>
+                    <p className="text-xs text-slate-500">Arraste uma imagem para este painel</p>
                   )}
                 </div>
               </Card>
@@ -589,17 +664,34 @@ export default function CasePage() {
                   </div>
                   <div className="space-y-1">
                     <p className="text-[10px] font-semibold text-slate-500 uppercase">Densidad de bone mudange</p>
-                    <p className="text-xs font-mono text-slate-700">-3.6% / -5.5 mm</p>
+                    <p className="text-xs font-mono text-slate-700">
+                      {comparisonMetrics ? `${comparisonMetrics.boneDensityChangePct?.toFixed(1)}% / ${comparisonMetrics.boneDensityChangeMm?.toFixed(1)} mm` : '-3.6% / -5.5 mm'}
+                    </p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-[10px] font-semibold text-slate-500 uppercase">Mudança de espaço de joints</p>
-                    <p className="text-xs font-mono text-slate-700">3.8% / -3.5 mm</p>
+                    <p className="text-xs font-mono text-slate-700">
+                      {comparisonMetrics ? `${comparisonMetrics.jointSpaceChangePct?.toFixed(1)}% / ${comparisonMetrics.jointSpaceChangeMm?.toFixed(1)} mm` : '3.8% / -3.5 mm'}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-semibold text-slate-500 uppercase">Opacidade</span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      defaultValue="50"
+                      onChange={(e) => {}}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[var(--color-accent)]"
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-semibold text-slate-500 uppercase">Parâmetros de IA</span>
                     <span className="text-[10px] font-mono bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">AUTO</span>
                   </div>
-                  <Button variant="primary" size="sm" className="w-full">Iniciar Análise Comparativa por IA</Button>
+                  <Button variant="primary" size="sm" className="w-full" onClick={handleStartComparativeAnalysis} disabled={analysisLoading}>
+                    {analysisLoading ? 'Analisando...' : 'Iniciar Análise Comparativa por IA'}
+                  </Button>
                 </div>
               </Card>
             </div>
@@ -609,14 +701,23 @@ export default function CasePage() {
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Painel B</h3>
                   <div className="flex items-center gap-1">
+                    <span className="text-[10px] font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full">{selectedDropTarget === 'right' && isDragging ? 'DROP B' : 'B'}</span>
                     <Button variant="secondary" size="sm" onClick={() => setComparisonImages(prev => ({ ...prev, right: null }))}>Limpar</Button>
                   </div>
                 </div>
-                <div className="aspect-[4/3] bg-[var(--color-surface-muted)] border border-[var(--color-border)] rounded-xl overflow-hidden flex items-center justify-center">
+                <div
+                  className={`aspect-[4/3] bg-[var(--color-surface-muted)] border rounded-xl overflow-hidden flex items-center justify-center transition-colors ${
+                    selectedDropTarget === 'right' && isDragging ? 'border-[var(--color-accent)]' : 'border-[var(--color-border)]'
+                  }`}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, 'right')}
+                  onDragEnter={() => handleDragEnter('right')}
+                  onDragLeave={handleDragLeave}
+                >
                   {comparisonImages.right ? (
                     <img src={comparisonImages.right} alt="Painel B" className="w-full h-full object-contain" />
                   ) : (
-                    <p className="text-xs text-slate-500">Selecione uma imagem na galeria</p>
+                    <p className="text-xs text-slate-500">Arraste uma imagem para este painel</p>
                   )}
                 </div>
               </Card>
@@ -628,9 +729,10 @@ export default function CasePage() {
             <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Selecionar Exames para Comparação</h3>
             <div className="flex gap-3 overflow-x-auto pb-2">
               {availableImages.map((img) => (
-                <button
+                <div
                   key={img.id}
-                  type="button"
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, img.id)}
                   onClick={() => {
                     if (!comparisonImages.left) {
                       handleSelectComparisonImage('left', img.url);
@@ -640,18 +742,25 @@ export default function CasePage() {
                       handleSelectComparisonImage('left', img.url);
                     }
                   }}
-                  className={`flex-shrink-0 w-24 h-24 rounded-lg border-2 overflow-hidden transition-colors ${
+                  className={`flex-shrink-0 w-24 h-24 rounded-lg border-2 overflow-hidden transition-colors cursor-grab active:cursor-grabbing ${
                     comparisonImages.left === img.url || comparisonImages.right === img.url
                       ? 'border-[var(--color-accent)]'
                       : 'border-[var(--color-border)] hover:border-[var(--color-accent)]'
                   }`}
                 >
                   <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
-                </button>
+                </div>
               ))}
             </div>
-            <p className="text-[10px] text-slate-500 mt-2">Toque para alternar entre Painel A e B automaticamente.</p>
+            <p className="text-[10px] text-slate-500 mt-2">Clique para alternar entre Painel A e B ou arraste para o painel desejado.</p>
           </Card>
+
+          {analysisLoading && (
+            <div className="flex items-center justify-center gap-2 p-4">
+              <div className="w-5 h-5 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
+              <p className="text-xs font-semibold text-slate-700">Executando análise comparativa...</p>
+            </div>
+          )}
 
           <p className="text-xs text-slate-500 text-center">Selecione e arraste mais exames para comparar ou ajuste os parâmetros de IA.</p>
         </>
