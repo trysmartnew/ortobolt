@@ -407,7 +407,7 @@ export default function AnalysisPage() {
                 {[
                   ['1', 'Análise visual'],
                   ['2', 'Copiloto contextual'],
-                  ['3', 'Aprovar → Galeria / Caso / Dashboard / PDF'],
+                  ['3', 'Aprovar → Galeria / Caso / Painel Clínico / PDF'],
                 ].map(([step, label]) => (
                   <div key={step} className="flex gap-2">
                     <span className="font-mono text-primary font-bold">{step}</span>

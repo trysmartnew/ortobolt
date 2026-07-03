@@ -110,7 +110,7 @@ export default function DashboardPage() {
     return (
       <div className="p-6 flex items-center justify-center">
         <Spinner />
-        <p className="ml-3 text-sm text-slate-500">Carregando dashboard...</p>
+        <p className="ml-3 text-sm text-slate-500">Carregando Painel Clínico...</p>
       </div>
     );
   }

@@ -6,7 +6,7 @@ import { useApp } from '@/contexts/AppContext';
 import { TOUR_STEPS } from '@/components/ProductTour';
 
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
-  dashboard:     { title: 'Dashboard',          subtitle: 'Visão geral em tempo real' },
+  dashboard:     { title: 'Painel Clínico',          subtitle: 'Visão geral em tempo real' },
   chat:          { title: 'Consultor IA',       subtitle: 'OrthoAI · Gemini 2.5 Flash' },
   analysis:      { title: 'Análise Visual',     subtitle: 'Gemini Vision · Análise Multimodal' },
   gallery:       { title: 'Galeria de Casos',   subtitle: 'Casos clínicos e histórico' },

@@ -26,7 +26,7 @@ const MENU_SECTIONS: MenuSection[] = [
     items: [
       { label: 'Casos', icon: ClipboardList, page: 'gallery', dynamicBadge: 'activeCases' },
       { label: 'Análise de Imagens', icon: Scan, page: 'analysis' },
-      { label: 'Dashboard', icon: Activity, page: 'dashboard' },
+      { label: 'Painel Clínico', icon: Activity, page: 'dashboard' },
       { label: 'Relatórios', icon: BarChart3, page: 'reports' },
     ]
   },

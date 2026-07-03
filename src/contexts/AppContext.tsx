@@ -497,7 +497,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           id: `n-pipeline-${Date.now()}`,
           type: 'success',
           title: 'Caso completo integrado',
-          message: `${clinicalCase.patientName} foi registrado na galeria, dashboard e relatórios.`,
+          message: `${clinicalCase.patientName} foi registrado na galeria, Painel Clínico e relatórios.`,
           timestamp: new Date().toISOString(),
           read: false,
           caseId: clinicalCase.id,

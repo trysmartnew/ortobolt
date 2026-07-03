@@ -29,7 +29,7 @@ export default function ApproveCompleteCaseBar({
         <div>
           <p className="text-sm font-bold text-slate-900">Aprovar Caso Completo</p>
           <p className="text-xs text-slate-600 mt-0.5">
-            Propaga automaticamente para Galeria, Caso, Dashboard e Relatórios — sem retrabalho.
+            Propaga automaticamente para Galeria, Caso, Painel Clínico e Relatórios — sem retrabalho.
           </p>
         </div>
       </div>
