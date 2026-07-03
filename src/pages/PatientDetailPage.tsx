@@ -4,6 +4,7 @@ import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { ArrowLeft, User, PawPrint, Ruler, Activity, Pill, FlaskConical, Image, Calendar, UserRound } from 'lucide-react';
 import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';
 import { SPECIES_LABELS } from '@/constants/labels';
+import RadiographGallery from '../components/RadiographGallery';
 
 function formatDate(iso: string): string {
   try {
@@ -34,6 +35,7 @@ function getStatusLabel(status: CaseStatus): string {
 export default function PatientDetailPage() {
   const { cases, activeCase, openCase, user, authLoading, addToast } = useApp();
   const [loading, setLoading] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
 
   const patientCases = useMemo(() => {
     const base = activeCase
@@ -163,6 +165,21 @@ export default function PatientDetailPage() {
           description="Abra um caso clínico para visualizar o prontuário completo."
         />
       </div>
+    );
+  }
+
+  if (showGallery) {
+    return (
+      <RadiographGallery
+        patientName={currentPatient.patientName}
+        species={currentPatient.species}
+        breed={currentPatient.breed}
+        ageYears={currentPatient.ageYears}
+        weightKg={currentPatient.weightKg}
+        avatarUrl={currentPatient.avatarUrl}
+        cases={patientCases}
+        onBack={() => setShowGallery(false)}
+      />
     );
   }
 
@@ -319,11 +336,16 @@ export default function PatientDetailPage() {
           </Card>
 
           <Card className="p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Image className="text-[var(--color-accent)]" size={18} />
-              <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                Imaging Gallery
-              </h3>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 mb-3">
+                <Image className="text-[var(--color-accent)]" size={18} />
+                <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                  Imaging Gallery
+                </h3>
+              </div>
+              <Button variant="secondary" size="sm" onClick={() => setShowGallery(true)}>
+                Ver Galeria
+              </Button>
             </div>
             {images.length === 0 ? (
               <p className="text-xs text-slate-500">Sem imagens registradas.</p>
