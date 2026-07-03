@@ -156,7 +156,11 @@ export default function ReportsPage() {
     setShowCaseSelector(false);
     setGenerating('case');
     try {
-      await generateCaseReport(c);
+      if (tutorMode) {
+        await handleGenerateTutorGuide(c.id);
+      } else {
+        await handleGenerateTechnicalReport(c.id);
+      }
     } finally {
       setGenerating(null);
     }
@@ -251,10 +255,44 @@ export default function ReportsPage() {
     loadMetrics();
   }, [user]);
 
-  const downloadMonthly = async () => {
+  const handleGenerateMonthlyReport = async () => {
     if (!user) return;
     setGenerating('monthly');
     try {
+      const reportData = {
+        clinicName,
+        specialty: clinicSubtitle,
+        logoPreview,
+        precisionMetric,
+        caseVolume,
+        successRate,
+        monthlyData,
+        period: 'Últimos 30 dias',
+        generatedAt: new Date().toISOString(),
+      };
+
+      try {
+        const response = await fetch('/api/reports/generate-monthly', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(reportData),
+        });
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `relatorio-mensal-${new Date().toISOString().split('T')[0]}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          addToast('Relatório mensal gerado com sucesso.', 'success');
+          return;
+        }
+      } catch {
+        console.warn('API de relatório mensal não disponível, usando geração client-side.');
+      }
       await generateMonthlyReport(user, kpiMetrics, chartData, cases);
       addToast('Relatório mensal gerado com sucesso.', 'success');
     } finally {
@@ -291,42 +329,81 @@ export default function ReportsPage() {
     }
   };
 
-  const handleGenerateTechnicalReport = async () => {
-    if (!reportableCase) {
+  const handleGenerateTechnicalReport = async (caseId?: string) => {
+    if (!reportableCase && !caseId) {
       setNoCaseToast(true);
       setTimeout(() => setNoCaseToast(false), 3000);
       return;
     }
+    const selectedCase = caseId ? cases.find(c => c.id === caseId) : reportableCase;
+    if (!selectedCase) return;
+
     setGenerating('case');
     try {
-      await generateCaseReport(reportableCase);
+      try {
+        const response = await fetch('/api/reports/generate-technical', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ caseId: selectedCase.id }),
+        });
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `laudo-tecnico-${selectedCase.id}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          addToast('Laudo técnico gerado com sucesso.', 'success');
+          return;
+        }
+      } catch {
+        console.warn('API de laudo técnico não disponível, usando geração client-side.');
+      }
+      await generateCaseReport(selectedCase);
       addToast('Laudo técnico gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
     }
   };
 
-  const handleGenerateTutorGuide = async () => {
-    if (!reportableCase) {
+  const handleGenerateTutorGuide = async (caseId?: string) => {
+    if (!reportableCase && !caseId) {
       setNoCaseToast(true);
       setTimeout(() => setNoCaseToast(false), 3000);
       return;
     }
+    const selectedCase = caseId ? cases.find(c => c.id === caseId) : reportableCase;
+    if (!selectedCase) return;
+
     setGenerating('case');
     try {
-      await generateCaseReport(reportableCase);
+      try {
+        const response = await fetch('/api/reports/generate-tutor-guide', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ caseId: selectedCase.id }),
+        });
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `guia-tutor-${selectedCase.id}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          addToast('Guia para o tutor gerado com sucesso.', 'success');
+          return;
+        }
+      } catch {
+        console.warn('API de guia para tutor não disponível, usando geração client-side.');
+      }
+      await generateCaseReport(selectedCase);
       addToast('Guia para o tutor gerado com sucesso.', 'success');
-    } finally {
-      setGenerating(null);
-    }
-  };
-
-  const handleGenerateMonthlyPdf = async () => {
-    if (!user) return;
-    setGenerating('monthly');
-    try {
-      await generateMonthlyReport(user, kpiMetrics, chartData, cases);
-      addToast('Relatório mensal gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
     }
@@ -479,7 +556,7 @@ export default function ReportsPage() {
               <Button
                 className="w-full"
                 loading={generating === 'monthly' || metricsLoading}
-                onClick={downloadMonthly}
+                onClick={handleGenerateMonthlyReport}
               >
                 <Download size={14} />
                 {generating === 'monthly' ? 'Gerando...' : metricsLoading ? 'Carregando dados...' : 'Gerar e Baixar PDF'}
