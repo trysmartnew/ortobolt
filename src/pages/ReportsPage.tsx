@@ -83,6 +83,37 @@ export default function ReportsPage() {
   const [logoPreview, setLogoPreview] = useState<string | null>(localStorage.getItem('ortobolt_pdf_logo'));
   const [tutorMode, setTutorMode] = useState(false);
 
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
+  const [reportType, setReportType] = useState<'technical' | 'tutor' | null>(null);
+
+  const handleOpenTechnicalReport = () => {
+    setReportType('technical');
+    setIsReportModalOpen(true);
+  };
+
+  const handleOpenTutorGuide = () => {
+    setReportType('tutor');
+    setIsReportModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsReportModalOpen(false);
+    setReportType(null);
+    setSelectedCaseId(null);
+  };
+
+  const handleCaseSelect = async (caseId: string) => {
+    setSelectedCaseId(caseId);
+    handleCloseModal();
+
+    if (reportType === 'technical') {
+      await handleGenerateTechnicalReport(caseId);
+    } else if (reportType === 'tutor') {
+      await handleGenerateTutorGuide(caseId);
+    }
+  };
+
   const handleSavePrefs = () => {
     localStorage.setItem('ortobolt_pdf_clinic_name', clinicName);
     localStorage.setItem('ortobolt_pdf_clinic_subtitle', clinicSubtitle);
@@ -130,7 +161,6 @@ export default function ReportsPage() {
   };
 
   // ── Seletor de Caso para Laudo ──
-  const [showCaseSelector, setShowCaseSelector] = useState(false);
   const [caseSearch, setCaseSearch] = useState('');
   const [caseSortBy, setCaseSortBy] = useState<'date' | 'name'>('date');
 
@@ -151,20 +181,6 @@ export default function ReportsPage() {
     }
     return result;
   }, [cases, caseSearch, caseSortBy]);
-
-  const handleGenerateSpecificCase = async (c: ClinicalCase) => {
-    setShowCaseSelector(false);
-    setGenerating('case');
-    try {
-      if (tutorMode) {
-        await handleGenerateTutorGuide(c.id);
-      } else {
-        await handleGenerateTechnicalReport(c.id);
-      }
-    } finally {
-      setGenerating(null);
-    }
-  };
 
   // ── Estados Principais ──
   const [reports, setReports] = useState<Report[]>([]);
@@ -548,17 +564,12 @@ export default function ReportsPage() {
               </ResponsiveContainer>
             </div>
 
-            <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
-              <Button className="w-full" disabled title="Exclusivo para profissionais">
-                <Download size={14} /> Gerar e Baixar PDF
-              </Button>
-            }>
+            <RequireRole roles={['veterinarian', 'admin']}>
               <Button
-                className="w-full"
-                loading={generating === 'monthly' || metricsLoading}
                 onClick={handleGenerateMonthlyReport}
+                className="w-full mt-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                disabled={generating === 'monthly' || metricsLoading}
               >
-                <Download size={14} />
                 {generating === 'monthly' ? 'Gerando...' : metricsLoading ? 'Carregando dados...' : 'Gerar e Baixar PDF'}
               </Button>
             </RequireRole>
@@ -586,7 +597,7 @@ export default function ReportsPage() {
                 <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
                   <Button className="w-full" variant="secondary" disabled title="Exclusivo para profissionais">Selecionar Caso</Button>
                 }>
-                  <Button className="w-full" variant="secondary" onClick={() => { setTutorMode(false); setShowCaseSelector(true); }} disabled={!cases || cases.length === 0}>
+                  <Button className="w-full" variant="secondary" onClick={handleOpenTechnicalReport} disabled={!cases || cases.length === 0}>
                     <FileText size={14} /> Selecionar Caso
                   </Button>
                 </RequireRole>
@@ -601,7 +612,7 @@ export default function ReportsPage() {
                 <RequireRole roles={['veterinarian', 'resident', 'admin']} fallback={
                   <Button className="w-full" variant="secondary" disabled title="Exclusivo para profissionais">Selecionar Caso</Button>
                 }>
-                  <Button className="w-full" variant="secondary" onClick={() => { setTutorMode(true); setShowCaseSelector(true); }} disabled={!cases || cases.length === 0}>
+                  <Button className="w-full" variant="secondary" onClick={handleOpenTutorGuide} disabled={!cases || cases.length === 0}>
                     <User size={14} /> Selecionar Caso
                   </Button>
                 </RequireRole>
@@ -676,7 +687,7 @@ export default function ReportsPage() {
       </Card>
 
       {/* Modal de Seleção de Caso */}
-      {showCaseSelector && (
+      {isReportModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
             <div className="p-5 border-b border-slate-100 flex items-center justify-between">
@@ -684,7 +695,7 @@ export default function ReportsPage() {
                 <h3 className="font-bold text-slate-900 text-lg">Selecionar Caso para Laudo</h3>
                 <p className="text-sm text-slate-500">Escolha o caso clínico para gerar o PDF personalizado.</p>
               </div>
-              <button onClick={() => setShowCaseSelector(false)} className="p-2 hover:bg-slate-100 rounded-full transition">
+              <button onClick={handleCloseModal} className="p-2 hover:bg-slate-100 rounded-full transition">
                 <X size={20} className="text-slate-500" />
               </button>
             </div>
@@ -724,7 +735,7 @@ export default function ReportsPage() {
                   {filteredAndSortedCases.map((c: ClinicalCase) => (
                     <button
                       key={c.id}
-                      onClick={() => handleGenerateSpecificCase(c)}
+                      onClick={() => handleCaseSelect(c.id)}
                       className="w-full flex items-center gap-4 p-3 rounded-xl border border-slate-100 hover:border-primary hover:bg-blue-50/50 transition text-left group"
                     >
                       <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs overflow-hidden shrink-0">
