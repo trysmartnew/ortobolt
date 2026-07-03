@@ -5,6 +5,7 @@ import { Search, Plus, Edit3, Eye, Trash2, Calendar, Activity } from 'lucide-rea
 import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';
 import { SPECIES_LABELS } from '@/constants/labels';
 import { CLINICAL_TERMS } from '@/constants/clinicalTerms';
+import PatientForm from '../components/PatientForm';
 
 interface PatientRecord {
   id: string;
@@ -49,6 +50,8 @@ export default function PatientsPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [showGuide, setShowGuide] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [editingPatient, setEditingPatient] = useState<ClinicalCase | null>(null);
 
   const patients = useMemo(() => {
     const sorted = [...cases].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -96,7 +99,13 @@ export default function PatientsPage() {
   }, [patients, search, breedFilter, statusFilter, dateFilter]);
 
   const handleAddPatient = () => {
-    addToast('Cadastro de paciente iniciado a partir da Análise de Imagens.', 'info');
+    setEditingPatient(null);
+    setShowForm(true);
+  };
+
+  const handleBack = () => {
+    setShowForm(false);
+    setEditingPatient(null);
   };
 
   const handleView = (caseId: string) => {
@@ -106,7 +115,10 @@ export default function PatientsPage() {
 
   const handleEdit = (caseId: string) => {
     const c = cases.find(x => x.id === caseId);
-    if (c) openCase(c);
+    if (c) {
+      setEditingPatient(c);
+      setShowForm(true);
+    }
   };
 
   const handleDelete = (caseId: string) => {
@@ -118,6 +130,14 @@ export default function PatientsPage() {
       <div className="p-6 flex items-center justify-center">
         <Spinner />
         <p className="ml-3 text-sm text-slate-500">Carregando pacientes...</p>
+      </div>
+    );
+  }
+
+  if (showForm) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        <PatientForm caseData={editingPatient} onClose={handleBack} />
       </div>
     );
   }
