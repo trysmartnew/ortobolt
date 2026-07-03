@@ -48,14 +48,14 @@ h3 { font-size: 18px; font-weight: 600; }
   /* Cores Institucionais */
   --color-primary: #0A3D8F;
   --color-primary-light: #1258B41a;
-  --color-navy: #1D2433;
+  --color-navy: #141821;
 
   /* Neutros */
-  --color-surface: #ffffff;
-  --color-surface-muted: #f8fafc;
-  --color-border: #e2e8f0;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
+  --color-surface: #1E2329;
+  --color-surface-muted: #252B36;
+  --color-border: rgba(255,255,255,0.08);
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #94A3B8;
   --color-text-tertiary: #94a3b8;
 
   /* Feedback */
