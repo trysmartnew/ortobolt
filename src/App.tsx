@@ -19,6 +19,7 @@ const NotificationsPage = lazy(() => import('@/pages/NotificationsPage'));
 const PatientsPage       = lazy(() => import('@/pages/PatientsPage'));
 const PatientDetailPage  = lazy(() => import('@/pages/PatientDetailPage'));
 const EvolutionaryAnalysisPage = lazy(() => import('@/pages/EvolutionaryAnalysisPage'));
+const AlignmentAnalysisPage = lazy(() => import('@/pages/AlignmentAnalysisPage'));
 import Sidebar           from '@/components/Sidebar';
 import TopBar            from '@/components/TopBar';
 import ProductTour       from '@/components/ProductTour';
@@ -41,6 +42,7 @@ const PAGE_MAP = {
     patients:       PatientsPage,
     patientDetail:  PatientDetailPage,
     evolutionaryAnalysis: EvolutionaryAnalysisPage,
+    alignmentAnalysis: AlignmentAnalysisPage,
   } as const;
 
 function AppInner() {
