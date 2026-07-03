@@ -16,6 +16,7 @@ const ProfilePage       = lazy(() => import('@/pages/ProfilePage'));
 const ReportsPage       = lazy(() => import('@/pages/ReportsPage'));
 const SettingsPage      = lazy(() => import('@/pages/SettingsPage'));
 const NotificationsPage = lazy(() => import('@/pages/NotificationsPage'));
+const PatientsPage       = lazy(() => import('@/pages/PatientsPage'));
 import Sidebar           from '@/components/Sidebar';
 import TopBar            from '@/components/TopBar';
 import ProductTour       from '@/components/ProductTour';
@@ -34,8 +35,9 @@ const PAGE_MAP = {
   profile:       ProfilePage,
   reports:       ReportsPage,
   settings:      SettingsPage,
-  notifications: NotificationsPage,
-} as const;
+    notifications: NotificationsPage,
+    patients:       PatientsPage,
+  } as const;
 
 function AppInner() {
   // Inicializar view reset se token de recovery foi detectado no main.tsx
