@@ -187,7 +187,7 @@ function generateTutorGuide(c: ClinicalCase, protocol: typeof POST_OP_PROTOCOLS.
 }
 
 // ── MODAL DE EDIÇÃO ─────────────────────────────────────────────────────────
-const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave }: { caseData: ClinicalCase; onClose: () => void; onSave: (updates: Partial<ClinicalCase>) => void }) {
+const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave, saving }: { caseData: ClinicalCase; onClose: () => void; onSave: (updates: Partial<ClinicalCase>) => void; saving: boolean }) {
   const [form, setForm] = useState({
     title: caseData.title,
     patientName: caseData.patientName,
@@ -243,10 +243,12 @@ const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave }:
             </select>
           </div>
         </div>
-        <div className="p-5 border-t border-slate-100 flex gap-2">
-          <Button variant="secondary" onClick={onClose} className="flex-1">Cancelar</Button>
-          <Button onClick={handleSave} className="flex-1"><Check size={14} /> Salvar</Button>
-        </div>
+          <div className="p-5 border-t border-slate-100 flex gap-2">
+            <Button variant="secondary" onClick={onClose} className="flex-1" disabled={saving}>Cancelar</Button>
+            <Button onClick={handleSave} className="flex-1" disabled={saving}>
+              {saving ? <><span className="animate-spin inline-block h-4 w-4 border border-current border-t-transparent rounded-full mr-2" />Salvando...</> : <><Check size={14} /> Salvar</>}
+            </Button>
+          </div>
       </div>
     </div>
   );
@@ -992,7 +994,7 @@ export default function CasePage() {
       </div>
 
       {/* Modais */}
-      {showEdit && <EditCaseModal caseData={activeCase} onClose={() => setShowEdit(false)} onSave={handleSaveEdit} />}
+      {showEdit && <EditCaseModal caseData={activeCase} onClose={() => setShowEdit(false)} onSave={handleSaveEdit} saving={saving} />}
       {showGuide && <TutorGuideModal caseData={activeCase} protocol={protocol} onClose={() => setShowGuide(false)} />}
     </div>
   );
