@@ -34,7 +34,7 @@ function SettingCard({ icon: Icon, title, description, children, accent }: { ico
 }
 
 export default function SettingsPage() {
-  const { user, addToast } = useApp();
+  const { user, cases, addToast } = useApp();
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   const [prefs, setPrefs] = useState(() => {
@@ -88,20 +88,49 @@ export default function SettingsPage() {
         name: user.name,
         email: user.email,
         role: user.role,
+        specialty: user.specialty,
+        crmv: user.crmv,
+        institution: user.institution,
+        avatar: user.avatar,
+        certifications: user.certifications,
+        stats: user.stats,
         preferences: prefs,
       },
+      cases: cases.map(c => ({
+        id: c.id,
+        title: c.title,
+        patientName: c.patientName,
+        species: c.species,
+        breed: c.breed,
+        ageYears: c.ageYears,
+        weightKg: c.weightKg,
+        procedure: c.procedure,
+        status: c.status,
+        precisionScore: c.precisionScore,
+        riskLevel: c.riskLevel,
+        tags: c.tags,
+        imageUrl: c.imageUrl,
+        avatarUrl: c.avatarUrl,
+        notes: c.notes,
+        veterinarianId: c.veterinarianId,
+        createdAt: c.createdAt,
+        updatedAt: c.updatedAt,
+        aiAnalysis: c.aiAnalysis,
+        clinicalEvidence: c.clinicalEvidence,
+        exams: c.exams,
+      })),
       exportedAt: new Date().toISOString(),
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ortobolt-config-${user.id}-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `ortobolt-data-export-${user.id}-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
-    addToast('Exportação concluída.', 'success');
+    addToast('Exportação de dados concluída.', 'success');
   };
 
   return (
