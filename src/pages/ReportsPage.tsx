@@ -306,10 +306,11 @@ export default function ReportsPage() {
           addToast('Relatório mensal gerado com sucesso.', 'success');
           return;
         }
-      } catch {
-        console.warn('API de relatório mensal não disponível, usando geração client-side.');
-      }
-      await generateMonthlyReport(user, kpiMetrics, chartData, cases);
+        } catch {
+          console.warn('API de relatório mensal não disponível, usando geração client-side.');
+          addToast('API não disponível. Gerando relatório localmente...', 'info');
+        }
+        await generateMonthlyReport(user, kpiMetrics, chartData, cases);
       addToast('Relatório mensal gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
@@ -377,6 +378,7 @@ export default function ReportsPage() {
         }
       } catch {
         console.warn('API de laudo técnico não disponível, usando geração client-side.');
+        addToast('API não disponível. Gerando laudo localmente...', 'info');
       }
       await generateCaseReport(selectedCase);
       addToast('Laudo técnico gerado com sucesso.', 'success');
@@ -417,8 +419,9 @@ export default function ReportsPage() {
         }
       } catch {
         console.warn('API de guia para tutor não disponível, usando geração client-side.');
+        addToast('API não disponível. Gerando guia localmente...', 'info');
       }
-      await generateCaseReport(selectedCase);
+      await generateCaseReport(selectedCase, true);
       addToast('Guia para o tutor gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
