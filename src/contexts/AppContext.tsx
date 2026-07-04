@@ -352,7 +352,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       id: data.user.id,
       email: data.user.email || '',
       name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Usuário',
-      role: 'veterinarian',
+      role: 'professional',
       specialty: 'Ortopedia Veterinária',
       crmv: '',
       institution: '',

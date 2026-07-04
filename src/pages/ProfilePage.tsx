@@ -109,7 +109,7 @@ export default function ProfilePage() {
           { label: 'Total de Casos', value: user.stats.totalCases, color: 'var(--color-primary)' },
           { label: 'Taxa de Sucesso', value: `${user.stats.successRate}%`, color: 'var(--color-success)' },
           { label: 'Precisão Média', value: `${user.stats.avgPrecision}%`, color: '#0891b2' },
-          { label: 'Procedimentos/Mês', value: user.stats.monthlyProcedures, color: '#d97706' },
+          { label: 'Procedimentos/Mês', value: user.stats.monthlyProcedures, color: 'var(--color-warning)' },
         ].map(({ label, value, color }) => (
           <Card key={label} className="p-4 text-center">
             <p className="text-2xl font-bold font-mono" style={{ color }}>{value}</p>
@@ -170,8 +170,8 @@ export default function ProfilePage() {
           <ResponsiveContainer width="100%" height={220}>
             <RadarChart data={RADAR_DATA} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
               <PolarGrid stroke="#e2e8f0" />
-              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#64748b', fontFamily: 'Roboto Mono' }} />
-              <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 9, fill: '#94a3b8' }} />
+              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: 'var(--color-text-secondary)', fontFamily: 'Roboto Mono' }} />
+              <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 9, fill: 'var(--color-text-secondary)' }} />
               <Radar dataKey="A" stroke="var(--color-primary)" fill="var(--color-primary)" fillOpacity={0.15} strokeWidth={2} dot={{ r: 3, fill: 'var(--color-primary)' }} />
             </RadarChart>
           </ResponsiveContainer>

@@ -33,7 +33,6 @@ interface FormData {
   confirmPassword: string;
   acceptTerms: boolean;
   acceptAiConsent: boolean; // ✅ C-04: consentimento IA
-  role: 'veterinarian' | 'resident' | 'student';
 }
 
 const SPECIALTIES = [
@@ -52,7 +51,7 @@ export default function RegisterPage() {
   const { setCurrentView } = useApp();
   const [form, setForm] = useState<FormData>({
     name: '', email: '', crmv: '', specialty: '', password: '', confirmPassword: '',
-    acceptTerms: false, acceptAiConsent: false, role: 'veterinarian',
+    acceptTerms: false, acceptAiConsent: false,
   });
   const [crmvState, setCrmvState] = useState('');
   const [crmvDeclaration, setCrmvDeclaration] = useState(false);
@@ -85,13 +84,11 @@ export default function RegisterPage() {
         return;
       }
 
-      // Validação CRMV (condicional por role)
-      if (form.role === 'veterinarian' || form.role === 'resident') {
-        if (!form.crmv.trim())     { setError('Informe seu CRMV.'); return; }
-        if (!/^\d+\/[A-Z]{2}$/.test(form.crmv.trim())) {
-          setError('Formato inválido. Use: 12345/SP');
-          return;
-        }
+      // Validação CRMV
+      if (!form.crmv.trim())     { setError('Informe seu CRMV.'); return; }
+      if (!/^\d+\/[A-Z]{2}$/.test(form.crmv.trim())) {
+        setError('Formato inválido. Use: 12345/SP');
+        return;
       }
 
       if (!form.specialty)       { setError('Selecione sua especialidade.'); return; }
@@ -135,11 +132,11 @@ export default function RegisterPage() {
         id:          data.user.id,
         name:        form.name.trim(),
         email:       form.email.trim(),
-        crmv:        (form.role === 'veterinarian' || form.role === 'resident') ? form.crmv.trim() : '',
+        crmv:        form.crmv.trim(),
         specialty:   form.specialty,
-        crmv_state:  (form.role === 'veterinarian' || form.role === 'resident') ? crmvState : '',
-        crmv_verified: (form.role === 'veterinarian' || form.role === 'resident') ? crmvDeclaration : false,
-        role:        form.role,
+        crmv_state:  crmvState,
+        crmv_verified: crmvDeclaration,
+        role:        'professional',
         institution: '',
         preferences: {
           notifications: true,
@@ -223,15 +220,9 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-4">
-            {/* Tipo de usuário */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Tipo de usuário</label>
-              <select value={form.role} onChange={e => update('role', e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
-                <option value="veterinarian">Médico-veterinário (com CRMV)</option>
-                <option value="resident">Residente</option>
-                <option value="student">Estudante</option>
-              </select>
+            {/* Tipo de usuário (removido) */}
+            <div className="hidden">
+              <input type="text" value="professional" readOnly />
             </div>
 
             {/* Nome */}
@@ -257,28 +248,24 @@ export default function RegisterPage() {
             </div>
 
             {/* CRMV */}
-            {(form.role === 'veterinarian' || form.role === 'resident') && (
-              <div>
-                  <Input
-                    type="text"
-                    label="CRMV"
-                    value={form.crmv}
-                    onChange={e => update('crmv', e.target.value.toUpperCase().replace(/\s/g, ''))}
-                    placeholder="Ex: 12345/SP"
-                  />
-              </div>
-            )}
+            <div>
+              <Input
+                type="text"
+                label="CRMV"
+                value={form.crmv}
+                onChange={e => update('crmv', e.target.value.toUpperCase().replace(/\s/g, ''))}
+                placeholder="Ex: 12345/SP"
+              />
+            </div>
 
-            {(form.role === 'veterinarian' || form.role === 'resident') && (
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Estado do CRMV</label>
-                <select value={crmvState} onChange={e => setCrmvState(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
-                  <option value="">Selecione...</option>
-                  {['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'].map(uf => <option key={uf} value={uf}>{uf}</option>)}
-                </select>
-              </div>
-            )}
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Estado do CRMV</label>
+              <select value={crmvState} onChange={e => setCrmvState(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
+                <option value="">Selecione...</option>
+                {['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'].map(uf => <option key={uf} value={uf}>{uf}</option>)}
+              </select>
+            </div>
 
             {/* Especialidade */}
             <div>
@@ -373,7 +360,6 @@ export default function RegisterPage() {
               </span>
             </label>
 
-            {(form.role === 'veterinarian' || form.role === 'resident') && (
               <label className="flex items-start gap-2.5 cursor-pointer select-none">
                 <div className="relative mt-0.5 flex-shrink-0">
                   <input type="checkbox" className="sr-only" checked={crmvDeclaration} onChange={e => setCrmvDeclaration(e.target.checked)} />
@@ -386,7 +372,6 @@ export default function RegisterPage() {
                   Declaro que possuo registro ativo no CRMV informado.
                 </span>
               </label>
-            )}
 
             {error && (
               <div className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</div>

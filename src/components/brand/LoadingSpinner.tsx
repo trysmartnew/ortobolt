@@ -22,8 +22,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       >
         <defs>
           <linearGradient id="spinner-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0A3D8F" />
-            <stop offset="100%" stopColor="#00B3A6" />
+            <stop offset="0%" stopColor="var(--color-primary)" />
+            <stop offset="100%" stopColor="var(--color-accent)" />
           </linearGradient>
         </defs>
         

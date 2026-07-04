@@ -101,7 +101,7 @@ export function PrecisionGauge({ value, size = 80 }: { value: number; size?: num
   const circ = 2 * Math.PI * r;
   const filled = (value / 100) * circ * 0.75;
   const offset = circ * 0.25;
-  const color = value >= 95 ? 'var(--color-success)' : value >= 85 ? 'var(--color-primary)' : value >= 70 ? '#d97706' : '#dc2626';
+  const color = value >= 95 ? 'var(--color-success)' : value >= 85 ? 'var(--color-primary)' : value >= 70 ? 'var(--color-warning)' : 'var(--color-error)';
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(135deg)' }}>

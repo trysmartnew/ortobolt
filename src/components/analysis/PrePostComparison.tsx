@@ -512,37 +512,10 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                       {/* Badge Ângulo de Norberg */}
                       {aiAnalysisResult.metrics.norbergAngle && (
                         <g transform="translate(20, 20)">
-                          <rect className="fill-slate-950/80" width="140" height="32" rx="6" stroke="rgb(52 211 153)" strokeWidth="1" />
-                          <text className="fill-emerald-400 text-[11px] font-semibold" x="10" y="21">
-                            Norberg: {aiAnalysisResult.metrics.norbergAngle}°
-                          </text>
-                        </g>
-                      )}
-                      
-                      {/* Badge Ângulo Acetabular */}
-                      {aiAnalysisResult.metrics.acetabularAngle && (
-                        <g transform="translate(20, 60)">
-                          <rect className="fill-slate-950/80" width="160" height="32" rx="6" stroke="rgb(52 211 153)" strokeWidth="1" />
-                          <text className="fill-emerald-400 text-[11px] font-semibold" x="10" y="21">
-                            Acetabular: {aiAnalysisResult.metrics.acetabularAngle}°
-                          </text>
-                        </g>
-                      )}
-                      
-                      {/* Badge TPA */}
-                      {aiAnalysisResult.metrics.tpaAngle && (
-                        <g transform="translate(20, 100)">
-                          <rect className="fill-slate-950/80" width="120" height="32" rx="6" stroke="rgb(52 211 153)" strokeWidth="1" />
-                          <text className="fill-emerald-400 text-[11px] font-semibold" x="10" y="21">
-                            TPA: {aiAnalysisResult.metrics.tpaAngle}°
-                          </text>
-                        </g>
-                      )}
-                      
-                      {/* Badge Densidade Óssea */}
-                      {aiAnalysisResult.metrics.boneDensityPercent && (
-                        <g transform="translate(20, 140)">
-                          <rect className="fill-slate-950/80" width="180" height="32" rx="6" stroke="rgb(52 211 153)" strokeWidth="1" />
+                          <rect className="fill-slate-950/80" width="140" height="32" rx="6" stroke="var(--color-success)" strokeWidth="1" />
+                          <rect className="fill-slate-950/80" width="160" height="32" rx="6" stroke="var(--color-success)" strokeWidth="1" />
+                          <rect className="fill-slate-950/80" width="120" height="32" rx="6" stroke="var(--color-success)" strokeWidth="1" />
+                          <rect className="fill-slate-950/80" width="180" height="32" rx="6" stroke="var(--color-success)" strokeWidth="1" />
                           <text className="fill-emerald-400 text-[11px] font-semibold" x="10" y="21">
                             Densidade: {aiAnalysisResult.metrics.boneDensityPercent}%
                           </text>

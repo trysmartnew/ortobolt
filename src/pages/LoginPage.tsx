@@ -105,7 +105,7 @@ export default function LoginPage() {
             </button>
             {forgotSent ? (
               <div className="text-center py-4">
-                <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#ECFDF5' }}>
+                <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-success-bg)' }}>
                   <Shield size={24} className="text-success" />
                 </div>
                 <h2 className="font-bold text-slate-800 mb-2">E-mail enviado!</h2>
@@ -262,7 +262,7 @@ export default function LoginPage() {
               <div className="relative">
                 <input type="checkbox" className="sr-only" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
                 <div className="w-4 h-4 rounded border-2 flex items-center justify-center transition-all"
-                  style={{ borderColor: rememberMe ? 'var(--color-primary)' : '#CBD5E1', background: rememberMe ? 'var(--color-primary)' : '#fff' }}>
+                  style={{ borderColor: rememberMe ? 'var(--color-primary)' : 'var(--color-text-secondary)', background: rememberMe ? 'var(--color-primary)' : '#fff' }}>
                   {rememberMe && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
                 </div>
               </div>
