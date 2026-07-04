@@ -7,10 +7,11 @@ interface MarkingToolbarProps {
   onSave: () => void;
   onExport?: () => void;
   hasUnsavedChanges: boolean;
+  saving?: boolean;
   mode?: 'annotate' | 'review';
 }
 
-export function MarkingToolbar({ activeTool, onToolChange, onClear, onSave, onExport, hasUnsavedChanges, mode = 'annotate' }: MarkingToolbarProps) {
+export function MarkingToolbar({ activeTool, onToolChange, onClear, onSave, onExport, hasUnsavedChanges, saving = false, mode = 'annotate' }: MarkingToolbarProps) {
   const tools: { id: MarkingTool; label: string; hotkey: string }[] = [
     { id: 'circle', label: '⊙ Círculo', hotkey: 'C' },
     { id: 'angle-tpa', label: '∠ TPA', hotkey: 'A' },
@@ -66,13 +67,20 @@ export function MarkingToolbar({ activeTool, onToolChange, onClear, onSave, onEx
 
       <button
         onClick={onSave}
-        disabled={!hasUnsavedChanges}
-        className={`px-3 py-1.5 text-sm rounded-md ${hasUnsavedChanges
+        disabled={!hasUnsavedChanges || saving}
+        className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-2 ${hasUnsavedChanges && !saving
           ? 'border border-yellow-400 text-yellow-400 hover:bg-yellow-900/20'
           : 'bg-gray-800 text-gray-500 cursor-not-allowed'
           }`}
       >
-        💾 Salvar
+        {saving ? (
+          <>
+            <span className="animate-spin inline-block h-4 w-4 border border-current border-t-transparent rounded-full" />
+            Salvando...
+          </>
+        ) : (
+          <>💾 Salvar</>
+        )}
       </button>
 
       {onExport && (

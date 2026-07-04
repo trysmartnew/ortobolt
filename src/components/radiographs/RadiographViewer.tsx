@@ -23,6 +23,7 @@ export const RadiographViewer = memo(({ caseId, markings: externalMarkings }: Ra
   const initialMarkings = useMemo(() => externalMarkings || { circles: [], angles: [], markers: [], rois: [] } as MarkingsData, [externalMarkings]);
   const [markings, setMarkings] = useState<MarkingsData>(initialMarkings);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
 
   useEffect(() => {
     if (externalMarkings) {
@@ -98,6 +99,8 @@ export const RadiographViewer = memo(({ caseId, markings: externalMarkings }: Ra
   };
 
   const handleSaveMarkings = useCallback(async () => {
+    if (saving) return;
+    setSaving(true);
     try {
       const validated = validateMarkings(markings);
       if (!validated) {
@@ -148,8 +151,10 @@ export const RadiographViewer = memo(({ caseId, markings: externalMarkings }: Ra
       setHasUnsavedChanges(false);
     } catch (error: any) {
       console.error('Erro ao salvar marcações:', error.message);
+    } finally {
+      setSaving(false);
     }
-  }, [caseId, imageUrl, markings]);
+  }, [caseId, imageUrl, markings, saving]);
 
   const handleAddCircle = (circle: AlignmentCircle) => {
     setMarkings(prev => ({ ...prev, circles: [...prev.circles, circle] }));
@@ -227,6 +232,7 @@ export const RadiographViewer = memo(({ caseId, markings: externalMarkings }: Ra
                       onClear={handleClearMarkings}
                       onSave={handleSaveMarkings}
                       hasUnsavedChanges={hasUnsavedChanges}
+                      saving={saving}
                     />
                     <MarkingCanvas 
                       image={imageElement} 
