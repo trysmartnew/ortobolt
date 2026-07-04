@@ -29,21 +29,21 @@ function formatDate(iso: string): string {
 
 function classifyAlignment(value: number, type: 'femoral' | 'cobb' | 'symmetry'): { label: string; color: string } {
   if (type === 'femoral') {
-    if (value >= 120 && value <= 140) return { label: 'Normal', color: '#10b981' };
-    if (value >= 100 && value < 120) return { label: 'Leve', color: '#f59e0b' };
-    if (value >= 80 && value < 100) return { label: 'Moderado', color: '#f59e0b' };
-    return { label: 'Severo', color: '#ef4444' };
+    if (value >= 120 && value <= 140) return { label: 'Normal', color: 'var(--color-success)' };
+    if (value >= 100 && value < 120) return { label: 'Leve', color: 'var(--color-warning)' };
+    if (value >= 80 && value < 100) return { label: 'Moderado', color: 'var(--color-warning)' };
+    return { label: 'Severo', color: 'var(--color-error)' };
   }
   if (type === 'cobb') {
-    if (value < 10) return { label: 'Normal', color: '#10b981' };
-    if (value < 25) return { label: 'Leve', color: '#f59e0b' };
-    if (value < 40) return { label: 'Moderado', color: '#f59e0b' };
-    return { label: 'Severo', color: '#ef4444' };
+    if (value < 10) return { label: 'Normal', color: 'var(--color-success)' };
+    if (value < 25) return { label: 'Leve', color: 'var(--color-warning)' };
+    if (value < 40) return { label: 'Moderado', color: 'var(--color-warning)' };
+    return { label: 'Severo', color: 'var(--color-error)' };
   }
   if (type === 'symmetry') {
-    if (value >= 95) return { label: 'Normal', color: '#10b981' };
-    if (value >= 85) return { label: 'Leve', color: '#f59e0b' };
-    return { label: 'Moderada', color: '#ef4444' };
+    if (value >= 95) return { label: 'Normal', color: 'var(--color-success)' };
+    if (value >= 85) return { label: 'Leve', color: 'var(--color-warning)' };
+    return { label: 'Moderada', color: 'var(--color-error)' };
   }
   return { label: '—', color: 'var(--color-text-secondary)' };
 }

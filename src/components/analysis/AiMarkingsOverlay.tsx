@@ -58,7 +58,7 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
                 x={c.cx * scaleX}
                 y={c.cy * scaleY}
                 radius={Math.max(6, (c.radius || 30) * Math.min(scaleX, scaleY))}
-                stroke={c.stage === 'abnormal' ? '#ef4444' : '#10b981'}
+                stroke={c.stage === 'abnormal' ? 'var(--color-error)' : 'var(--color-success)'}
                 strokeWidth={2}
                 fill={c.stage === 'abnormal' ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)'}
               />
@@ -66,7 +66,7 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
                 x={(c.cx * scaleX) + (c.radius || 30) * scaleX}
                 y={(c.cy * scaleY) - 14 * scaleY}
                 text={c.label || 'Círculo'}
-                fill={c.stage === 'abnormal' ? '#ef4444' : '#10b981'}
+                fill={c.stage === 'abnormal' ? 'var(--color-error)' : 'var(--color-success)'}
                 fontSize={Math.round(12 * scaleX)}
                 fontStyle="bold"
               />
@@ -96,18 +96,18 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
 
           {markings.markers.map((m: FractureMarker) => (
             <Group key={m.id}>
-              <Circle x={m.x * scaleX} y={m.y * scaleY} radius={Math.max(4, 6 * scaleX)} fill="#ef4444" stroke="#ffffff" strokeWidth={2} />
+              <Circle x={m.x * scaleX} y={m.y * scaleY} radius={Math.max(4, 6 * scaleX)} fill="var(--color-error)" stroke="#ffffff" strokeWidth={2} />
               {m.label && (
-                <Text x={(m.x * scaleX) + 8 * scaleX} y={(m.y * scaleY) - 6 * scaleY} text={m.label} fill="#ef4444" fontSize={Math.round(11 * scaleX)} fontStyle="bold" />
+                <Text x={(m.x * scaleX) + 8 * scaleX} y={(m.y * scaleY) - 6 * scaleY} text={m.label} fill="var(--color-error)" fontSize={Math.round(11 * scaleX)} fontStyle="bold" />
               )}
             </Group>
           ))}
 
           {markings.rois.map((roi: ROI) => (
             <Group key={roi.id}>
-              <Rect x={roi.x * scaleX} y={roi.y * scaleY} width={(roi.width || 40) * scaleX} height={(roi.height || 40) * scaleY} stroke="#f59e0b" strokeWidth={2} fill="rgba(245,158,11,0.08)" />
+              <Rect x={roi.x * scaleX} y={roi.y * scaleY} width={(roi.width || 40) * scaleX} height={(roi.height || 40) * scaleY} stroke="var(--color-warning)" strokeWidth={2} fill="rgba(245,158,11,0.08)" />
               {roi.label && (
-                <Text x={roi.x * scaleX} y={(roi.y * scaleY) - 14 * scaleY} text={roi.label} fill="#f59e0b" fontSize={Math.round(11 * scaleX)} fontStyle="bold" />
+                <Text x={roi.x * scaleX} y={(roi.y * scaleY) - 14 * scaleY} text={roi.label} fill="var(--color-warning)" fontSize={Math.round(11 * scaleX)} fontStyle="bold" />
               )}
             </Group>
           ))}
