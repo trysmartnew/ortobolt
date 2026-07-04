@@ -564,7 +564,7 @@ export default function ReportsPage() {
               </ResponsiveContainer>
             </div>
 
-            <RequireRole allowedRoles={['professional']}>
+            <RequireRole>
                 <Button
                   onClick={handleGenerateMonthlyReport}
                 className="w-full mt-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
@@ -594,9 +594,7 @@ export default function ReportsPage() {
                   <h4 className="text-xs font-bold text-slate-900">Selecionar Caso e Gerar Laudo Técnico</h4>
                 </div>
                 <p className="text-[11px] text-slate-500 mb-3">Gera o laudo técnico completo com métricas de IA, landmarks anatômicos e fatores de risco identificados.</p>
-                <RequireRole allowedRoles={['professional']} fallback={
-                  <Button className="w-full" variant="secondary" disabled title="Exclusivo para profissionais">Selecionar Caso</Button>
-                }>
+                <RequireRole>
                   <Button className="w-full" variant="secondary" onClick={handleOpenTechnicalReport} disabled={!cases || cases.length === 0}>
                     <FileText size={14} /> Selecionar Caso
                   </Button>
@@ -609,9 +607,7 @@ export default function ReportsPage() {
                   <h4 className="text-xs font-bold text-slate-900">Selecionar Caso e Gerar Guia para o Tutor</h4>
                 </div>
                 <p className="text-[11px] text-slate-500 mb-3">Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal com instruções pós-operatórias.</p>
-                <RequireRole allowedRoles={['professional']} fallback={
-                  <Button className="w-full" variant="secondary" disabled title="Exclusivo para profissionais">Selecionar Caso</Button>
-                }>
+                <RequireRole>
                   <Button className="w-full" variant="secondary" onClick={handleOpenTutorGuide} disabled={!cases || cases.length === 0}>
                     <User size={14} /> Selecionar Caso
                   </Button>
@@ -662,11 +658,7 @@ export default function ReportsPage() {
                 {TYPE_LABELS[r.type] || r.type}
               </Badge>
               {r.status === 'ready' && (
-                <RequireRole allowedRoles={['professional']} fallback={
-                  <button disabled title="Exclusivo para profissionais" className="text-slate-300 p-1.5 rounded-lg">
-                    <Download size={15} />
-                  </button>
-                }>
+                <RequireRole>
                   <button
                     onClick={() => downloadHistoryReport(r)}
                     disabled={downloadingId === r.id}
