@@ -1,145 +1,135 @@
 ﻿// src/pages/SettingsPage.tsx
-// ✅ U-02: InlineToast local substituído por addToast global
-import React, { useState } from 'react';
-import { Bell, Globe, FileDown, Zap, Shield, Database, RefreshCw, Check, Download } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bell, Globe, Brain, FileText, Download, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { exportUserData } from '@/services/backupService';
-import { invalidateAiConsentCache } from '@/services/aiConsent';
+import { supabase } from '@/services/supabase';
 import { Card, Button, SectionHeader } from '@/components/ui';
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <button onClick={() => onChange(!checked)} className={`relative inline-flex w-11 h-6 rounded-full transition-colors ${checked ? 'bg-primary' : 'bg-slate-200'}`}>
+    <button onClick={() => onChange(!checked)} className={`relative inline-flex w-11 h-6 rounded-full transition-colors ${checked ? 'bg-[var(--color-accent)]' : 'bg-slate-200'}`}>
       <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
     </button>
   );
 }
 
-function SettingRow({ icon: Icon, title, description, children }: { icon: React.ElementType; title: string; description?: string; children: React.ReactNode }) {
+function SettingCard({ icon: Icon, title, description, children, accent }: { icon: React.ElementType; title: string; description?: string; children: React.ReactNode; accent?: boolean }) {
   return (
-    <div className="flex items-center justify-between py-4 border-b border-slate-50 last:border-0">
-      <div className="flex items-start gap-3">
-        <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0 mt-0.5"><Icon size={15} className="text-primary" /></div>
-        <div>
-          <p className="text-sm font-semibold text-slate-900">{title}</p>
-          {description && <p className="text-xs text-slate-400 mt-0.5">{description}</p>}
+    <Card className={`p-5 ${accent ? 'border-l-4 border-l-[var(--color-accent)]' : ''}`}>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)]/10 flex items-center justify-center flex-shrink-0">
+            <Icon size={20} className="text-[var(--color-accent)]" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-[var(--color-text-primary)]">{title}</p>
+            {description && <p className="text-xs text-[var(--color-text-secondary)] mt-0.5 leading-relaxed">{description}</p>}
+          </div>
         </div>
+        <div className="flex-shrink-0 flex items-center gap-2">{children}</div>
       </div>
-      <div className="flex-shrink-0 ml-4">{children}</div>
-    </div>
+    </Card>
   );
 }
 
 export default function SettingsPage() {
   const { user, addToast } = useApp();
-  const [prefs, setPrefs] = useState(() => {
-    try { const s = localStorage.getItem('ortobolt_prefs'); return s ? JSON.parse(s) : (user?.preferences || { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' }); }
-    catch { return { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' }; }
-  });
   const [saving, setSaving] = useState(false);
-  const [exporting, setExporting] = useState(false);
-  const handleExport = async () => {
-    if (!user?.id) return;
-    setExporting(true);
-    try { await exportUserData(user.id); addToast('Backup exportado com sucesso!', 'success'); }
-    catch { addToast('Erro ao exportar dados.', 'error'); }
-    finally { setExporting(false); }
-  };
+  const [loading, setLoading] = useState(false);
+  const [prefs, setPrefs] = useState(() => {
+    try {
+      const s = localStorage.getItem('ortobolt_prefs');
+      if (s) return JSON.parse(s);
+    } catch {}
+    return { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' };
+  });
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    supabase.from('profiles').select('preferences').eq('id', user?.id).maybeSingle()
+      .then(({ data }) => {
+        if (!mounted) return;
+        if (data?.preferences && typeof data.preferences === 'object') {
+          const next = data.preferences as Record<string, unknown>;
+          setPrefs((prev: Record<string, unknown>) => ({ ...prev, ...next }));
+        }
+        setLoading(false);
+      }, () => setLoading(false));
+    return () => { mounted = false; };
+  }, [user?.id]);
 
   const save = async () => {
     setSaving(true);
     try {
       localStorage.setItem('ortobolt_prefs', JSON.stringify(prefs));
-      invalidateAiConsentCache();
-      addToast('Configurações salvas com sucesso!', 'success'); }
-    catch { addToast('Erro ao salvar configurações.', 'error'); }
-    finally { setSaving(false); }
+      if (user?.id) {
+        await supabase.from('profiles').update({ preferences: prefs }).eq('id', user.id);
+      }
+      addToast('Configurações salvas com sucesso!', 'success');
+    } catch {
+      addToast('Erro ao salvar configurações.', 'error');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const clearCache = () => {
-    try { const d = { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' }; localStorage.removeItem('ortobolt_prefs'); setPrefs(d); addToast('Cache limpo com sucesso!', 'info'); }
-    catch { addToast('Erro ao limpar cache.', 'error'); }
-  };
+  const set = (key: string, val: unknown) => setPrefs((prev: Record<string, unknown>) => ({ ...prev, [key]: val }));
 
-  const set = (key: string, val: unknown) => {
-    setPrefs((p: typeof prefs) => ({ ...p, [key]: val }));
-    if (key === 'autoAnalysis') invalidateAiConsentCache();
-  };
+  const timestamp = new Date();
+  const timeStr = timestamp.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', '');
 
   return (
-    <div className="p-6 max-w-2xl space-y-6">
-      <SectionHeader title="Configurações" subtitle="Preferências do sistema e conta" />
-
-      <Card data-tour="tour-settings-toggles" className="p-5">
-        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Notificações e Interface</p>
+    <div className="p-6 max-w-3xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <SettingRow icon={Bell} title="Notificações em Tempo Real" description="Alertas de casos críticos e análises concluídas">
-            <Toggle checked={prefs.notifications} onChange={v => set('notifications', v)} />
-          </SettingRow>
-          <SettingRow icon={Globe} title="Idioma" description="Língua da interface e relatórios">
-            <select value={prefs.language} onChange={e => set('language', e.target.value)} className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+          <SectionHeader title="Configurações da Conta" subtitle="Preferências do sistema e conta" />
+          <p className="text-[10px] text-slate-400 font-mono mt-1">{timeStr}</p>
+        </div>
+        <Button onClick={save} loading={saving} className="flex items-center gap-2">
+          <Check size={14} />
+          {saving ? 'Salvando...' : 'Salvar Alterações'}
+        </Button>
+      </div>
+
+      {loading ? (
+        <div className="p-6 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent)]" />
+          <p className="ml-3 text-sm text-slate-500">Carregando preferências...</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <SettingCard icon={Bell} title="Notificações e Interface" description="Alertas de casos críticos e análises concluídas" accent>
+            <Toggle checked={!!prefs.notifications} onChange={v => set('notifications', v)} />
+            <Button variant="secondary" size="sm">Tour Online</Button>
+          </SettingCard>
+
+          <SettingCard icon={Globe} title="Idioma" description="Língua da interface e relatórios">
+            <select value={prefs.language as string} onChange={e => set('language', e.target.value)} className="border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]">
               <option value="pt">Português (BR)</option>
               <option value="en">English</option>
             </select>
-          </SettingRow>
-        </div>
-      </Card>
+          </SettingCard>
 
-      <Card className="p-5">
-        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">IA e Análise</p>
-        <div>
-          <SettingRow icon={Zap} title="Análise Automática" description="Iniciar análise IA automaticamente ao carregar imagens">
-            <Toggle checked={prefs.autoAnalysis} onChange={v => set('autoAnalysis', v)} />
-          </SettingRow>
-          <SettingRow icon={FileDown} title="Formato de Relatório" description="Formato padrão para exportação">
-            <select value={prefs.reportFormat} onChange={e => set('reportFormat', e.target.value)} className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+          <SettingCard icon={Brain} title="IA e Análise" description="Análise automática de IA adicionadas. Melhore seus laudos">
+            <Toggle checked={!!prefs.autoAnalysis} onChange={v => set('autoAnalysis', v)} />
+          </SettingCard>
+
+          <SettingCard icon={FileText} title="Formato de Relatório" description="Formato padrão para exportação">
+            <select value={prefs.reportFormat as string} onChange={e => set('reportFormat', e.target.value)} className="border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]">
               <option value="pdf">PDF</option>
               <option value="docx">DOCX</option>
             </select>
-          </SettingRow>
-        </div>
-      </Card>
+          </SettingCard>
 
-      <Card className="p-5">
-        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Sistema</p>
-        <div>
-          <SettingRow icon={Database} title="Modelo de IA Ativo" description="Modelo Gemini usado pelo OrthoAI">
-            <span className="text-xs font-mono font-semibold text-primary bg-blue-50 px-2 py-1 rounded-lg">gemini-2.5-flash-lite</span>
-          </SettingRow>
-          <SettingRow icon={Shield} title="Segurança" description="Autenticação e criptografia dos dados">
-            <span className="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">✓ Ativo · TLS 1.3</span>
-          </SettingRow>
-          <SettingRow icon={RefreshCw} title="Cache e Dados Locais" description="Limpar dados temporários do sistema">
-            <Button variant="secondary" size="sm" onClick={clearCache}>Limpar Cache</Button>
-          </SettingRow>
-        </div>
-      </Card>
-
-      <Card className="p-5">
-        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Meus Dados</p>
-        <div>
-          <SettingRow icon={Download} title="Exportar Backup" description="Baixar todos os seus casos e dados em formato JSON">
-            <Button variant="secondary" size="sm" onClick={handleExport} loading={exporting}>
-              {exporting ? 'Exportando...' : 'Exportar (.json)'}
+          <SettingCard icon={Download} title="Meus Dados" description="Baixar todos os seus casos e dados em formato JSON (dados pessoais, e configurações de conta)">
+            <Button variant="secondary" size="sm">
+              <Download size={14} />
+              Exportar (.json)
             </Button>
-          </SettingRow>
+          </SettingCard>
         </div>
-      </Card>
-
-      <div className="flex gap-3 pt-2">
-        <Button onClick={save} loading={saving} className="flex-1">
-          {saving ? 'Salvando...' : <><Check size={14} />Salvar Configurações</>}
-        </Button>
-        <Button variant="secondary" onClick={() => { const d = { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' }; setPrefs(d); localStorage.setItem('ortobolt_prefs', JSON.stringify(d)); addToast('Configurações resetadas.', 'info'); }} className="flex-shrink-0">Resetar</Button>
-      </div>
-
-      <p className="text-xs text-slate-400 font-mono text-center">
-        OrtoBolt v1.0.0 · © 2026 OrtoBolt LTDA · CRMV-SP Certificado · HL7 FHIR v4.0
-      </p>
+      )}
     </div>
   );
 }
-
-
-
-
