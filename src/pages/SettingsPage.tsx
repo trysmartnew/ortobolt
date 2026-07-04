@@ -43,6 +43,7 @@ export default function SettingsPage() {
     } catch {}
     return { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' };
   });
+  const [timestamp, setTimestamp] = useState(() => new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', ''));
 
   useEffect(() => {
     let mounted = true;
@@ -59,13 +60,16 @@ export default function SettingsPage() {
     return () => { mounted = false; };
   }, [user?.id]);
 
-  const save = async () => {
+  const set = (key: string, val: unknown) => setPrefs((prev: Record<string, unknown>) => ({ ...prev, [key]: val }));
+
+  const handleSaveSettings = async () => {
     setSaving(true);
     try {
       localStorage.setItem('ortobolt_prefs', JSON.stringify(prefs));
       if (user?.id) {
         await supabase.from('profiles').update({ preferences: prefs }).eq('id', user.id);
       }
+      setTimestamp(new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', ''));
       addToast('Configurações salvas com sucesso!', 'success');
     } catch {
       addToast('Erro ao salvar configurações.', 'error');
@@ -74,19 +78,38 @@ export default function SettingsPage() {
     }
   };
 
-  const set = (key: string, val: unknown) => setPrefs((prev: Record<string, unknown>) => ({ ...prev, [key]: val }));
-
-  const timestamp = new Date();
-  const timeStr = timestamp.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', '');
+  const handleExportData = () => {
+    if (!user?.id) return;
+    const payload = {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        preferences: prefs,
+      },
+      exportedAt: new Date().toISOString(),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ortobolt-config-${user.id}-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    addToast('Exportação concluída.', 'success');
+  };
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <SectionHeader title="Configurações da Conta" subtitle="Preferências do sistema e conta" />
-          <p className="text-[10px] text-slate-400 font-mono mt-1">{timeStr}</p>
+          <p className="text-[10px] text-slate-400 font-mono mt-1">{timestamp}</p>
         </div>
-        <Button onClick={save} loading={saving} className="flex items-center gap-2">
+        <Button onClick={handleSaveSettings} loading={saving} className="flex items-center gap-2">
           <Check size={14} />
           {saving ? 'Salvando...' : 'Salvar Alterações'}
         </Button>
@@ -123,7 +146,7 @@ export default function SettingsPage() {
           </SettingCard>
 
           <SettingCard icon={Download} title="Meus Dados" description="Baixar todos os seus casos e dados em formato JSON (dados pessoais, e configurações de conta)">
-            <Button variant="secondary" size="sm">
+            <Button variant="secondary" size="sm" onClick={handleExportData}>
               <Download size={14} />
               Exportar (.json)
             </Button>
