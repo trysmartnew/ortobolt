@@ -18,11 +18,11 @@ export const OrtoBoltSymbol: React.FC<OrtoBoltSymbolProps> = ({
       case 'monochrome':
         return { left: '#1D2433', right: '#1D2433', bg: 'transparent' };
       case 'negative':
-        return { left: '#FFFFFF', right: '#FFFFFF', bg: 'transparent' };
+        return { left: 'var(--color-text-primary)', right: 'var(--color-text-primary)', bg: 'transparent' };
       case 'positive':
-        return { left: '#0A3D8F', right: '#00B3A6', bg: '#FFFFFF' };
+        return { left: 'var(--color-primary)', right: 'var(--color-accent)', bg: 'var(--color-text-primary)' };
       default:
-        return { left: '#0A3D8F', right: '#00B3A6', bg: 'transparent' };
+        return { left: 'var(--color-primary)', right: 'var(--color-accent)', bg: 'transparent' };
     }
   };
 
