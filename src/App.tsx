@@ -18,6 +18,7 @@ const SettingsPage      = lazy(() => import('@/pages/SettingsPage'));
 const NotificationsPage = lazy(() => import('@/pages/NotificationsPage'));
 const PatientsPage       = lazy(() => import('@/pages/PatientsPage'));
 const PatientDetailPage  = lazy(() => import('@/pages/PatientDetailPage'));
+const HelpPage           = lazy(() => import('@/pages/HelpPage'));
 const EvolutionaryAnalysisPage = lazy(() => import('@/pages/EvolutionaryAnalysisPage'));
 const AlignmentAnalysisPage = lazy(() => import('@/pages/AlignmentAnalysisPage'));
 import Sidebar           from '@/components/Sidebar';
@@ -37,8 +38,9 @@ const PAGE_MAP = {
   case:          CasePage,
   profile:       ProfilePage,
   reports:       ReportsPage,
-  settings:      SettingsPage,
-    notifications: NotificationsPage,
+    settings:      SettingsPage,
+      help:           HelpPage,
+      notifications: NotificationsPage,
     patients:       PatientsPage,
     patientDetail:  PatientDetailPage,
     evolutionaryAnalysis: EvolutionaryAnalysisPage,
