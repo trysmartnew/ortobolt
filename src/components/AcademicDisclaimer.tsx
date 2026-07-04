@@ -8,7 +8,7 @@ export default function AcademicDisclaimer() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user?.role === 'student' && !user.academic_disclaimer_accepted) {
+    if (user && !user.academic_disclaimer_accepted) {
       setShowModal(true);
     }
   }, [user]);

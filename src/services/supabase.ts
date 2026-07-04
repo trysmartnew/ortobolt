@@ -55,7 +55,7 @@ interface UserProfileRow {
   id: string;
   name: string | null;
   email: string | null;
-  role: 'veterinarian' | 'resident' | 'admin' | 'student' | null;
+  role: 'professional' | null;
   specialty: string | null;
   crmv: string | null;
   institution: string | null;
@@ -103,7 +103,7 @@ export async function fetchUserProfile(userId: string): Promise<User | null> {
     id:          profile.id,
     name:        profile.name        || '',
     email:       profile.email       || '',
-    role:        profile.role        || 'veterinarian',
+    role:        profile.role        || 'professional',
     specialty:   profile.specialty   || 'Ortopedia Veterinária',
     crmv:        profile.crmv        || '',
     institution: profile.institution || '',
@@ -149,7 +149,7 @@ export async function upsertUserProfile(supaUser: {
       email:        supaUser.email ?? null,
       name,
       avatar,
-      role:         'veterinarian',
+      role:         'professional',
       specialty:    'Ortopedia Veterinária',
       crmv:         '',
       institution:  '',
@@ -174,10 +174,6 @@ export async function uploadRadiografia(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user || !user.id) {
       throw new Error('Usuário não autenticado');
-    }
-
-    if (user.role === 'student') {
-      throw new Error('Estudantes não podem fazer upload de radiografias');
     }
 
     const sep    = dataUrl.indexOf(',');
@@ -289,10 +285,6 @@ export async function updateCaseMarkings(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user || !user.id) {
       throw new Error('Usuário não autenticado');
-    }
-
-    if (user.role === 'student') {
-      throw new Error('Estudantes não podem atualizar marcações');
     }
 
     const { error } = await supabase

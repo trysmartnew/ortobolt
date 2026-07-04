@@ -3,7 +3,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'veterinarian' | 'resident' | 'admin' | 'student';
+  role: 'professional';
   specialty: string;
   crmv: string;
   crmv_state?: string;
@@ -16,7 +16,7 @@ export interface User {
   preferences: UserPreferences;
 }
 
-export type UserRole = 'veterinarian' | 'resident' | 'admin' | 'student';
+export type UserRole = 'professional';
 export interface Certification { id:string; title:string; issuer:string; year:number; verified:boolean; }
 export interface UserStats { totalCases:number; successRate:number; avgPrecision:number; monthlyProcedures:number; }
 export interface UserPreferences { notifications:boolean; theme:'light'|'dark'; language:'pt'|'en'; autoAnalysis:boolean; reportFormat:'pdf'|'docx'; }

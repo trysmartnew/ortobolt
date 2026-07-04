@@ -94,7 +94,7 @@ export default function ProfilePage() {
                 <p className="text-sm text-slate-500 mt-0.5">{displaySpec}</p>
                 <div className="flex flex-wrap gap-2 mt-3">
                   <Badge variant="blue">{user.crmv}</Badge>
-                  <Badge variant="info">{user.role === 'veterinarian' ? 'Médico Veterinário' : user.role}</Badge>
+                  <Badge variant="info">{user.role}</Badge>
                   <Badge variant="default">{user.institution}</Badge>
                 </div>
               </>
