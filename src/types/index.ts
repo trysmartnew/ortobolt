@@ -17,6 +17,7 @@ export interface User {
 }
 
 export type UserRole = 'professional';
+export type Plan = 'free' | 'professional' | 'enterprise';
 export interface Certification { id:string; title:string; issuer:string; year:number; verified:boolean; }
 export interface UserStats { totalCases:number; successRate:number; avgPrecision:number; monthlyProcedures:number; }
 export interface UserPreferences { notifications:boolean; theme:'light'|'dark'; language:'pt'|'en'; autoAnalysis:boolean; reportFormat:'pdf'|'docx'; }

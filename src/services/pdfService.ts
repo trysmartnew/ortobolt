@@ -107,7 +107,7 @@ export async function generateMonthlyReport(
 
   let y = 54;
 
-  // Veterinarian info
+  // Professional info
   doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
   doc.text('Dados do Profissional', 14, y); y += 7;
   doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);

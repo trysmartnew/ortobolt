@@ -4,6 +4,7 @@ import { Bell, Globe, Brain, FileText, Download, Check, Crown } from 'lucide-rea
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
 import { Card, Button, SectionHeader } from '@/components/ui';
+import type { Plan } from '@/types/index';
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -44,7 +45,7 @@ export default function SettingsPage() {
     return { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' };
   });
   const [timestamp, setTimestamp] = useState(() => new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', ''));
-  const [currentPlan, setCurrentPlan] = useState<'free' | 'professional' | 'enterprise'>('free');
+  const [currentPlan, setCurrentPlan] = useState<Plan>('free');
 
   useEffect(() => {
     let mounted = true;
