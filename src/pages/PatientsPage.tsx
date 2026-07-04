@@ -44,7 +44,7 @@ function formatDate(iso: string): string {
 }
 
 export default function PatientsPage() {
-  const { cases, user, authLoading, openCase, addToast } = useApp();
+  const { cases, user, authLoading, openCase, deleteCase, addToast } = useApp();
   const [search, setSearch] = useState('');
   const [breedFilter, setBreedFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -52,6 +52,7 @@ export default function PatientsPage() {
   const [showGuide, setShowGuide] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingPatient, setEditingPatient] = useState<ClinicalCase | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const patients = useMemo(() => {
     const sorted = [...cases].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -121,8 +122,17 @@ export default function PatientsPage() {
     }
   };
 
-  const handleDelete = (caseId: string) => {
-    addToast('Exclusão de paciente iniciada.', 'info');
+  const handleDelete = async (caseId: string) => {
+    if (deleting === caseId) return;
+    setDeleting(caseId);
+    try {
+      deleteCase(caseId);
+      addToast('Paciente excluído com sucesso.', 'success');
+    } catch {
+      addToast('Erro ao excluir paciente.', 'error');
+    } finally {
+      setDeleting(null);
+    }
   };
 
   if (authLoading) {
@@ -269,10 +279,11 @@ export default function PatientsPage() {
                         </button>
                         <button
                           onClick={() => handleDelete(p.id)}
-                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-[var(--color-error)] transition-colors"
+                          disabled={deleting === p.id}
+                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-[var(--color-error)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Excluir"
                         >
-                          <Trash2 size={16} />
+                          {deleting === p.id ? <span className="animate-spin inline-block h-4 w-4 border border-current border-t-transparent rounded-full" /> : <Trash2 size={16} />}
                         </button>
                       </div>
                     </td>
