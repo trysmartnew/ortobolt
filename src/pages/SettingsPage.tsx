@@ -1,6 +1,6 @@
 ﻿// src/pages/SettingsPage.tsx
 import React, { useState, useEffect } from 'react';
-import { Bell, Globe, Brain, FileText, Download, Check } from 'lucide-react';
+import { Bell, Globe, Brain, FileText, Download, Check, Crown } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
 import { Card, Button, SectionHeader } from '@/components/ui';
@@ -44,6 +44,7 @@ export default function SettingsPage() {
     return { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' };
   });
   const [timestamp, setTimestamp] = useState(() => new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', ''));
+  const [currentPlan, setCurrentPlan] = useState<'free' | 'professional' | 'enterprise'>('free');
 
   useEffect(() => {
     let mounted = true;
@@ -143,6 +144,17 @@ export default function SettingsPage() {
               <option value="pdf">PDF</option>
               <option value="docx">DOCX</option>
             </select>
+          </SettingCard>
+
+          <SettingCard icon={Crown} title="Upgrade de Plano" description="Recursos disponíveis e opções de upgrade">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-muted)] px-2 py-1 rounded-lg capitalize border border-[var(--color-border)]">
+                {currentPlan === 'free' ? 'Gratuito' : currentPlan === 'professional' ? 'Professional' : 'Enterprise'}
+              </span>
+              <Button variant="secondary" size="sm" disabled title="Em breve">
+                Ver Planos
+              </Button>
+            </div>
           </SettingCard>
 
           <SettingCard icon={Download} title="Meus Dados" description="Baixar todos os seus casos e dados em formato JSON (dados pessoais, e configurações de conta)">
