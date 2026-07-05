@@ -40,14 +40,14 @@ const FEATURES = [
     icon: TrendingUp,
     title: 'Painel Clínico de Métricas',
     desc: 'Acompanhe evolução clínica, precisão média e evolução dos seus casos com gráficos interativos.',
-    color: '#D97706',
+    color: 'var(--color-warning)',
     bg: '#FFFBEB',
   },
   {
     icon: Shield,
     title: 'Segurança LGPD',
     desc: 'Dados clínicos protegidos com criptografia AES-256, backups automáticos e total conformidade com a LGPD.',
-    color: '#DC2626',
+    color: 'var(--color-error)',
     bg: '#FEF2F2',
   },
 ];
@@ -389,7 +389,7 @@ export default function HomePage() {
                 {/* Stars */}
                 <div className="flex gap-1 mb-4">
                   {Array(rating).fill(0).map((_, i) => (
-                    <Star key={i} size={14} fill="#F59E0B" style={{ color: '#F59E0B' }} />
+                    <Star key={i} size={14} fill="var(--color-warning)" style={{ color: 'var(--color-warning)' }} />
                   ))}
                 </div>
                 <p className="text-sm leading-relaxed mb-6" style={{ color: '#475569' }}>"{text}"</p>

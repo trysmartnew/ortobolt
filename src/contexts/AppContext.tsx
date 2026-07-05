@@ -1,4 +1,4 @@
-﻿// src/contexts/AppContext.tsx
+// src/contexts/AppContext.tsx
 // ✅ C-02: Rate limiting — 5 tentativas → bloqueio 15 min
 // ✅ A-05: useMemo para unreadCount
 // ✅ U-02: Sistema de Toast global
@@ -164,7 +164,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [profileSyncStatus, setProfileSyncStatus] = useState<'idle' | 'syncing' | 'done' | 'error'>('idle');
   const [pendingProfileSync, setPendingProfileSync] = useState<{ id: string; email: string } | null>(null);
   const [currentView, setCurrentView] = useState<AppView>('home');
-  const [currentPage, setCurrentPage] = useState<Page>('dashboard');
+  const [currentPage, setCurrentPage] = useState<Page>(() => (sessionStorage.getItem('ortobolt_page') as Page) ?? 'dashboard');
 
   const [cases, setCases] = useState<ClinicalCase[]>([]);
   const [activeCase, setActiveCase] = useState<ClinicalCase | null>(null);
@@ -260,7 +260,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
   }, [pendingProfileSync, addToast]);
 
-  // ✅ D-01: Fetch casos reais COM mapeamento seguro
+  // Persiste página atual para sobreviver ao F5
+  useEffect(() => {
+    sessionStorage.setItem('ortobolt_page', currentPage);
+  }, [currentPage]);
+
+    // ✅ D-01: Fetch casos reais COM mapeamento seguro
   useEffect(() => {
     if (!user) return;
     supabase
@@ -444,11 +449,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const openCase = useCallback((c: ClinicalCase) => {
     setActiveCase(c);
+    sessionStorage.setItem('ortobolt_active_case_id', c.id);
     setCurrentPage('case');
   }, []);
 
   const closeCase = useCallback(() => {
     setActiveCase(null);
+    sessionStorage.removeItem('ortobolt_active_case_id');
     setCurrentPage('gallery');
   }, []);
 
@@ -657,6 +664,10 @@ export function useApp() {
   if (!ctx) throw new Error('useApp must be inside AppProvider');
   return ctx;
 }
+
+
+
+
 
 
 
