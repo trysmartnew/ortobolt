@@ -43,7 +43,8 @@ import { setAiConsentFromProfile } from '@/services/aiConsent';
 
 export type Page =
   | 'dashboard' | 'chat' | 'analysis' | 'gallery'
-  | 'case' | 'profile' | 'reports' | 'settings' | 'notifications';
+  | 'case' | 'profile' | 'reports' | 'settings' | 'notifications'
+  | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'help';
 
 export type AppView = 'home' | 'login' | 'register' | 'app' | 'reset';
 

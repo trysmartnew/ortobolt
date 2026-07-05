@@ -2,7 +2,8 @@ import { OrtoBoltLogo } from './brand/OrtoBoltLogo';
 ﻿import { useMemo } from 'react';
 import { 
   ClipboardList, Scan, Activity, BarChart3,
-  Bot, Bell, User, Settings, LogOut 
+  Bot, Bell, User, Settings, LogOut,
+  Users, TrendingUp, Ruler, HelpCircle
 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import type { Page } from '@/contexts/AppContext';
@@ -24,9 +25,12 @@ const MENU_SECTIONS: MenuSection[] = [
   {
     title: 'CLÍNICO',
     items: [
+      { label: 'Painel Clínico', icon: Activity, page: 'dashboard' },
+      { label: 'Pacientes', icon: Users, page: 'patients' },
       { label: 'Casos', icon: ClipboardList, page: 'gallery', dynamicBadge: 'activeCases' },
       { label: 'Análise de Imagens', icon: Scan, page: 'analysis' },
-      { label: 'Painel Clínico', icon: Activity, page: 'dashboard' },
+      { label: 'Análise Evolutiva', icon: TrendingUp, page: 'evolutionaryAnalysis' },
+      { label: 'Análise de Alinhamento', icon: Ruler, page: 'alignmentAnalysis' },
       { label: 'Relatórios', icon: BarChart3, page: 'reports' },
     ]
   },
@@ -39,9 +43,10 @@ const MENU_SECTIONS: MenuSection[] = [
   {
     title: 'SISTEMA',
     items: [
-      { label: 'Notificações', icon: Bell, page: 'notifications', badge: 3 },
+      { label: 'Notificações', icon: Bell, page: 'notifications' },
       { label: 'Perfil', icon: User, page: 'profile' },
       { label: 'Configurações', icon: Settings, page: 'settings' },
+      { label: 'Ajuda', icon: HelpCircle, page: 'help' },
     ]
   }
 ];
