@@ -63,8 +63,9 @@ function calculateCobbAngle(_markings?: any): number {
 function generateAlignmentAnalysis(femoralAngle: { left: number; right: number }, limbLength: any, cobbAngle: number): string {
   const femoralClass = classifyAlignment(femoralAngle.left, 'femoral');
   const cobbClass = classifyAlignment(cobbAngle, 'cobb');
-  const symmetry = limbLength.diff < 5 ? 'normal' : limbLength.diff < 10 ? 'leve' : 'moderada';
-  return `Métricas de alinhamento ${femoralClass.label.toLowerCase()} para o ângulo femoral (${femoralAngle.left}° / ${femoralAngle.right}°) e ${cobbClass.label.toLowerCase()} para o ângulo de Cobb (${cobbAngle}°). Assimetria de comprimento de membros ${symmetry} (${limbLength.diff.toFixed(1)} mm).`;
+  const diff = isValidNumber(limbLength?.diff) ? limbLength.diff : 0;
+  const symmetry = diff < 5 ? 'normal' : diff < 10 ? 'leve' : 'moderada';
+  return `Métricas de alinhamento ${femoralClass.label.toLowerCase()} para o ângulo femoral (${femoralAngle.left}° / ${femoralAngle.right}°) e ${cobbClass.label.toLowerCase()} para o ângulo de Cobb (${cobbAngle}°). Assimetria de comprimento de membros ${symmetry} (${diff.toFixed(1)} mm).`;
 }
 
 function generateAlignmentPrediction(metrics: any): string {
@@ -335,7 +336,7 @@ export default function AlignmentAnalysisPage() {
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
                   </Pie>
-                  <PolarAngleAxis type="number" domain={[0, 180]} tickCount={7} cx={"50%" as unknown as number} cy={"100%" as unknown as number} radius={100} stroke="var(--color-text-secondary)" />
+                  <PolarAngleAxis type="number" domain={[0, 180]} tickCount={7} radius={100} stroke="var(--color-text-secondary)" />
                   <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text-primary)' }} />
                 </PieChart>
               </ResponsiveContainer>

@@ -27,11 +27,6 @@ const MENU_SECTIONS: MenuSection[] = [
     items: [
       { label: 'Painel Clínico', icon: Activity, page: 'dashboard' },
       { label: 'Pacientes', icon: Users, page: 'patients' },
-      { label: 'Casos', icon: ClipboardList, page: 'gallery', dynamicBadge: 'activeCases' },
-      { label: 'Análise de Imagens', icon: Scan, page: 'analysis' },
-      { label: 'Análise Evolutiva', icon: TrendingUp, page: 'evolutionaryAnalysis' },
-      { label: 'Análise de Alinhamento', icon: Ruler, page: 'alignmentAnalysis' },
-      { label: 'Relatórios', icon: BarChart3, page: 'reports' },
     ]
   },
   {
