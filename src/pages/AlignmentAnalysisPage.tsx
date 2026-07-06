@@ -71,6 +71,8 @@ function generateAlignmentPrediction(metrics: any): string {
   return 'Projeção de alinhamento com base no plano cirúrgico simulado: correção média estimada de 8° a 12° com estabilização esperada em 6-8 semanas.';
 }
 
+const isValidNumber = (val: unknown): val is number => typeof val === 'number' && !isNaN(val);
+
 export default function AlignmentAnalysisPage() {
   const { cases, activeCase, user, authLoading, addToast, setCurrentPage } = useApp();
   const [loading, setLoading] = useState(false);
@@ -119,8 +121,8 @@ export default function AlignmentAnalysisPage() {
   const cobbAngle = useMemo(() => calculateCobbAngle(markingsForCalculations), [markingsForCalculations]);
 
   const gaugeData = useMemo(() => {
-    const safeLeft = typeof femoralAngle.left === 'number' && !isNaN(femoralAngle.left) ? femoralAngle.left : 0;
-    const safeRight = typeof femoralAngle.right === 'number' && !isNaN(femoralAngle.right) ? femoralAngle.right : 0;
+    const safeLeft = isValidNumber(femoralAngle.left) ? femoralAngle.left : 0;
+    const safeRight = isValidNumber(femoralAngle.right) ? femoralAngle.right : 0;
     return [
       { name: 'Left', value: safeLeft, fill: classifyAlignment(safeLeft, 'femoral').color },
       { name: 'Right', value: safeRight, fill: classifyAlignment(safeRight, 'femoral').color },
@@ -128,10 +130,10 @@ export default function AlignmentAnalysisPage() {
   }, [femoralAngle]);
 
   const symmetryData = useMemo(() => {
-    const safeLeftFemur = typeof limbLength.leftFemur === 'number' && !isNaN(limbLength.leftFemur) ? limbLength.leftFemur : 0;
-    const safeRightFemur = typeof limbLength.rightFemur === 'number' && !isNaN(limbLength.rightFemur) ? limbLength.rightFemur : 0;
-    const safeLeftTibia = typeof limbLength.leftTibia === 'number' && !isNaN(limbLength.leftTibia) ? limbLength.leftTibia : 0;
-    const safeRightTibia = typeof limbLength.rightTibia === 'number' && !isNaN(limbLength.rightTibia) ? limbLength.rightTibia : 0;
+    const safeLeftFemur = isValidNumber(limbLength.leftFemur) ? limbLength.leftFemur : 0;
+    const safeRightFemur = isValidNumber(limbLength.rightFemur) ? limbLength.rightFemur : 0;
+    const safeLeftTibia = isValidNumber(limbLength.leftTibia) ? limbLength.leftTibia : 0;
+    const safeRightTibia = isValidNumber(limbLength.rightTibia) ? limbLength.rightTibia : 0;
     return [
       { name: 'Left Femur', value: safeLeftFemur },
       { name: 'Right Femur', value: safeRightFemur },
@@ -143,7 +145,7 @@ export default function AlignmentAnalysisPage() {
   const cobbAngleData = useMemo(() => {
     return patientCases.map((c, idx) => {
       const rawValue = calculateCobbAngle(c.exams?.[0]?.markings);
-      const value = typeof rawValue === 'number' && !isNaN(rawValue) ? rawValue : 0;
+      const value = isValidNumber(rawValue) ? rawValue : 0;
       return {
         name: `Exame ${String(idx + 1).padStart(2, '0')}`,
         value,
@@ -159,8 +161,9 @@ export default function AlignmentAnalysisPage() {
   const predictionText = useMemo(() => generateAlignmentPrediction({ femoralAngle, limbLength, cobbAngle }), [femoralAngle, limbLength, cobbAngle]);
 
   const handleBack = () => {
-    setCurrentPage('gallery');
-    addToast('Voltando para Galeria.', 'info');
+    // Preserve global context (activeCase/activePatient). Only pop analysis view.
+    setCurrentPage('case');
+    addToast('Voltando ao Prontuário.', 'info');
   };
 
   const handleGenerateReport = () => {
@@ -332,7 +335,7 @@ export default function AlignmentAnalysisPage() {
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
                   </Pie>
-                  <PolarAngleAxis type="number" domain={[0, 180]} tickCount={7} cx={50} cy={100} radius={100} stroke="var(--color-text-secondary)" />
+                  <PolarAngleAxis type="number" domain={[0, 180]} tickCount={7} cx={"50%" as unknown as number} cy={"100%" as unknown as number} radius={100} stroke="var(--color-text-secondary)" />
                   <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text-primary)' }} />
                 </PieChart>
               </ResponsiveContainer>
@@ -375,8 +378,8 @@ export default function AlignmentAnalysisPage() {
 
             {/* Textos descritivos */}
             <div className="space-y-2">
-              <p className="text-xs text-slate-600">{analysisText}</p>
-              <p className="text-xs text-slate-500">{predictionText}</p>
+              <p className="text-sm leading-relaxed text-slate-600">{analysisText}</p>
+              <p className="text-sm leading-relaxed text-slate-500">{predictionText}</p>
             </div>
           </Card>
         </div>
