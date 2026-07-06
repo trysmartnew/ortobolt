@@ -152,7 +152,7 @@ export async function upsertUserProfile(supaUser: {
         avatar,
         role:         'professional',
         specialty:    'Ortopedia Veterinária',
-        cmv:          '',
+        crmv:          '',
         institution:  '',
         preferences: {
           notifications: true,

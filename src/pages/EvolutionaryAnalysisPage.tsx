@@ -100,19 +100,31 @@ export default function EvolutionaryAnalysisPage() {
   }, [patientCases]);
 
   const boneDensityData = useMemo(() => {
-    return patientCases.map((c, idx) => ({
-      name: `Exame ${String(idx + 1).padStart(2, '0')}`,
-      value: calculateBoneDensity(c),
-      date: formatDate(c.createdAt),
-    }));
+    return patientCases
+      .map((c, idx) => {
+        const rawValue = calculateBoneDensity(c);
+        const value = typeof rawValue === 'number' && !isNaN(rawValue) ? rawValue : 0.3;
+        return {
+          name: `Exame ${String(idx + 1).padStart(2, '0')}`,
+          value,
+          date: formatDate(c.createdAt),
+        };
+      })
+      .filter(d => typeof d.value === 'number' && !isNaN(d.value));
   }, [patientCases]);
 
   const jointSpaceData = useMemo(() => {
-    return patientCases.map((c, idx) => ({
-      name: `Exame ${String(idx + 1).padStart(2, '0')}`,
-      value: calculateJointSpace(c),
-      date: formatDate(c.createdAt),
-    }));
+    return patientCases
+      .map((c, idx) => {
+        const rawValue = calculateJointSpace(c);
+        const value = typeof rawValue === 'number' && !isNaN(rawValue) ? rawValue : 0.35;
+        return {
+          name: `Exame ${String(idx + 1).padStart(2, '0')}`,
+          value,
+          date: formatDate(c.createdAt),
+        };
+      })
+      .filter(d => typeof d.value === 'number' && !isNaN(d.value));
   }, [patientCases]);
 
   const trends = useMemo(() => ({
