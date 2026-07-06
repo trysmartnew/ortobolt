@@ -92,7 +92,8 @@ export default function AlignmentAnalysisPage() {
       }
       if (c.exams) {
         for (const exam of c.exams) {
-          for (const url of exam.imageUrls) {
+          const imageUrls = exam.imageUrls ?? [];
+          for (const url of imageUrls) {
             list.push({ id: `${exam.id}-${url}`, url, label: exam.modality });
           }
         }
@@ -102,7 +103,7 @@ export default function AlignmentAnalysisPage() {
   }, [patientCases]);
 
   const markingsForCalculations = useMemo(() => {
-    const firstWithMarkings = patientCases.find(c => c.exams?.some(e => e.markings && (e.markings.circles.length > 0 || e.markings.angles.length > 0)));
+    const firstWithMarkings = patientCases.find(c => c.exams?.some(e => e.markings && ((e.markings.circles ?? []).length > 0 || (e.markings.angles ?? []).length > 0)));
     return firstWithMarkings?.exams?.find(e => e.markings)?.markings;
   }, [patientCases]);
 
@@ -130,10 +131,14 @@ export default function AlignmentAnalysisPage() {
   ], [limbLength]);
 
   const cobbAngleData = useMemo(() => {
-    return patientCases.map((c, idx) => ({
-      name: `Exame ${String(idx + 1).padStart(2, '0')}`,
-      value: calculateCobbAngle(c.exams?.[0]?.markings),
-    }));
+    return patientCases.map((c, idx) => {
+      const rawValue = calculateCobbAngle(c.exams?.[0]?.markings);
+      const value = typeof rawValue === 'number' && !isNaN(rawValue) ? rawValue : 0;
+      return {
+        name: `Exame ${String(idx + 1).padStart(2, '0')}`,
+        value,
+      };
+    });
   }, [patientCases]);
 
   const analysisText = useMemo(() => generateAlignmentAnalysis(femoralAngle, limbLength, cobbAngle), [femoralAngle, limbLength, cobbAngle]);
@@ -266,7 +271,7 @@ export default function AlignmentAnalysisPage() {
                       )}
                     </div>
                     <div className="p-3 space-y-1">
-                      <p className="text-[10px] font-semibold text-slate-900">{formatDate(img.label === 'Principal' ? currentPatient.createdAt : currentPatient.updatedAt)}</p>
+                      <p className="text-[10px] font-semibold text-slate-900">{formatDate(img.label === 'Principal' ? currentPatient.createdAt : (currentPatient.updatedAt || currentPatient.createdAt))}</p>
                       <p className="text-[10px] text-slate-500">{img.label === 'Principal' ? 'Radiografia Principal' : img.label}</p>
                       <Badge variant={currentPatient.status === 'completed' ? 'success' : currentPatient.status === 'critical' ? 'danger' : 'info'} className="border-0">
                         {currentPatient.status === 'completed' ? 'Concluído' : currentPatient.status === 'in_analysis' ? 'Em Análise' : currentPatient.status === 'pending' ? 'Pendente' : 'Crítico'}
