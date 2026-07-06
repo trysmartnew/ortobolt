@@ -151,6 +151,10 @@ export default function AlignmentAnalysisPage() {
     });
   }, [patientCases]);
 
+  console.log('[DEBUG] gaugeData:', JSON.stringify(gaugeData));
+  console.log('[DEBUG] symmetryData:', JSON.stringify(symmetryData));
+  console.log('[DEBUG] cobbAngleData:', JSON.stringify(cobbAngleData));
+
   const analysisText = useMemo(() => generateAlignmentAnalysis(femoralAngle, limbLength, cobbAngle), [femoralAngle, limbLength, cobbAngle]);
   const predictionText = useMemo(() => generateAlignmentPrediction({ femoralAngle, limbLength, cobbAngle }), [femoralAngle, limbLength, cobbAngle]);
 
