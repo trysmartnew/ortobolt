@@ -100,25 +100,25 @@ export async function fetchUserProfile(userId: string): Promise<User | null> {
     .returns<CertRow[]>();
 
   const user: User = {
-    id:          profile.id,
-    name:        profile.name        || '',
-    email:       profile.email       || '',
-    role:        profile.role        || 'professional',
-    specialty:   profile.specialty   || 'Ortopedia Veterinária',
-    crmv:        profile.crmv        || '',
+    id: profile.id,
+    name: profile.name || '',
+    email: profile.email || '',
+    role: profile.role || 'professional',
+    specialty: profile.specialty || 'Ortopedia Veterinária',
+    crmv: profile.crmv || '',
     institution: profile.institution || '',
-    avatar:      profile.avatar      ?? undefined,
+    avatar: profile.avatar ?? undefined,
     certifications: (certs || []).map((c: CertRow) => ({
-      id:       c.id,
-      title:    c.title,
-      issuer:   c.issuer,
-      year:     c.year,
+      id: c.id,
+      title: c.title,
+      issuer: c.issuer,
+      year: c.year,
       verified: c.verified,
     })),
     stats: {
-      totalCases:        profile.total_cases        || 0,
-      successRate:       profile.success_rate       || 0,
-      avgPrecision:      profile.avg_precision      || 0,
+      totalCases: profile.total_cases || 0,
+      successRate: profile.success_rate || 0,
+      avgPrecision: profile.avg_precision || 0,
       monthlyProcedures: profile.monthly_procedures || 0,
     },
     preferences: profile.preferences || {
@@ -146,20 +146,20 @@ export async function upsertUserProfile(supaUser: {
     const avatar = supaUser.user_metadata?.avatar_url ?? null;
     await supabase.from('users').upsert(
       {
-        id:           supaUser.id,
-        email:        supaUser.email ?? '',
+        id: supaUser.id,
+        email: supaUser.email ?? '',
         name,
         avatar,
-        role:         'professional',
-        specialty:    'Ortopedia Veterinária',
-        crmv:          '',
-        institution:  '',
+        role: 'professional',
+        specialty: 'Ortopedia Veterinária',
+        crmv: '',
+        institution: '',
         preferences: {
           notifications: true,
-          theme:         'light',
-          language:      'pt',
-          autoAnalysis:  true,
-          reportFormat:  'pdf',
+          theme: 'light',
+          language: 'pt',
+          autoAnalysis: true,
+          reportFormat: 'pdf',
         },
       },
       { onConflict: 'id', ignoreDuplicates: true }
@@ -175,23 +175,23 @@ export async function upsertUserProfile(supaUser: {
 
 /** P0.1 — Upload de radiografia para bucket radiografias; retorna signedUrl ou null */
 export async function uploadRadiografia(
-    dataUrl: string,
-    storagePath: string
-  ): Promise<string | null> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || !user.id) {
-      throw new Error('Usuário não autenticado');
-    }
+  dataUrl: string,
+  storagePath: string
+): Promise<string | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !user.id) {
+    throw new Error('Usuário não autenticado');
+  }
 
-    const sep    = dataUrl.indexOf(',');
+  const sep = dataUrl.indexOf(',');
   const header = sep >= 0 ? dataUrl.slice(0, sep) : 'data:image/jpeg;base64';
-  const b64    = sep >= 0 ? dataUrl.slice(sep + 1) : dataUrl;
-  const mime   = header.match(/:(.*?);/)?.[1] ?? 'image/jpeg';
-  const ext    = mime.split('/')[1] ?? 'jpg';
+  const b64 = sep >= 0 ? dataUrl.slice(sep + 1) : dataUrl;
+  const mime = header.match(/:(.*?);/)?.[1] ?? 'image/jpeg';
+  const ext = mime.split('/')[1] ?? 'jpg';
   const filePath = `${storagePath}.${ext}`;
 
-  const raw  = atob(b64);
-  const ab   = new ArrayBuffer(raw.length);
+  const raw = atob(b64);
+  const ab = new ArrayBuffer(raw.length);
   const view = new Uint8Array(ab);
   for (let i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
 
@@ -222,16 +222,16 @@ export async function uploadCaseImage(
   caseId: string,
   type: 'avatar' | 'xray'
 ): Promise<string | null> {
-  const sep    = dataUrl.indexOf(',');
+  const sep = dataUrl.indexOf(',');
   const header = sep >= 0 ? dataUrl.slice(0, sep) : 'data:image/jpeg;base64';
-  const b64    = sep >= 0 ? dataUrl.slice(sep + 1) : dataUrl;
-  const mime   = header.match(/:(.*?);/)?.[1] ?? 'image/jpeg';
-  const ext    = mime.split('/')[1] ?? 'jpg';
+  const b64 = sep >= 0 ? dataUrl.slice(sep + 1) : dataUrl;
+  const mime = header.match(/:(.*?);/)?.[1] ?? 'image/jpeg';
+  const ext = mime.split('/')[1] ?? 'jpg';
   const folder = type === 'avatar' ? 'avatars' : 'xrays';
   const filePath = folder + '/' + caseId + '_' + Date.now() + '.' + ext;
 
-  const raw  = atob(b64);
-  const ab   = new ArrayBuffer(raw.length);
+  const raw = atob(b64);
+  const ab = new ArrayBuffer(raw.length);
   const view = new Uint8Array(ab);
   for (let i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
 
@@ -273,12 +273,12 @@ export async function getSignedImageUrl(
       .from('case-images')
       .createSignedUrl(path, expiresIn);
 
-  if (error) {
-    logger.error('Erro ao gerar URL assinada', error.message);
-    return null;
-  }
+    if (error) {
+      logger.error('Erro ao gerar URL assinada', error.message);
+      return null;
+    }
 
-  return data.signedUrl;
+    return data.signedUrl;
   } catch (err) {
     logger.error('Erro ao gerar URL assinada', err);
     return null;
@@ -286,15 +286,15 @@ export async function getSignedImageUrl(
 }
 
 export async function updateCaseMarkings(
-    caseId: string,
-    markings: MarkingsData
-  ): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || !user.id) {
-      throw new Error('Usuário não autenticado');
-    }
+  caseId: string,
+  markings: MarkingsData
+): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !user.id) {
+    throw new Error('Usuário não autenticado');
+  }
 
-    const { error } = await supabase
+  const { error } = await supabase
     .from('clinical_cases')
     .update({ markings })
     .eq('id', caseId);

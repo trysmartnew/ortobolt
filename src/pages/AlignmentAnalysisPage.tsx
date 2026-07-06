@@ -332,7 +332,7 @@ export default function AlignmentAnalysisPage() {
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
                   </Pie>
-                  <PolarAngleAxis type="number" domain={[0, 180]} tickCount={7} stroke="var(--color-text-secondary)" />
+                  <PolarAngleAxis type="number" domain={[0, 180]} tickCount={7} cx={50} cy={100} radius={100} stroke="var(--color-text-secondary)" />
                   <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text-primary)' }} />
                 </PieChart>
               </ResponsiveContainer>
