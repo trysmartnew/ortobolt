@@ -118,17 +118,27 @@ export default function AlignmentAnalysisPage() {
   const limbLength = useMemo(() => calculateLimbLength(markingsForCalculations), [markingsForCalculations]);
   const cobbAngle = useMemo(() => calculateCobbAngle(markingsForCalculations), [markingsForCalculations]);
 
-  const gaugeData = useMemo(() => [
-    { name: 'Left', value: femoralAngle.left, fill: classifyAlignment(femoralAngle.left, 'femoral').color },
-    { name: 'Right', value: femoralAngle.right, fill: classifyAlignment(femoralAngle.right, 'femoral').color },
-  ], [femoralAngle]);
+  const gaugeData = useMemo(() => {
+    const safeLeft = typeof femoralAngle.left === 'number' && !isNaN(femoralAngle.left) ? femoralAngle.left : 0;
+    const safeRight = typeof femoralAngle.right === 'number' && !isNaN(femoralAngle.right) ? femoralAngle.right : 0;
+    return [
+      { name: 'Left', value: safeLeft, fill: classifyAlignment(safeLeft, 'femoral').color },
+      { name: 'Right', value: safeRight, fill: classifyAlignment(safeRight, 'femoral').color },
+    ];
+  }, [femoralAngle]);
 
-  const symmetryData = useMemo(() => [
-    { name: 'Left Femur', value: limbLength.leftFemur },
-    { name: 'Right Femur', value: limbLength.rightFemur },
-    { name: 'Left Tibia', value: limbLength.leftTibia },
-    { name: 'Right Tibia', value: limbLength.rightTibia },
-  ], [limbLength]);
+  const symmetryData = useMemo(() => {
+    const safeLeftFemur = typeof limbLength.leftFemur === 'number' && !isNaN(limbLength.leftFemur) ? limbLength.leftFemur : 0;
+    const safeRightFemur = typeof limbLength.rightFemur === 'number' && !isNaN(limbLength.rightFemur) ? limbLength.rightFemur : 0;
+    const safeLeftTibia = typeof limbLength.leftTibia === 'number' && !isNaN(limbLength.leftTibia) ? limbLength.leftTibia : 0;
+    const safeRightTibia = typeof limbLength.rightTibia === 'number' && !isNaN(limbLength.rightTibia) ? limbLength.rightTibia : 0;
+    return [
+      { name: 'Left Femur', value: safeLeftFemur },
+      { name: 'Right Femur', value: safeRightFemur },
+      { name: 'Left Tibia', value: safeLeftTibia },
+      { name: 'Right Tibia', value: safeRightTibia },
+    ];
+  }, [limbLength]);
 
   const cobbAngleData = useMemo(() => {
     return patientCases.map((c, idx) => {
