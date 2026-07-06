@@ -29,13 +29,10 @@ function calculateBoneDensity(caseData: ClinicalCase): number {
     ?.flatMap(exam => exam.markings ? [exam.markings] : [])
     .filter(Boolean) ?? [];
   const totalCircles = markings.reduce((sum, m) => sum + (m.circles?.length ?? 0), 0);
-  if (totalCircles > 0 && caseData.weightKg && caseData.ageYears) {
-    return Math.max(0.2, Math.min(0.5, 0.18 + (caseData.weightKg / 80) * 0.12 + (caseData.ageYears / 100) * 0.1 + totalCircles * 0.02));
-  }
-  if (caseData.weightKg && caseData.ageYears) {
-    return Math.max(0.2, Math.min(0.5, 0.18 + (caseData.weightKg / 80) * 0.12 + (caseData.ageYears / 100) * 0.1));
-  }
-  return 0.3;
+  const weight = caseData.weightKg ?? 0;
+  const age = caseData.ageYears ?? 0;
+  const base = 0.18 + (weight / 80) * 0.12 + (age / 100) * 0.1 + totalCircles * 0.02;
+  return Math.max(0.2, Math.min(0.5, base));
 }
 
 function calculateJointSpace(caseData: ClinicalCase): number {

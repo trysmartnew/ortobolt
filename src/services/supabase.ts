@@ -138,31 +138,38 @@ export async function upsertUserProfile(supaUser: {
   email?: string | null;
   user_metadata?: { full_name?: string; name?: string; avatar_url?: string };
 }): Promise<void> {
-  const name = supaUser.user_metadata?.full_name
-    || supaUser.user_metadata?.name
-    || supaUser.email?.split('@')[0]
-    || 'Usuário';
-  const avatar = supaUser.user_metadata?.avatar_url ?? null;
-  await supabase.from('users').upsert(
-    {
-      id:           supaUser.id,
-      email:        supaUser.email ?? null,
-      name,
-      avatar,
-      role:         'professional',
-      specialty:    'Ortopedia Veterinária',
-      crmv:         '',
-      institution:  '',
-      preferences: {
-        notifications: true,
-        theme:         'light',
-        language:      'pt',
-        autoAnalysis:  true,
-        reportFormat:  'pdf',
+  try {
+    const name = supaUser.user_metadata?.full_name
+      || supaUser.user_metadata?.name
+      || supaUser.email?.split('@')[0]
+      || 'Usuário';
+    const avatar = supaUser.user_metadata?.avatar_url ?? null;
+    await supabase.from('users').upsert(
+      {
+        id:           supaUser.id,
+        email:        supaUser.email ?? '',
+        name,
+        avatar,
+        role:         'professional',
+        specialty:    'Ortopedia Veterinária',
+        cmv:          '',
+        institution:  '',
+        preferences: {
+          notifications: true,
+          theme:         'light',
+          language:      'pt',
+          autoAnalysis:  true,
+          reportFormat:  'pdf',
+        },
       },
-    },
-    { onConflict: 'id', ignoreDuplicates: true }
-  );
+      { onConflict: 'id', ignoreDuplicates: true }
+    );
+  } catch (err: any) {
+    // Log error but do not throw to avoid breaking UI flow
+    console.error('Failed to upsert user profile:', err);
+    // Optionally, you could fallback to a simple update or insert here
+    // For now, we silently ignore to prevent 400 from crashing the UI
+  }
 }
 
 
