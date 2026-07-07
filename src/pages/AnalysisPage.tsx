@@ -495,13 +495,13 @@ export default function AnalysisPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               <Card className="lg:col-span-8 p-4 bg-[#0B0F19]">
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <p className="text-sm font-bold text-white uppercase tracking-wider">
                     Imagem Analisada
                   </p>
                   {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 || 
                     aiGeneratedMarkings.angles.length > 0 || 
                     aiGeneratedMarkings.markers.length > 0) && (
-                    <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-mono bg-white/10 text-white border border-white/20 px-2 py-0.5 rounded-full">
                       ⚡ {aiGeneratedMarkings.circles.length + aiGeneratedMarkings.angles.length} marcações
                     </span>
                   )}
@@ -545,12 +545,12 @@ export default function AnalysisPage() {
                       {session?.refinedAnalysis ? 'Análise Refinada' : 'Análise Concluída'}
                     </p>
                     {session?.refinedAnalysis && (
-                      <span className="text-[10px] font-mono bg-blue-50 text-primary px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="text-[10px] font-mono bg-white/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
                         <Sparkles size={10} /> Assistente Clínico
                       </span>
                     )}
                   </div>
-                  <div className="prose-sm space-y-1 overflow-y-auto max-h-[280px] pr-1">
+                  <div className="prose-sm space-y-1 overflow-y-auto max-h-[400px] pr-1">
                     {renderResult(analysisText)}
                   </div>
                   <div className="mt-4 pt-4 border-t border-slate-100">
@@ -574,36 +574,36 @@ export default function AnalysisPage() {
                   />
                 </Card>
 
-                <Card className="p-5">
+                <Card className="bg-[#001941]/40 backdrop-blur-md border border-white/10 rounded-lg p-5">
                   <div className="flex items-center gap-2 mb-4">
                     <ShieldCheck className="h-5 w-5 text-primary" />
-                    <p className="font-bold text-slate-900">Laudo Técnico de Suporte</p>
+                    <p className="text-sm font-bold text-white tracking-wide">Laudo Técnico de Suporte</p>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-500">Hip Dysplasia Index</span>
-                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
-                        dysplasiaBadge.variant === 'success' ? 'bg-emerald-50 text-emerald-700' :
-                        dysplasiaBadge.variant === 'warning' ? 'bg-amber-50 text-amber-700' :
-                        dysplasiaBadge.variant === 'danger' ? 'bg-red-50 text-red-700' :
-                        'bg-blue-50 text-blue-700'
+                      <span className="text-xs font-semibold text-slate-400">Hip Dysplasia Index</span>
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
+                        dysplasiaBadge.variant === 'success' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' :
+                        dysplasiaBadge.variant === 'warning' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' :
+                        dysplasiaBadge.variant === 'danger' ? 'bg-red-500/20 text-red-300 border-red-500/30' :
+                        'bg-sky-500/20 text-sky-300 border-sky-500/30'
                       }`}>
                         {dysplasiaBadge.label}
                       </span>
                     </div>
                     {norbergAngle !== null && (
-                      <div className="text-xs text-slate-600">
+                      <div className="text-xs text-slate-300">
                         <span className="font-semibold">Ângulo de Norberg:</span> {norbergAngle.toFixed(1)}°
                       </div>
                     )}
-                    <div className="text-xs text-slate-600">
+                    <div className="text-xs text-slate-300">
                       <span className="font-semibold">Confiança:</span> {Math.round(85 + Math.random() * 10)}%
                     </div>
-                    <div className="pt-3 border-t border-slate-100">
-                      <p className="text-xs font-semibold text-slate-700 mb-2">Recomendações</p>
+                    <div className="pt-3 border-t border-white/10">
+                      <p className="text-xs font-semibold text-slate-300 mb-2">Recomendações</p>
                       <ul className="space-y-1">
                         {recommendations.map((rec, i) => (
-                          <li key={i} className="text-xs text-slate-600 flex gap-2">
+                          <li key={i} className="text-xs text-slate-400 flex gap-2">
                             <span className="text-primary">›</span> {rec}
                           </li>
                         ))}
