@@ -1,12 +1,13 @@
 import { OrtoBoltLogo } from './brand/OrtoBoltLogo';
-﻿import { useMemo } from 'react';
-import { 
+import { useMemo, useState, useCallback } from 'react';
+import {
   ClipboardList, Scan, Activity, BarChart3,
   Bot, Bell, User, Settings, LogOut,
-  Users, TrendingUp, Ruler, HelpCircle
+  Users, TrendingUp, Ruler, HelpCircle, Zap
 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import type { Page } from '@/contexts/AppContext';
+import { AnalysisQuickSelectModal } from './AnalysisQuickSelectModal';
 
 interface MenuItem {
   label: string;
@@ -48,14 +49,24 @@ const MENU_SECTIONS: MenuSection[] = [
 
 export default function Sidebar() {
   const { currentPage, setCurrentPage, user, logout, cases, unreadCount } = useApp();
+  const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
 
   const activeCasesCount = useMemo(() => {
-    return cases.filter(c => 
-      c.status === 'pending' || 
-      c.status === 'in_analysis' || 
+    return cases.filter(c =>
+      c.status === 'pending' ||
+      c.status === 'in_analysis' ||
       c.status === 'critical'
     ).length;
   }, [cases]);
+
+  // Handlers memoizados para proteger o ciclo de re-render
+  const openAnalysisModal = useCallback(() => {
+    setIsAnalysisModalOpen(true);
+  }, []);
+
+  const closeAnalysisModal = useCallback(() => {
+    setIsAnalysisModalOpen(false);
+  }, []);
 
   const getBadge = (item: MenuItem): number | null => {
     if (item.dynamicBadge === 'activeCases') {
@@ -75,6 +86,27 @@ export default function Sidebar() {
         <p className="text-xs text-white/60">Ortopedia Veterinária</p>
       </div>
 
+      {/* Bloco de Ações Flash (Verde Jade) */}
+      <div className="px-3 py-4 border-b border-[#00A36C]/20">
+        <button
+          onClick={openAnalysisModal}
+          className="
+            w-full flex items-center justify-center gap-2
+            bg-[#00A36C] text-white font-semibold
+            px-4 py-3 rounded-lg
+            shadow-lg shadow-[#00A36C]/20
+            transition-all duration-300 cubic-bezier(0.34, 1.56, 0.64, 1)
+            hover:scale-105 hover:bg-[#00C77A] hover:shadow-xl hover:shadow-[#00C77A]/30
+            active:scale-95
+            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00A36C]
+          "
+          aria-label="Abrir seletor de análise de imagem"
+        >
+          <Zap className="w-5 h-5" />
+          <span>Analisar Imagem</span>
+        </button>
+      </div>
+
       {/* Menu Items */}
       <nav className="flex-1 py-4 overflow-y-auto">
         {MENU_SECTIONS.map((section, sectionIdx) => (
@@ -91,16 +123,15 @@ export default function Sidebar() {
               const Icon = item.icon;
               const isActive = currentPage === item.page;
               const badgeValue = getBadge(item);
-              
+
               return (
                 <button
                   key={item.page}
                   onClick={() => setCurrentPage(item.page)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors ${
-                    isActive 
-                      ? 'bg-blue-600 text-white border-l-4 border-blue-400' 
+                  className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors ${isActive
+                      ? 'bg-blue-600 text-white border-l-4 border-blue-400'
                       : 'text-white/70 hover:bg-white/5 hover:text-white'
-                  }`}
+                    }`}
                 >
                   <Icon className="w-5 h-5" />
                   <span className="flex-1 text-left">{item.label}</span>
@@ -136,7 +167,7 @@ export default function Sidebar() {
             </div>
           </div>
         )}
-        
+
         <button
           onClick={logout}
           className="w-full flex items-center gap-2 px-3 py-2 text-sm text-white/70 hover:bg-white/5 hover:text-white transition-colors"
@@ -145,6 +176,12 @@ export default function Sidebar() {
           <span>Sair da sessão</span>
         </button>
       </div>
+
+      {/* Modal Acoplado */}
+      <AnalysisQuickSelectModal
+        isOpen={isAnalysisModalOpen}
+        onClose={closeAnalysisModal}
+      />
     </aside>
   );
 }
