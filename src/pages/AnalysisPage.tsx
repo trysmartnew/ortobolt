@@ -508,7 +508,7 @@ export default function AnalysisPage() {
                     </span>
                   )}
                 </div>
-                <div className="bg-black rounded-[12px] border border-[#2a2d30] overflow-hidden p-2">
+                <div className="bg-[#050607] border-[2px] border-[#2c3136] rounded-[12px] shadow-[0_20px_40px_rgba(0,0,0,0.6)] overflow-hidden p-2">
                 {imageData && imageDimensions && aiGeneratedMarkings && (
                   <AiMarkingsOverlay
                     imageUrl={imageData}
@@ -541,7 +541,7 @@ export default function AnalysisPage() {
                 )}
               </Card>
 
-              <div className="lg:col-span-4 flex flex-col gap-4">
+              <div className="lg:col-span-4 w-[380px] mr-8 flex flex-col gap-4">
                 <Card className="p-5 bg-[rgba(26,29,31,0.65)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)] rounded-[12px] text-white" data-tour="tour-analysis-result">
                   <div className="flex items-center gap-2 mb-4">
                     <CheckCircle className="h-5 w-5 text-success" />

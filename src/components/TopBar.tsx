@@ -49,8 +49,8 @@ export default React.memo(function TopBar() {
   return (
     <header className={`h-16 flex items-center justify-between px-6 sticky top-0 z-20 shrink-0 ${isAnalysisPage ? 'bg-[#0e1011] border-b border-[#22262a]' : 'bg-white border-b border-slate-100'}`}>
       <div>
-        <h1 className={`text-base font-bold ${isAnalysisPage ? 'text-white font-semibold' : 'text-slate-900'}`} style={{ fontFamily: 'Montserrat' }}>{title}</h1>
-        <p className={`text-xs font-mono ${isAnalysisPage ? 'text-[#9a9fa5]' : 'text-slate-400'}`}>{subtitle}</p>
+        <h1 className={`text-[26px] font-semibold ${isAnalysisPage ? 'text-white' : 'text-slate-900'}`} style={{ fontFamily: 'Montserrat' }}>{title}</h1>
+        <p className="text-[13px] text-[#7a828a] font-normal">{subtitle}</p>
         {user && (
           <div className="mt-1">
             {user.crmv ? (

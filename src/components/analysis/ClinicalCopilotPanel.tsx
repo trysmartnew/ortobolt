@@ -146,7 +146,7 @@ export default function ClinicalCopilotPanel({
           placeholder="Paciente (opcional)"
           value={clinicalContext.patientName ?? ''}
           onChange={(e) => onContextChange({ patientName: e.target.value })}
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#29a399] transition-all"
         />
         <select
           value={clinicalContext.species ?? ''}
@@ -155,7 +155,7 @@ export default function ClinicalCopilotPanel({
               species: (e.target.value || undefined) as AnimalSpecies | undefined,
             })
           }
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#29a399] transition-all"
         >
           <option value="">Espécie</option>
           {(Object.keys(SPECIES_LABELS) as AnimalSpecies[]).map((s) => (
@@ -169,7 +169,7 @@ export default function ClinicalCopilotPanel({
           placeholder="Raça"
           value={clinicalContext.breed ?? ''}
           onChange={(e) => onContextChange({ breed: e.target.value })}
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#29a399] transition-all"
         />
         <input
           type="number"
@@ -180,7 +180,7 @@ export default function ClinicalCopilotPanel({
               weightKg: e.target.value ? Number(e.target.value) : undefined,
             })
           }
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#29a399] transition-all"
         />
         <select
           value={clinicalContext.procedure ?? ''}
@@ -189,7 +189,7 @@ export default function ClinicalCopilotPanel({
               procedure: (e.target.value || undefined) as ProcedureType | undefined,
             })
           }
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 col-span-2 placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 col-span-2 placeholder-[#6f767e] focus:border-[#29a399] transition-all"
         >
           <option value="">Procedimento</option>
           {(Object.keys(PROCEDURE_LABELS) as ProcedureType[]).map((p) => (
@@ -203,7 +203,7 @@ export default function ClinicalCopilotPanel({
           value={clinicalContext.clinicalNotes ?? ''}
           onChange={(e) => onContextChange({ clinicalNotes: e.target.value })}
           rows={2}
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 col-span-2 resize-none placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 col-span-2 resize-none placeholder-[#6f767e] focus:border-[#29a399] transition-all"
         />
       </div>
 
@@ -227,7 +227,7 @@ export default function ClinicalCopilotPanel({
             type="button"
             disabled={streaming}
             onClick={() => onSend(s)}
-            className="text-[10px] text-[#3caea3] bg-[#111315] border border-[#2a2d30] px-2 py-1 rounded-full hover:bg-white/5 disabled:opacity-50 transition-all"
+            className="text-[10px] text-[#29a399] bg-[#111315] border border-[#2a2d30] px-2 py-1 rounded-full hover:bg-white/5 disabled:opacity-50 transition-all"
           >
             {s}
           </button>
@@ -248,7 +248,7 @@ export default function ClinicalCopilotPanel({
             placeholder="Pergunte sobre a radiografia..."
             rows={2}
             disabled={streaming}
-            className="flex-1 text-sm text-white bg-[#111315] border border-[#2a2d30] rounded-[6px] px-3 py-2 resize-none placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
+            className="flex-1 text-sm text-white bg-[#111315] border border-[#2a2d30] rounded-[6px] px-3 py-2 resize-none placeholder-[#6f767e] focus:border-[#29a399] transition-all"
           />
           <Button size="sm" onClick={handleSend} disabled={!input.trim() || streaming} loading={streaming}>
             <Send size={14} />

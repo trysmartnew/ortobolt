@@ -79,7 +79,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a]">
+    <aside className="w-[280px] bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a]">
       {/* Logo */}
       <div className="p-4 border-b border-white/10">
         <OrtoBoltLogo variant="horizontal" size="small" showSubtitle={false} />
@@ -91,15 +91,16 @@ export default function Sidebar() {
         <button
           onClick={openAnalysisModal}
           className="
-            w-full flex items-center justify-center gap-2
-            bg-gradient-to-br from-[#3caea3]/20 to-[#3caea3]/05 border border-[#3caea3] text-white
+            w-[232px] h-[48px] rounded-[8px]
+            flex items-center justify-center gap-2
+            border-[rgba(41,163,153,0.6)] bg-gradient-to-r from-[#29a399]/15 to-[#29a399]/05 text-white
             shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]
             transition-all duration-300
-            hover:border-[#3caea3] hover:from-[#3caea3]/25 hover:to-[#3caea3]/05 hover:shadow-[0_0_12px_rgba(60,174,163,0.2)]
+            hover:shadow-[0_0_15px_rgba(41,163,153,0.25)]
           "
           aria-label="Abrir seletor de análise de imagem"
         >
-          <Sparkles className="w-5 h-5 text-[#3caea3]" />
+          <Sparkles className="w-5 h-5 text-[#29a399]" />
           <span>Analisar Imagem</span>
         </button>
       </div>

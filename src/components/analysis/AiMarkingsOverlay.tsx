@@ -32,14 +32,14 @@ function Badge({ x, y, text, fontSize }: { x: number; y: number; text: string; f
         width={width}
         height={height}
         fill="rgba(14,16,17,0.8)"
-        stroke="rgba(60,174,163,0.2)"
+        stroke="rgba(41, 163, 153, 0.35)"
         strokeWidth={1}
         cornerRadius={2}
       />
       <Text
         text={text}
         fontSize={fontSize}
-        fill="#3caea3"
+        fill="#29a399"
         fontStyle="bold"
         x={padding}
         y={padding * 0.5}
@@ -52,7 +52,7 @@ function GuideLine({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2:
   return (
     <Line
       points={[x1, y1, x2, y2]}
-      stroke="#3caea3"
+      stroke="#29a399"
       strokeWidth={0.5}
       opacity={0.4}
       dash={[2, 2]}
@@ -100,7 +100,7 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
       <Line
         key={`v-${i}`}
         points={[x, 0, x, stageSize.height]}
-        stroke="#3caea3"
+        stroke="#29a399"
         strokeWidth={0.5}
         opacity={0.15}
       />
@@ -112,7 +112,7 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
       <Line
         key={`h-${j}`}
         points={[0, y, stageSize.width, y]}
-        stroke="#3caea3"
+        stroke="#29a399"
         strokeWidth={0.5}
         opacity={0.15}
       />
@@ -202,10 +202,10 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
 
             return (
               <Group key={roi.id}>
-                <CornerLines x={x} y={y} w={1} h={1} size={cornerSize} stroke="#3caea3" strokeWidth={2} />
-                <CornerLines x={x + w} y={y} w={-1} h={1} size={cornerSize} stroke="#3caea3" strokeWidth={2} />
-                <CornerLines x={x} y={y + h} w={1} h={-1} size={cornerSize} stroke="#3caea3" strokeWidth={2} />
-                <CornerLines x={x + w} y={y + h} w={-1} h={-1} size={cornerSize} stroke="#3caea3" strokeWidth={2} />
+                <CornerLines x={x} y={y} w={1} h={1} size={cornerSize} stroke="#29a399" strokeWidth={2} />
+                <CornerLines x={x + w} y={y} w={-1} h={1} size={cornerSize} stroke="#29a399" strokeWidth={2} />
+                <CornerLines x={x} y={y + h} w={1} h={-1} size={cornerSize} stroke="#29a399" strokeWidth={2} />
+                <CornerLines x={x + w} y={y + h} w={-1} h={-1} size={cornerSize} stroke="#29a399" strokeWidth={2} />
                 {roi.label && (
                   <>
                     <GuideLine x1={x} y1={y} x2={x} y2={y - 16} />
