@@ -61,6 +61,8 @@ function AppInner() {
     toasts, removeToast,
   } = useApp();
 
+  const isAnalysisPage = currentPage === 'analysis' || currentPage === 'evolutionaryAnalysis' || currentPage === 'alignmentAnalysis';
+
   const logoutRef     = useRef(logout);
   const setSessionRef = useRef(setUserFromSession);
 
@@ -142,7 +144,7 @@ function AppInner() {
   const PageComponent = PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
+    <div className={`flex h-screen overflow-hidden ${isAnalysisPage ? 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011]' : 'bg-slate-50'}`}>
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <TopBar />

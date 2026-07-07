@@ -20,6 +20,7 @@ const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
 export default React.memo(function TopBar() {
   const { currentPage, setCurrentPage, unreadCount, tourActive, startTour, user } = useApp();
   const { title, subtitle } = PAGE_TITLES[currentPage] || PAGE_TITLES.dashboard;
+  const isAnalysisPage = currentPage === 'analysis' || currentPage === 'evolutionaryAnalysis' || currentPage === 'alignmentAnalysis';
   const [online, setOnline] = React.useState(navigator.onLine);
   const hasTour = (TOUR_STEPS[currentPage]?.length ?? 0) > 0;
   const [timeString, setTimeString] = React.useState(() => `${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`);
@@ -46,10 +47,10 @@ export default React.memo(function TopBar() {
   }, []);
 
   return (
-    <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 sticky top-0 z-20 shrink-0">
+    <header className={`h-16 flex items-center justify-between px-6 sticky top-0 z-20 shrink-0 ${isAnalysisPage ? 'bg-[#0e1011] border-b border-[#22262a]' : 'bg-white border-b border-slate-100'}`}>
       <div>
-        <h1 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>{title}</h1>
-        <p className="text-xs text-slate-400 font-mono">{subtitle}</p>
+        <h1 className={`text-base font-bold ${isAnalysisPage ? 'text-white font-semibold' : 'text-slate-900'}`} style={{ fontFamily: 'Montserrat' }}>{title}</h1>
+        <p className={`text-xs font-mono ${isAnalysisPage ? 'text-[#9a9fa5]' : 'text-slate-400'}`}>{subtitle}</p>
         {user && (
           <div className="mt-1">
             {user.crmv ? (
@@ -77,11 +78,11 @@ export default React.memo(function TopBar() {
           {online ? <Wifi size={11} /> : <WifiOff size={11} />}
           {online ? 'Online' : 'Offline'}
         </div>
-        <div className="text-xs font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded-md">
+        <div className={`text-xs font-mono px-2 py-1 rounded-md ${isAnalysisPage ? 'bg-[#1a1d1f] text-[#9a9fa5]' : 'text-slate-400 bg-slate-50'}`}>
           {timeString}
         </div>
-        <button onClick={() => setCurrentPage('notifications')} className="relative p-2 rounded-lg hover:bg-slate-100 transition-colors">
-          <Bell className="h-4.5 w-4.5 text-slate-600" size={18} />
+        <button onClick={() => setCurrentPage('notifications')} className={`relative p-2 rounded-lg transition-colors ${isAnalysisPage ? 'hover:bg-white/5 text-[#9a9fa5]' : 'hover:bg-slate-100'}`}>
+          <Bell className={`h-4.5 w-4.5 ${isAnalysisPage ? 'text-[#9a9fa5]' : 'text-slate-600'}`} size={18} />
           {unreadCount > 0 && (
             <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
               {unreadCount}
