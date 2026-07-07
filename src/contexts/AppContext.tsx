@@ -73,6 +73,7 @@ interface AppContextType {
   updateCase: (id: string, updates: Partial<ClinicalCase>) => void;
   deleteCase: (id: string) => void;
   activeCase: ClinicalCase | null;
+  setActiveCase: (c: ClinicalCase) => void;
   openCase: (c: ClinicalCase) => void;
   closeCase: () => void;
   notifications: Notification[];
@@ -646,7 +647,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       login, logout, setUserFromSession,
       currentPage, setCurrentPage,
       cases, addCase, approveAndIntegrateCase, updateCase, deleteCase,
-      activeCase, openCase, closeCase,
+      activeCase, setActiveCase, openCase, closeCase,
       notifications, unreadCount, markAllRead, markRead, addNotification,
       chatHistory, setChatHistory,
       tourActive, tourForceShow, startTour, closeTour,

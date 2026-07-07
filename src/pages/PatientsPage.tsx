@@ -44,7 +44,7 @@ function formatDate(iso: string): string {
 }
 
 export default function PatientsPage() {
-  const { cases, user, authLoading, openCase, deleteCase, addToast } = useApp();
+  const { cases, user, authLoading, openCase, deleteCase, addToast, setActiveCase, setCurrentPage } = useApp();
   const [search, setSearch] = useState('');
   const [breedFilter, setBreedFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -109,10 +109,13 @@ export default function PatientsPage() {
     setEditingPatient(null);
   };
 
-  const handleView = (caseId: string) => {
-    const c = cases.find(x => x.id === caseId);
-    if (c) openCase(c);
-  };
+const handleView = (patientId: string) => {
+  const selectedCase = cases.find(c => c.id === patientId);
+  if (selectedCase) {
+    setActiveCase(selectedCase);
+    setCurrentPage('patientDetail');
+  }
+};
 
   const handleEdit = (caseId: string) => {
     const c = cases.find(x => x.id === caseId);

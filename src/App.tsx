@@ -28,7 +28,7 @@ import ToastContainer    from '@/components/ToastContainer';
 import AIAssistant       from '@/components/AIAssistant';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AnalysisProvider } from '@/contexts/AnalysisContext';
-import AcademicDisclaimer from '@/components/AcademicDisclaimer';
+
 
 const PAGE_MAP = {
   dashboard:     DashboardPage,
@@ -172,7 +172,7 @@ function AppInner() {
       <Suspense fallback={null}>
         {currentPage !== 'chat' && <AIAssistant />}
       </Suspense>
-      <AcademicDisclaimer />
+
     </div>
   );
 }

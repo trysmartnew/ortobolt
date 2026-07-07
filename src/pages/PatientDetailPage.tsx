@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
-import { ArrowLeft, User, PawPrint, Ruler, Activity, Pill, FlaskConical, Image, Calendar, UserRound } from 'lucide-react';
+import { ArrowLeft, User, PawPrint, Ruler, Activity, Pill, FlaskConical, Image, TrendingUp, Calendar, UserRound } from 'lucide-react';
 import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';
 import { SPECIES_LABELS } from '@/constants/labels';
 import RadiographGallery from '../components/RadiographGallery';
@@ -33,7 +33,7 @@ function getStatusLabel(status: CaseStatus): string {
 }
 
 export default function PatientDetailPage() {
-  const { cases, activeCase, openCase, user, authLoading, addToast } = useApp();
+  const { cases, activeCase, openCase, setCurrentPage, user, authLoading, addToast } = useApp();
   const [loading, setLoading] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
 
@@ -295,23 +295,55 @@ export default function PatientDetailPage() {
         <div className="space-y-6">
           <Card className="p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Pill className="text-[var(--color-accent)]" size={18} />
+              <Activity className="text-[var(--color-accent)]" size={18} />
               <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                Recent Medications
+                Ferramentas Clínicas
               </h3>
             </div>
-            {medications.length === 0 ? (
-              <p className="text-xs text-slate-500">Sem medicações registradas.</p>
-            ) : (
-              <div className="space-y-2">
-                {medications.slice(0, 5).map((m) => (
-                  <div key={m.id} className="text-xs">
-                    <p className="font-semibold text-slate-700">{m.name}</p>
-                    <p className="text-slate-500">{m.dosage} · {m.frequency}</p>
+            <div className="space-y-3">
+              <button
+                onClick={() => setCurrentPage('analysis')}
+                className="w-full p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] hover:bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[var(--color-surface-muted)] flex items-center justify-center group-hover:bg-[var(--color-accent)]/20">
+                    <Image className="text-[var(--color-accent)]" size={20} />
                   </div>
-                ))}
-              </div>
-            )}
+                  <div className="flex-1 text-left">
+                    <p className="text-sm font-semibold text-slate-900 group-hover:text-[var(--color-accent)]">Análise de Imagens</p>
+                    <p className="text-xs text-slate-500">Upload e análise radiográfica</p>
+                  </div>
+                </div>
+              </button>
+              <button
+                onClick={() => setCurrentPage('evolutionaryAnalysis')}
+                className="w-full p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] hover:bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[var(--color-surface-muted)] flex items-center justify-center group-hover:bg-[var(--color-accent)]/20">
+                    <TrendingUp className="text-[var(--color-accent)]" size={20} />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <p className="text-sm font-semibold text-slate-900 group-hover:text-[var(--color-accent)]">Análise Evolutiva</p>
+                    <p className="text-xs text-slate-500">Timeline clínica e evolutiva</p>
+                  </div>
+                </div>
+              </button>
+              <button
+                onClick={() => setCurrentPage('alignmentAnalysis')}
+                className="w-full p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] hover:bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[var(--color-surface-muted)] flex items-center justify-center group-hover:bg-[var(--color-accent)]/20">
+                    <Ruler className="text-[var(--color-accent)]" size={20} />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <p className="text-sm font-semibold text-slate-900 group-hover:text-[var(--color-accent)]">Análise de Alinhamento</p>
+                    <p className="text-xs text-slate-500">Avaliação pós-cirúrgica</p>
+                  </div>
+                </div>
+              </button>
+            </div>
           </Card>
 
           <Card className="p-4">
