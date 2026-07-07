@@ -111,14 +111,14 @@ export default function ClinicalCopilotPanel({
   return (
     <div
       data-tour="tour-clinical-copilot"
-      className="flex flex-col rounded-2xl border border-white/10 bg-[#0B0F19]/60 overflow-hidden min-h-[480px]"
+      className="flex flex-col rounded-[12px] border border-[rgba(255,255,255,0.06)] bg-[rgba(26,29,31,0.65)] backdrop-blur-[12px] overflow-hidden min-h-[480px]"
     >
-      <div className="px-4 py-3 border-b border-white/10 bg-[#0B0F19]/60 flex items-center justify-between gap-2">
+      <div className="px-4 py-3 border-b border-white/10 bg-[rgba(26,29,31,0.65)] flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Sparkles size={16} className="text-primary" />
           <div>
-            <p className="text-sm font-bold text-slate-100">Assistente Clínico</p>
-            <p className="text-[10px] text-slate-400 font-mono">
+            <p className="text-sm font-bold text-[#9a9fa5]">Assistente Clínico</p>
+            <p className="text-[10px] text-[#9a9fa5] font-mono">
               Radiografia + contexto + histórico da sessão
             </p>
           </div>
@@ -140,13 +140,13 @@ export default function ClinicalCopilotPanel({
           </Button>
       </div>
 
-      <div className="px-4 py-3 border-b border-white/10 bg-[#0B0F19]/60 grid grid-cols-2 gap-2">
+      <div className="px-4 py-3 border-b border-white/10 bg-[rgba(26,29,31,0.65)] grid grid-cols-2 gap-2">
         <input
           type="text"
           placeholder="Paciente (opcional)"
           value={clinicalContext.patientName ?? ''}
           onChange={(e) => onContextChange({ patientName: e.target.value })}
-          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5 placeholder:text-slate-500"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
         />
         <select
           value={clinicalContext.species ?? ''}
@@ -155,7 +155,7 @@ export default function ClinicalCopilotPanel({
               species: (e.target.value || undefined) as AnimalSpecies | undefined,
             })
           }
-          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
         >
           <option value="">Espécie</option>
           {(Object.keys(SPECIES_LABELS) as AnimalSpecies[]).map((s) => (
@@ -169,7 +169,7 @@ export default function ClinicalCopilotPanel({
           placeholder="Raça"
           value={clinicalContext.breed ?? ''}
           onChange={(e) => onContextChange({ breed: e.target.value })}
-          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
         />
         <input
           type="number"
@@ -180,7 +180,7 @@ export default function ClinicalCopilotPanel({
               weightKg: e.target.value ? Number(e.target.value) : undefined,
             })
           }
-          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
         />
         <select
           value={clinicalContext.procedure ?? ''}
@@ -189,7 +189,7 @@ export default function ClinicalCopilotPanel({
               procedure: (e.target.value || undefined) as ProcedureType | undefined,
             })
           }
-          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5 col-span-2"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 col-span-2 placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
         >
           <option value="">Procedimento</option>
           {(Object.keys(PROCEDURE_LABELS) as ProcedureType[]).map((p) => (
@@ -203,7 +203,7 @@ export default function ClinicalCopilotPanel({
           value={clinicalContext.clinicalNotes ?? ''}
           onChange={(e) => onContextChange({ clinicalNotes: e.target.value })}
           rows={2}
-          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5 col-span-2 resize-none"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 col-span-2 resize-none placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
         />
       </div>
 
@@ -227,14 +227,14 @@ export default function ClinicalCopilotPanel({
             type="button"
             disabled={streaming}
             onClick={() => onSend(s)}
-            className="text-[10px] text-primary bg-[#0B0F19]/60 border border-white/10 px-2 py-1 rounded-full hover:bg-white/10 disabled:opacity-50"
+            className="text-[10px] text-[#3caea3] bg-[#111315] border border-[#2a2d30] px-2 py-1 rounded-full hover:bg-white/5 disabled:opacity-50 transition-all"
           >
             {s}
           </button>
         ))}
       </div>
 
-      <div className="p-3 border-t border-white/10 bg-[#0B0F19]/60">
+      <div className="p-3 border-t border-white/10 bg-[rgba(26,29,31,0.65)]">
         <div className="flex gap-2 items-end">
           <textarea
             value={input}
@@ -248,7 +248,7 @@ export default function ClinicalCopilotPanel({
             placeholder="Pergunte sobre a radiografia..."
             rows={2}
             disabled={streaming}
-            className="flex-1 text-sm text-slate-200 bg-[#0B0F19]/60 border border-white/10 rounded-xl px-3 py-2 resize-none placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="flex-1 text-sm text-white bg-[#111315] border border-[#2a2d30] rounded-[6px] px-3 py-2 resize-none placeholder-[#6f767e] focus:border-[#3caea3] transition-all"
           />
           <Button size="sm" onClick={handleSend} disabled={!input.trim() || streaming} loading={streaming}>
             <Send size={14} />

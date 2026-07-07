@@ -1,5 +1,5 @@
-import { useRef, useEffect, useState } from 'react';
-import { Stage, Layer, Image as KonvaImage, Circle, Line, Text, Group } from 'react-konva';
+import { useRef, useEffect, useState, type ReactNode } from 'react';
+import { Stage, Layer, Image as KonvaImage, Circle, Line, Text, Group, Rect } from 'react-konva';
 import type { MarkingsData, AlignmentCircle, AngleMeasurement, FractureMarker, ROI } from '@/types/markings';
 
 interface AiMarkingsOverlayProps {
@@ -7,6 +7,57 @@ interface AiMarkingsOverlayProps {
   markings: MarkingsData;
   naturalWidth: number;
   naturalHeight: number;
+}
+
+const GRID_SPACING = 60;
+
+function CornerLines({ x, y, w, h, size, stroke, strokeWidth }: { x: number; y: number; w: number; h: number; size: number; stroke: string; strokeWidth: number }) {
+  return (
+    <Group>
+      <Line points={[x, y, x + w, y]} stroke={stroke} strokeWidth={strokeWidth} />
+      <Line points={[x, y, x, y + h]} stroke={stroke} strokeWidth={strokeWidth} />
+    </Group>
+  );
+}
+
+function Badge({ x, y, text, fontSize }: { x: number; y: number; text: string; fontSize: number }) {
+  const padding = 3;
+  const textWidth = text.length * fontSize * 0.6;
+  const width = textWidth + padding * 2;
+  const height = fontSize + padding * 2;
+
+  return (
+    <Group x={x} y={y}>
+      <Rect
+        width={width}
+        height={height}
+        fill="rgba(14,16,17,0.8)"
+        stroke="rgba(60,174,163,0.2)"
+        strokeWidth={1}
+        cornerRadius={2}
+      />
+      <Text
+        text={text}
+        fontSize={fontSize}
+        fill="#3caea3"
+        fontStyle="bold"
+        x={padding}
+        y={padding * 0.5}
+      />
+    </Group>
+  );
+}
+
+function GuideLine({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2: number }) {
+  return (
+    <Line
+      points={[x1, y1, x2, y2]}
+      stroke="#3caea3"
+      strokeWidth={0.5}
+      opacity={0.4}
+      dash={[2, 2]}
+    />
+  );
 }
 
 export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, naturalHeight }: AiMarkingsOverlayProps) {
@@ -39,8 +90,37 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
   const scaleX = stageSize.width / (naturalWidth || 800);
   const scaleY = stageSize.height / (naturalHeight || 600);
 
+  const gridLines: ReactNode[] = [];
+  const cols = Math.ceil((naturalWidth || 800) / GRID_SPACING) + 1;
+  const rows = Math.ceil((naturalHeight || 600) / GRID_SPACING) + 1;
+
+  for (let i = 0; i < cols; i++) {
+    const x = i * GRID_SPACING * scaleX;
+    gridLines.push(
+      <Line
+        key={`v-${i}`}
+        points={[x, 0, x, stageSize.height]}
+        stroke="#3caea3"
+        strokeWidth={0.5}
+        opacity={0.15}
+      />
+    );
+  }
+  for (let j = 0; j < rows; j++) {
+    const y = j * GRID_SPACING * scaleY;
+    gridLines.push(
+      <Line
+        key={`h-${j}`}
+        points={[0, y, stageSize.width, y]}
+        stroke="#3caea3"
+        strokeWidth={0.5}
+        opacity={0.15}
+      />
+    );
+  }
+
   return (
-    <div ref={containerRef} className="w-full overflow-hidden rounded-2xl border border-slate-200/60 bg-black/5">
+    <div ref={containerRef} className="w-full">
       <Stage width={stageSize.width} height={stageSize.height}>
         <Layer>
           {image && (
@@ -52,44 +132,51 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
           )}
         </Layer>
         <Layer>
-          {markings.circles.map((c: AlignmentCircle) => (
-            <Group key={c.id}>
-              <Circle
-                x={c.cx * scaleX}
-                y={c.cy * scaleY}
-                radius={Math.max(6, (c.radius || 30) * Math.min(scaleX, scaleY))}
-                stroke={c.stage === 'abnormal' ? 'var(--color-error)' : 'var(--color-success)'}
-                strokeWidth={2}
-                fill={c.stage === 'abnormal' ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)'}
-              />
-              <Text
-                x={(c.cx * scaleX) + (c.radius || 30) * scaleX}
-                y={(c.cy * scaleY) - 14 * scaleY}
-                text={c.label || 'Círculo'}
-                fill={c.stage === 'abnormal' ? 'var(--color-error)' : 'var(--color-success)'}
-                fontSize={Math.round(12 * scaleX)}
-                fontStyle="bold"
-              />
-            </Group>
-          ))}
+          {gridLines}
+
+          {markings.circles.map((c: AlignmentCircle) => {
+            const cx = c.cx * scaleX;
+            const cy = c.cy * scaleY;
+            const radius = Math.max(6, (c.radius || 30) * Math.min(scaleX, scaleY));
+            const labelX = cx + radius + 4;
+            const labelY = cy - 14 * scaleY;
+
+            return (
+              <Group key={c.id}>
+                <Circle
+                  x={cx}
+                  y={cy}
+                  radius={radius}
+                  stroke={c.stage === 'abnormal' ? 'var(--color-error)' : 'var(--color-success)'}
+                  strokeWidth={2}
+                  fill={c.stage === 'abnormal' ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)'}
+                />
+                <GuideLine x1={cx + radius} y1={cy} x2={labelX} y2={labelY} />
+                <Badge x={labelX} y={labelY} text={c.label || 'Círculo'} fontSize={Math.round(10 * scaleX)} />
+              </Group>
+            );
+          })}
 
           {markings.angles.map((a: AngleMeasurement) => {
             const [p1, p2, p3] = a.points;
+            const vertexX = p2.x * scaleX;
+            const vertexY = p2.y * scaleY;
+            const labelX = vertexX;
+            const labelY = vertexY - 18 * scaleY;
+
             return (
               <Group key={a.id}>
                 <Line
-                  points={[p1.x * scaleX, p1.y * scaleY, p2.x * scaleX, p2.y * scaleY, p3.x * scaleX, p3.y * scaleY]}
+                  points={[
+                    p1.x * scaleX, p1.y * scaleY,
+                    vertexX, vertexY,
+                    p3.x * scaleX, p3.y * scaleY
+                  ]}
                   stroke="#3b82f6"
                   strokeWidth={2}
                 />
-                <Text
-                  x={p2.x * scaleX}
-                  y={(p2.y * scaleY) - 18 * scaleY}
-                  text={`${a.type || 'Ângulo'}: ${a.value.toFixed(1)}°`}
-                  fill="#1d4ed8"
-                  fontSize={Math.round(12 * scaleX)}
-                  fontStyle="bold"
-                />
+                <GuideLine x1={vertexX} y1={vertexY} x2={labelX} y2={labelY} />
+                <Badge x={labelX} y={labelY} text={`${a.type || 'Ângulo'}: ${a.value.toFixed(1)}°`} fontSize={Math.round(10 * scaleX)} />
               </Group>
             );
           })}
@@ -98,35 +185,38 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
             <Group key={m.id}>
               <Circle x={m.x * scaleX} y={m.y * scaleY} radius={Math.max(4, 6 * scaleX)} fill="var(--color-error)" stroke="#ffffff" strokeWidth={2} />
               {m.label && (
-                <Text x={(m.x * scaleX) + 8 * scaleX} y={(m.y * scaleY) - 6 * scaleY} text={m.label} fill="var(--color-error)" fontSize={Math.round(11 * scaleX)} fontStyle="bold" />
+                <>
+                  <GuideLine x1={m.x * scaleX} y1={m.y * scaleY} x2={(m.x * scaleX) + 8 * scaleX} y2={(m.y * scaleY) - 6 * scaleY} />
+                  <Badge x={(m.x * scaleX) + 8 * scaleX} y={(m.y * scaleY) - 6 * scaleY} text={m.label} fontSize={Math.round(10 * scaleX)} />
+                </>
               )}
             </Group>
           ))}
 
-          {markings.rois.map((roi: ROI) => (
-            <Group key={roi.id}>
-              <Rect x={roi.x * scaleX} y={roi.y * scaleY} width={(roi.width || 40) * scaleX} height={(roi.height || 40) * scaleY} stroke="var(--color-warning)" strokeWidth={2} fill="rgba(245,158,11,0.08)" />
-              {roi.label && (
-                <Text x={roi.x * scaleX} y={(roi.y * scaleY) - 14 * scaleY} text={roi.label} fill="var(--color-warning)" fontSize={Math.round(11 * scaleX)} fontStyle="bold" />
-              )}
-            </Group>
-          ))}
+          {markings.rois.map((roi: ROI) => {
+            const x = roi.x * scaleX;
+            const y = roi.y * scaleY;
+            const w = (roi.width || 40) * scaleX;
+            const h = (roi.height || 40) * scaleY;
+            const cornerSize = Math.min(w, h, 20) * 0.25;
+
+            return (
+              <Group key={roi.id}>
+                <CornerLines x={x} y={y} w={1} h={1} size={cornerSize} stroke="#3caea3" strokeWidth={2} />
+                <CornerLines x={x + w} y={y} w={-1} h={1} size={cornerSize} stroke="#3caea3" strokeWidth={2} />
+                <CornerLines x={x} y={y + h} w={1} h={-1} size={cornerSize} stroke="#3caea3" strokeWidth={2} />
+                <CornerLines x={x + w} y={y + h} w={-1} h={-1} size={cornerSize} stroke="#3caea3" strokeWidth={2} />
+                {roi.label && (
+                  <>
+                    <GuideLine x1={x} y1={y} x2={x} y2={y - 16} />
+                    <Badge x={x} y={y - 16} text={roi.label} fontSize={Math.round(10 * scaleX)} />
+                  </>
+                )}
+              </Group>
+            );
+          })}
         </Layer>
       </Stage>
     </div>
-  );
-}
-
-function Rect({ x, y, width, height, stroke, strokeWidth, fill }: { x: number; y: number; width: number; height: number; stroke: string; strokeWidth: number; fill: string }) {
-  return (
-    <rect
-      x={x}
-      y={y}
-      width={width}
-      height={height}
-      stroke={stroke}
-      strokeWidth={strokeWidth}
-      fill={fill}
-    />
   );
 }

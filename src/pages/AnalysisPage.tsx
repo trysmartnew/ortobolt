@@ -352,23 +352,23 @@ export default function AnalysisPage() {
     });
 
   return (
-    <div className="p-4 w-full space-y-4 bg-[#0B0F19] text-white">
+    <div className="p-4 w-full space-y-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011] text-white">
       <SectionHeader
         title="Análise de Imagem Ortopédica"
         subtitle="Análise → Assistente → Caso completo integrado"
-        titleClassName="text-white font-bold text-2xl"
+        titleClassName="text-2xl font-semibold text-white"
         subtitleClassName="text-slate-400 text-sm"
       />
 
       {/* Segmented Control - Modo de Análise */}
       <div className="flex items-center justify-center mb-6">
-        <div className="inline-flex items-center bg-slate-100/80 rounded-full p-1 gap-1 border border-slate-200/50 shadow-inner">
+        <div className="inline-flex items-center bg-[#1a1d1f] rounded-[20px] p-1">
           <button
             onClick={() => setAnalysisMode('analysis')}
             className={`px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
               analysisMode === 'analysis'
-                ? 'bg-navy text-white shadow-md'
-                : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50/50'
+                ? 'text-white bg-gradient-to-b from-[#2a2e32] to-[#1a1d1f] border-b border-white/20'
+                : 'text-[#9a9fa5] bg-transparent'
             }`}
           >
             Análise do Exame
@@ -377,8 +377,8 @@ export default function AnalysisPage() {
             onClick={() => setAnalysisMode('compare')}
             className={`px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
               analysisMode === 'compare'
-                ? 'bg-navy text-white shadow-md'
-                : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50/50'
+                ? 'text-white bg-gradient-to-b from-[#2a2e32] to-[#1a1d1f] border-b border-white/20'
+                : 'text-[#9a9fa5] bg-transparent'
             }`}
           >
             Estudo Comparativo
@@ -438,7 +438,7 @@ export default function AnalysisPage() {
           )}
           
           {streamError && (
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-5 flex items-center gap-3 text-red-700 text-sm">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-5 flex items-center gap-3 text-[#ffd54f] text-sm">
               <AlertCircle size={16} className="flex-shrink-0" />
               {streamError}
             </div>
@@ -495,19 +495,20 @@ export default function AnalysisPage() {
           
           {mode === 'result' && result && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-              <Card className="lg:col-span-8 p-4 bg-[#0B0F19]">
-                <div className="flex items-center justify-between mb-3">
+              <Card className="lg:col-span-8 bg-[#0B0F19] border border-[#2a2d30]">
+                <div className="flex items-center justify-between mb-3 p-4 pb-2">
                   <p className="text-sm font-bold text-white uppercase tracking-wider">
                     Imagem Analisada
                   </p>
                   {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 || 
                     aiGeneratedMarkings.angles.length > 0 || 
                     aiGeneratedMarkings.markers.length > 0) && (
-                    <span className="text-[10px] font-mono bg-white/10 text-white border border-white/20 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-mono bg-white/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
                       ⚡ {aiGeneratedMarkings.circles.length + aiGeneratedMarkings.angles.length} marcações
                     </span>
                   )}
                 </div>
+                <div className="bg-black rounded-[12px] border border-[#2a2d30] overflow-hidden p-2">
                 {imageData && imageDimensions && aiGeneratedMarkings && (
                   <AiMarkingsOverlay
                     imageUrl={imageData}
@@ -520,9 +521,10 @@ export default function AnalysisPage() {
                   <img
                     src={imageData}
                     alt="Resultado"
-                    className="w-full rounded-2xl border object-contain max-h-80"
+                    className="w-full object-contain max-h-80"
                   />
                 )}
+                </div>
                 {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 || aiGeneratedMarkings.angles.length > 0) && (
                   <div className="mt-3 pt-3 border-t border-slate-700/60 space-y-1 text-xs">
                     {aiGeneratedMarkings.circles.map((c) => (
@@ -540,10 +542,10 @@ export default function AnalysisPage() {
               </Card>
 
               <div className="lg:col-span-4 flex flex-col gap-4">
-                <Card className="p-5 bg-[#001941]/40! backdrop-blur-md border border-white/10! text-white" data-tour="tour-analysis-result">
+                <Card className="p-5 bg-[rgba(26,29,31,0.65)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)] rounded-[12px] text-white" data-tour="tour-analysis-result">
                   <div className="flex items-center gap-2 mb-4">
                     <CheckCircle className="h-5 w-5 text-success" />
-                    <p className="font-bold text-slate-900">
+                    <p className="font-bold text-slate-100">
                       {session?.refinedAnalysis ? 'Análise Refinada' : 'Análise Concluída'}
                     </p>
                     {session?.refinedAnalysis && (
@@ -556,13 +558,13 @@ export default function AnalysisPage() {
                     {renderResult(analysisText)}
                   </div>
                   <div className="mt-4 pt-4 border-t border-white/10">
-                    <Button variant="secondary" size="sm" onClick={reset} className="w-full bg-transparent! hover:bg-white/5! text-white! border border-white/20! transition-colors">
+                    <Button variant="secondary" size="sm" onClick={reset} className="w-full bg-transparent border border-[#2a2d30] text-[#9a9fa5] hover:bg-white/5 transition-all">
                       <RefreshCw size={13} /> Nova Análise
                     </Button>
                   </div>
                 </Card>
 
-                <Card className="bg-[#001941]/40 backdrop-blur-md border border-green-500 rounded-lg">
+                <Card className="bg-[rgba(26,29,31,0.65)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)] rounded-[12px]">
                   <ClinicalCopilotPanel
                     enabled={Boolean(session && imageBase64)}
                     messages={session?.messages ?? []}

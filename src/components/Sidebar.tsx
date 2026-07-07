@@ -3,7 +3,7 @@ import { useMemo, useState, useCallback } from 'react';
 import {
   ClipboardList, Scan, Activity, BarChart3,
   Bot, Bell, User, Settings, LogOut,
-  Users, TrendingUp, Ruler, HelpCircle, Zap
+  Users, TrendingUp, Ruler, HelpCircle, Sparkles
 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import type { Page } from '@/contexts/AppContext';
@@ -79,7 +79,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-slate-900 text-white h-screen flex flex-col">
+    <aside className="w-64 bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a]">
       {/* Logo */}
       <div className="p-4 border-b border-white/10">
         <OrtoBoltLogo variant="horizontal" size="small" showSubtitle={false} />
@@ -92,17 +92,14 @@ export default function Sidebar() {
           onClick={openAnalysisModal}
           className="
             w-full flex items-center justify-center gap-2
-            bg-[#00A36C] text-white font-semibold
-            px-4 py-3 rounded-lg
-            shadow-lg shadow-[#00A36C]/20
-            transition-all duration-300 cubic-bezier(0.34, 1.56, 0.64, 1)
-            hover:scale-105 hover:bg-[#00C77A] hover:shadow-xl hover:shadow-[#00C77A]/30
-            active:scale-95
-            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00A36C]
+            bg-gradient-to-br from-[#3caea3]/20 to-[#3caea3]/05 border border-[#3caea3] text-white
+            shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]
+            transition-all duration-300
+            hover:border-[#3caea3] hover:from-[#3caea3]/25 hover:to-[#3caea3]/05 hover:shadow-[0_0_12px_rgba(60,174,163,0.2)]
           "
           aria-label="Abrir seletor de análise de imagem"
         >
-          <Zap className="w-5 h-5" />
+          <Sparkles className="w-5 h-5 text-[#3caea3]" />
           <span>Analisar Imagem</span>
         </button>
       </div>
