@@ -47,9 +47,9 @@ export default React.memo(function TopBar() {
   }, []);
 
   return (
-    <header className={`h-16 flex items-center justify-between px-6 sticky top-0 z-20 shrink-0 ${isAnalysisPage ? 'bg-[#0e1011] border-b border-[#22262a]' : 'bg-white border-b border-slate-100'}`}>
+    <header className="h-16 flex items-center justify-between px-6 sticky top-0 z-20 shrink-0 bg-[#0e1011] border-b border-[#22262a]">
       <div>
-        <h1 className={`text-[26px] font-semibold ${isAnalysisPage ? 'text-white' : 'text-slate-900'}`} style={{ fontFamily: 'Montserrat' }}>{title}</h1>
+        <h1 className="text-[26px] font-semibold text-white" style={{ fontFamily: 'Montserrat' }}>{title}</h1>
         <p className="text-[13px] text-[#7a828a] font-normal">{subtitle}</p>
         {user && (
           <div className="mt-1">
@@ -78,11 +78,11 @@ export default React.memo(function TopBar() {
           {online ? <Wifi size={11} /> : <WifiOff size={11} />}
           {online ? 'Online' : 'Offline'}
         </div>
-        <div className={`text-xs font-mono px-2 py-1 rounded-md ${isAnalysisPage ? 'bg-[#1a1d1f] text-[#9a9fa5]' : 'text-slate-400 bg-slate-50'}`}>
+        <div className="text-xs font-mono px-2 py-1 rounded-md bg-[#1a1d1f] text-[#9a9fa5]">
           {timeString}
         </div>
-        <button onClick={() => setCurrentPage('notifications')} className={`relative p-2 rounded-lg transition-colors ${isAnalysisPage ? 'hover:bg-white/5 text-[#9a9fa5]' : 'hover:bg-slate-100'}`}>
-          <Bell className={`h-4.5 w-4.5 ${isAnalysisPage ? 'text-[#9a9fa5]' : 'text-slate-600'}`} size={18} />
+        <button onClick={() => setCurrentPage('notifications')} className="relative p-2 rounded-lg transition-colors hover:bg-white/5 text-[#9a9fa5]">
+          <Bell className="h-4.5 w-4.5 text-[#9a9fa5]" size={18} />
           {unreadCount > 0 && (
             <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
               {unreadCount}
