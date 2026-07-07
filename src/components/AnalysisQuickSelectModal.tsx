@@ -62,7 +62,7 @@ const ANALYSIS_TYPES = [
  */
 interface AnalysisCardProps {
     type: (typeof ANALYSIS_TYPES)[number];
-    onClick: (page: Page) => void;
+    onClick: (item: typeof ANALYSIS_TYPES[number]) => void;
 }
 
 /**
@@ -74,8 +74,8 @@ const AnalysisCard = memo<AnalysisCardProps>(({ type, onClick }) => {
     const Icon = type.icon as LucideIcon;
 
     const handleClick = useCallback(() => {
-        onClick(type.page);
-    }, [type.page, onClick]);
+        onClick(type);
+    }, [type, onClick]);
 
     return (
         <button
@@ -180,18 +180,29 @@ interface AnalysisQuickSelectModalProps {
  */
 export const AnalysisQuickSelectModal = memo<AnalysisQuickSelectModalProps>(
     ({ isOpen, onClose }) => {
-        const { setCurrentPage } = useApp();
+        const { setCurrentPage, setAnalysisMode } = useApp();
 
         /**
          * Handler de seleção memoizado com useCallback
          * Mantém referência consistente se dependências não mudarem
          */
         const handleSelect = useCallback(
-            (page: Page) => {
+            (item: typeof ANALYSIS_TYPES[number]) => {
                 onClose(); // Fecha modal
-                setCurrentPage(page); // Navega para página
+                if (item.id === 'comparative') {
+                    setAnalysisMode('compare');
+                    setCurrentPage(item.page);
+                } else if (item.id === 'clinical') {
+                    setAnalysisMode('analysis');
+                    // Injeta uma flag temporária no sessionStorage para sinalizar à página o modo clínico
+                    sessionStorage.setItem('ortobolt_pending_clinical_trigger', 'true');
+                    setCurrentPage(item.page);
+                } else {
+                    setAnalysisMode('analysis');
+                    setCurrentPage(item.page);
+                }
             },
-            [setCurrentPage, onClose]
+            [setCurrentPage, setAnalysisMode, onClose]
         );
 
         // Evita render do portal se modal está fechado
