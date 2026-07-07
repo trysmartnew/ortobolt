@@ -1,0 +1,21 @@
+# OrtoBolt - AI Agent Constraints & Quota Optimization Rules
+
+## 🚨 CRITICAL: RPM/TPM Rate Limit Protection
+To prevent "429 Too Many Requests" and optimize Google AI Studio quota usage, you MUST strictly adhere to the following execution rules:
+
+### 1. Batch Processing & Thought Before Action
+- **No Chain-Tooling:** Never call a tool immediately after another tool without a consolidated plan. Group your file reads and file edits into the fewest steps possible.
+- **Analyze First:** Before reading a file, clearly state *why* you are reading it. If you need to check multiple files, request them sequentially in a single thought block or use specific paths. Do not search the entire directory blindly.
+
+### 2. Smart Compilation & Validation Throttling
+- **Single-Shot Builds:** Do NOT run `npm run build`, `npx tsc`, or test commands recursively after every small line edit. 
+- **The Rule of One:** Apply ALL planned edits to the files first. Only run the validation terminal command (`npx tsc --noEmit && npm run build`) ONCE per task phase, or when explicitly requested by the user.
+
+### 3. Preventing Loop Hallucinations
+- If a compilation error occurs, do not blindly attempt to fix it and re-run the build immediately. 
+- Pause, analyze the error output completely, formulate the definitive fix, apply the fix, and only then re-run the validation.
+- If you fail to fix a bug after 2 attempts, STOP tool execution immediately and ask the user for guidance to avoid burning API quotas.
+
+### 4. Context Preservation (Prompt Caching Optimization)
+- Do not request directory listings (`ls`, `find`) repeatedly. Rely on your existing cached knowledge of the workspace tree.
+- Keep modifications clean and targeted to maintain high prompt cache efficiency.
