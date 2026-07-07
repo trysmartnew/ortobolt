@@ -8,7 +8,7 @@ import { TOUR_STEPS } from '@/components/ProductTour';
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   dashboard:     { title: 'Painel Clínico',          subtitle: 'Visão geral em tempo real' },
   chat:          { title: 'Consultor IA',       subtitle: 'OrthoAI · Gemini 2.5 Flash' },
-  analysis:      { title: 'Análise Visual',     subtitle: 'Gemini Vision · Análise Multimodal' },
+  analysis:      { title: 'Análise Visual',     subtitle: 'Análise Avançada · Sistema de Suporte' },
   gallery:       { title: 'Galeria de Casos',   subtitle: 'Casos clínicos e histórico' },
   reports:       { title: 'Relatórios',         subtitle: 'Exportação e análise de dados' },
   profile:       { title: 'Perfil Profissional', subtitle: 'Dados e certificações' },

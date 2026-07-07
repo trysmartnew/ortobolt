@@ -42,7 +42,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
           {msg.isLoading ? (
             <div className="flex items-center gap-2">
               <Spinner size="sm" />
-              <span className="text-xs text-slate-400">Copiloto analisando...</span>
+              <span className="text-xs text-slate-400">Processando análise...</span>
             </div>
           ) : (
             msg.content
@@ -102,8 +102,8 @@ export default function ClinicalCopilotPanel({
 
   if (!enabled) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-6 text-center text-sm text-slate-500">
-        Conclua a análise visual para ativar o Copiloto Clínico contextual.
+      <div className="rounded-2xl border border-dashed border-white/15 bg-[#0B0F19]/60 p-6 text-center text-sm text-slate-400">
+        Conclua a análise visual para ativar o Assistente Clínico contextual.
       </div>
     );
   }
@@ -111,14 +111,14 @@ export default function ClinicalCopilotPanel({
   return (
     <div
       data-tour="tour-clinical-copilot"
-      className="flex flex-col rounded-2xl border border-slate-200 bg-slate-50/50 overflow-hidden min-h-[480px]"
+      className="flex flex-col rounded-2xl border border-white/10 bg-[#0B0F19]/60 overflow-hidden min-h-[480px]"
     >
-      <div className="px-4 py-3 border-b border-slate-200 bg-white flex items-center justify-between gap-2">
+      <div className="px-4 py-3 border-b border-white/10 bg-[#0B0F19]/60 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Sparkles size={16} className="text-primary" />
           <div>
-            <p className="text-sm font-bold text-slate-900">Copiloto Clínico</p>
-            <p className="text-[10px] text-slate-500 font-mono">
+            <p className="text-sm font-bold text-slate-100">Assistente Clínico</p>
+            <p className="text-[10px] text-slate-400 font-mono">
               Radiografia + contexto + histórico da sessão
             </p>
           </div>
@@ -140,13 +140,13 @@ export default function ClinicalCopilotPanel({
           </Button>
       </div>
 
-      <div className="px-4 py-3 border-b border-slate-100 bg-white grid grid-cols-2 gap-2">
+      <div className="px-4 py-3 border-b border-white/10 bg-[#0B0F19]/60 grid grid-cols-2 gap-2">
         <input
           type="text"
           placeholder="Paciente (opcional)"
           value={clinicalContext.patientName ?? ''}
           onChange={(e) => onContextChange({ patientName: e.target.value })}
-          className="text-xs border border-slate-200 rounded-lg px-2 py-1.5"
+          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5 placeholder:text-slate-500"
         />
         <select
           value={clinicalContext.species ?? ''}
@@ -155,7 +155,7 @@ export default function ClinicalCopilotPanel({
               species: (e.target.value || undefined) as AnimalSpecies | undefined,
             })
           }
-          className="text-xs border border-slate-200 rounded-lg px-2 py-1.5"
+          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5"
         >
           <option value="">Espécie</option>
           {(Object.keys(SPECIES_LABELS) as AnimalSpecies[]).map((s) => (
@@ -169,7 +169,7 @@ export default function ClinicalCopilotPanel({
           placeholder="Raça"
           value={clinicalContext.breed ?? ''}
           onChange={(e) => onContextChange({ breed: e.target.value })}
-          className="text-xs border border-slate-200 rounded-lg px-2 py-1.5"
+          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5"
         />
         <input
           type="number"
@@ -180,7 +180,7 @@ export default function ClinicalCopilotPanel({
               weightKg: e.target.value ? Number(e.target.value) : undefined,
             })
           }
-          className="text-xs border border-slate-200 rounded-lg px-2 py-1.5"
+          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5"
         />
         <select
           value={clinicalContext.procedure ?? ''}
@@ -189,7 +189,7 @@ export default function ClinicalCopilotPanel({
               procedure: (e.target.value || undefined) as ProcedureType | undefined,
             })
           }
-          className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 col-span-2"
+          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5 col-span-2"
         >
           <option value="">Procedimento</option>
           {(Object.keys(PROCEDURE_LABELS) as ProcedureType[]).map((p) => (
@@ -203,12 +203,12 @@ export default function ClinicalCopilotPanel({
           value={clinicalContext.clinicalNotes ?? ''}
           onChange={(e) => onContextChange({ clinicalNotes: e.target.value })}
           rows={2}
-          className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 col-span-2 resize-none"
+          className="text-xs text-slate-200 border border-white/10 bg-[#0B0F19]/60 rounded-lg px-2 py-1.5 col-span-2 resize-none"
         />
       </div>
 
       {error && (
-        <div className="mx-4 mt-3 text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+        <div className="mx-4 mt-3 text-xs text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
           {error}
         </div>
       )}
@@ -227,14 +227,14 @@ export default function ClinicalCopilotPanel({
             type="button"
             disabled={streaming}
             onClick={() => onSend(s)}
-            className="text-[10px] text-primary bg-blue-50 border border-blue-100 px-2 py-1 rounded-full hover:bg-blue-100 disabled:opacity-50"
+            className="text-[10px] text-primary bg-[#0B0F19]/60 border border-white/10 px-2 py-1 rounded-full hover:bg-white/10 disabled:opacity-50"
           >
             {s}
           </button>
         ))}
       </div>
 
-      <div className="p-3 border-t border-slate-200 bg-white">
+      <div className="p-3 border-t border-white/10 bg-[#0B0F19]/60">
         <div className="flex gap-2 items-end">
           <textarea
             value={input}
@@ -248,7 +248,7 @@ export default function ClinicalCopilotPanel({
             placeholder="Pergunte sobre a radiografia..."
             rows={2}
             disabled={streaming}
-            className="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="flex-1 text-sm text-slate-200 bg-[#0B0F19]/60 border border-white/10 rounded-xl px-3 py-2 resize-none placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           <Button size="sm" onClick={handleSend} disabled={!input.trim() || streaming} loading={streaming}>
             <Send size={14} />

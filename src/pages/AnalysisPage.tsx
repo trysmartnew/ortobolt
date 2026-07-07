@@ -352,10 +352,10 @@ export default function AnalysisPage() {
     });
 
   return (
-    <div className="p-6 max-w-6xl space-y-5">
+    <div className="p-4 w-full space-y-4 bg-[#0B0F19] text-white">
       <SectionHeader
         title="Análise de Imagem Ortopédica"
-        subtitle="Análise → Copiloto → Caso completo integrado na plataforma"
+        subtitle="Análise → Assistente → Caso completo integrado"
       />
 
       {/* Segmented Control - Modo de Análise */}
@@ -462,7 +462,7 @@ export default function AnalysisPage() {
                   <div className="space-y-3 text-sm">
                     {[
                       ['1', 'Análise visual'],
-                      ['2', 'Copiloto contextual'],
+                      ['2', 'Suporte Clínico Contextual'],
                       ['3', 'Aprovar → Galeria / Caso / Painel Clínico / PDF'],
                     ].map(([step, label]) => (
                       <div key={step} className="flex gap-2">
@@ -538,7 +538,7 @@ export default function AnalysisPage() {
               </Card>
 
               <div className="lg:col-span-4 flex flex-col gap-4">
-                <Card className="p-5" data-tour="tour-analysis-result">
+                <Card className="p-5 bg-[#001941]/40 backdrop-blur-md border border-white/10 text-white" data-tour="tour-analysis-result">
                   <div className="flex items-center gap-2 mb-4">
                     <CheckCircle className="h-5 w-5 text-success" />
                     <p className="font-bold text-slate-900">
