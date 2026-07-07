@@ -31,7 +31,7 @@ export function createCopilotSession(
         id: 'welcome',
         role: 'assistant',
         content:
-          'Sou o Copiloto Clínico desta sessão. Tenho acesso à radiografia, à análise visual e ao contexto que você informar. Como posso refinar a interpretação?',
+          'Sou o Assistente Clínico desta sessão. Tenho acesso à radiografia, à análise visual e ao contexto que você informar. Como posso refinar a interpretação?',
         timestamp: now,
       },
     ],

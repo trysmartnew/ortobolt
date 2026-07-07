@@ -135,7 +135,7 @@ export default function CopilotClinical({
           <div className="text-center py-6">
             <Bot size={32} className="text-slate-200 mx-auto mb-2" />
             <p className="text-xs text-slate-500">
-              Sou o Copiloto Clínico. Como posso ajudar a refinar esta análise?
+              Sou o Assistente Clínico. Como posso ajudar a refinar esta análise?
             </p>
             <div className="flex flex-wrap gap-1.5 mt-3 justify-center">
               {['Confirme a região anatômica', 'Quais diagnósticos diferenciais?', 'Sugira conduta'].map((s, i) => (

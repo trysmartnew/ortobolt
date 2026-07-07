@@ -356,6 +356,8 @@ export default function AnalysisPage() {
       <SectionHeader
         title="Análise de Imagem Ortopédica"
         subtitle="Análise → Assistente → Caso completo integrado"
+        titleClassName="text-white font-bold text-2xl"
+        subtitleClassName="text-slate-400 text-sm"
       />
 
       {/* Segmented Control - Modo de Análise */}
@@ -538,7 +540,7 @@ export default function AnalysisPage() {
               </Card>
 
               <div className="lg:col-span-4 flex flex-col gap-4">
-                <Card className="p-5 bg-[#001941]/40 backdrop-blur-md border border-white/10 text-white" data-tour="tour-analysis-result">
+                <Card className="p-5 bg-[#001941]/40! backdrop-blur-md border border-white/10! text-white" data-tour="tour-analysis-result">
                   <div className="flex items-center gap-2 mb-4">
                     <CheckCircle className="h-5 w-5 text-success" />
                     <p className="font-bold text-slate-900">
@@ -553,8 +555,8 @@ export default function AnalysisPage() {
                   <div className="prose-sm space-y-1 overflow-y-auto max-h-[400px] pr-1">
                     {renderResult(analysisText)}
                   </div>
-                  <div className="mt-4 pt-4 border-t border-slate-100">
-                    <Button variant="secondary" size="sm" onClick={reset} className="w-full">
+                  <div className="mt-4 pt-4 border-t border-white/10">
+                    <Button variant="secondary" size="sm" onClick={reset} className="w-full bg-transparent! hover:bg-white/5! text-white! border border-white/20! transition-colors">
                       <RefreshCw size={13} /> Nova Análise
                     </Button>
                   </div>

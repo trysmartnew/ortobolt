@@ -85,11 +85,11 @@ export function Spinner({ size = "md" }: { size?: "sm"|"md"|"lg" }) {
 }
 
 // ── Section Header ───────────────────────────────────────────────────────────
-export function SectionHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: React.ReactNode }) {
+export function SectionHeader({ title, subtitle, action, titleClassName = '', subtitleClassName = '' }: { title: string; subtitle?: string; action?: React.ReactNode; titleClassName?: string; subtitleClassName?: string }) {
   return <div className="flex items-start justify-between mb-6">
     <div>
-      <h2 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{title}</h2>
-      {subtitle && <p className="text-sm text-slate-600 mt-0.5 font-medium">{subtitle}</p>}
+      <h2 className={`text-lg font-bold text-slate-900 ${titleClassName}`} style={{ fontFamily: 'Montserrat, sans-serif' }}>{title}</h2>
+      {subtitle && <p className={`text-sm text-slate-600 mt-0.5 font-medium ${subtitleClassName}`}>{subtitle}</p>}
     </div>
     {action}
   </div>;

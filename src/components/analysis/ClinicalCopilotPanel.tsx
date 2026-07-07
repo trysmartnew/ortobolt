@@ -26,7 +26,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
     <div className={`flex gap-2 ${isUser ? 'flex-row-reverse' : ''}`}>
       <div
         className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center ${
-          isUser ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600'
+          isUser ? 'bg-primary text-white' : 'bg-white/10 text-slate-200'
         }`}
       >
         {isUser ? <User size={12} /> : <Bot size={12} />}
@@ -36,7 +36,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
           className={`rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap ${
             isUser
               ? 'bg-primary text-white rounded-tr-sm'
-              : 'bg-white text-slate-800 border border-slate-200 rounded-tl-sm'
+              : 'bg-[#0B0F19]/60 border border-white/10 text-slate-200 rounded-tl-sm'
           }`}
         >
           {msg.isLoading ? (
