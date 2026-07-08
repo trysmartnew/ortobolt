@@ -163,7 +163,7 @@ export default function HomePage() {
 
         {/* Mobile menu dropdown */}
         {menuOpen && (
-          <div className="md:hidden bg-white border-t border-slate-100 px-6 py-4 space-y-3">
+          <div className="md:hidden glass-panel-premium border-t border-slate-100 px-6 py-4 space-y-3">
             {['Funcionalidades', 'Depoimentos', 'Planos'].map(item => (
               <a key={item} href={`#${item.toLowerCase()}`} className="block text-sm font-medium text-slate-700 py-1" onClick={() => setMenuOpen(false)}>
                 {item}
@@ -296,7 +296,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURES ───────────────────────────────────────────────────── */}
-      <section id="funcionalidades" className="py-20 bg-slate-50">
+      <section id="funcionalidades" className="py-20 premium-header-bg bg-slate-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4"
@@ -411,7 +411,7 @@ export default function HomePage() {
 
 
       {/* ── FOOTER ─────────────────────────────────────────────────────── */}
-      <footer className="py-8 bg-white border-t border-slate-100">
+      <footer className="py-8 glass-panel-premium border-t border-slate-100">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">          <p className="text-xs" style={{ color: '#94A3B8' }}>
             © 2025 OrtoBolt · Medicina Veterinária com IA · LGPD Compliant
           </p>
@@ -424,6 +424,8 @@ export default function HomePage() {
     </div>
   );
 }
+
+
 
 
 

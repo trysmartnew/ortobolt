@@ -246,7 +246,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
       aria-labelledby="tour-title"
       aria-describedby="tour-content"
       style={{ ...style, width: TW }}
-      className="bg-white rounded-2xl shadow-2xl border border-slate-200/60 overflow-hidden animate-in fade-in zoom-in-95 duration-300"
+      className="glass-panel-premium rounded-2xl shadow-2xl border border-slate-200/60 overflow-hidden animate-in fade-in zoom-in-95 duration-300"
     >
       <div className="bg-gradient-to-r from-primary to-accent px-5 py-4 flex items-center justify-between">
         <span id="tour-title" className="text-white font-bold text-base">{step.title}</span>
@@ -283,7 +283,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
             <button
               onClick={onPrev}
               aria-label="Passo anterior"
-              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-700 bg-slate-100 hover:premium-header-bg bg-slate-200 transition-colors"
             >
               <ChevronLeft size={14} /> Anterior
             </button>
@@ -499,3 +499,5 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
     </>
   );
 });
+
+

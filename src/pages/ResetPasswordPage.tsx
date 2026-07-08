@@ -66,7 +66,7 @@ export default function ResetPasswordPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4"
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
-        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
+        <div className="glass-panel-premium rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-emerald-50">
             <CheckCircle size={32} className="text-success" />
           </div>
@@ -85,7 +85,7 @@ export default function ResetPasswordPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4"
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
-        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
+        <div className="glass-panel-premium rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 bg-red-50">
             <Shield size={24} className="text-error" />
           </div>
@@ -107,7 +107,7 @@ export default function ResetPasswordPage() {
         <div className="flex justify-center mb-8">
           <OrtoBoltLogo variant="vertical" size="large" />
         </div>
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="glass-panel-premium rounded-2xl shadow-2xl p-8">
           <h2 className="font-bold text-slate-800 text-lg mb-1">Redefinir senha</h2>
           <p className="text-xs text-slate-400 mb-6">Crie uma nova senha segura para sua conta.</p>
           <div className="space-y-4">
@@ -154,3 +154,4 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
+

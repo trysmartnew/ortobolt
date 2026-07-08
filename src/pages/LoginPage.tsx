@@ -98,7 +98,7 @@ export default function LoginPage() {
           <div className="flex justify-center mb-8">
             <OrtoBoltLogo variant="vertical" size="large" />
           </div>
-          <div className="bg-white rounded-2xl shadow-2xl p-8">
+          <div className="glass-panel-premium rounded-2xl shadow-2xl p-8">
             <button onClick={() => { setForgotMode(false); setForgotSent(false); setError(''); }}
               className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 mb-5 transition-colors">
               <ArrowLeft size={13} /> Voltar ao login
@@ -299,6 +299,7 @@ export default function LoginPage() {
     </div>
   );
 }
+
 
 
 

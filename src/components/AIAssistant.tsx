@@ -118,7 +118,7 @@ export default function AIAssistant() {
       )}
 
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+        <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)] glass-panel-premium rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
           <div className="bg-gradient-to-r from-primary to-accent text-white p-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
               <Sparkles size={20} />
@@ -208,3 +208,4 @@ export default function AIAssistant() {
     </>
   );
 }
+

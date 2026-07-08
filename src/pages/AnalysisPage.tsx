@@ -503,7 +503,7 @@ export default function AnalysisPage() {
                   {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 || 
                     aiGeneratedMarkings.angles.length > 0 || 
                     aiGeneratedMarkings.markers.length > 0) && (
-                    <span className="text-[10px] font-mono bg-white/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span className="text-[10px] font-mono glass-panel-premium/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
                       ⚡ {aiGeneratedMarkings.circles.length + aiGeneratedMarkings.angles.length} marcações
                     </span>
                   )}
@@ -549,7 +549,7 @@ export default function AnalysisPage() {
                       {session?.refinedAnalysis ? 'Análise Refinada' : 'Análise Concluída'}
                     </p>
                     {session?.refinedAnalysis && (
-                      <span className="text-[10px] font-mono bg-white/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="text-[10px] font-mono glass-panel-premium/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
                         <Sparkles size={10} /> Assistente Clínico
                       </span>
                     )}
