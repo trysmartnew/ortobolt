@@ -177,10 +177,15 @@ export const AnalysisQuickSelectModal = memo<AnalysisQuickSelectModalProps>(
          * Handler de seleção memoizado com useCallback
          * Mantém referência consistente se dependências não mudarem
          */
-        const handleSelect = useCallback(
+const handleSelect = useCallback(
             (item: typeof ANALYSIS_TYPES[number]) => {
-                onClose(); // Fecha modal
-
+                if (item.id === 'comparative') {
+                    setAnalysisMode('compare');
+                } else {
+                    setAnalysisMode('analysis');
+                }
+                setCurrentPage(item.page);
+                onClose();
             },
             [setCurrentPage, setAnalysisMode, onClose]
         );

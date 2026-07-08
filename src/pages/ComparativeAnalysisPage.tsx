@@ -30,7 +30,7 @@ export default function ComparativeAnalysisPage() {
 
       const caseTitle = buildCaseTitle(
         'Paciente Comparativo',
-        'comparative_study'
+        'other'
       );
 
       const comparativeExam: CaseExam = {
