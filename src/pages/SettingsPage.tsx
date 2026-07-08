@@ -1,4 +1,4 @@
-﻿// src/pages/SettingsPage.tsx
+// src/pages/SettingsPage.tsx
 import React, { useState, useEffect } from 'react';
 import { Bell, Globe, Brain, FileText, Download, Check, Crown } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
@@ -9,7 +9,7 @@ import type { Plan } from '@/types/index';
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <button onClick={() => onChange(!checked)} className={`relative inline-flex w-11 h-6 rounded-full transition-colors ${checked ? 'bg-[var(--color-accent)]' : 'bg-slate-200'}`}>
-      <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
+      <span className={`absolute top-1 left-1 w-4 h-4 glass-panel-premium rounded-full shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
     </button>
   );
 }
@@ -198,3 +198,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

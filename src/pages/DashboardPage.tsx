@@ -168,7 +168,7 @@ export default function DashboardPage() {
                 const diff = typeof m.today === 'number' && typeof m.yesterday === 'number' ? m.today - m.yesterday : 0;
                 const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
                 return (
-                  <div key={i} className="bg-slate-50 rounded-xl p-4 text-center">
+                  <div key={i} className="glass-panel-premium rounded-xl p-4 text-center">
                     <m.icon size={18} className="mx-auto mb-2 text-primary" />
                     <p className="text-[36px] font-bold text-slate-900">{m.today}</p>
                     <p className="text-[10px] text-slate-500">{m.label}</p>
@@ -207,7 +207,7 @@ export default function DashboardPage() {
                 { text: `${cases.filter(c=>c.status==='in_analysis').length} em análise`, icon: '📄' },
                 { text: `${cases.filter(c=>c.status==='critical').length} críticos`, icon: '🚨' },
               ].map((a, i) => (
-                <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-slate-50">
+                <div key={i} className="flex items-center gap-2 p-2 rounded-lg glass-panel-premium">
                   <span className="text-lg">{a.icon}</span>
                   <span className="text-slate-700">{a.text}</span>
                 </div>
@@ -236,6 +236,7 @@ export default function DashboardPage() {
     </div>
   );
 }
+
 
 
 

@@ -162,7 +162,7 @@ const handleView = (patientId: string) => {
         <p className="text-sm text-slate-600">Gerencie seus pacientes e acompanhe o histórico clínico.</p>
       </div>
 
-      <Card className="bg-[var(--color-surface-muted)] border-[var(--color-border)] !text-[var(--color-text-primary)] p-4">
+      <Card className="glass-panel-premium !text-[var(--color-text-primary)] p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)]" size={16} />
@@ -214,7 +214,7 @@ const handleView = (patientId: string) => {
         </div>
       </Card>
 
-      <Card className="bg-[var(--color-surface-muted)] border-[var(--color-border)] !text-[var(--color-text-primary)] overflow-hidden">
+      <Card className="glass-panel-premium !text-[var(--color-text-primary)] overflow-hidden">
         {filtered.length === 0 ? (
           <EmptyState
             icon={<Activity size={48} className="text-slate-300" />}

@@ -406,7 +406,7 @@ export default function AnalysisPage() {
           
           {mode === 'idle' && (
             <>
-              <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 w-fit">
+              <div className="flex items-center gap-2 text-xs text-white/60 glass-panel-premium border border-white/10 rounded-lg px-3 py-2 w-fit">
                 <ShieldCheck className="w-3.5 h-3.5 text-success" />
                 Formatos: JPG, PNG, WEBP · Máx. {MAX_FILE_SIZE_MB}MB · Fluxo integrado com Galeria e Relatórios
               </div>
@@ -416,7 +416,7 @@ export default function AnalysisPage() {
                   data-tour="tour-upload"
                   type="button"
                   onClick={() => fileRef.current?.click()}
-                  className="w-full flex flex-col items-center gap-4 p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-primary hover:bg-blue-50/50 transition-all group"
+                  className="w-full flex flex-col items-center gap-4 p-8 glass-panel-premium border-2 border-dashed border-white/10 rounded-2xl hover:border-primary transition-all group"
                 >
                   <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <Upload className="h-7 w-7 text-primary" />

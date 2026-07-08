@@ -71,12 +71,12 @@ export default function ProfilePage() {
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 mb-1">Nome completo</label>
                   <input value={editName} onChange={e => setEditName(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" />
+                    className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 mb-1">Especialidade</label>
                   <input value={editSpec} onChange={e => setEditSpec(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" />
+                    className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
                 {!editName.trim() && <p className="text-xs text-error font-semibold">Nome não pode estar vazio.</p>}
                 <div className="flex gap-2">
@@ -124,7 +124,7 @@ export default function ProfilePage() {
           <SectionHeader title="Certificações" subtitle={`${certifications.length} certificados`} />
           <div className="space-y-3">
             {certifications.map(cert => (
-              <div key={cert.id} className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
+              <div key={cert.id} className="flex items-start gap-3 p-3 glass-panel-premium rounded-xl">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Award className="h-4 w-4 text-primary" />
                 </div>
@@ -138,7 +138,7 @@ export default function ProfilePage() {
           </div>
 
           {showAddCert ? (
-            <div className="mt-4 p-4 border border-slate-200 rounded-xl space-y-3 bg-slate-50">
+            <div className="mt-4 p-4 border border-white/10 rounded-xl space-y-3 glass-panel-premium">
               <p className="text-xs font-bold text-slate-600">Nova Certificação</p>
               {[
                 { label: 'Título', key: 'title', ph: 'Ex.: Especialização em Ortopedia' },
@@ -147,7 +147,7 @@ export default function ProfilePage() {
               ].map(({ label, key, ph }) => (
                 <div key={key}>
                   <label className="block text-xs font-semibold text-slate-500 mb-1">{label}</label>
-                  <input value={certForm[key as keyof typeof certForm]} onChange={e => setCertForm(f => ({ ...f, [key]: e.target.value }))} placeholder={ph} className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary" />
+                  <input value={certForm[key as keyof typeof certForm]} onChange={e => setCertForm(f => ({ ...f, [key]: e.target.value }))} placeholder={ph} className="w-full border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
               ))}
               <div className="flex gap-2">
@@ -187,4 +187,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
 

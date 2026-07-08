@@ -21,6 +21,7 @@ const PatientDetailPage  = lazy(() => import('@/pages/PatientDetailPage'));
 const HelpPage           = lazy(() => import('@/pages/HelpPage'));
 const EvolutionaryAnalysisPage = lazy(() => import('@/pages/EvolutionaryAnalysisPage'));
 const AlignmentAnalysisPage = lazy(() => import('@/pages/AlignmentAnalysisPage'));
+import AppLayout         from '@/components/AppLayout';
 import Sidebar           from '@/components/Sidebar';
 import TopBar            from '@/components/TopBar';
 import ProductTour       from '@/components/ProductTour';
@@ -144,20 +145,16 @@ function AppInner() {
   const PageComponent = PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011]">
-      <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <TopBar />
-        <main className="flex-1 overflow-y-auto">
-          <Suspense fallback={
-            <div className="flex h-full items-center justify-center">
-              <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-            </div>
-          }>
-            <PageComponent />
-          </Suspense>
-        </main>
-      </div>
+    <>
+      <AppLayout>
+        <Suspense fallback={
+          <div className="flex h-full items-center justify-center">
+            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+          </div>
+        }>
+          <PageComponent />
+        </Suspense>
+      </AppLayout>
       <Suspense fallback={null}>
         <ProductTour
           page={currentPage}
@@ -174,8 +171,7 @@ function AppInner() {
       <Suspense fallback={null}>
         {currentPage !== 'chat' && <AIAssistant />}
       </Suspense>
-
-    </div>
+    </>
   );
 }
 

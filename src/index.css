@@ -9,8 +9,8 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.6;
-  background-color: #F7F9FC;
-  color: #1e293b;
+  background: linear-gradient(180deg, #0a0c0d, #121517);
+  color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -46,7 +46,7 @@ h3 { font-size: 18px; font-weight: 600; }
 
 @theme {
   /* Cores Institucionais */
-  --color-primary: #0A3D8F;
+  --color-primary: #29a399;
   --color-primary-light: #1258B41a;
   --color-navy: #141821;
 
@@ -85,4 +85,26 @@ h3 { font-size: 18px; font-weight: 600; }
   --color-accent: #00B3A6;
   --color-navy-gradient: #002d6b;
   --color-navy-mid: #003d8f;
+}
+
+.premium-header-bg {
+  background: linear-gradient(180deg, #16191b 0%, #0e1011 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.glass-panel-premium {
+  background: rgba(18, 21, 23, 0.6);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.ai-accuracy-badge {
+  background: rgba(41, 163, 153, 0.1);
+  border: 1px solid rgba(41, 163, 153, 0.3);
+  color: #29a399;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
 }
