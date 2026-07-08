@@ -127,7 +127,7 @@ export default function Sidebar() {
                   key={item.page}
                   onClick={() => setCurrentPage(item.page)}
                   className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors ${isActive
-                      ? 'bg-blue-600 text-white border-l-4 border-blue-400'
+                      ? 'bg-[#29a399]/15 text-white border-l-4 border-[#29a399]'
                       : 'text-white/70 hover:bg-white/5 hover:text-white'
                     }`}
                 >
@@ -155,7 +155,7 @@ export default function Sidebar() {
         {user && (
           <div className="mb-3">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold">
+              <div className="w-8 h-8 bg-[#29a399] rounded-full flex items-center justify-center text-sm font-bold">
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
