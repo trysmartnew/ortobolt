@@ -45,16 +45,7 @@ const ANALYSIS_TYPES = [
         hoverColor: 'hover:border-green-400',
         accentColor: '#00A36C',
     },
-    {
-        id: 'clinical',
-        label: 'Clínica',
-        description: 'Correlação com sintomas',
-        page: 'analysis' as const,
-        icon: Activity,
-        color: 'from-orange-500 to-orange-600',
-        hoverColor: 'hover:border-orange-400',
-        accentColor: '#00A36C',
-    },
+    
 ] as const;
 
 /**
@@ -189,18 +180,7 @@ export const AnalysisQuickSelectModal = memo<AnalysisQuickSelectModalProps>(
         const handleSelect = useCallback(
             (item: typeof ANALYSIS_TYPES[number]) => {
                 onClose(); // Fecha modal
-                if (item.id === 'comparative') {
-                    setAnalysisMode('compare');
-                    setCurrentPage(item.page);
-                } else if (item.id === 'clinical') {
-                    setAnalysisMode('analysis');
-                    // Injeta uma flag temporária no sessionStorage para sinalizar à página o modo clínico
-                    sessionStorage.setItem('ortobolt_pending_clinical_trigger', 'true');
-                    setCurrentPage(item.page);
-                } else {
-                    setAnalysisMode('analysis');
-                    setCurrentPage(item.page);
-                }
+
             },
             [setCurrentPage, setAnalysisMode, onClose]
         );

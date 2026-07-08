@@ -83,16 +83,7 @@ export default function AnalysisPage() {
 
   // Intercepta o gatilho clínico do Modal e injeta as notas automaticamente no Copiloto
   useEffect(() => {
-      const hasClinicalTrigger = sessionStorage.getItem('ortobolt_pending_clinical_trigger');
-      
-      if (hasClinicalTrigger === 'true' && session) {
-        sessionStorage.removeItem('ortobolt_pending_clinical_trigger');
-          
-        // Alimenta o painel do Copiloto com o template preditivo clínico
-        updateContext({
-          clinicalNotes: "[Modo Clínico Ativo]: Insira aqui a correlação dos sintomas físicos (ex: Claudicação grau 4, dor à palpação, teste de gaveta positivo) para refinar este laudo."
-        });
-      }
+
     }, [session, updateContext]);
 
 
