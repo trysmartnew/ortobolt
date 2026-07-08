@@ -256,7 +256,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
   };
 
   return (
-    <div className="w-full bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in">
+    <div className="w-full glass-panel-premium rounded-xl border border-white/10 shadow-premium-light overflow-hidden animate-fade-in">
       {/* Topbar Médica Unificada */}
       <div className="bg-slate-900 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800">
         <div className="flex items-center gap-3">
@@ -291,7 +291,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
               onClick={() => setViewMode('side')}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 viewMode === 'side'
-                  ? 'bg-navy text-white shadow-sm'
+                  ? 'bg-navy text-white shadow-premium-light'
                   : 'text-slate-300 hover:text-white'
               }`}
             >
@@ -302,7 +302,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
               onClick={() => setViewMode('slider')}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 viewMode === 'slider'
-                  ? 'bg-navy text-white shadow-sm'
+                  ? 'bg-navy text-white shadow-premium-light'
                   : 'text-slate-300 hover:text-white'
               }`}
             >
@@ -394,15 +394,15 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block">Eixo & Geometria</span>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-menu-muted block">Eixo & Geometria</span>
                 <p className="text-xs text-slate-200 mt-0.5">{aiAnalysisResult.alignment}</p>
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block">Biometria Óssea</span>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-menu-muted block">Biometria Óssea</span>
                 <p className="text-xs text-slate-200 mt-0.5">{aiAnalysisResult.boneDensity}</p>
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block">Sugestão Clínica</span>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-menu-muted block">Sugestão Clínica</span>
                 <p className="text-xs text-emerald-400 mt-0.5 font-medium">{aiAnalysisResult.recommendation}</p>
               </div>
             </div>
@@ -445,7 +445,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                     <Upload className="w-5 h-5 text-slate-400" />
                   </div>
                   <p className="text-xs font-medium text-slate-300">Carregar Imagem Base</p>
-                  <p className="text-[11px] text-slate-500 mt-1">Exame Inicial / Pré-operatório</p>
+                  <p className="text-[11px] text-menu-muted mt-1">Exame Inicial / Pré-operatório</p>
                 </div>
               )}
             </div>
@@ -478,7 +478,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                     <Upload className="w-5 h-5 text-slate-400" />
                   </div>
                   <p className="text-xs font-medium text-slate-300">Carregar Imagem Evolutiva</p>
-                  <p className="text-[11px] text-slate-500 mt-1">Exame Evolutivo / Pós-operatório</p>
+                  <p className="text-[11px] text-menu-muted mt-1">Exame Evolutivo / Pós-operatório</p>
                 </div>
               )}
             </div>
@@ -583,3 +583,5 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
     </div>
   );
 }
+
+

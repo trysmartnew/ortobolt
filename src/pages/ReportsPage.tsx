@@ -438,7 +438,7 @@ export default function ReportsPage() {
     return (
       <div className="p-6 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-        <p className="ml-3 text-sm text-slate-500">Carregando relatórios...</p>
+        <p className="ml-3 text-sm text-menu-muted">Carregando relatórios...</p>
       </div>
     );
   }
@@ -457,12 +457,12 @@ export default function ReportsPage() {
               <Settings size={18} className="text-[var(--color-accent)]" />
               <h3 className="font-bold text-slate-900 text-sm">Report Customization</h3>
             </div>
-            <p className="text-xs text-slate-500">Personalização de Laudos e Relatórios</p>
+            <p className="text-xs text-menu-muted">Personalização de Laudos e Relatórios</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-4">
               <div>
-                <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Nome da Clínica</label>
+                <label className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</label>
                 <input
                   type="text"
                   value={clinicName}
@@ -472,7 +472,7 @@ export default function ReportsPage() {
                 />
               </div>
               <div>
-                <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Subtítulo / Especialidade</label>
+                <label className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</label>
                 <input
                   type="text"
                   value={clinicSubtitle}
@@ -485,7 +485,7 @@ export default function ReportsPage() {
             <div className="flex items-center gap-2">
               {logoPreview ? (
                 <div className="relative">
-                  <img src={logoPreview} alt="Logo" className="w-10 h-10 object-contain rounded border border-[var(--color-border)] bg-white p-1" />
+                  <img src={logoPreview} alt="Logo" className="w-10 h-10 object-contain rounded border border-[var(--color-border)] glass-panel-premium p-1" />
                   <button
                     onClick={handleRemoveLogo}
                     className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-600"
@@ -505,7 +505,7 @@ export default function ReportsPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 md:hidden">
           <div>
-            <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Nome da Clínica</label>
+            <label className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</label>
             <input
               type="text"
               value={clinicName}
@@ -515,7 +515,7 @@ export default function ReportsPage() {
             />
           </div>
           <div>
-            <label className="text-[10px] font-semibold text-slate-500 mb-1 block">Subtítulo / Especialidade</label>
+            <label className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</label>
             <input
               type="text"
               value={clinicSubtitle}
@@ -536,21 +536,21 @@ export default function ReportsPage() {
               <FileText className="text-[var(--color-accent)]" size={18} />
               <div>
                 <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Relatório Mensal</h3>
-                <p className="text-xs text-slate-500">KPIs, evolução e casos do período</p>
+                <p className="text-xs text-menu-muted">KPIs, evolução e casos do período</p>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-3 mb-4">
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
-                <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Métricas de Precisão</p>
+                <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Métricas de Precisão</p>
                 <p className="text-lg font-bold text-slate-900">{precisionMetric.toFixed(1)}%</p>
               </div>
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
-                <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Volume de Casos</p>
+                <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Volume de Casos</p>
                 <p className="text-lg font-bold text-slate-900">{caseVolume}</p>
               </div>
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
-                <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Taxa de Sucesso</p>
+                <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Taxa de Sucesso</p>
                 <p className="text-lg font-bold text-slate-900">{successRate.toFixed(1)}%</p>
               </div>
             </div>
@@ -585,7 +585,7 @@ export default function ReportsPage() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Clinical Reports & Tutor Guides</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco.</p>
+                <p className="text-xs text-menu-muted mt-0.5">Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco.</p>
               </div>
               <Badge variant="info" className="border-0">{availableCasesCount} casos disponíveis</Badge>
             </div>
@@ -596,7 +596,7 @@ export default function ReportsPage() {
                   <FileText className="text-[var(--color-accent)]" size={18} />
                   <h4 className="text-xs font-bold text-slate-900">Selecionar Caso e Gerar Laudo Técnico</h4>
                 </div>
-                <p className="text-[11px] text-slate-500 mb-3">Gera o laudo técnico completo com métricas de IA, landmarks anatômicos e fatores de risco identificados.</p>
+                <p className="text-[11px] text-menu-muted mb-3">Gera o laudo técnico completo com métricas de IA, landmarks anatômicos e fatores de risco identificados.</p>
                 <RequireRole>
                   <Button className="w-full" variant="secondary" onClick={handleOpenTechnicalReport} disabled={!cases || cases.length === 0}>
                     <FileText size={14} /> Selecionar Caso
@@ -609,7 +609,7 @@ export default function ReportsPage() {
                   <User className="text-[var(--color-accent)]" size={18} />
                   <h4 className="text-xs font-bold text-slate-900">Selecionar Caso e Gerar Guia para o Tutor</h4>
                 </div>
-                <p className="text-[11px] text-slate-500 mb-3">Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal com instruções pós-operatórias.</p>
+                <p className="text-[11px] text-menu-muted mb-3">Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal com instruções pós-operatórias.</p>
                 <RequireRole>
                   <Button className="w-full" variant="secondary" onClick={handleOpenTutorGuide} disabled={!cases || cases.length === 0}>
                     <User size={14} /> Selecionar Caso
@@ -633,12 +633,12 @@ export default function ReportsPage() {
           {reports.map(r => (
             <div
               key={r.id}
-              className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50/50 transition-colors"
+              className="flex items-center gap-4 px-5 py-3.5 hover:glass-panel-premium/50 transition-colors"
             >
               <StatusIcon status={r.status} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-slate-900 truncate">{r.title}</p>
-                <div className="flex items-center gap-2 mt-0.5 text-[13px] text-slate-500 font-mono leading-relaxed">
+                <div className="flex items-center gap-2 mt-0.5 text-[13px] text-menu-muted font-mono leading-relaxed">
                   <Clock size={10} />
                   <span>
                     {new Date(r.generatedAt).toLocaleString('pt-BR', {
@@ -684,14 +684,14 @@ export default function ReportsPage() {
       {/* Modal de Seleção de Caso */}
       {isReportModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
+          <div className="glass-panel-premium rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
             <div className="p-5 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-slate-900 text-lg">Selecionar Caso para Laudo</h3>
-                <p className="text-sm text-slate-500">Escolha o caso clínico para gerar o PDF personalizado.</p>
+                <p className="text-sm text-menu-muted">Escolha o caso clínico para gerar o PDF personalizado.</p>
               </div>
               <button onClick={handleCloseModal} className="p-2 hover:bg-slate-100 rounded-full transition">
-                <X size={20} className="text-slate-500" />
+                <X size={20} className="text-menu-muted" />
               </button>
             </div>
 
@@ -703,19 +703,19 @@ export default function ReportsPage() {
                   placeholder="Buscar por nome do paciente ou procedimento..."
                   value={caseSearch}
                   onChange={(e) => setCaseSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-white/10 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
                 />
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setCaseSortBy('date')}
-                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'date' ? 'bg-primary text-white border-primary' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'date' ? 'bg-primary text-white border-primary' : 'glass-panel-premium text-label border-white/10 hover:glass-panel-premium'}`}
                 >
                   <Calendar size={14} /> Mais Recente
                 </button>
                 <button
                   onClick={() => setCaseSortBy('name')}
-                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'name' ? 'bg-primary text-white border-primary' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'name' ? 'bg-primary text-white border-primary' : 'glass-panel-premium text-label border-white/10 hover:glass-panel-premium'}`}
                 >
                   <User size={14} /> Nome (A-Z)
                 </button>
@@ -733,7 +733,7 @@ export default function ReportsPage() {
                       onClick={() => handleCaseSelect(c.id)}
                       className="w-full flex items-center gap-4 p-3 rounded-xl border border-slate-100 hover:border-primary hover:bg-blue-50/50 transition text-left group"
                     >
-                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs overflow-hidden shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-menu-muted font-bold text-xs overflow-hidden shrink-0">
                         {(c as any).patientAvatar ? (
                           <img src={(c as any).patientAvatar} alt="" className="w-full h-full object-cover" />
                         ) : (
@@ -742,7 +742,7 @@ export default function ReportsPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-slate-900 text-sm truncate">{c.patientName}</p>
-                        <p className="text-xs text-slate-500 truncate">{c.procedure || 'Procedimento não especificado'}</p>
+                        <p className="text-xs text-menu-muted truncate">{c.procedure || 'Procedimento não especificado'}</p>
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-xs text-slate-400">{new Date(c.createdAt).toLocaleDateString('pt-BR')}</p>
@@ -763,3 +763,4 @@ export default function ReportsPage() {
     </div>
   );
 }
+

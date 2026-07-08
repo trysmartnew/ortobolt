@@ -23,8 +23,8 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
       {c.imageUrl && <img src={c.imageUrl} alt={c.patientName} className="w-full h-52 object-cover rounded-t-[18px]" />}
       
       {[['Paciente', c.patientName], ['Espécie', SPECIES_LABELS[c.species]], ['Raça', c.breed], ['Idade', `${c.ageYears} anos`], ['Peso', `${c.weightKg} kg`], ['Procedimento', PROCEDURE_LABELS[c.procedure]]].map(([k, v]) => (
-        <div key={k} className="bg-slate-50/70 rounded-xl p-3.5">
-          <span className="text-xs font-semibold text-slate-500">{k}</span>
+        <div key={k} className="glass-panel-premium/70 rounded-xl p-3.5">
+          <span className="text-xs font-semibold text-menu-muted">{k}</span>
           <p className="text-sm font-medium text-slate-900">{v}</p>
         </div>
       ))}
@@ -37,13 +37,13 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
       {c.precisionScore && (
         <div className="mt-3 p-3 bg-blue-50/60 rounded-xl">
           <PrecisionGauge value={c.precisionScore} size={48} />
-          <p className="text-xs text-slate-500 mt-1">precisão IA</p>
+          <p className="text-xs text-menu-muted mt-1">precisão IA</p>
         </div>
       )}
       
       {c.aiAnalysis && (
         <div className="mt-4 space-y-3">
-          <p className="text-xs font-bold text-slate-700">Análise OrthoVision IA</p>
+          <p className="text-xs font-bold text-menu">Análise OrthoVision IA</p>
           {c.aiAnalysis.anatomicalLandmarks.map(l => (
             <div key={l.name} className="flex items-center justify-between text-xs">
               <span className="text-slate-600">{l.name}</span>
@@ -55,10 +55,10 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
           
           {c.aiAnalysis.recommendations.length > 0 && (
             <>
-              <p className="text-xs font-bold text-slate-700 mt-2">Recomendações</p>
+              <p className="text-xs font-bold text-menu mt-2">Recomendações</p>
               <ul className="space-y-1">
                 {c.aiAnalysis.recommendations.map((r, i) => (
-                  <li key={i} className="text-xs text-slate-700 flex gap-2">
+                  <li key={i} className="text-xs text-menu flex gap-2">
                     <span>›</span> {r}
                   </li>
                 ))}
@@ -69,8 +69,8 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
       )}
       
       {c.notes && (
-        <div className="mt-4 p-3 bg-slate-50 rounded-lg">
-          <p className="text-xs font-bold text-slate-700 mb-1">Observações</p>
+        <div className="mt-4 p-3 glass-panel-premium rounded-lg">
+          <p className="text-xs font-bold text-menu mb-1">Observações</p>
           <p className="text-xs text-slate-600">{c.notes}</p>
         </div>
       )}
@@ -99,8 +99,8 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
         if (similarCases.length === 0) return null;
 
         return (
-          <div className="mt-6 pt-4 border-t border-slate-200">
-            <p className="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+          <div className="mt-6 pt-4 border-t border-white/10">
+            <p className="text-xs font-bold text-menu mb-3 flex items-center gap-1.5">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
               Casos Similares Sugeridos
             </p>
@@ -109,7 +109,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
                 <button
                   key={sim.id}
                   onClick={() => { onClose(); setTimeout(() => window.location.hash = `#/case/${sim.id}`, 100); }}
-                  className="text-left bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-primary rounded-xl p-3 transition-all group"
+                  className="text-left glass-panel-premium hover:bg-blue-50 border border-white/10 hover:border-primary rounded-xl p-3 transition-all group"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
@@ -117,7 +117,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-slate-900 truncate">{sim.patientName}</p>
-                      <p className="text-[10px] text-slate-500 truncate">{sim.species === 'canine' ? 'Cão' : sim.species === 'feline' ? 'Gato' : sim.species} · {sim.procedure}</p>
+                      <p className="text-[10px] text-menu-muted truncate">{sim.species === 'canine' ? 'Cão' : sim.species === 'feline' ? 'Gato' : sim.species} · {sim.procedure}</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
@@ -325,7 +325,7 @@ export default function GalleryPage() {
 
       {/* Filters */}
       <div data-tour="tour-gallery-filters" className="flex flex-wrap gap-3 items-center">
-        <div className="flex items-center gap-2 bg-white border border-slate-200/60 rounded-xl px-3.5 py-2.5 shadow-sm flex-1 min-w-48">
+        <div className="flex items-center gap-2 glass-panel-premium border border-white/10/60 rounded-xl px-3.5 py-2.5 shadow-sm flex-1 min-w-48">
           <Search size={14} className="text-slate-400" />
           <input
             value={search}
@@ -347,7 +347,7 @@ export default function GalleryPage() {
               className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition-colors ${
                 statusFilter === f.value
                   ? 'bg-primary text-white'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  : 'glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium'
               }`}
             >
               {f.label}
@@ -357,7 +357,7 @@ export default function GalleryPage() {
                 <select
                   value={filterProcedure}
                   onChange={e => setFilterProcedure(e.target.value as ProcedureType | 'all')}
-                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="all">Todos os Procedimentos</option>
                   {Object.entries(PROCEDURE_LABELS).map(([k, v]) => (
@@ -367,7 +367,7 @@ export default function GalleryPage() {
                 <select
                   value={filterSpecies}
                   onChange={e => setFilterSpecies(e.target.value as AnimalSpecies | 'all')}
-                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="all">Todas as Espécies</option>
                   {Object.entries(SPECIES_LABELS).map(([k, v]) => (
@@ -377,7 +377,7 @@ export default function GalleryPage() {
                 <select
                   value={filterPeriod}
                   onChange={e => setFilterPeriod(e.target.value as 'all' | '7days' | '30days' | '90days')}
-                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="all">Todo o Período</option>
                   <option value="7days">Últimos 7 dias</option>
@@ -410,7 +410,7 @@ export default function GalleryPage() {
       ) : (
         <div data-tour="tour-gallery-grid" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {filtered.map(c => (
-            <Card key={c.id} className="overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group rounded-2xl">
+            <Card key={c.id} className="overflow-hidden hover:shadow-premium-card hover:-translate-y-0.5 transition-all duration-300 group rounded-2xl">
               <div
                 className="relative cursor-pointer"
                 onClick={() => openCase(c)}
@@ -427,7 +427,7 @@ export default function GalleryPage() {
                     <span className="text-slate-400 text-sm">Sem imagem</span>
                   </div>
                 )}
-                {c.avatarUrl && <img src={c.avatarUrl} alt={`${c.patientName} avatar`} className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
+                {c.avatarUrl && <img src={c.avatarUrl} alt={`${c.patientName} avatar`} className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-premium-card" />}
                 
                 {c.status === 'critical' && (
                   <div className="absolute top-2 right-2 flex items-center gap-1 bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold">
@@ -445,7 +445,7 @@ export default function GalleryPage() {
                   <h3 className="text-sm font-bold text-slate-900 leading-tight line-clamp-2">{c.title}</h3>
                   <StatusBadge status={c.status} />
                 </div>
-                <div className="flex items-center gap-3 text-xs text-slate-500 font-mono mb-3">
+                <div className="flex items-center gap-3 text-xs text-menu-muted font-mono mb-3">
                   <span>{c.patientName}</span>
                   <span>·</span>
                   <span>{SPECIES_LABELS[c.species]}</span>
@@ -463,7 +463,7 @@ export default function GalleryPage() {
                 <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
                   <button
                     onClick={() => setSelected(c)}
-                    className="flex-1 text-xs text-slate-500 hover:text-slate-700 py-1.5 rounded-lg hover:bg-slate-50 transition-colors font-medium"
+                    className="flex-1 text-xs text-menu-muted hover:text-menu py-1.5 rounded-lg hover:glass-panel-premium transition-colors font-medium"
                   >
                     Ver detalhes
                   </button>
@@ -529,7 +529,7 @@ export default function GalleryPage() {
                     }}
                     placeholder={placeholder}
                     className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono ${
-                      !form[key] && formErrors.length > 0 ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                      !form[key] && formErrors.length > 0 ? 'border-red-300 bg-red-50' : 'border-white/10'
                     }`}
                   />
             </div>
@@ -540,7 +540,7 @@ export default function GalleryPage() {
               <select
                 value={form.species}
                 onChange={e => setForm(f => ({ ...f, species: e.target.value as AnimalSpecies }))}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {Object.entries(SPECIES_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>{v}</option>
@@ -552,7 +552,7 @@ export default function GalleryPage() {
               <select
                 value={form.procedure}
                 onChange={e => setForm(f => ({ ...f, procedure: e.target.value as ProcedureType }))}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {Object.entries(PROCEDURE_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>{v}</option>
@@ -572,7 +572,7 @@ export default function GalleryPage() {
                   setFormErrors([]);
                 }}
                 placeholder="Ex: 4"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono"
               />
             </div>
             <div>
@@ -588,7 +588,7 @@ export default function GalleryPage() {
                   setFormErrors([]);
                 }}
                 placeholder="Ex: 32.5"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono"
               />
             </div>
           </div>
@@ -599,7 +599,7 @@ export default function GalleryPage() {
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
               placeholder="Notas clínicas, achados, intercorrências..."
               rows={3}
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono resize-none"
+              className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono resize-none"
             />
           </div>
   
@@ -612,7 +612,7 @@ export default function GalleryPage() {
                 const file = e.target.files?.[0] || null;
                 setForm(f => ({ ...f, imageFile: file }));
               }}
-              className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[var(--color-primary)] cursor-pointer"
+              className="w-full text-sm text-menu-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[var(--color-primary)] cursor-pointer"
             />
             {form.imageFile && (
               <p className="text-xs text-green-600 mt-1">Imagem selecionada: {form.imageFile.name}</p>
@@ -627,4 +627,6 @@ export default function GalleryPage() {
     </div>
   );
 }
+
+
 

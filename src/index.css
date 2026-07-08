@@ -108,3 +108,90 @@ h3 { font-size: 18px; font-weight: 600; }
   border-radius: 4px;
   font-family: monospace;
 }
+
+/* === Surface & Background Tokens === */
+.surface-primary {
+  background-color: rgba(18, 21, 23, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.surface-secondary {
+  background-color: #131923;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.surface-card {
+  background-color: rgba(22, 26, 30, 0.45);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* === Typography Utility Classes === */
+.text-heading-primary {
+  font-size: 26px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.text-heading-secondary {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.text-section-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.text-menu {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.text-menu-muted {
+  font-size: 14px;
+  font-weight: 500;
+  color: #7a828a;
+}
+
+.text-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.text-metric {
+  font-size: 11px;
+  font-weight: 700;
+  color: #29a399;
+}
+
+/* === Shadow Premium Tokens === */
+.shadow-premium-glow {
+  box-shadow: 0 0 15px rgba(41, 163, 153, 0.25);
+}
+
+.shadow-premium-card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+}
+
+.shadow-premium-light {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* === Primary Opacity Variants === */
+.primary-10 { color: rgba(41, 163, 153, 0.1); }
+.primary-25 { color: rgba(41, 163, 153, 0.25); }
+.primary-35 { color: rgba(41, 163, 153, 0.35); }
+.primary-60 { color: rgba(41, 163, 153, 0.6); }
+
+.bg-primary-10 { background-color: rgba(41, 163, 153, 0.1); }
+.bg-primary-15 { background-color: rgba(41, 163, 153, 0.15); }
+
+.border-primary-30 { border-color: rgba(41, 163, 153, 0.3); }
+.border-primary-60 { border-color: rgba(41, 163, 153, 0.6); }

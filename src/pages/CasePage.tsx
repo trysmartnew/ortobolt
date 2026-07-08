@@ -204,37 +204,37 @@ const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave, s
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="glass-panel-premium rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Edit3 size={18} /> Editar Caso</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700"><X size={20} /></button>
+          <button onClick={onClose} className="text-slate-400 hover:text-menu"><X size={20} /></button>
         </div>
         <div className="p-6 space-y-5">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Título do Caso</label>
-            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+            <label className="block text-xs font-semibold text-label mb-1">Título do Caso</label>
+            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Nome do Paciente</label>
-            <input value={form.patientName} onChange={e => setForm({ ...form, patientName: e.target.value })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+            <label className="block text-xs font-semibold text-label mb-1">Nome do Paciente</label>
+            <input value={form.patientName} onChange={e => setForm({ ...form, patientName: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Raça</label>
-            <input value={form.breed} onChange={e => setForm({ ...form, breed: e.target.value })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+            <label className="block text-xs font-semibold text-label mb-1">Raça</label>
+            <input value={form.breed} onChange={e => setForm({ ...form, breed: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Idade (anos)</label>
-              <input type="number" value={form.ageYears} onChange={e => setForm({ ...form, ageYears: Number(e.target.value) })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+              <label className="block text-xs font-semibold text-label mb-1">Idade (anos)</label>
+              <input type="number" value={form.ageYears} onChange={e => setForm({ ...form, ageYears: Number(e.target.value) })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Peso (kg)</label>
-              <input type="number" step="0.1" value={form.weightKg} onChange={e => setForm({ ...form, weightKg: Number(e.target.value) })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+              <label className="block text-xs font-semibold text-label mb-1">Peso (kg)</label>
+              <input type="number" step="0.1" value={form.weightKg} onChange={e => setForm({ ...form, weightKg: Number(e.target.value) })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as ClinicalCase['status'] })} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+            <label className="block text-xs font-semibold text-label mb-1">Status</label>
+            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as ClinicalCase['status'] })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
               <option value="pending">Pendente</option>
               <option value="analyzing">Em Análise</option>
               <option value="analyzed">Analisado</option>
@@ -269,13 +269,13 @@ const TutorGuideModal = memo(function TutorGuideModal({ caseData, protocol, onCl
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="glass-panel-premium rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
           <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Printer size={18} /> Orientações para o Tutor</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700"><X size={20} /></button>
+          <button onClick={onClose} className="text-slate-400 hover:text-menu"><X size={20} /></button>
         </div>
         <div className="flex-1 overflow-y-auto p-6">
-          <pre className="text-sm font-mono text-slate-700 whitespace-pre-wrap leading-relaxed bg-slate-50 p-4 rounded-lg border border-slate-200">{guide}</pre>
+          <pre className="text-sm font-mono text-menu whitespace-pre-wrap leading-relaxed premium-header-bg glass-panel-premium p-4 rounded-lg border border-white/10">{guide}</pre>
         </div>
         <div className="p-5 border-t border-slate-100 flex gap-2 flex-shrink-0">
           <Button variant="secondary" onClick={handleCopy} className="flex-1">{copied ? <><Check size={14} /> Copiado!</> : <>Copiar Texto</>}</Button>
@@ -545,7 +545,7 @@ export default function CasePage() {
       {!analysisTool ? (
         <>
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+          <div className="flex items-center gap-2 text-xs font-semibold text-menu-muted">
             <button type="button" onClick={() => { closeCase(); setCurrentPage('gallery'); }} className="hover:text-[var(--color-accent)]">Prontuário</button>
             <span>/</span>
             <span className="text-slate-900">Mesa de Luz Digital</span>
@@ -554,7 +554,7 @@ export default function CasePage() {
           {/* Header do Paciente */}
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
-              <button type="button" onClick={handleBackToPatient} className="px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-slate-700 hover:text-[var(--color-accent)] transition-colors">
+              <button type="button" onClick={handleBackToPatient} className="px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-menu hover:text-[var(--color-accent)] transition-colors">
                 <ArrowLeft size={14} className="inline mr-1" /> Voltar ao Prontuário
               </button>
               <div className="flex items-center gap-3">
@@ -563,11 +563,11 @@ export default function CasePage() {
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-900">{activeCase.patientName}</p>
-                  <p className="text-xs text-slate-500 capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
+                  <p className="text-xs text-menu-muted capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 text-xs text-slate-500">
+            <div className="flex items-center gap-3 text-xs text-menu-muted">
               <span className="flex items-center gap-1"><Ruler size={14} /> {activeCase.ageYears} anos</span>
               <span className="flex items-center gap-1"><Weight size={14} /> {activeCase.weightKg} kg</span>
               <span className="flex items-center gap-1"><Activity size={14} /> {activeCase.status}</span>
@@ -579,26 +579,26 @@ export default function CasePage() {
             <button type="button" onClick={() => handleSelectAnalysis('comparativa')} className="flex flex-col gap-2 p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] transition-colors text-left">
               <GitCompare className="text-[var(--color-accent)]" size={24} />
               <p className="text-sm font-bold text-slate-900">Iniciar Análise Comparativa por IA</p>
-              <p className="text-xs text-slate-500">Comparação visual e métrica de múltiplos exames</p>
+              <p className="text-xs text-menu-muted">Comparação visual e métrica de múltiplos exames</p>
             </button>
             <button type="button" onClick={() => handleSelectAnalysis('evolutiva')} className="flex flex-col gap-2 p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] transition-colors text-left">
               <LineChart className="text-[var(--color-accent)]" size={24} />
               <p className="text-sm font-bold text-slate-900">Iniciar Análise Evolutiva por IA</p>
-              <p className="text-xs text-slate-500">Acompanhamento do progresso e tendências ao longo do tempo</p>
+              <p className="text-xs text-menu-muted">Acompanhamento do progresso e tendências ao longo do tempo</p>
             </button>
             <button type="button" onClick={() => handleSelectAnalysis('alinhamento')} className="flex flex-col gap-2 p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] transition-colors text-left">
               <RulerIcon className="text-[var(--color-accent)]" size={24} />
               <p className="text-sm font-bold text-slate-900">Iniciar Análise de Alinhamento e Medição por IA</p>
-              <p className="text-xs text-slate-500">Medições automáticas e detecção de desvios articulares</p>
+              <p className="text-xs text-menu-muted">Medições automáticas e detecção de desvios articulares</p>
             </button>
           </div>
 
-          <p className="text-xs text-slate-500 text-center">Selecione uma análise para começar ou arraste imagens da galeria (não visível) para o canvas.</p>
+          <p className="text-xs text-menu-muted text-center">Selecione uma análise para começar ou arraste imagens da galeria (não visível) para o canvas.</p>
         </>
       ) : analysisTool === 'comparativa' ? (
         <>
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+          <div className="flex items-center gap-2 text-xs font-semibold text-menu-muted">
             <button type="button" onClick={handleBackToPatient} className="hover:text-[var(--color-accent)]">Mesa de Luz Digital</button>
             <span>/</span>
             <span className="text-slate-900">Análise Comparativa por IA</span>
@@ -607,7 +607,7 @@ export default function CasePage() {
           {/* Header do Paciente */}
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
-              <button type="button" onClick={handleBackToPatient} className="px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-slate-700 hover:text-[var(--color-accent)] transition-colors">
+              <button type="button" onClick={handleBackToPatient} className="px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-menu hover:text-[var(--color-accent)] transition-colors">
                 <ArrowLeft size={14} className="inline mr-1" /> Voltar ao Prontuário
               </button>
               <div className="flex items-center gap-3">
@@ -616,11 +616,11 @@ export default function CasePage() {
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-900">{activeCase.patientName}</p>
-                  <p className="text-xs text-slate-500 capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
+                  <p className="text-xs text-menu-muted capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 text-xs text-slate-500">
+            <div className="flex items-center gap-3 text-xs text-menu-muted">
               <span className="flex items-center gap-1"><Ruler size={14} /> {activeCase.ageYears} anos</span>
               <span className="flex items-center gap-1"><Weight size={14} /> {activeCase.weightKg} kg</span>
               <span className="flex items-center gap-1"><Activity size={14} /> {activeCase.status}</span>
@@ -632,7 +632,7 @@ export default function CasePage() {
             <div className="lg:col-span-5">
               <Card className="p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Painel A</h3>
+                  <h3 className="text-xs font-bold text-menu uppercase tracking-wider">Painel A</h3>
                   <div className="flex items-center gap-1">
                     <span className="text-[10px] font-mono bg-[var(--color-accent)] text-white px-2 py-0.5 rounded-full">{selectedDropTarget === 'left' ? 'DROP A' : 'A'}</span>
                     <Button variant="secondary" size="sm" onClick={() => setComparisonImages(prev => ({ ...prev, left: null }))}>Limpar</Button>
@@ -650,7 +650,7 @@ export default function CasePage() {
                   {comparisonImages.left ? (
                     <img src={comparisonImages.left} alt="Painel A" className="w-full h-full object-contain" />
                   ) : (
-                    <p className="text-xs text-slate-500">Arraste uma imagem para este painel</p>
+                    <p className="text-xs text-menu-muted">Arraste uma imagem para este painel</p>
                   )}
                 </div>
               </Card>
@@ -658,37 +658,37 @@ export default function CasePage() {
 
             <div className="lg:col-span-2 flex items-center justify-center">
               <Card className="p-4 w-full">
-                <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 text-center">Controle</h3>
+                <h3 className="text-xs font-bold text-menu uppercase tracking-wider mb-3 text-center">Controle</h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-semibold text-slate-500 uppercase">Controle de comparação</span>
+                    <span className="text-[10px] font-semibold text-menu-muted uppercase">Controle de comparação</span>
                     <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">ON</span>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-semibold text-slate-500 uppercase">Densidad de bone mudange</p>
-                    <p className="text-xs font-mono text-slate-700">
+                    <p className="text-[10px] font-semibold text-menu-muted uppercase">Densidad de bone mudange</p>
+                    <p className="text-xs font-mono text-menu">
                       {comparisonMetrics ? `${comparisonMetrics.boneDensityChangePct?.toFixed(1)}% / ${comparisonMetrics.boneDensityChangeMm?.toFixed(1)} mm` : '-3.6% / -5.5 mm'}
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-semibold text-slate-500 uppercase">Mudança de espaço de joints</p>
-                    <p className="text-xs font-mono text-slate-700">
+                    <p className="text-[10px] font-semibold text-menu-muted uppercase">Mudança de espaço de joints</p>
+                    <p className="text-xs font-mono text-menu">
                       {comparisonMetrics ? `${comparisonMetrics.jointSpaceChangePct?.toFixed(1)}% / ${comparisonMetrics.jointSpaceChangeMm?.toFixed(1)} mm` : '3.8% / -3.5 mm'}
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] font-semibold text-slate-500 uppercase">Opacidade</span>
+                    <span className="text-[10px] font-semibold text-menu-muted uppercase">Opacidade</span>
                     <input
                       type="range"
                       min="0"
                       max="100"
                       defaultValue="50"
                       onChange={(e) => {}}
-                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[var(--color-accent)]"
+                      className="w-full h-2 premium-header-bg bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[var(--color-accent)]"
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-semibold text-slate-500 uppercase">Parâmetros de IA</span>
+                    <span className="text-[10px] font-semibold text-menu-muted uppercase">Parâmetros de IA</span>
                     <span className="text-[10px] font-mono bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">AUTO</span>
                   </div>
                   <Button variant="primary" size="sm" className="w-full" onClick={handleStartComparativeAnalysis} disabled={analysisLoading}>
@@ -701,9 +701,9 @@ export default function CasePage() {
             <div className="lg:col-span-5">
               <Card className="p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Painel B</h3>
+                  <h3 className="text-xs font-bold text-menu uppercase tracking-wider">Painel B</h3>
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full">{selectedDropTarget === 'right' && isDragging ? 'DROP B' : 'B'}</span>
+                    <span className="text-[10px] font-mono premium-header-bg bg-slate-100 text-menu px-2 py-0.5 rounded-full">{selectedDropTarget === 'right' && isDragging ? 'DROP B' : 'B'}</span>
                     <Button variant="secondary" size="sm" onClick={() => setComparisonImages(prev => ({ ...prev, right: null }))}>Limpar</Button>
                   </div>
                 </div>
@@ -719,7 +719,7 @@ export default function CasePage() {
                   {comparisonImages.right ? (
                     <img src={comparisonImages.right} alt="Painel B" className="w-full h-full object-contain" />
                   ) : (
-                    <p className="text-xs text-slate-500">Arraste uma imagem para este painel</p>
+                    <p className="text-xs text-menu-muted">Arraste uma imagem para este painel</p>
                   )}
                 </div>
               </Card>
@@ -728,7 +728,7 @@ export default function CasePage() {
 
           {/* Galeria de Thumbnails */}
           <Card className="p-4">
-            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Selecionar Exames para Comparação</h3>
+            <h3 className="text-xs font-bold text-menu uppercase tracking-wider mb-3">Selecionar Exames para Comparação</h3>
             <div className="flex gap-3 overflow-x-auto pb-2">
               {availableImages.map((img) => (
                 <div
@@ -754,21 +754,21 @@ export default function CasePage() {
                 </div>
               ))}
             </div>
-            <p className="text-[10px] text-slate-500 mt-2">Clique para alternar entre Painel A e B ou arraste para o painel desejado.</p>
+            <p className="text-[10px] text-menu-muted mt-2">Clique para alternar entre Painel A e B ou arraste para o painel desejado.</p>
           </Card>
 
           {analysisLoading && (
             <div className="flex items-center justify-center gap-2 p-4">
               <div className="w-5 h-5 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
-              <p className="text-xs font-semibold text-slate-700">Executando análise comparativa...</p>
+              <p className="text-xs font-semibold text-menu">Executando análise comparativa...</p>
             </div>
           )}
 
-          <p className="text-xs text-slate-500 text-center">Selecione e arraste mais exames para comparar ou ajuste os parâmetros de IA.</p>
+          <p className="text-xs text-menu-muted text-center">Selecione e arraste mais exames para comparar ou ajuste os parâmetros de IA.</p>
         </>
       ) : (
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <button type="button" onClick={handleBackToPatient} className="flex items-center gap-2 text-sm text-slate-600 hover:text-[var(--color-accent)] font-semibold transition-colors">
+          <button type="button" onClick={handleBackToPatient} className="flex items-center gap-2 text-sm text-label hover:text-[var(--color-accent)] font-semibold transition-colors">
             <ArrowLeft size={16} /> Voltar às Ferramentas
           </button>
           <div className="flex gap-2">
@@ -787,7 +787,7 @@ export default function CasePage() {
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-extrabold text-slate-900 mb-1">{activeCase.title}</h1>
-            <p className="text-sm text-slate-500 font-mono">
+            <p className="text-sm text-menu-muted font-mono">
               Criado em {formatDate(activeCase.createdAt)} · Atualizado em {formatDate(activeCase.updatedAt)}
             </p>
           </div>
@@ -812,10 +812,10 @@ export default function CasePage() {
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2"><Activity size={16} /> Imagem Radiográfica</h2>
               <div className="flex items-center gap-2">
-                <button onClick={() => setZoom(z => Math.max(50, z - 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-bold">−</button>
-                <span className="text-xs font-mono text-slate-500 w-10 text-center">{zoom}%</span>
-                <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-bold">+</button>
-                <button onClick={() => setZoom(100)} className="text-xs text-slate-500 hover:text-primary px-2">Reset</button>
+                <button onClick={() => setZoom(z => Math.max(50, z - 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:premium-header-bg bg-slate-200 text-sm font-bold">−</button>
+                <span className="text-xs font-mono text-menu-muted w-10 text-center">{zoom}%</span>
+                <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:premium-header-bg bg-slate-200 text-sm font-bold">+</button>
+                <button onClick={() => setZoom(100)} className="text-xs text-menu-muted hover:text-primary px-2">Reset</button>
                   <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
                     {uploading ? <span className="animate-spin inline-block h-3 w-3 border border-current border-t-transparent rounded-full" /> : <Upload size={14} />}
                     {uploading ? 'Enviando...' : 'Upload'}
@@ -828,14 +828,14 @@ export default function CasePage() {
                 <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
               </div>
             </div>
-            <div className="bg-slate-900 p-6 flex items-center justify-center min-h-[400px] overflow-auto relative">`n              {activeCase.avatarUrl && <img src={activeCase.avatarUrl} alt="Avatar do paciente" className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
+            <div className="premium-header-bg bg-slate-900 p-6 flex items-center justify-center min-h-[400px] overflow-auto relative">`n              {activeCase.avatarUrl && <img src={activeCase.avatarUrl} alt="Avatar do paciente" className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
               {activeCase.imageUrl ? (
                 <div className="relative inline-block" style={{ width: `${zoom}%`, maxWidth: '100%', transition: 'width .2s' }}>
                   <img src={activeCase.imageUrl} alt={activeCase.patientName} className="w-full h-auto rounded-xl shadow-2xl object-contain block" />
                   {activeCase.aiAnalysis && activeCase.aiAnalysis.anatomicalLandmarks.filter(l => l.detected && l.coordinates).map((l, i) => (
                     <div key={i} className="absolute z-20" style={{ top: `${l.coordinates?.y ?? 0}%`, left: `${l.coordinates?.x ?? 0}%`, transform: 'translate(-50%, -50%)' }}>
                       <div className="w-3 h-3 bg-emerald-400 rounded-full border-2 border-white shadow-lg ring-2 ring-emerald-400/50"></div>
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/80 text-white text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap font-bold shadow-md">{l.name}</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/80 text-white text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap font-bold shadow-premium-card">{l.name}</span>
                     </div>
                   ))}
                   {activeCase.precisionScore !== undefined && (
@@ -846,7 +846,7 @@ export default function CasePage() {
                   )}
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-2 text-slate-500">
+                <div className="flex flex-col items-center gap-2 text-menu-muted">
                   <Upload size={32} />
                   <EmptyState icon={<Upload size={32} />} title="Sem Radiografias" description="Nenhuma radiografia" />
                 </div>
@@ -903,7 +903,7 @@ export default function CasePage() {
             </div>
             {activeCase.precisionScore !== undefined && (
               <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-xs text-slate-500">Score de Precisão IA</span>
+                <span className="text-xs text-menu-muted">Score de Precisão IA</span>
                 <span className="text-lg font-extrabold text-primary font-mono">{activeCase.precisionScore}%</span>
               </div>
             )}
@@ -914,13 +914,13 @@ export default function CasePage() {
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-3">
                 <Activity size={16} /> Análise IA Integrada
               </h2>
-              <p className="text-xs text-slate-500 mb-3 font-mono">
+              <p className="text-xs text-menu-muted mb-3 font-mono">
                 Confiança {(activeCase.aiAnalysis.confidence * 100).toFixed(0)}% ·{' '}
                 {activeCase.aiAnalysis.recommendations.length} recomendações
               </p>
               <ul className="space-y-1 mb-3">
                 {activeCase.aiAnalysis.recommendations.slice(0, 5).map((r, i) => (
-                  <li key={i} className="text-xs text-slate-700 flex gap-2">
+                  <li key={i} className="text-xs text-menu flex gap-2">
                     <span className="text-primary">›</span> {r}
                   </li>
                 ))}
@@ -929,7 +929,7 @@ export default function CasePage() {
                 <div className="border-t border-slate-100 pt-3 space-y-1">
                   {activeCase.aiAnalysis.anatomicalLandmarks.map((l) => (
                     <div key={l.name} className="flex justify-between text-xs">
-                      <span className="text-slate-600">{l.name}</span>
+                      <span className="text-label">{l.name}</span>
                       <span className="font-mono text-emerald-600">
                         {l.detected ? `${(l.confidence * 100).toFixed(0)}%` : '—'}
                       </span>
@@ -957,8 +957,8 @@ export default function CasePage() {
                 const done = completedSteps.includes(step.text);
                 const icon = { medicacao: '💊', restricao: '🛌', retorno: '📅', cuidado: '🩹' }[step.category];
                 return (
-                  <button key={i} onClick={() => toggleStep(step.text)} className={`w-full text-left p-3 rounded-lg border transition-all flex items-start gap-3 ${done ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-100 hover:border-primary/30 hover:bg-blue-50/30'}`}>
-                    <div className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 ${done ? 'bg-emerald-500 text-white' : 'border-2 border-slate-300'}`}>
+                  <button key={i} onClick={() => toggleStep(step.text)} className={`w-full text-left p-3 rounded-lg border transition-all flex items-start gap-3 ${done ? 'bg-emerald-50 border-emerald-200' : 'glass-panel-premium border-slate-100 hover:border-primary/30 hover:bg-blue-50/30'}`}>
+                    <div className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 ${done ? 'bg-emerald-500 text-white' : 'border-2 border-white/15'}`}>
                       {done && <Check size={12} />}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -970,7 +970,7 @@ export default function CasePage() {
                           </span>
                         )}
                       </p>
-                      <p className="text-[10px] text-slate-500 mt-0.5">
+                      <p className="text-[10px] text-menu-muted mt-0.5">
                         {step.frequency ? `${step.frequency} por ${step.days} dias` : `${step.days} dias`}
                       </p>
                     </div>
@@ -999,6 +999,9 @@ export default function CasePage() {
     </div>
   );
 }
+
+
+
 
 
 
