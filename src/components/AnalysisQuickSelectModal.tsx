@@ -29,7 +29,7 @@ const ANALYSIS_TYPES = [
         id: 'comparative',
         label: 'Comparativa',
         description: 'Comparação lado-a-lado',
-        page: 'analysis' as const,
+        page: 'comparative' as const,
         icon: GitCompare,
         color: 'from-purple-500 to-purple-600',
         hoverColor: 'hover:border-purple-400',

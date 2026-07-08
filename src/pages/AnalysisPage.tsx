@@ -14,9 +14,7 @@ import ApproveCompleteCaseBar from '@/components/analysis/ApproveCompleteCaseBar
 import AiMarkingsOverlay from '@/components/analysis/AiMarkingsOverlay';
 import { lazy, Suspense } from 'react';
 // Code-split: html2canvas (~202 kB) + jspdf (~391 kB) so na Mesa de Luz
-const PrePostComparison = lazy(
-  () => import('@/components/analysis/PrePostComparison')
-);
+// PrePostComparison removed - feature disabled
 import { useMarkings } from '@/hooks/useMarkings';
 import type { MarkingTool, MarkingsData } from '@/types/markings';
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
@@ -360,28 +358,14 @@ export default function AnalysisPage() {
         subtitleClassName="text-slate-400 text-sm"
       />
 
-      {/* Segmented Control - Modo de Análise */}
+{/* Segmented Control - Modo de Análise */}
       <div className="flex items-center justify-center mb-6">
         <div className="inline-flex items-center bg-[#1a1d1f] rounded-[20px] p-1">
           <button
             onClick={() => setAnalysisMode('analysis')}
-            className={`px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
-              analysisMode === 'analysis'
-                ? 'text-white bg-gradient-to-b from-[#2a2e32] to-[#1a1d1f] border-b border-white/20'
-                : 'text-[#9a9fa5] bg-transparent'
-            }`}
+            className="px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider text-white bg-gradient-to-b from-[#2a2e32] to-[#1a1d1f] border-b border-white/20"
           >
             Análise do Exame
-          </button>
-          <button
-            onClick={() => setAnalysisMode('compare')}
-            className={`px-5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
-              analysisMode === 'compare'
-                ? 'text-white bg-gradient-to-b from-[#2a2e32] to-[#1a1d1f] border-b border-white/20'
-                : 'text-[#9a9fa5] bg-transparent'
-            }`}
-          >
-            Estudo Comparativo
           </button>
         </div>
       </div>
@@ -630,16 +614,6 @@ export default function AnalysisPage() {
             </div>
           )}
         </>
-      )}
-
-      {analysisMode === 'compare' && (
-        <Suspense fallback={
-          <div className="flex items-center justify-center p-12">
-            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-          </div>
-        }>
-          <PrePostComparison onSaveCase={handleSaveComparisonCase} />
-        </Suspense>
       )}
     </div>
   );

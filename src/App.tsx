@@ -21,6 +21,7 @@ const PatientDetailPage  = lazy(() => import('@/pages/PatientDetailPage'));
 const HelpPage           = lazy(() => import('@/pages/HelpPage'));
 const EvolutionaryAnalysisPage = lazy(() => import('@/pages/EvolutionaryAnalysisPage'));
 const AlignmentAnalysisPage = lazy(() => import('@/pages/AlignmentAnalysisPage'));
+const ComparativeAnalysisPage = lazy(() => import('@/pages/ComparativeAnalysisPage'));
 import AppLayout         from '@/components/AppLayout';
 import Sidebar           from '@/components/Sidebar';
 import TopBar            from '@/components/TopBar';
@@ -46,6 +47,7 @@ const PAGE_MAP = {
     patientDetail:  PatientDetailPage,
     evolutionaryAnalysis: EvolutionaryAnalysisPage,
     alignmentAnalysis: AlignmentAnalysisPage,
+    comparative: ComparativeAnalysisPage,
   } as const;
 
 function AppInner() {
@@ -62,7 +64,7 @@ function AppInner() {
     toasts, removeToast,
   } = useApp();
 
-  const isAnalysisPage = currentPage === 'analysis' || currentPage === 'evolutionaryAnalysis' || currentPage === 'alignmentAnalysis';
+  const isAnalysisPage = currentPage === 'analysis' || currentPage === 'evolutionaryAnalysis' || currentPage === 'alignmentAnalysis' || currentPage === 'comparative';
 
   const logoutRef     = useRef(logout);
   const setSessionRef = useRef(setUserFromSession);

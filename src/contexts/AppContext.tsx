@@ -44,7 +44,7 @@ import { setAiConsentFromProfile } from '@/services/aiConsent';
 export type Page =
   | 'dashboard' | 'chat' | 'analysis' | 'gallery'
   | 'case' | 'profile' | 'reports' | 'settings' | 'notifications'
-  | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'help';
+  | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'comparative' | 'help';
 
 export type AppView = 'home' | 'login' | 'register' | 'app' | 'reset';
 
@@ -600,7 +600,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   useEffect(() => {
-    if (currentPage !== 'analysis') {
+    if (currentPage !== 'analysis' && currentPage !== 'comparative') {
       setAnalysisMode('analysis');
     }
   }, [currentPage]);
