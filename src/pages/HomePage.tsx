@@ -56,7 +56,7 @@ const TESTIMONIALS = [
   {
     name: 'Dr. Marcus Andrade',
     role: 'Cirurgião Ortopédico · CRMV-SP 18.432',
-    text: 'O OrtoBolt centralizou toda a minha gestão de casos. Antes perdia informações em anotações soltas. Hoje acompanho a evolução de cada paciente do diagnóstico à alta em um só lugar.',
+    text: 'O Vanguard Veterinary centralizou toda a minha gestão de casos. Antes perdia informações em anotações soltas. Hoje acompanho a evolução de cada paciente do diagnóstico à alta em um só lugar.',
     rating: 5,
     avatar: 'MA',
     color: 'var(--color-primary)',
@@ -307,7 +307,7 @@ export default function HomePage() {
               Tudo que você precisa em uma plataforma
             </h2>
             <p className="text-base max-w-xl mx-auto" style={{ color: '#64748B' }}>
-              Do diagnóstico ao laudo final — o OrtoBolt acompanha cada etapa do seu trabalho clínico.
+              Do diagnóstico ao laudo final — o Vanguard Veterinary acompanha cada etapa do seu trabalho clínico.
             </p>
           </div>
 
@@ -413,7 +413,7 @@ export default function HomePage() {
       {/* ── FOOTER ─────────────────────────────────────────────────────── */}
       <footer className="py-8 glass-panel-premium border-t border-slate-100">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">          <p className="text-xs" style={{ color: '#94A3B8' }}>
-            © 2025 OrtoBolt · Medicina Veterinária com IA · LGPD Compliant
+            © 2025 Vanguard Veterinary · Medicina Veterinária com IA · LGPD Compliant
           </p>
           <div className="flex items-center gap-2 text-xs" style={{ color: '#94A3B8' }}>
             <Shield size={12} className="text-success" />
