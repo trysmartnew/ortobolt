@@ -200,7 +200,7 @@ export default function RegisterPage() {
             Crie sua conta e tenha acesso completo às ferramentas de ortopedia veterinária com IA.
           </p>
         </div>
-        <p className="text-white/30 text-xs">© 2025 OrtoBolt · LGPD Compliant</p>
+        <p className="text-white/30 text-xs">© 2025 Vanguard Veterinary · LGPD Compliant</p>
       </div>
 
       {/* Painel direito */}

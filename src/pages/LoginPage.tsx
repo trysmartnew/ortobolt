@@ -156,7 +156,7 @@ export default function LoginPage() {
             <span style={{ color: 'var(--color-accent)' }}>inteligência artificial</span>
           </h2>
           <p className="text-white/60 text-sm leading-relaxed mb-8">
-            Mais de 180 veterinários confiam no OrtoBolt para análise de imagens, protocolos ortopédicos e clínicos.
+            Mais de 180 veterinários confiam no Vanguard Veterinary para análise de imagens, protocolos ortopédicos e clínicos.
           </p>
           <div className="space-y-3">
             {['Análise de radiografias em menos de 60s','Protocolos ortopédicos com IA','Laudos PDF automáticos','Checklist pós-operatório'].map(item => (
@@ -169,7 +169,7 @@ export default function LoginPage() {
             ))}
           </div>
         </div>
-        <p className="text-white/30 text-xs">© 2025 OrtoBolt · LGPD Compliant</p>
+        <p className="text-white/30 text-xs">© 2025 Vanguard Veterinary · LGPD Compliant</p>
       </div>
 
       {/* Painel direito — formulário */}
