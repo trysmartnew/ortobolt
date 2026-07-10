@@ -67,7 +67,7 @@ export default function OrthoDeepAnalysis({ analysis, casoClinico, onClose }: Pr
             <button onClick={() => handleFeedback('rejeitado')} className="text-red-600 hover:scale-110"><ThumbsDown /></button>
           </div>
         ) : (
-          <div className="mt-4 text-green-600 text-sm font-semibold">✅ Feedback salvo. O OrtoBolt está aprendendo.</div>
+          <div className="mt-4 text-green-600 text-sm font-semibold">✅ Feedback salvo. O Vanguard Veterinary está aprendendo.</div>
         )}
       </div>
     </div>

@@ -12,7 +12,7 @@ export interface TourStep {
 
 export const TOUR_STEPS: Record<string, TourStep[]> = {
   dashboard: [
-    { target: '__welcome__', title: '👋 Bem-vindo ao OrtoBolt', content: 'Este guia rápido mostra como usar a plataforma no seu dia a dia clínico. Leva menos de 1 minuto.', placement: 'center' },
+    { target: '__welcome__', title: '👋 Bem-vindo ao Vanguard Veterinary', content: 'Este guia rápido mostra como usar a plataforma no seu dia a dia clínico. Leva menos de 1 minuto.', placement: 'center' },
     { target: 'tour-dashboard-hero', title: '☀️ Resumo do Dia', content: 'Acompanhe aqui suas cirurgias agendadas e os casos críticos pendentes de hoje.', placement: 'bottom', highlight: true },
     { target: 'tour-dashboard-surgeries', title: '🏥 Cirurgias de Hoje', content: 'Lista de procedimentos do dia. Clique em qualquer cirurgia para abrir o caso e o protocolo.', placement: 'bottom', highlight: true },
     { target: 'tour-dashboard-triage', title: '⚡ Fila de Triagem', content: 'Casos ordenados por prioridade clínica. Críticos no topo. Clique para iniciar o atendimento.', placement: 'left', highlight: true },

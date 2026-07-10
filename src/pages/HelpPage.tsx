@@ -96,7 +96,7 @@ export default function HelpPage() {
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold text-[var(--color-text-primary)]">Equipe OrtoBolt</p>
+            <p className="text-sm font-semibold text-[var(--color-text-primary)]">Equipe Vanguard Veterinary</p>
             <p className="text-xs text-[var(--color-text-secondary)] mt-1">Suporte especializado em ortopedia veterinária e análise de imagem.</p>
             <p className="text-xs text-[var(--color-text-secondary)] mt-2 font-mono">suporte@ortobolt.com.br</p>
           </div>
@@ -108,7 +108,7 @@ export default function HelpPage() {
       </Card>
 
       <p className="text-[10px] text-slate-400 font-mono text-center">
-        OrtoBolt v1.0.0 · © 2026 OrtoBolt LTDA · CRMV-SP Certificado
+        Vanguard Veterinary v1.0.0 · © 2026 Vanguard Veterinary LTDA · CRMV-SP Certificado
       </p>
     </div>
   );
