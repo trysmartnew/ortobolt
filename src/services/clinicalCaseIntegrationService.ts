@@ -157,7 +157,7 @@ export function formatIntegratedNotes(
   analysisText: string,
   copilotMessages?: ChatMessage[]
 ): string {
-  const parts = [`--- Análise IA (OrtoBolt) ---\n${analysisText.trim()}`];
+  const parts = [`--- Análise IA (Vanguard Veterinary) ---\n${analysisText.trim()}`];
   const chat = (copilotMessages ?? [])
     .filter((m) => m.id !== 'welcome' && !m.isLoading && m.content.trim())
     .slice(-8)

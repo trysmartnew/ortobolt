@@ -45,7 +45,7 @@ function addHeader(
   title: string,
   subtitle: string
 ) {
-  const clinicName = localStorage.getItem('ortobolt_pdf_clinic_name') || 'OrtoBolt';
+  const clinicName = localStorage.getItem('ortobolt_pdf_clinic_name') || 'Vanguard Veterinary';
   const clinicSubtitle = localStorage.getItem('ortobolt_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente';
   const logoData = localStorage.getItem('ortobolt_pdf_logo');
 
@@ -90,7 +90,7 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.setFont('helvetica', 'normal');
-    const clinicNameF = localStorage.getItem('ortobolt_pdf_clinic_name') || 'OrtoBolt';
+    const clinicNameF = localStorage.getItem('ortobolt_pdf_clinic_name') || 'Vanguard Veterinary';
     doc.text(safe(clinicNameF) + ' — Plataforma de Ortopedia Veterinária com IA', 14, 290);
     doc.text(`Página ${i} de ${pageCount}`, 185, 290, { align: 'right' });
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 290, { align: 'center' });
