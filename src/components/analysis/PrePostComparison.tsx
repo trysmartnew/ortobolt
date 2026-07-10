@@ -112,7 +112,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
 
       // Extrair métricas quantitativas se disponíveis
       if (result.metrics) {
-        console.log('[OrtoBolt] Métricas quantitativas recebidas:', result.metrics);
+        console.log('[Vanguard Veterinary] Métricas quantitativas recebidas:', result.metrics);
       }
 
       setAiAnalysisResult({
@@ -150,7 +150,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
       doc.text('Relatório de Comparação Ortopédica', pageWidth / 2, 12, { align: 'center' });
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
-      doc.text('OrtoBolt — Plataforma de Ortopedia Veterinária Inteligente', pageWidth / 2, 20, { align: 'center' });
+      doc.text('Vanguard Veterinary — Plataforma de Ortopedia Veterinária Inteligente', pageWidth / 2, 20, { align: 'center' });
 
       yPos = 40;
       doc.setTextColor(0, 0, 0);
@@ -214,7 +214,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
       doc.setFontSize(8);
       doc.setTextColor(128, 128, 128);
       doc.setFont('helvetica', 'italic');
-      doc.text('Gerado por OrtoBolt — Este documento é auxiliar à decisão clínica e não substitui avaliação profissional.', pageWidth / 2, pageHeight - 10, { align: 'center' });
+      doc.text('Gerado por Vanguard Veterinary — Este documento é auxiliar à decisão clínica e não substitui avaliação profissional.', pageWidth / 2, pageHeight - 10, { align: 'center' });
 
       const filename = `comparacao-ortopedica-${now.getTime()}.pdf`;
       doc.save(filename);
