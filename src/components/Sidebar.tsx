@@ -34,6 +34,7 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'FERRAMENTAS',
     items: [
       { label: 'OrthoAI', icon: Bot, page: 'chat' },
+      { label: 'Relatórios', icon: BarChart3, page: 'reports' },
     ]
   },
   {
