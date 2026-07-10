@@ -81,20 +81,29 @@ export default function Sidebar() {
 
   return (
     <aside className="w-[280px] bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a]">
-      {/* Logo */}
-      <div className="p-4 border-b border-white/10">
-        <OrtoBoltLogo variant="horizontal" size="small" showSubtitle={false} />
-        <p className="text-xs text-white/60">Ortopedia Veterinária</p>
-      </div>
+      {/* Header */}
+      <header className="h-[84px] w-full flex flex-col justify-center px-5 border-b border-white/5 bg-[#0e1011]">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#29a399]/20 to-transparent border border-[#29a399]/20 flex items-center justify-center">
+            <span className="text-[#29a399] font-bold text-sm">V</span>
+          </div>
+          <h1 className="text-[15px] font-semibold text-white tracking-tight">
+            Vanguard <span className="text-[#29a399]">Veterinary</span>
+          </h1>
+        </div>
+        <p className="mt-1 ml-[40px] font-mono text-[10px] tracking-widest text-white/40 uppercase">
+          Ortopedia de Precisão
+        </p>
+      </header>
 
       {/* Bloco de Ações Flash (Verde Jade) */}
-      <div className="px-3 py-4 border-b border-[#00A36C]/20">
+      <div className="px-5 py-4 border-b border-[#00A36C]/20">
         <button
           onClick={openAnalysisModal}
           className="
-            w-[232px] h-[48px] rounded-[8px]
+            w-full h-[52px] rounded-[8px]
             flex items-center justify-center gap-2
-            border-[rgba(41,163,153,0.6)] bg-gradient-to-r from-[#29a399]/15 to-[#29a399]/05 text-white
+            border border-[rgba(41,163,153,0.3)] bg-gradient-to-r from-[#29a399]/15 to-[#29a399]/05 text-white
             shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]
             transition-all duration-300
             hover:shadow-[0_0_15px_rgba(41,163,153,0.25)]
@@ -107,69 +116,65 @@ export default function Sidebar() {
       </div>
 
       {/* Menu Items */}
-      <nav className="flex-1 py-4 overflow-y-auto">
+      <nav className="flex-1 py-4 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(41,163,153,0.2) transparent' }}>
         {MENU_SECTIONS.map((section, sectionIdx) => (
           <div key={section.title}>
             {/* Section Title */}
-            <div className={`px-3 ${section.title === 'SISTEMA' ? 'mt-4' : 'mb-2'}`}>
+            <div className={`px-5 mt-6 mb-2`}>
               <span className="text-xs text-white/40 uppercase tracking-wider">
                 {section.title}
               </span>
             </div>
 
             {/* Menu Items */}
-            {section.items.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentPage === item.page;
-              const badgeValue = getBadge(item);
+            <div className="space-y-2">
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentPage === item.page;
+                const badgeValue = getBadge(item);
 
-              return (
-                <button
-                  key={item.page}
-                  onClick={() => setCurrentPage(item.page)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors ${isActive
-                      ? 'bg-[#29a399]/15 text-white border-l-4 border-[#29a399]'
-                      : 'text-white/70 hover:bg-white/5 hover:text-white'
-                    }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="flex-1 text-left">{item.label}</span>
-                  {badgeValue !== null && badgeValue > 0 && (
-                    <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
-                      {badgeValue}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-
-            {/* Divider: após CLÍNICO e após SISTEMA */}
-            {(section.title === 'CLÍNICO' || section.title === 'SISTEMA') && (
-              <div className="border-t border-white/10 my-3" />
-            )}
+                return (
+                  <button
+                    key={item.page}
+                    onClick={() => setCurrentPage(item.page)}
+                    style={isActive ? { background: 'linear-gradient(90deg, rgba(41,163,153,0.15) 0%, rgba(41,163,153,0) 100%)' } : {}}
+                    className={`w-full flex items-center gap-3 px-5 h-[44px] text-sm transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${isActive
+                        ? 'text-white font-medium'
+                        : 'text-white/50 hover:bg-white/[0.03] hover:translate-x-1 hover:text-white'
+                      }`}
+                  >
+                    <Icon className={`w-5 h-5 ${isActive ? 'text-[#29a399]' : ''}`} />
+                    <span className="flex-1 text-left">{item.label}</span>
+                    {badgeValue !== null && badgeValue > 0 && (
+                      <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
+                        {badgeValue}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         ))}
       </nav>
 
       {/* User Section */}
-      <div className="border-t border-white/10 p-4">
+      <div className="mt-auto">
         {user && (
-          <div className="mb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#29a399] rounded-full flex items-center justify-center text-sm font-bold">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{user.name}</p>
-                <p className="text-xs text-white/60 truncate">{user.email}</p>
-              </div>
+          <div className="mx-3 mb-3 p-3 rounded-lg bg-[#161a1c] border border-white/5 flex items-center gap-3 h-[56px]">
+            <div className="w-8 h-8 bg-[#29a399] ring-1 ring-[#29a399]/30 rounded-full flex items-center justify-center text-sm font-bold">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{user.name}</p>
+              <p className="text-xs text-white/60 truncate">{user.email}</p>
             </div>
           </div>
         )}
 
         <button
           onClick={logout}
-          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-white/70 hover:bg-white/5 hover:text-white transition-colors"
+          className="w-full flex items-center gap-2 px-5 py-4 text-sm text-white/50 hover:text-white transition-colors border-t border-white/5"
         >
           <LogOut className="w-5 h-5" />
           <span>Sair da sessão</span>
