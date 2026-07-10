@@ -1,4 +1,3 @@
-import { OrtoBoltLogo } from './brand/OrtoBoltLogo';
 import { useMemo, useState, useCallback } from 'react';
 import {
   ClipboardList, Scan, Activity, BarChart3,
@@ -161,7 +160,7 @@ export default function Sidebar() {
       {/* User Section */}
       <div className="mt-auto">
         {user && (
-          <div className="mx-3 mb-3 p-3 rounded-lg bg-[#161a1c] border border-white/5 flex items-center gap-3 h-[56px]">
+          <div className="mx-4 mb-3 p-3 rounded-lg bg-[#161a1c] border border-white/5 flex items-center gap-3 h-[56px]">
             <div className="w-8 h-8 bg-[#29a399] ring-1 ring-[#29a399]/30 rounded-full flex items-center justify-center text-sm font-bold">
               {user.name.charAt(0).toUpperCase()}
             </div>
