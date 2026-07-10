@@ -82,12 +82,12 @@ export default function Sidebar() {
   return (
     <aside className="w-[280px] bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a]">
       {/* Header */}
-      <header className="h-[84px] w-full flex flex-col justify-center px-5 border-b border-white/5 bg-[#0e1011]">
+      <header className="h-[84px] w-full shrink-0 flex flex-col justify-center px-5 border-b border-white/5 bg-[#0e1011]">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#29a399]/20 to-transparent border border-[#29a399]/20 flex items-center justify-center">
             <span className="text-[#29a399] font-bold text-sm">V</span>
           </div>
-          <h1 className="text-[15px] font-semibold text-white tracking-tight">
+          <h1 className="text-[15px] font-semibold text-white tracking-tight leading-none">
             Vanguard <span className="text-[#29a399]">Veterinary</span>
           </h1>
         </div>
@@ -101,7 +101,7 @@ export default function Sidebar() {
         <button
           onClick={openAnalysisModal}
           className="
-            w-full h-[52px] rounded-[8px]
+            w-full h-[42px] rounded-[8px]
             flex items-center justify-center gap-2
             border border-[rgba(41,163,153,0.3)] bg-gradient-to-r from-[#29a399]/15 to-[#29a399]/05 text-white
             shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]
@@ -110,8 +110,8 @@ export default function Sidebar() {
           "
           aria-label="Abrir seletor de análise de imagem"
         >
-          <Sparkles className="w-5 h-5 text-[#29a399]" />
-          <span>Analisar Imagem</span>
+          <Sparkles className="w-4 h-4 text-[#29a399]" />
+          <span className="text-sm">Analisar Imagem</span>
         </button>
       </div>
 
