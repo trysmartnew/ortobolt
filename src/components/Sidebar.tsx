@@ -80,14 +80,14 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-[280px] bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a]">
+    <aside className="w-[250px] bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a]">
       {/* Header */}
-      <header className="h-[84px] w-full shrink-0 flex flex-col justify-center px-5 border-b border-white/5 bg-[#0e1011]">
+      <header className="h-[84px] w-full shrink-0 flex flex-col justify-center px-4 border-b border-white/5 bg-[#0e1011]">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#29a399]/20 to-transparent border border-[#29a399]/20 flex items-center justify-center">
             <span className="text-[#29a399] font-bold text-sm">V</span>
           </div>
-          <h1 className="text-[15px] font-semibold text-white tracking-tight leading-none">
+          <h1 className="text-[13px] font-semibold text-white tracking-tight leading-none">
             Vanguard <span className="text-[#29a399]">Veterinary</span>
           </h1>
         </div>
@@ -97,7 +97,7 @@ export default function Sidebar() {
       </header>
 
       {/* Bloco de Ações Flash (Verde Jade) */}
-      <div className="px-5 py-4 border-b border-[#00A36C]/20">
+      <div className="px-4 py-4 border-b border-[#00A36C]/20">
         <button
           onClick={openAnalysisModal}
           className="
@@ -120,7 +120,7 @@ export default function Sidebar() {
         {MENU_SECTIONS.map((section, sectionIdx) => (
           <div key={section.title}>
             {/* Section Title */}
-            <div className={`px-5 mt-6 mb-2`}>
+            <div className={`px-4 mt-6 mb-2`}>
               <span className="text-xs text-white/40 uppercase tracking-wider">
                 {section.title}
               </span>
@@ -138,7 +138,7 @@ export default function Sidebar() {
                     key={item.page}
                     onClick={() => setCurrentPage(item.page)}
                     style={isActive ? { background: 'linear-gradient(90deg, rgba(41,163,153,0.15) 0%, rgba(41,163,153,0) 100%)' } : {}}
-                    className={`w-full flex items-center gap-3 px-5 h-[44px] text-sm transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${isActive
+                    className={`w-full flex items-center gap-3 px-4 h-[44px] text-sm transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${isActive
                         ? 'text-white font-medium'
                         : 'text-white/50 hover:bg-white/[0.03] hover:translate-x-1 hover:text-white'
                       }`}
@@ -174,7 +174,7 @@ export default function Sidebar() {
 
         <button
           onClick={logout}
-          className="w-full flex items-center gap-2 px-5 py-4 text-sm text-white/50 hover:text-white transition-colors border-t border-white/5"
+          className="w-full flex items-center gap-2 px-4 py-4 text-sm text-white/50 hover:text-white transition-colors border-t border-white/5"
         >
           <LogOut className="w-5 h-5" />
           <span>Sair da sessão</span>
