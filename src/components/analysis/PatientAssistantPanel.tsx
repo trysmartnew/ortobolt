@@ -1,6 +1,6 @@
 import { X, Bot } from 'lucide-react';
 import ClinicalAssistant from './ClinicalAssistant';
-import type { ClinicalCase } from '@/types';
+import type { ClinicalCase, AIAnalysisResult } from '@/types/index';
 
 interface PatientAssistantPanelProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ export default function PatientAssistantPanel({ isOpen, onClose, caseData }: Pat
       <div className="flex-1 overflow-y-auto p-4">
         <ClinicalAssistant 
             caseData={caseData} 
-            originalAnalysis={caseData.aiAnalysis || {}} 
+            originalAnalysis={(caseData.aiAnalysis || { id: 'placeholder', timestamp: new Date().toISOString(), precisionScore: 0, riskFactors: [], anatomicalLandmarks: [], confidence: 0, processingTimeMs: 0, recommendations: [] }) as AIAnalysisResult} 
         />
       </div>
     </div>

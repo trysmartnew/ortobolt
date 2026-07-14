@@ -52,7 +52,7 @@ export default memo(function CaseAnalysisTab() {
 
       <ClinicalAssistant 
         caseData={activeCase} 
-        originalAnalysis={analysis}
+        originalAnalysis={analysis as any}
       />
     </div>
   );

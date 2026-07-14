@@ -550,7 +550,12 @@ export default function AnalysisPage() {
                     onContextChange={updateContext}
                     onSend={sendMessage}
                     onRefineAnalysis={handleRefine}
+                    onRetry={() => {
+                        // Implementação simples de retry para o AnalysisPage
+                        window.location.reload(); 
+                    }}
                   />
+
                 </Card>
 
                 <Card className="bg-[#001941]/40 backdrop-blur-md border border-white/10 rounded-lg p-5">

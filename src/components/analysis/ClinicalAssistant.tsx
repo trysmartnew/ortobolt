@@ -1,16 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import ClinicalCopilotPanel from './ClinicalCopilotPanel';
-import type { ClinicalCase as Case } from '@/types/index';
+import type { ClinicalCase as Case, AIAnalysisResult } from '@/types/index';
 
 interface ClinicalAssistantProps {
   caseData: Case;
-  originalAnalysis: any; 
+  originalAnalysis: AIAnalysisResult; 
   enabled?: boolean;
 }
 
 export default function ClinicalAssistant({ caseData, originalAnalysis, enabled = true }: ClinicalAssistantProps) {
-  const imageBase64 = originalAnalysis?.imageData?.split(',')[1] || originalAnalysis?.imageData;
+  const imageBase64 = (originalAnalysis as any)?.imageData?.split(',')[1] || (originalAnalysis as any)?.imageData;
+  const prevCaseData = useRef(caseData);
   
   const {
     session,
@@ -20,12 +21,13 @@ export default function ClinicalAssistant({ caseData, originalAnalysis, enabled 
     initSession,
     updateContext,
     sendMessage,
-    refineAnalysis
+    refineAnalysis,
+    resetCopilot // Assumindo necessidade de re-init
   } = useClinicalCopilot(imageBase64);
 
-  // Inicializa a sessão com dados do caso quando necessário
-  useEffect(() => {
-    if (imageBase64 && !session) {
+  const handleRetry = () => {
+    resetCopilot();
+    if (imageBase64) {
       initSession(imageBase64, {
         patientName: caseData.patientName,
         species: caseData.species,
@@ -35,7 +37,7 @@ export default function ClinicalAssistant({ caseData, originalAnalysis, enabled 
         clinicalNotes: caseData.notes
       });
     }
-  }, [imageBase64, session, initSession, caseData]);
+  };
 
   return (
     <ClinicalCopilotPanel
@@ -48,6 +50,8 @@ export default function ClinicalAssistant({ caseData, originalAnalysis, enabled 
       onContextChange={updateContext}
       onSend={sendMessage}
       onRefineAnalysis={refineAnalysis}
+      onRetry={handleRetry}
     />
   );
+
 }

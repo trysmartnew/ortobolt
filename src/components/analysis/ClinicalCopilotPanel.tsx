@@ -73,6 +73,7 @@ export interface ClinicalCopilotPanelProps {
   onContextChange: (ctx: ClinicalContextDraft) => void;
   onSend: (text: string) => void;
   onRefineAnalysis: () => void;
+  onRetry: () => void;
 }
 
 export default function ClinicalCopilotPanel({
@@ -85,6 +86,7 @@ export default function ClinicalCopilotPanel({
   onContextChange,
   onSend,
   onRefineAnalysis,
+  onRetry,
 }: ClinicalCopilotPanelProps) {
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -208,8 +210,14 @@ export default function ClinicalCopilotPanel({
       </div>
 
       {error && (
-        <div className="mx-4 mt-3 text-xs text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
-          {error}
+        <div className="mx-4 mt-3 text-xs text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 flex justify-between items-center">
+          <span>{error}</span>
+          <button
+            onClick={onRetry}
+            className="text-white hover:text-primary font-bold underline"
+          >
+            Tentar novamente
+          </button>
         </div>
       )}
 
@@ -258,4 +266,3 @@ export default function ClinicalCopilotPanel({
     </div>
   );
 }
-

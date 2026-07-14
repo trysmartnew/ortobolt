@@ -1,6 +1,20 @@
+import { z } from 'zod'; // Assumindo presença de Zod no projeto, caso contrário ajustar para lógica manual
+
+const RefinementLogSchema = z.object({
+  caseId: z.string(),
+  context: z.object({
+    patientName: z.string().optional(),
+    species: z.string().optional(),
+    breed: z.string().optional(),
+    weightKg: z.number().optional(),
+    procedure: z.string().optional(),
+    clinicalNotes: z.string().optional(),
+  }).passthrough(),
+  finalRefinement: z.string(),
+});
+
 /**
  * Serviço de auditoria local utilizando IndexedDB para logs de refinamento clínico.
- * Mantém os dados sensíveis estritamente no dispositivo do usuário.
  */
 
 const DB_NAME = 'OrtoBoltAuditDB';
@@ -30,9 +44,16 @@ export interface RefinementLog {
 
 export const localAuditService = {
   async save(log: Omit<RefinementLog, 'id' | 'timestamp'>) {
+    // Validação Schema
+    const result = RefinementLogSchema.safeParse(log);
+    if (!result.success) {
+      console.error('Falha na validação de log local:', result.error);
+      return null;
+    }
+
     const db = await getDB();
     const entry: RefinementLog = {
-      ...log,
+      ...result.data,
       id: Date.now().toString(),
       timestamp: new Date().toISOString(),
     };
