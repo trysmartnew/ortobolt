@@ -219,16 +219,18 @@ export default function CopilotClinical({
           </button>
         </div>
 
-        {/* Botão Refinar Análise */}
-        {onRefine && (
-          <button
-            onClick={onRefine}
-            className="w-full px-3 py-2 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 transition-colors flex items-center justify-center gap-2"
-          >
-            <RefreshCw size={12} />
-            Refinar Análise
-          </button>
-        )}
+         {/* Botão Refinar Análise */}
+         {onRefine && (
+           <div>
+             <button
+               onClick={onRefine}
+               className="w-full px-3 py-2 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 transition-colors flex items-center justify-center gap-2"
+             >
+               <RefreshCw size={12} />
+               Refinar Análise
+             </button>
+           </div>
+         )}
 
         <p className="text-[10px] text-slate-300 font-mono text-center">
           ⚡ Copiloto Clínico · OrthoAI · {PRIMARY_MODEL}
