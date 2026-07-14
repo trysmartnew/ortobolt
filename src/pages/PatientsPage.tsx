@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
-import { Search, Plus, Edit3, Eye, Trash2, Calendar, Activity } from 'lucide-react';
+import { Search, Plus, Edit3, Eye, Trash2, Calendar, Activity, Bot } from 'lucide-react';
 import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';
 import { SPECIES_LABELS } from '@/constants/labels';
 import { CLINICAL_TERMS } from '@/constants/clinicalTerms';
 import PatientForm from '../components/PatientForm';
+import PatientAssistantPanel from '../components/analysis/PatientAssistantPanel';
 
 interface PatientRecord {
   id: string;
@@ -43,6 +44,7 @@ function formatDate(iso: string): string {
   }
 }
 
+// ...
 export default function PatientsPage() {
   const { cases, user, authLoading, openCase, deleteCase, addToast, setActiveCase, setCurrentPage } = useApp();
   const [search, setSearch] = useState('');
@@ -53,6 +55,7 @@ export default function PatientsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingPatient, setEditingPatient] = useState<ClinicalCase | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [activeAssistantCase, setActiveAssistantCase] = useState<ClinicalCase | null>(null);
 
   const patients = useMemo(() => {
     const sorted = [...cases].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -109,13 +112,13 @@ export default function PatientsPage() {
     setEditingPatient(null);
   };
 
-const handleView = (patientId: string) => {
-  const selectedCase = cases.find(c => c.id === patientId);
-  if (selectedCase) {
-    setActiveCase(selectedCase);
-    setCurrentPage('patientDetail');
-  }
-};
+  const handleView = (patientId: string) => {
+    const selectedCase = cases.find(c => c.id === patientId);
+    if (selectedCase) {
+      setActiveCase(selectedCase);
+      setCurrentPage('patientDetail');
+    }
+  };
 
   const handleEdit = (caseId: string) => {
     const c = cases.find(x => x.id === caseId);
@@ -157,6 +160,13 @@ const handleView = (patientId: string) => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
+      {activeAssistantCase && (
+        <PatientAssistantPanel 
+          isOpen={!!activeAssistantCase} 
+          onClose={() => setActiveAssistantCase(null)} 
+          caseData={activeAssistantCase} 
+        />
+      )}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold" style={{ fontFamily: 'Montserrat, sans-serif' }}>Página de Pacientes</h1>
         <p className="text-sm text-slate-600">Gerencie seus pacientes e acompanhe o histórico clínico.</p>
@@ -272,6 +282,13 @@ const handleView = (patientId: string) => {
                           title="Visualizar"
                         >
                           <Eye size={16} />
+                        </button>
+                        <button
+                          onClick={() => setActiveAssistantCase(cases.find(c => c.id === p.id) as any)}
+                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-primary transition-colors"
+                          title="Assistente Clínico"
+                        >
+                          <Bot size={16} />
                         </button>
                         <button
                           onClick={() => handleEdit(p.id)}

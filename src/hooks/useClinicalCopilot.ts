@@ -13,6 +13,7 @@ import {
   sendCopilotMessage,
   updateSessionContext,
 } from '@/services/clinicalCopilotService';
+import { localAuditService } from '@/services/localAuditService';
 
 export function useClinicalCopilot(imageBase64: string | null) {
   const [session, setSession] = useState<ClinicalCopilotSession | null>(null);
@@ -121,6 +122,14 @@ export function useClinicalCopilot(imageBase64: string | null) {
     try {
       const next = await refineSessionAnalysis({ session, imageBase64 });
       setSession(next);
+      
+      // Registro local do checkpoint de refinamento
+      await localAuditService.save({
+        caseId: session.sessionId,
+        context: session.clinicalContext,
+        finalRefinement: getDisplayAnalysis(next) || ''
+      });
+
       return getDisplayAnalysis(next);
     } catch (err) {
       const msg =
