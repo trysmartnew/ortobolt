@@ -78,73 +78,24 @@ interface CertRow {
 export async function fetchUserProfile(userId: string): Promise<User | null> {
   // ✅ C-03: Campos explícitos — nunca select('*')
   const { data: profile, error } = await supabase
-    .from('users')
+    .from('profiles')
     .select(
       'id, name, email, role, specialty, crmv, institution, avatar, ' +
       'total_cases, success_rate, avg_precision, monthly_procedures, preferences'
     )
     .eq('id', userId)
-    .single<UserProfileRow>();
-
-  if (error || !profile) {
-    console.error('fetchUserProfile error:', error?.message);
+    if (error) {
+    console.error('fetchUserProfile error:', error);
     return null;
   }
-
-  // ✅ C-03: select apenas campos necessários em certifications também
-  const { data: certs } = await supabase
-    .from('certifications')
-    .select('id, title, issuer, year, verified')
-    .eq('user_id', userId)
-    .order('year', { ascending: false })
-    .returns<CertRow[]>();
-
-  const user: User = {
-    id: profile.id,
-    name: profile.name || '',
-    email: profile.email || '',
-    role: profile.role || 'professional',
-    specialty: profile.specialty || 'Ortopedia Veterinária',
-    crmv: profile.crmv || '',
-    institution: profile.institution || '',
-    avatar: profile.avatar ?? undefined,
-    certifications: (certs || []).map((c: CertRow) => ({
-      id: c.id,
-      title: c.title,
-      issuer: c.issuer,
-      year: c.year,
-      verified: c.verified,
-    })),
-    stats: {
-      totalCases: profile.total_cases || 0,
-      successRate: profile.success_rate || 0,
-      avgPrecision: profile.avg_precision || 0,
-      monthlyProcedures: profile.monthly_procedures || 0,
-    },
-    preferences: profile.preferences || {
-      notifications: true,
-      theme: 'light',
-      language: 'pt',
-      autoAnalysis: true,
-      reportFormat: 'pdf',
-    },
-  };
-
-  return user;
+  return profile as unknown as User;
 }
 
-export async function upsertUserProfile(supaUser: {
-  id: string;
-  email?: string | null;
-  user_metadata?: { full_name?: string; name?: string; avatar_url?: string };
-}): Promise<void> {
+export async function upsertUserProfile(supaUser: any): Promise<void> {
   try {
-    const name = supaUser.user_metadata?.full_name
-      || supaUser.user_metadata?.name
-      || supaUser.email?.split('@')[0]
-      || 'Usuário';
+    const name = supaUser.user_metadata?.full_name ?? supaUser.user_metadata?.name ?? null;
     const avatar = supaUser.user_metadata?.avatar_url ?? null;
-    await supabase.from('users').upsert(
+    await supabase.from('profiles').upsert(
       {
         id: supaUser.id,
         email: supaUser.email ?? '',
@@ -162,16 +113,12 @@ export async function upsertUserProfile(supaUser: {
           reportFormat: 'pdf',
         },
       },
-      { onConflict: 'id', ignoreDuplicates: true }
+      { onConflict: 'id' }
     );
   } catch (err: any) {
-    // Log error but do not throw to avoid breaking UI flow
     console.error('Failed to upsert user profile:', err);
-    // Optionally, you could fallback to a simple update or insert here
-    // For now, we silently ignore to prevent 400 from crashing the UI
   }
 }
-
 
 /** P0.1 — Upload de radiografia para bucket radiografias; retorna signedUrl ou null */
 export async function uploadRadiografia(
