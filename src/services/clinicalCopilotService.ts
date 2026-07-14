@@ -1,25 +1,14 @@
 import type { ChatMessage } from '@/types/index';
-import type {
-  ClinicalContextDraft,
-  ClinicalCopilotSession,
-} from '@/types/clinicalCopilot';
-import {
-  refineClinicalAnalysis,
-  sendClinicalCopilotStream,
-} from '@/services/aiService';
+import type { ClinicalContextDraft, ClinicalCopilotSession } from '@/types/clinicalCopilot';
+import { refineClinicalAnalysis, sendClinicalCopilotStream } from '@/services/aiService';
+import { localAuditService } from '@/services/localAuditService';
 
-const STORAGE_PREFIX = 'ortobolt-clinical-copilot-';
-
-function storageKey(sessionId: string): string {
-  return `${STORAGE_PREFIX}${sessionId}`;
-}
-
-export function createCopilotSession(
+export async function createCopilotSession(
   visionAnalysis: string,
   clinicalContext: ClinicalContextDraft = {}
-): ClinicalCopilotSession {
+): Promise<ClinicalCopilotSession> {
   const now = new Date().toISOString();
-  return {
+  const session: ClinicalCopilotSession = {
     sessionId: crypto.randomUUID(),
     createdAt: now,
     updatedAt: now,
@@ -28,46 +17,41 @@ export function createCopilotSession(
     clinicalContext,
     messages: [
       {
-        id: 'welcome',
+        id: crypto.randomUUID(),
         role: 'assistant',
-        content:
-          'Sou o Assistente Clínico desta sessão. Tenho acesso à radiografia, à análise visual e ao contexto que você informar. Como posso refinar a interpretação?',
+        content: 'Sou o Assistente Clínico desta sessão. Tenho acesso à radiografia, à análise visual e ao contexto que você informar. Como posso refinar a interpretação?',
         timestamp: now,
       },
     ],
   };
+  await saveCopilotSession(session);
+  return session;
 }
 
-export function loadCopilotSession(sessionId: string): ClinicalCopilotSession | null {
+export async function loadCopilotSession(sessionId: string): Promise<ClinicalCopilotSession | null> {
+  const allLogs = await localAuditService.getAll();
+  const sessionLog = allLogs.find(log => log.caseId === sessionId);
+  if (!sessionLog) return null;
   try {
-    const raw = sessionStorage.getItem(storageKey(sessionId));
-    if (!raw) return null;
-    return JSON.parse(raw) as ClinicalCopilotSession;
+    return JSON.parse(sessionLog.finalRefinement) as ClinicalCopilotSession;
   } catch {
     return null;
   }
 }
 
-export function saveCopilotSession(session: ClinicalCopilotSession): void {
-  const updated = { ...session, updatedAt: new Date().toISOString() };
-  try {
-    sessionStorage.setItem(storageKey(session.sessionId), JSON.stringify(updated));
-  } catch (err) {
-    console.warn('clinicalCopilotService: falha ao persistir sessão', err);
-  }
+export async function saveCopilotSession(session: ClinicalCopilotSession): Promise<void> {
+  await localAuditService.save({
+    caseId: session.sessionId,
+    context: session.clinicalContext,
+    finalRefinement: JSON.stringify({ ...session, updatedAt: new Date().toISOString() })
+  });
 }
 
-export function clearCopilotSession(sessionId: string): void {
-  sessionStorage.removeItem(storageKey(sessionId));
-}
-
-function historyForApi(messages: ChatMessage[]): { role: 'user' | 'assistant'; content: string }[] {
+export function historyForApi(messages: ChatMessage[]) {
   return messages
     .filter((m) => m.id !== 'welcome' && !m.isLoading && m.content.trim())
-    .map((m) => ({
-      role: m.role,
-      content: m.content,
-    }));
+    .slice(-12)
+    .map((m) => ({ role: m.role, content: m.content }));
 }
 
 export async function sendCopilotMessage(params: {
@@ -80,7 +64,7 @@ export async function sendCopilotMessage(params: {
   const now = new Date().toISOString();
 
   const userMsg: ChatMessage = {
-    id: `u-${Date.now()}`,
+    id: crypto.randomUUID(),
     role: 'user',
     content: userMessage,
     timestamp: now,
@@ -89,19 +73,12 @@ export async function sendCopilotMessage(params: {
   const history = historyForApi(session.messages);
 
   const reply = await sendClinicalCopilotStream(
-    {
-      imageBase64,
-      visionAnalysis: session.visionAnalysis,
-      refinedAnalysis: session.refinedAnalysis,
-      clinicalContext: session.clinicalContext,
-      userMessage,
-      history,
-    },
+    { imageBase64, visionAnalysis: session.visionAnalysis, refinedAnalysis: session.refinedAnalysis, clinicalContext: session.clinicalContext, userMessage, history },
     onChunk
   );
 
   const assistantMsg: ChatMessage = {
-    id: `a-${Date.now()}`,
+    id: crypto.randomUUID(),
     role: 'assistant',
     content: reply,
     timestamp: new Date().toISOString(),
@@ -113,14 +90,11 @@ export async function sendCopilotMessage(params: {
     updatedAt: assistantMsg.timestamp,
   };
 
-  saveCopilotSession(next);
+  await saveCopilotSession(next);
   return { session: next, reply };
 }
 
-export async function refineSessionAnalysis(params: {
-  session: ClinicalCopilotSession;
-  imageBase64: string;
-}): Promise<ClinicalCopilotSession> {
+export async function refineSessionAnalysis(params: { session: ClinicalCopilotSession; imageBase64: string }): Promise<ClinicalCopilotSession> {
   const { session, imageBase64 } = params;
   const history = historyForApi(session.messages);
 
@@ -133,22 +107,14 @@ export async function refineSessionAnalysis(params: {
     history,
   });
 
-  const next: ClinicalCopilotSession = {
-    ...session,
-    refinedAnalysis: refined,
-    updatedAt: new Date().toISOString(),
-  };
-
-  saveCopilotSession(next);
+  const next: ClinicalCopilotSession = { ...session, refinedAnalysis: refined, updatedAt: new Date().toISOString() };
+  await saveCopilotSession(next);
   return next;
 }
 
-export function updateSessionContext(
-  session: ClinicalCopilotSession,
-  clinicalContext: ClinicalContextDraft
-): ClinicalCopilotSession {
+export async function updateSessionContext(session: ClinicalCopilotSession, clinicalContext: ClinicalContextDraft): Promise<ClinicalCopilotSession> {
   const next = { ...session, clinicalContext, updatedAt: new Date().toISOString() };
-  saveCopilotSession(next);
+  await saveCopilotSession(next);
   return next;
 }
 

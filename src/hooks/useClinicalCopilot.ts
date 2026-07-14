@@ -22,9 +22,8 @@ export function useClinicalCopilot(imageBase64: string | null) {
   const [error, setError] = useState<string | null>(null);
 
   const initSession = useCallback(
-    (visionAnalysis: string, initialContext?: ClinicalContextDraft) => {
-      const created = createCopilotSession(visionAnalysis, initialContext ?? {});
-      saveCopilotSession(created);
+    async (visionAnalysis: string, initialContext?: ClinicalContextDraft) => {
+      const created = await createCopilotSession(visionAnalysis, initialContext ?? {});
       setSession(created);
       setError(null);
       return created.sessionId;
@@ -32,18 +31,17 @@ export function useClinicalCopilot(imageBase64: string | null) {
     []
   );
 
-  const restoreSession = useCallback((sessionId: string) => {
-    const loaded = loadCopilotSession(sessionId);
+  const restoreSession = useCallback(async (sessionId: string) => {
+    const loaded = await loadCopilotSession(sessionId);
     if (loaded) setSession(loaded);
     return loaded;
   }, []);
 
-  const updateContext = useCallback((ctx: ClinicalContextDraft) => {
-    setSession((prev) => {
-      if (!prev) return prev;
-      return updateSessionContext(prev, { ...prev.clinicalContext, ...ctx });
-    });
-  }, []);
+  const updateContext = useCallback(async (ctx: ClinicalContextDraft) => {
+    if (!session) return;
+    const next = await updateSessionContext(session, { ...session.clinicalContext, ...ctx });
+    setSession(next);
+  }, [session]);
 
   const sendMessage = useCallback(
     async (text: string) => {
