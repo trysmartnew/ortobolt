@@ -3,10 +3,9 @@
 import React, { memo } from 'react';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { useApp } from '@/contexts/AppContext';
-import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
-import CopilotClinical from './CopilotClinical';
 import { Card } from '@/components/ui';
-import { Scan, AlertCircle } from 'lucide-react';
+import { Scan } from 'lucide-react';
+import ClinicalAssistant from './analysis/ClinicalAssistant';
 
 export default memo(function CaseAnalysisTab() {
   const { activeCase } = useApp();
@@ -15,11 +14,6 @@ export default memo(function CaseAnalysisTab() {
   if (!activeCase) return null;
 
   const analysis = getAnalysisByCaseId(activeCase.id);
-
-  const imageBase64 = analysis
-    ? analysis.imageData.split(',')[1] || analysis.imageData
-    : null;
-  const { refineAnalysis } = useClinicalCopilot(imageBase64);
 
   if (!analysis) {
     return (
@@ -56,12 +50,9 @@ export default memo(function CaseAnalysisTab() {
         </div>
       </Card>
 
-      {/* Copiloto Clínico integrado ao contexto do caso */}
-      <CopilotClinical 
-        mode="case" 
+      <ClinicalAssistant 
         caseData={activeCase} 
         originalAnalysis={analysis}
-        onRefine={refineAnalysis}
       />
     </div>
   );
