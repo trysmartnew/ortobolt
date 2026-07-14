@@ -25,8 +25,8 @@ const MENU_SECTIONS: MenuSection[] = [
   {
     title: 'CLÍNICO',
     items: [
-      { label: 'Painel Clínico', icon: Activity, page: 'dashboard' },
       { label: 'Pacientes', icon: Users, page: 'patients' },
+      { label: 'Painel Clínico', icon: Activity, page: 'dashboard' },
     ]
   },
   {
