@@ -186,7 +186,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+    <div className="min-h-screen flex">
       {/* Painel esquerdo */}
       <div className="hidden lg:flex flex-col justify-between w-2/5 p-12"
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>

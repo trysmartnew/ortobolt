@@ -5,7 +5,6 @@
         "naumovs.color-highlight",
         "usernamehw.errorlens",
         "eamodio.gitlens",
-        "esbenp.prettier-vscode",
-        "codeium.codeium"
+        "esbenp.prettier-vscode"
     ]
 }
