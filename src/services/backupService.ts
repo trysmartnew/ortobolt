@@ -49,7 +49,7 @@ function sanitizeCase(c: ClinicalCase): SanitizedCase {
 
 export async function exportUserData(userId: string): Promise<void> {
   const [profileResult, casesResult] = await Promise.all([
-    supabase.from('users')
+    supabase.from('profiles')
       .select('id, name, email, role, crmv, specialty, institution')
       .eq('id', userId)
       .single(),

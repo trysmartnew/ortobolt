@@ -250,6 +250,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
           console.warn('Perfil incompleto após 3 tentativas; usando mínimo', err);
           setProfileSyncStatus('error');
           addToast('Perfil sincronizando em background...', 'warning');
+          // BUGFIX: Se a sincronização falhar, não continue com um perfil incompleto.
+          // Deslogue o usuário para forçar uma nova tentativa limpa.
+          addToast('Falha ao sincronizar perfil. Por favor, entre novamente.', 'error');
+          logout();
           setPendingProfileSync(null);
         }
       }
@@ -267,7 +271,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     sessionStorage.setItem('ortobolt_page', currentPage);
   }, [currentPage]);
 
-    // ✅ D-01: Fetch casos reais COM mapeamento seguro
+  // ✅ D-01: Fetch casos reais COM mapeamento seguro
   useEffect(() => {
     if (!user) return;
     supabase
@@ -445,6 +449,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (!hasSeenTourSession) {
         setTimeout(() => setTourActive(true), 600);
       }
+    } else {
+      // BUGFIX: Se o perfil não for encontrado ao restaurar a sessão,
+      // o usuário deve ser deslogado para evitar um estado inconsistente.
+      addToast('Sua sessão expirou ou não foi possível carregar seu perfil.', 'error');
+      logout();
     }
     setAuthLoading(false);
   }, []);
@@ -666,14 +675,3 @@ export function useApp() {
   if (!ctx) throw new Error('useApp must be inside AppProvider');
   return ctx;
 }
-
-
-
-
-
-
-
-
-
-
-

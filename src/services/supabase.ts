@@ -58,6 +58,8 @@ interface UserProfileRow {
   role: 'professional' | null;
   specialty: string | null;
   crmv: string | null;
+  crmv_state: string | null;
+  crmv_verified: boolean | null;
   institution: string | null;
   avatar: string | null;
   total_cases: number | null;
@@ -80,15 +82,48 @@ export async function fetchUserProfile(userId: string): Promise<User | null> {
   const { data: profile, error } = await supabase
     .from('profiles')
     .select(
-      'id, name, email, role, specialty, crmv, institution, avatar, ' +
+      'id, name, email, role, specialty, crmv, crmv_state, crmv_verified, institution, avatar, ' +
       'total_cases, success_rate, avg_precision, monthly_procedures, preferences'
     )
     .eq('id', userId)
-    if (error) {
-    console.error('fetchUserProfile error:', error);
+    .single<UserProfileRow>();
+
+  if (error || !profile) {
+    console.error('fetchUserProfile error:', error?.message);
     return null;
   }
-  return profile as unknown as User;
+
+  // Mapeamento seguro do objeto do banco (snake_case) para o tipo da aplicação (camelCase)
+  const user: User = {
+    id: profile.id,
+    name: profile.name || '',
+    email: profile.email || '',
+    role: 'professional', // O 'role' agora é fixo no novo modelo de dados
+    specialty: profile.specialty || 'Ortopedia Veterinária',
+    crmv: profile.crmv || '',
+    crmv_state: profile.crmv_state || undefined,
+    crmv_verified: profile.crmv_verified || false,
+    institution: profile.institution || '',
+    avatar: profile.avatar ?? undefined,
+    // A tabela 'certifications' parece ter sido descontinuada na refatoração.
+    // Retornamos um array vazio para manter a conformidade com o tipo User.
+    certifications: [],
+    stats: {
+      totalCases: profile.total_cases || 0,
+      successRate: profile.success_rate || 0,
+      avgPrecision: profile.avg_precision || 0,
+      monthlyProcedures: profile.monthly_procedures || 0,
+    },
+    preferences: profile.preferences || {
+      notifications: true,
+      theme: 'light',
+      language: 'pt',
+      autoAnalysis: true,
+      reportFormat: 'pdf',
+    },
+  };
+
+  return user;
 }
 
 export async function upsertUserProfile(supaUser: any): Promise<void> {

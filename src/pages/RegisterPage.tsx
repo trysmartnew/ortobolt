@@ -13,7 +13,7 @@ import { Input } from '@/components/forms/Input';
 // ── Cálculo de força da senha ─────────────────────────────────────────────────
 function calcPasswordStrength(pwd: string): number {
   let score = 0;
-  if (pwd.length >= 8)  score++;
+  if (pwd.length >= 8) score++;
   if (pwd.length >= 12) score++;
   if (/[A-Z]/.test(pwd)) score++;
   if (/[0-9]/.test(pwd)) score++;
@@ -55,10 +55,10 @@ export default function RegisterPage() {
   });
   const [crmvState, setCrmvState] = useState('');
   const [crmvDeclaration, setCrmvDeclaration] = useState(false);
-  const [showPass, setShowPass]     = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [error, setError]           = useState('');
-  const [loading, setLoading]       = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showLoginButton, setShowLoginButton] = useState(false);
 
@@ -68,43 +68,43 @@ export default function RegisterPage() {
   const passwordStrength = calcPasswordStrength(form.password);
 
   const handleSubmit = async () => {
-      setError('');
-      setShowLoginButton(false);
+    setError('');
+    setShowLoginButton(false);
 
-      // Validação Zod (campos comuns)
-      const validation = RegisterSchema.safeParse({
-        name: form.name,
-        email: form.email,
-        password: form.password,
-        confirmPassword: form.confirmPassword,
-      });
-      if (!validation.success) {
-        const firstError = validation.error.issues?.[0]?.message ?? 'Verifique os dados do formulário.';
-        setError(firstError);
-        return;
-      }
+    // Validação Zod (campos comuns)
+    const validation = RegisterSchema.safeParse({
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      confirmPassword: form.confirmPassword,
+    });
+    if (!validation.success) {
+      const firstError = validation.error.issues?.[0]?.message ?? 'Verifique os dados do formulário.';
+      setError(firstError);
+      return;
+    }
 
-      // Validação CRMV
-      if (!form.crmv.trim())     { setError('Informe seu CRMV.'); return; }
-      if (!/^\d+\/[A-Z]{2}$/.test(form.crmv.trim())) {
-        setError('Formato inválido. Use: 12345/SP');
-        return;
-      }
+    // Validação CRMV
+    if (!form.crmv.trim()) { setError('Informe seu CRMV.'); return; }
+    if (!/^\d+\/[A-Z]{2}$/.test(form.crmv.trim())) {
+      setError('Formato inválido. Use: 12345/SP');
+      return;
+    }
 
-      if (!form.specialty)       { setError('Selecione sua especialidade.'); return; }
+    if (!form.specialty) { setError('Selecione sua especialidade.'); return; }
 
-      // Regra de negócio: força da senha
-      if (passwordStrength < 2) {
-        setError('Senha muito fraca. Use ao menos 8 caracteres, uma letra maiúscula e um número.');
-        return;
-      }
+    // Regra de negócio: força da senha
+    if (passwordStrength < 2) {
+      setError('Senha muito fraca. Use ao menos 8 caracteres, uma letra maiúscula e um número.');
+      return;
+    }
 
-      if (!form.acceptTerms) {
-        setError('Aceite os Termos de Uso para continuar.');
-        return;
-      }
+    if (!form.acceptTerms) {
+      setError('Aceite os Termos de Uso para continuar.');
+      return;
+    }
 
-      setLoading(true);
+    setLoading(true);
     try {
       // 1. Criar usuário no Supabase Auth
       const { data, error: signUpErr } = await supabase.auth.signUp({
@@ -116,27 +116,27 @@ export default function RegisterPage() {
       });
 
       if (signUpErr) {
-      if (signUpErr.message.includes('already registered') || signUpErr.message.includes('User already registered')) {
-        setError('Não foi possível concluir o cadastro. Caso já possua uma conta, utilize a opção Entrar.');
-        setShowLoginButton(true);
-      } else {
-        console.error('SignUp error:', signUpErr.message);
-        setError('Não foi possível concluir o cadastro. Verifique os dados e tente novamente.');
+        if (signUpErr.message.includes('already registered') || signUpErr.message.includes('User already registered')) {
+          setError('Não foi possível concluir o cadastro. Caso já possua uma conta, utilize a opção Entrar.');
+          setShowLoginButton(true);
+        } else {
+          console.error('SignUp error:', signUpErr.message);
+          setError('Não foi possível concluir o cadastro. Verifique os dados e tente novamente.');
+        }
+        return;
       }
-      return;
-    }
       if (!data.user) { setError('Erro ao criar conta. Tente novamente.'); return; }
 
-      // 2. Salvar perfil na tabela users
-      const { error: profileErr } = await supabase.from('users').upsert({
-        id:          data.user.id,
-        name:        form.name.trim(),
-        email:       form.email.trim(),
-        crmv:        form.crmv.trim(),
-        specialty:   form.specialty,
-        crmv_state:  crmvState,
+      // 2. Salvar perfil na tabela profiles
+      const { error: profileErr } = await supabase.from('profiles').upsert({
+        id: data.user.id,
+        name: form.name.trim(),
+        email: form.email.trim(),
+        crmv: form.crmv.trim(),
+        specialty: form.specialty,
+        crmv_state: crmvState,
         crmv_verified: crmvDeclaration,
-        role:        'professional',
+        role: 'professional',
         institution: '',
         preferences: {
           notifications: true,
@@ -226,25 +226,25 @@ export default function RegisterPage() {
             </div>
 
             {/* Nome */}
-              <div>
-                <Input
-                  type="text"
-                  label="Nome completo"
-                  value={form.name}
-                  onChange={e => update('name', e.target.value)}
-                  placeholder="Dra. Maria Silva"
-                />
-              </div>
+            <div>
+              <Input
+                type="text"
+                label="Nome completo"
+                value={form.name}
+                onChange={e => update('name', e.target.value)}
+                placeholder="Dra. Maria Silva"
+              />
+            </div>
 
             {/* E-mail */}
             <div>
-                <Input
-                  type="email"
-                  label="E-mail profissional"
-                  value={form.email}
-                  onChange={e => update('email', e.target.value)}
-                  placeholder="seu@email.com"
-                />
+              <Input
+                type="email"
+                label="E-mail profissional"
+                value={form.email}
+                onChange={e => update('email', e.target.value)}
+                placeholder="seu@email.com"
+              />
             </div>
 
             {/* CRMV */}
@@ -263,7 +263,7 @@ export default function RegisterPage() {
               <select value={crmvState} onChange={e => setCrmvState(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
                 <option value="">Selecione...</option>
-                {['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'].map(uf => <option key={uf} value={uf}>{uf}</option>)}
+                {['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'].map(uf => <option key={uf} value={uf}>{uf}</option>)}
               </select>
             </div>
 
@@ -280,25 +280,25 @@ export default function RegisterPage() {
             {/* Senha */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Senha</label>
-                <div className="relative">
-                  <Input
-                    type={showPass ? 'text' : 'password'}
-                    label="Senha"
-                    value={form.password}
-                    onChange={e => update('password', e.target.value)}
-                    placeholder="Mínimo 8 caracteres"
-                    className="pr-10"
-                  />
-                  <button type="button" onClick={() => setShowPass(v => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                    {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
-                  </button>
-                </div>
+              <div className="relative">
+                <Input
+                  type={showPass ? 'text' : 'password'}
+                  label="Senha"
+                  value={form.password}
+                  onChange={e => update('password', e.target.value)}
+                  placeholder="Mínimo 8 caracteres"
+                  className="pr-10"
+                />
+                <button type="button" onClick={() => setShowPass(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                  {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
               {/* ✅ U-03: Indicador de força */}
               {form.password && (
                 <div className="mt-2">
                   <div className="flex gap-1 mb-1">
-                    {[1,2,3,4].map(i => (
+                    {[1, 2, 3, 4].map(i => (
                       <div key={i} className="h-1 flex-1 rounded-full transition-all"
                         style={{ background: i <= passwordStrength ? STRENGTH_COLORS[passwordStrength] : 'var(--color-border)' }} />
                     ))}
@@ -314,20 +314,20 @@ export default function RegisterPage() {
             {/* Confirmar senha */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Confirmar senha</label>
-                <div className="relative">
-                  <Input
-                    type={showConfirm ? 'text' : 'password'}
-                    label="Confirmar senha"
-                    value={form.confirmPassword}
-                    onChange={e => update('confirmPassword', e.target.value)}
-                    placeholder="Repita a senha"
-                    className="pr-10"
-                  />
-                  <button type="button" onClick={() => setShowConfirm(v => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                    {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
-                  </button>
-                </div>
+              <div className="relative">
+                <Input
+                  type={showConfirm ? 'text' : 'password'}
+                  label="Confirmar senha"
+                  value={form.confirmPassword}
+                  onChange={e => update('confirmPassword', e.target.value)}
+                  placeholder="Repita a senha"
+                  className="pr-10"
+                />
+                <button type="button" onClick={() => setShowConfirm(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                  {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
             </div>
 
             {/* Termos */}
@@ -336,7 +336,7 @@ export default function RegisterPage() {
                 <input type="checkbox" className="sr-only" checked={form.acceptTerms} onChange={e => update('acceptTerms', e.target.checked)} />
                 <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
                   style={{ borderColor: form.acceptTerms ? 'var(--color-primary)' : 'var(--color-border)', background: form.acceptTerms ? 'var(--color-primary)' : '#fff' }}>
-                  {form.acceptTerms && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
+                  {form.acceptTerms && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
               <span className="text-xs text-slate-500 leading-relaxed">
@@ -351,7 +351,7 @@ export default function RegisterPage() {
                 <input type="checkbox" className="sr-only" checked={form.acceptAiConsent} onChange={e => update('acceptAiConsent', e.target.checked)} />
                 <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
                   style={{ borderColor: form.acceptAiConsent ? 'var(--color-primary)' : 'var(--color-border)', background: form.acceptAiConsent ? 'var(--color-primary)' : '#fff' }}>
-                  {form.acceptAiConsent && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
+                  {form.acceptAiConsent && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
               <span className="text-xs text-slate-500 leading-relaxed">
@@ -360,18 +360,18 @@ export default function RegisterPage() {
               </span>
             </label>
 
-              <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                <div className="relative mt-0.5 flex-shrink-0">
-                  <input type="checkbox" className="sr-only" checked={crmvDeclaration} onChange={e => setCrmvDeclaration(e.target.checked)} />
-                  <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
-                    style={{ borderColor: crmvDeclaration ? 'var(--color-primary)' : 'var(--color-border)', background: crmvDeclaration ? 'var(--color-primary)' : '#fff' }}>
-                    {crmvDeclaration && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>}
-                  </div>
+            <label className="flex items-start gap-2.5 cursor-pointer select-none">
+              <div className="relative mt-0.5 flex-shrink-0">
+                <input type="checkbox" className="sr-only" checked={crmvDeclaration} onChange={e => setCrmvDeclaration(e.target.checked)} />
+                <div className="w-4 h-4 rounded border-2 flex items-center justify-center"
+                  style={{ borderColor: crmvDeclaration ? 'var(--color-primary)' : 'var(--color-border)', background: crmvDeclaration ? 'var(--color-primary)' : '#fff' }}>
+                  {crmvDeclaration && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
-                <span className="text-xs text-slate-500 leading-relaxed">
-                  Declaro que possuo registro ativo no CRMV informado.
-                </span>
-              </label>
+              </div>
+              <span className="text-xs text-slate-500 leading-relaxed">
+                Declaro que possuo registro ativo no CRMV informado.
+              </span>
+            </label>
 
             {error && (
               <div className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</div>
@@ -398,57 +398,9 @@ export default function RegisterPage() {
               <ArrowLeft size={11} /> Página inicial
             </button>
 
-            <button
-              type="button"
-              onClick={async () => {
-                if (!form.name.trim() || !form.email.trim() || !form.password) {
-                  setError('Preencha nome, e-mail e senha.');
-                  return;
-                }
-                setLoading(true);
-                setError('');
-    setShowLoginButton(false);
-                try {
-                  const { data, error } = await supabase.auth.signUp({
-                    email: form.email.trim(),
-                    password: form.password,
-                    options: { data: { name: form.name.trim() } }
-                  });
-                  if (error) throw error;
-                  if (!data.user) throw new Error('Erro ao criar conta.');
-                  
-                  await supabase.from('users').upsert({
-                    id: data.user.id,
-                    name: form.name.trim(),
-                    email: form.email.trim(),
-                    role: 'student',
-                    crmv: '',
-                    specialty: '',
-                    crmv_state: '',
-                    crmv_verified: false
-                  });
-                  
-                  setSuccess(true);
-                } catch (err: any) {
-                  if (err.message?.includes('already registered') || err.message?.includes('User already registered')) {
-                    setError('Não foi possível concluir o cadastro. Caso já possua uma conta, utilize a opção Entrar.');
-                    setShowLoginButton(true);
-                  } else {
-                    setError('Não foi possível concluir o cadastro. Tente novamente.');
-                  }
-                } finally {
-                  setLoading(false);
-                }
-              }}
-              disabled={loading}
-              className="w-full mt-4 py-3 px-4 rounded-lg font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Criando...' : 'Entrar como Aluno / Ambiente Acadêmico'}
-            </button>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
