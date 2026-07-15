@@ -116,11 +116,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <Card className="p-8 bg-gradient-to-br from-primary via-primary-mid to-accent text-white">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-5">
+      <Card className="p-6 bg-gradient-to-br from-primary via-primary-mid to-accent text-white">
         <div data-tour="tour-dashboard-hero" className="flex items-center justify-between flex-wrap gap-3 min-h-[120px]">
           <div>
-            <h1 className="text-2xl font-bold">{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Veterinário'}</h1>
+            <h1 className="text-xl font-bold">{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Veterinário'}</h1>
             <p className="text-white/80 text-sm mt-1">
               {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
             </p>
@@ -134,11 +134,11 @@ export default function DashboardPage() {
         </div>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="p-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 space-y-5">
+          <Card className="p-4">
             <div data-tour="tour-dashboard-surgeries" className="flex items-center justify-between mb-4 min-h-[48px]">
-              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <span className="flex items-center gap-2"><Stethoscope size={16} /> Cirurgias de Hoje</span>
               </h2>
               <span className="text-xs font-mono text-slate-500">{surgeriesToday.length} procedimentos</span>
@@ -154,8 +154,8 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          <Card className="p-5">
-            <h2 data-tour="tour-dashboard-metrics" className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2 min-h-[24px]">
+          <Card className="p-4">
+            <h2 data-tour="tour-dashboard-metrics" className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2 min-h-[24px]">
               <span className="flex items-center gap-2"><Activity size={16} /> Métricas Operacionais</span> (hoje vs ontem)
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -170,10 +170,10 @@ export default function DashboardPage() {
                 return (
                   <div key={i} className="glass-panel-premium rounded-xl p-4 text-center">
                     <m.icon size={18} className="mx-auto mb-2 text-primary" />
-                    <p className="text-2xl font-bold text-slate-900">{m.today}</p>
-                    <p className="text-[10px] text-slate-500">{m.label}</p>
+                    <p className="text-3xl font-bold text-slate-900">{m.today}</p>
+                    <p className="text-xs text-slate-500">{m.label}</p>
                     {typeof m.yesterday === 'number' && (
-                      <p className="text-[10px] text-emerald-600 font-semibold mt-1">
+                      <p className="text-xs text-emerald-600 font-semibold mt-1">
                         {arrow} {Math.abs(diff)}
                       </p>
                     )}
@@ -184,10 +184,10 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        <div className="space-y-6">
-          <Card className="p-5">
+        <div className="space-y-5">
+          <Card className="p-4">
             <div data-tour="tour-dashboard-triage" className="flex items-center justify-between mb-4 min-h-[48px]">
-              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <span className="flex items-center gap-2"><AlertTriangle size={16} /> Triage Inteligente</span>
               </h2>
               <span className="text-xs text-slate-500">Prioridade clínica</span>
@@ -199,8 +199,8 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          <Card className="p-5">
-            <h2 className="text-sm font-bold text-slate-900 mb-3">Próximas Ações</h2>
+          <Card className="p-4">
+            <h2 className="text-base font-bold text-slate-900 mb-3">Próximas Ações</h2>
             <div className="space-y-2 text-sm">
               {[
                 { text: `${cases.filter(c => c.status === 'pending').length} casos pendentes`, icon: '⏳' },
@@ -215,7 +215,7 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          <Card className="p-8 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+          <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                 <Pill size={16} className="text-white" />

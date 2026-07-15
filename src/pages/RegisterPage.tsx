@@ -192,7 +192,7 @@ export default function RegisterPage() {
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <OrtoBoltLogo variant="horizontal" size="small" showSubtitle={false} />
         <div>
-          <h2 className="text-3xl font-extrabold text-white mb-4 leading-tight">
+          <h2 className="text-2xl font-extrabold text-white mb-4 leading-tight">
             Comece agora,<br />
             <span style={{ color: 'var(--color-accent)' }}>é gratuito</span>
           </h2>
@@ -204,13 +204,13 @@ export default function RegisterPage() {
       </div>
 
       {/* Painel direito */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-6 bg-white overflow-y-auto">
         <div className="lg:hidden mb-6">
           <OrtoBoltLogo variant="horizontal" size="small" showSubtitle={false} />
         </div>
         <div className="w-full max-w-sm">
           <div className="mb-6">
-            <h1 className="text-2xl font-extrabold text-slate-800 mb-1">Criar conta</h1>
+            <h1 className="text-xl font-extrabold text-slate-800 mb-1">Criar conta</h1>
             <p className="text-sm text-slate-400">
               Já tem conta?{' '}
               <button onClick={() => setCurrentView('login')} className="font-semibold" style={{ color: 'var(--color-primary)' }}>
@@ -261,7 +261,7 @@ export default function RegisterPage() {
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Estado do CRMV</label>
               <select value={crmvState} onChange={e => setCrmvState(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
                 <option value="">Selecione...</option>
                 {['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'].map(uf => <option key={uf} value={uf}>{uf}</option>)}
               </select>
@@ -271,7 +271,7 @@ export default function RegisterPage() {
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Especialidade</label>
               <select value={form.specialty} onChange={e => update('specialty', e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
                 <option value="">Selecione...</option>
                 {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
@@ -339,7 +339,7 @@ export default function RegisterPage() {
                   {form.acceptTerms && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
-              <span className="text-xs text-slate-500 leading-relaxed">
+              <span className="text-sm text-slate-500 leading-relaxed">
                 Aceito os <span style={{ color: 'var(--color-primary)' }} className="font-semibold">Termos de Uso</span> e a{' '}
                 <span style={{ color: 'var(--color-primary)' }} className="font-semibold">Política de Privacidade</span>
               </span>
@@ -354,7 +354,7 @@ export default function RegisterPage() {
                   {form.acceptAiConsent && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
-              <span className="text-xs text-slate-500 leading-relaxed">
+              <span className="text-sm text-slate-500 leading-relaxed">
                 Aceito o envio de <strong>dados clínicos anonimizados</strong> para análise por IA (LGPD Art. 7º).
                 Nomes e identificadores são removidos ou pseudonimizados antes do envio ao provedor de IA.
               </span>
@@ -368,7 +368,7 @@ export default function RegisterPage() {
                   {crmvDeclaration && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
-              <span className="text-xs text-slate-500 leading-relaxed">
+              <span className="text-sm text-slate-500 leading-relaxed">
                 Declaro que possuo registro ativo no CRMV informado.
               </span>
             </label>
