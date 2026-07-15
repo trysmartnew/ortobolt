@@ -72,23 +72,23 @@ export default function DashboardPage() {
 
   const { surgeriesToday, triageList, metricsToday, metricsYesterday } = useMemo(() => {
     const now = new Date();
-    const todayStart = new Date(now.setHours(0,0,0,0));
-    const yesterdayStart = new Date(now.setDate(now.getDate()-1));
-    
+    const todayStart = new Date(now.setHours(0, 0, 0, 0));
+    const yesterdayStart = new Date(now.setDate(now.getDate() - 1));
+
     const today = cases.filter(c => new Date(c.createdAt) >= todayStart);
     const yesterday = cases.filter(c => new Date(c.createdAt) >= yesterdayStart && new Date(c.createdAt) < todayStart);
-    
-    const surgicalProcedures = ['TPLO','FHO','TTA','LCP_repair','fracture_fixation','joint_replacement','spinal_surgery','tplo','fho','tta'];
+
+    const surgicalProcedures = ['TPLO', 'FHO', 'TTA', 'LCP_repair', 'fracture_fixation', 'joint_replacement', 'spinal_surgery', 'tplo', 'fho', 'tta'];
     const surgeries = today.filter((c) =>
       surgicalProcedures.some(
         (p) => p.toLowerCase() === (c.procedure ?? '').toLowerCase()
       )
     );
-    
-    const triage = [...cases].sort((a,b) => getClinicalPriority(a.status) - getClinicalPriority(b.status)).slice(0,4);
-    
+
+    const triage = [...cases].sort((a, b) => getClinicalPriority(a.status) - getClinicalPriority(b.status)).slice(0, 4);
+
     const countByStatus = (list: typeof cases, status: CaseStatus) => list.filter(c => c.status === status).length;
-    
+
     return {
       surgeriesToday: surgeries,
       triageList: triage,
@@ -116,11 +116,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
       <Card className="p-8 bg-gradient-to-br from-primary via-primary-mid to-accent text-white">
         <div data-tour="tour-dashboard-hero" className="flex items-center justify-between flex-wrap gap-3 min-h-[120px]">
           <div>
-            <h1 className="text-[36px] font-bold">{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Veterinário'}</h1>
+            <h1 className="text-2xl font-bold">{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Veterinário'}</h1>
             <p className="text-white/80 text-sm mt-1">
               {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
             </p>
@@ -128,7 +128,7 @@ export default function DashboardPage() {
           <div className="text-right">
             <p className="text-sm font-semibold">Hoje:</p>
             <p className="text-xs text-white/80">
-              {surgeriesToday.length} cirurgias · {triageList.filter(c=>c.status==='critical').length} crítico · {metricsToday.analyzed} análises
+              {surgeriesToday.length} cirurgias · {triageList.filter(c => c.status === 'critical').length} crítico · {metricsToday.analyzed} análises
             </p>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
                 return (
                   <div key={i} className="glass-panel-premium rounded-xl p-4 text-center">
                     <m.icon size={18} className="mx-auto mb-2 text-primary" />
-                    <p className="text-[36px] font-bold text-slate-900">{m.today}</p>
+                    <p className="text-2xl font-bold text-slate-900">{m.today}</p>
                     <p className="text-[10px] text-slate-500">{m.label}</p>
                     {typeof m.yesterday === 'number' && (
                       <p className="text-[10px] text-emerald-600 font-semibold mt-1">
@@ -203,9 +203,9 @@ export default function DashboardPage() {
             <h2 className="text-sm font-bold text-slate-900 mb-3">Próximas Ações</h2>
             <div className="space-y-2 text-sm">
               {[
-                { text: `${cases.filter(c=>c.status==='pending').length} casos pendentes`, icon: '⏳' },
-                { text: `${cases.filter(c=>c.status==='in_analysis').length} em análise`, icon: '📄' },
-                { text: `${cases.filter(c=>c.status==='critical').length} críticos`, icon: '🚨' },
+                { text: `${cases.filter(c => c.status === 'pending').length} casos pendentes`, icon: '⏳' },
+                { text: `${cases.filter(c => c.status === 'in_analysis').length} em análise`, icon: '📄' },
+                { text: `${cases.filter(c => c.status === 'critical').length} críticos`, icon: '🚨' },
               ].map((a, i) => (
                 <div key={i} className="flex items-center gap-2 p-2 rounded-lg glass-panel-premium">
                   <span className="text-lg">{a.icon}</span>
@@ -223,8 +223,8 @@ export default function DashboardPage() {
               <div className="flex-1">
                 <p className="text-sm font-semibold text-slate-900">Sugestão OrthoAI</p>
                 <p className="text-xs text-slate-600 mt-1">
-                  {triageList[0]?.status === 'critical' 
-                    ? `Caso crítico: ${triageList[0]?.patientName}. Recomendo revisão imediata do protocolo.` 
+                  {triageList[0]?.status === 'critical'
+                    ? `Caso crítico: ${triageList[0]?.patientName}. Recomendo revisão imediata do protocolo.`
                     : 'Nenhum caso crítico no momento. Revise os casos em análise para otimizar o fluxo.'}
                 </p>
                 <button onClick={() => openCase(triageList[0])} className="text-xs font-semibold text-primary hover:underline mt-2">Ver detalhes →</button>
@@ -236,9 +236,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-
-
-
-
-

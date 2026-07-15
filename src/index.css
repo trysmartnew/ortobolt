@@ -3,7 +3,11 @@
 
 @import "tailwindcss";
 
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
@@ -15,26 +19,59 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5 { 
+h1,
+h2,
+h3,
+h4,
+h5 {
   font-family: 'Inter', system-ui, sans-serif;
   font-weight: 700;
   line-height: 1.2;
 }
 
-h1 { font-size: 36px; }
-h2 { font-size: 22px; font-weight: 600; }
-h3 { font-size: 18px; font-weight: 600; }
+h1 {
+  font-size: 24px;
+}
 
-.font-mono, code, pre { font-family: 'Roboto Mono', monospace; }
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.font-mono,
+code,
+pre {
+  font-family: 'Roboto Mono', monospace;
+}
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
 
 /* Smooth transitions */
-* { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 /* Clinical spacing utilities */
 .card-premium {
@@ -53,7 +90,7 @@ h3 { font-size: 18px; font-weight: 600; }
   /* Neutros */
   --color-surface: #1E2329;
   --color-surface-muted: #252B36;
-  --color-border: rgba(255,255,255,0.08);
+  --color-border: rgba(255, 255, 255, 0.08);
   --color-text-primary: #FFFFFF;
   --color-text-secondary: #94A3B8;
   --color-text-tertiary: #94a3b8;
@@ -185,13 +222,34 @@ h3 { font-size: 18px; font-weight: 600; }
 }
 
 /* === Primary Opacity Variants === */
-.primary-10 { color: rgba(41, 163, 153, 0.1); }
-.primary-25 { color: rgba(41, 163, 153, 0.25); }
-.primary-35 { color: rgba(41, 163, 153, 0.35); }
-.primary-60 { color: rgba(41, 163, 153, 0.6); }
+.primary-10 {
+  color: rgba(41, 163, 153, 0.1);
+}
 
-.bg-primary-10 { background-color: rgba(41, 163, 153, 0.1); }
-.bg-primary-15 { background-color: rgba(41, 163, 153, 0.15); }
+.primary-25 {
+  color: rgba(41, 163, 153, 0.25);
+}
 
-.border-primary-30 { border-color: rgba(41, 163, 153, 0.3); }
-.border-primary-60 { border-color: rgba(41, 163, 153, 0.6); }
+.primary-35 {
+  color: rgba(41, 163, 153, 0.35);
+}
+
+.primary-60 {
+  color: rgba(41, 163, 153, 0.6);
+}
+
+.bg-primary-10 {
+  background-color: rgba(41, 163, 153, 0.1);
+}
+
+.bg-primary-15 {
+  background-color: rgba(41, 163, 153, 0.15);
+}
+
+.border-primary-30 {
+  border-color: rgba(41, 163, 153, 0.3);
+}
+
+.border-primary-60 {
+  border-color: rgba(41, 163, 153, 0.6);
+}
