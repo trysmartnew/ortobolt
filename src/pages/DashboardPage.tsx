@@ -138,7 +138,7 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 space-y-5">
           <Card className="p-4">
             <div data-tour="tour-dashboard-surgeries" className="flex items-center justify-between mb-4 min-h-[48px]">
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
                 <span className="flex items-center gap-2"><Stethoscope size={16} /> Cirurgias de Hoje</span>
               </h2>
               <span className="text-xs font-mono text-slate-700">{surgeriesToday.length} procedimentos</span>
@@ -155,7 +155,7 @@ export default function DashboardPage() {
           </Card>
 
           <Card className="p-4">
-            <h2 data-tour="tour-dashboard-metrics" className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2 min-h-[24px]">
+            <h2 data-tour="tour-dashboard-metrics" className="text-base font-bold text-white mb-4 flex items-center gap-2 min-h-[24px]">
               <span className="flex items-center gap-2"><Activity size={16} /> Métricas Operacionais</span> (hoje vs ontem)
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -187,7 +187,7 @@ export default function DashboardPage() {
         <div className="space-y-5">
           <Card className="p-4">
             <div data-tour="tour-dashboard-triage" className="flex items-center justify-between mb-4 min-h-[48px]">
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
                 <span className="flex items-center gap-2"><AlertTriangle size={16} /> Triage Inteligente</span>
               </h2>
               <span className="text-xs text-slate-700">Prioridade clínica</span>
@@ -200,7 +200,7 @@ export default function DashboardPage() {
           </Card>
 
           <Card className="p-4">
-            <h2 className="text-base font-bold text-slate-900 mb-3">Próximas Ações</h2>
+            <h2 className="text-base font-bold text-white mb-3">Próximas Ações</h2>
             <div className="space-y-2 text-sm">
               {[
                 { text: `${cases.filter(c => c.status === 'pending').length} casos pendentes`, icon: '⏳' },
@@ -221,7 +221,7 @@ export default function DashboardPage() {
                 <Pill size={16} className="text-white" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-slate-900">Sugestão OrthoAI</p>
+                <p className="text-sm font-semibold text-white">Sugestão OrthoAI</p>
                 <p className="text-xs text-slate-600 mt-1">
                   {triageList[0]?.status === 'critical'
                     ? `Caso crítico: ${triageList[0]?.patientName}. Recomendo revisão imediata do protocolo.`
