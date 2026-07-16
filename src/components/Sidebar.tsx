@@ -86,7 +86,7 @@ export default function Sidebar() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#29a399]/20 to-transparent border border-[#29a399]/20 flex items-center justify-center">
             <span className="text-[#29a399] font-bold text-sm">V</span>
           </div>
-          <h1 className="text-[13px] font-semibold text-white tracking-tight leading-none">
+          <h1 className="text-brand-h1 text-white">
             Vanguard <span className="text-[#29a399]">Veterinary</span>
           </h1>
         </div>
@@ -138,8 +138,8 @@ export default function Sidebar() {
                     onClick={() => setCurrentPage(item.page)}
                     style={isActive ? { background: 'linear-gradient(90deg, rgba(41,163,153,0.15) 0%, rgba(41,163,153,0) 100%)' } : {}}
                     className={`w-full flex items-center gap-3 px-4 h-[44px] text-sm transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${isActive
-                        ? 'text-white font-medium'
-                        : 'text-white/50 hover:bg-white/[0.03] hover:translate-x-1 hover:text-white'
+                      ? 'text-white font-medium'
+                      : 'text-white/50 hover:bg-white/[0.03] hover:translate-x-1 hover:text-white'
                       }`}
                   >
                     <Icon className={`w-5 h-5 ${isActive ? 'text-[#29a399]' : ''}`} />
@@ -188,4 +188,3 @@ export default function Sidebar() {
     </aside>
   );
 }
-

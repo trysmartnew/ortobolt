@@ -20,6 +20,17 @@ export default {
         surface: 'var(--color-surface)',
         'surface-muted': 'var(--color-surface-muted)',
       },
+      spacing: {
+        'sidebar': '280px',
+        'panel-right': '380px',
+        'header-brand': '84px',
+        'input-h': '42px',
+      },
+      fontSize: {
+        'brand-h1': ['13px', { fontWeight: '600', lineHeight: '1', letterSpacing: '-0.02em' }],
+        'brand-tagline': ['10px', { fontWeight: '400', letterSpacing: '0.1em' }],
+        'menu-item': ['14px', { lineHeight: '1.4' }],
+      },
       borderRadius: {
         sm: 'var(--radius-sm)',
         md: 'var(--radius-md)',
