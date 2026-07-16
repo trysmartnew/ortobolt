@@ -481,7 +481,7 @@ export default function ReportsPage() {
             <div className="flex items-center gap-2">
               {logoPreview ? (
                 <div className="relative">
-                  <img src={logoPreview} alt="Logo" className="w-24 h-10 object-contain rounded-lg border border-[var(--color-border)] glass-panel-premium p-1" />
+                  <img src={logoPreview} alt="Logo" className="w-40 h-16 object-contain rounded-lg border border-[var(--color-border)] glass-panel-premium p-1" />
                   <button
                     onClick={handleRemoveLogo}
                     className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-600"

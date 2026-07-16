@@ -79,17 +79,17 @@ async function addHeader(
 
       if (imageSource) {
         const format = imageSource.includes('jpeg') ? 'JPEG' : 'PNG';
-        doc.addImage(imageSource, format, 14, 5, 12, 12);
+        doc.addImage(imageSource, format, 14, 2, 18, 18);
       }
     } catch (e) {
       console.warn('Erro ao processar imagem do logo para o PDF:', e);
     }
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text(safe(clinicName), 30, 10);
+    doc.text(safe(clinicName), 36, 10);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
-    doc.text(safe(clinicSubtitle), 30, 16);
+    doc.text(safe(clinicSubtitle), 36, 16);
   } else {
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
