@@ -101,7 +101,7 @@ function getScrollParent(element: HTMLElement | null): HTMLElement | Window {
 function scrollToElement(target: string): void {
   const el = document.querySelector(`[data-tour="${target}"]`) as HTMLElement;
   if (!el) return;
-  
+
   const rect = el.getBoundingClientRect();
   const isInViewport = (
     rect.top >= 0 &&
@@ -109,7 +109,7 @@ function scrollToElement(target: string): void {
     rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   );
-  
+
   if (!isInViewport) {
     el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
   }
@@ -164,11 +164,11 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
   const tooltipRef = useRef<HTMLDivElement>(null);
   const isCenter = step.placement === 'center' || !rect;
   const PAD = 16;
-  
+
   const vw = typeof window !== 'undefined' ? window.innerWidth : 1024;
   const TW = vw < 480 ? Math.min(320, vw - 32) : 360;
   const TH = 220;
-  
+
   let style: React.CSSProperties = {};
 
   if (isCenter) {
@@ -205,18 +205,18 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
 
   useEffect(() => {
     if (!tooltipRef.current) return;
-    
+
     const focusableElements = tooltipRef.current.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
     const firstElement = focusableElements[0] as HTMLElement;
     const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-    
+
     firstElement?.focus();
-    
+
     const handleTab = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
-      
+
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
           e.preventDefault();
@@ -229,7 +229,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
         }
       }
     };
-    
+
     tooltipRef.current.addEventListener('keydown', handleTab);
     return () => tooltipRef.current?.removeEventListener('keydown', handleTab);
   }, [stepIndex]);
@@ -259,13 +259,13 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
         </button>
       </div>
       <div className="px-5 py-4">
-        <p id="tour-content" className="text-slate-700 text-[15px] leading-relaxed">{step.content}</p>
+        <p id="tour-content" className="text-slate-200 text-[15px] leading-relaxed">{step.content}</p>
       </div>
       <div className="px-5 pb-4 flex items-center justify-between flex-wrap gap-2">
         <button
           onClick={onClose}
           aria-label="Pular tour"
-          className="text-xs font-medium text-slate-500 hover:text-red-600 transition-colors"
+          className="text-xs font-medium text-slate-600 hover:text-red-600 transition-colors"
         >
           Pular
         </button>
@@ -273,7 +273,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
           {Array.from({ length: total }).map((_, i) => (
             <div
               key={i}
-              className={`rounded-full transition-all duration-300 ${i === stepIndex ? 'w-5 h-2 bg-primary' : 'w-2 h-2 bg-slate-200'}`}
+              className={`rounded-full transition-all duration-300 ${i === stepIndex ? 'w-5 h-2 bg-primary' : 'w-2 h-2 bg-slate-300'}`}
               aria-label={`Passo ${i + 1} de ${total}`}
             />
           ))}
@@ -283,7 +283,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
             <button
               onClick={onPrev}
               aria-label="Passo anterior"
-              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-700 bg-slate-100 hover:premium-header-bg bg-slate-200 transition-colors"
+              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-700 bg-slate-100 hover:premium-header-bg hover:text-white bg-slate-200 transition-colors"
             >
               <ChevronLeft size={14} /> Anterior
             </button>
@@ -373,7 +373,7 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
 
   useEffect(() => {
     if (!active || !currentStep) return;
-    
+
     if (currentStep.target !== '__welcome__') {
       scrollToElement(currentStep.target);
       const timeout = setTimeout(() => {
@@ -499,5 +499,3 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
     </>
   );
 });
-
-
