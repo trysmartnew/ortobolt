@@ -9,6 +9,23 @@ async function getJsPDF() {
   return jsPDF;
 }
 
+async function getUrlAsBase64(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error('Falha ao converter URL do logo para Base64:', error);
+    return '';
+  }
+}
+
 // ✅ A-03: Sanitizar texto — remove caracteres de controle que quebram jsPDF
 function safe(s?: string | number): string {
   if (s === undefined || s === null) return '';
@@ -40,7 +57,7 @@ function addWrappedText(
   return y;
 }
 
-function addHeader(
+async function addHeader(
   doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>,
   title: string,
   subtitle: string,
@@ -48,14 +65,25 @@ function addHeader(
 ) {
   const clinicName = options?.clinicName || localStorage.getItem('ortobolt_pdf_clinic_name') || 'Vanguard Veterinary';
   const clinicSubtitle = options?.clinicSubtitle || localStorage.getItem('ortobolt_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente';
-  const logoData = options?.logoUrl || localStorage.getItem('ortobolt_pdf_logo');
+  const logoUrl = options?.logoUrl || localStorage.getItem('ortobolt_pdf_logo');
 
   doc.setFillColor(0, 86, 179);
   doc.rect(0, 0, 210, 22, 'F');
   doc.setTextColor(255, 255, 255);
 
-  if (logoData) {
-    try { doc.addImage(logoData, 'PNG', 14, 5, 12, 12); } catch (e) { console.warn('Erro ao adicionar logo:', e); }
+  if (logoUrl) {
+    try {
+      const imageSource = logoUrl.startsWith('http')
+        ? await getUrlAsBase64(logoUrl)
+        : logoUrl;
+
+      if (imageSource) {
+        const format = imageSource.includes('jpeg') ? 'JPEG' : 'PNG';
+        doc.addImage(imageSource, format, 14, 5, 12, 12);
+      }
+    } catch (e) {
+      console.warn('Erro ao processar imagem do logo para o PDF:', e);
+    }
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text(safe(clinicName), 30, 10);
@@ -104,7 +132,7 @@ export async function generateMonthlyReport(
   const JsPDF = await getJsPDF();
   const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const month = new Date().toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-  addHeader(doc, 'Relatório de Desempenho', month.charAt(0).toUpperCase() + month.slice(1));
+  await addHeader(doc, 'Relatório de Desempenho', month.charAt(0).toUpperCase() + month.slice(1));
 
   let y = 54;
 
@@ -184,7 +212,7 @@ export async function generateCaseReport(
   const JsPDF = await getJsPDF();
   const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const reportTitle = tutorMode ? 'Guia para o Tutor' : 'Relatório de Caso Clínico';
-  addHeader(doc, reportTitle, `${safe(c.patientName)} — ${new Date(c.createdAt).toLocaleDateString('pt-BR')}`, options);
+  await addHeader(doc, reportTitle, `${safe(c.patientName)} — ${new Date(c.createdAt).toLocaleDateString('pt-BR')}`, options);
 
   let y = 54;
 
