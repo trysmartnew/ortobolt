@@ -118,41 +118,37 @@ export default function ReportsPage() {
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      addToast('Selecione apenas arquivos de imagem.', 'error');
+    if (!file) {
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      addToast('Imagem muito grande. Máximo: 2MB.', 'error');
+
+    // Validação de tamanho (máx 1MB para não estourar localStorage)
+    if (file.size > 1024 * 1024) {
+      addToast('O arquivo do logo é muito grande. Máximo 1MB.', 'error');
+      return;
+    }
+
+    // Validação de tipo
+    if (!file.type.startsWith('image/')) {
+      addToast('Por favor, selecione um arquivo de imagem válido.', 'error');
       return;
     }
 
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${crypto.randomUUID()}.${fileExt}`;
-      const { error: uploadError } = await supabase.storage
-        .from('case-images')
-        .upload(fileName, file, { contentType: file.type, upsert: true });
-
-      if (uploadError) throw uploadError;
-
-      // Correção Crítica: Desestruturação segura para evitar crash se a URL não for gerada.
-      const { data: urlData } = supabase.storage
-        .from('case-images')
-        .getPublicUrl(fileName);
-
-      if (!urlData?.publicUrl) {
-        throw new Error("Não foi possível obter a URL pública do logo após o upload.");
-      }
-
-      console.log('Logo URL carregada:', urlData.publicUrl);
-      setLogoPreview(urlData.publicUrl);
-      localStorage.setItem('ortobolt_pdf_logo', urlData.publicUrl);
-      addToast('Logo enviada com sucesso.', 'success');
-    } catch {
-      addToast('Erro ao enviar logo.', 'error');
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setLogoPreview(base64String);
+        localStorage.setItem('ortobolt_pdf_logo', base64String);
+        addToast('Logo salvo localmente com sucesso.', 'success');
+      };
+      reader.onerror = () => {
+        addToast('Erro ao processar a imagem.', 'error');
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Erro no upload local do logo:', error);
+      addToast('Erro ao salvar logo.', 'error');
     }
   };
 
