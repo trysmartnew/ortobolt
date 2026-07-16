@@ -2,7 +2,6 @@
 // ✅ Produção Real — Dados do Supabase (SEM MOCKS)
 // ✅ RESTAURADO: Personalização de Laudos + Modal de Seleção de Caso
 import { useState, useEffect, useMemo } from 'react';
-import { pickCaseForReport } from '@/services/clinicalCaseIntegrationService';
 import { supabase } from '@/services/supabase';
 import type { Report, KPIMetric, ChartDataPoint, ClinicalCase } from '@/types/index';
 import { Download, FileText, Clock, CheckCircle, AlertCircle, Upload, Settings, Search, Calendar, User, X } from 'lucide-react';
@@ -35,11 +34,6 @@ const TYPE_COLORS: Record<string, 'blue' | 'success' | 'warning' | 'info'> = {
 
 export default function ReportsPage() {
   const { user, cases, activeCase, addToast } = useApp();
-
-  const reportableCase = useMemo(
-    () => pickCaseForReport(cases, activeCase),
-    [cases, activeCase]
-  );
 
   const precisionMetric = useMemo(() => {
     const completedCases = cases.filter(c => c.status === 'completed');
@@ -101,6 +95,7 @@ export default function ReportsPage() {
     setIsReportModalOpen(false);
     setReportType(null);
     setSelectedCaseId(null);
+    setCaseSearch('');
   };
 
   const handleCaseSelect = async (caseId: string) => {
@@ -117,6 +112,7 @@ export default function ReportsPage() {
   const handleSavePrefs = () => {
     localStorage.setItem('ortobolt_pdf_clinic_name', clinicName);
     localStorage.setItem('ortobolt_pdf_clinic_subtitle', clinicSubtitle);
+    // O toast já existe, não precisa adicionar outro.
     addToast('Preferências de Laudo salvas.', 'success');
   };
 
@@ -142,12 +138,17 @@ export default function ReportsPage() {
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
+      // Correção Crítica: Desestruturação segura para evitar crash se a URL não for gerada.
+      const { data: urlData } = supabase.storage
         .from('case-images')
         .getPublicUrl(fileName);
 
-      setLogoPreview(publicUrl);
-      localStorage.setItem('ortobolt_pdf_logo', publicUrl);
+      if (!urlData?.publicUrl) {
+        throw new Error("Não foi possível obter a URL pública do logo após o upload.");
+      }
+
+      setLogoPreview(urlData.publicUrl);
+      localStorage.setItem('ortobolt_pdf_logo', urlData.publicUrl);
       addToast('Logo enviada com sucesso.', 'success');
     } catch {
       addToast('Erro ao enviar logo.', 'error');
@@ -317,29 +318,21 @@ export default function ReportsPage() {
     }
   };
 
-  const downloadCase = async () => {
-    if (!user) return;
-    if (!reportableCase) {
-      setNoCaseToast(true);
-      setTimeout(() => setNoCaseToast(false), 3000);
-      return;
-    }
-    setGenerating('case');
-    try {
-      await generateCaseReport(reportableCase);
-    } finally {
-      setGenerating(null);
-    }
-  };
-
-  const downloadHistoryReport = async (r: Report) => {
+  const handleRegenerateAndDownloadReport = async (r: Report) => {
     if (!user || downloadingId) return;
     setDownloadingId(r.id);
+    addToast('Gerando relatório com os dados mais recentes do caso...', 'info');
     try {
       if (r.type === 'monthly') {
         await generateMonthlyReport(user, kpiMetrics, chartData, cases);
-      } else if (r.type === 'case' && reportableCase) {
-        await generateCaseReport(reportableCase);
+      } else if (r.type === 'case') {
+        // Assumes the Report type has a case_id when type is 'case'
+        const caseToRegenerate = cases.find(c => c.id === (r as any).case_id);
+        if (caseToRegenerate) {
+          await generateCaseReport(caseToRegenerate);
+        } else {
+          addToast(`Caso associado ao relatório não foi encontrado.`, 'error');
+        }
       }
     } finally {
       setDownloadingId(null);
@@ -347,13 +340,15 @@ export default function ReportsPage() {
   };
 
   const handleGenerateTechnicalReport = async (caseId?: string) => {
-    if (!reportableCase && !caseId) {
-      setNoCaseToast(true);
-      setTimeout(() => setNoCaseToast(false), 3000);
+    if (!caseId) {
+      addToast('Nenhum caso selecionado para gerar o laudo.', 'warning');
       return;
     }
-    const selectedCase = caseId ? cases.find(c => c.id === caseId) : reportableCase;
-    if (!selectedCase) return;
+    const selectedCase = cases.find(c => c.id === caseId);
+    if (!selectedCase) {
+      addToast(`Caso com ID ${caseId} não encontrado.`, 'error');
+      return;
+    }
 
     setGenerating('case');
     try {
@@ -388,13 +383,15 @@ export default function ReportsPage() {
   };
 
   const handleGenerateTutorGuide = async (caseId?: string) => {
-    if (!reportableCase && !caseId) {
-      setNoCaseToast(true);
-      setTimeout(() => setNoCaseToast(false), 3000);
+    if (!caseId) {
+      addToast('Nenhum caso selecionado para gerar o guia.', 'warning');
       return;
     }
-    const selectedCase = caseId ? cases.find(c => c.id === caseId) : reportableCase;
-    if (!selectedCase) return;
+    const selectedCase = cases.find(c => c.id === caseId);
+    if (!selectedCase) {
+      addToast(`Caso com ID ${caseId} não encontrado.`, 'error');
+      return;
+    }
 
     setGenerating('case');
     try {
@@ -467,7 +464,6 @@ export default function ReportsPage() {
                   type="text"
                   value={clinicName}
                   onChange={e => setClinicName(e.target.value)}
-                  onBlur={handleSavePrefs}
                   className="w-48 px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
                 />
               </div>
@@ -477,7 +473,6 @@ export default function ReportsPage() {
                   type="text"
                   value={clinicSubtitle}
                   onChange={e => setClinicSubtitle(e.target.value)}
-                  onBlur={handleSavePrefs}
                   className="w-48 px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
                 />
               </div>
@@ -499,7 +494,7 @@ export default function ReportsPage() {
                   <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
                 </label>
               )}
-              <Button variant="primary" size="sm" onClick={handleSavePrefs}>Gerar Relatório</Button>
+              <Button variant="primary" size="sm" onClick={handleSavePrefs}>Salvar Preferências</Button>
             </div>
           </div>
         </div>
@@ -510,7 +505,6 @@ export default function ReportsPage() {
               type="text"
               value={clinicName}
               onChange={e => setClinicName(e.target.value)}
-              onBlur={handleSavePrefs}
               className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
             />
           </div>
@@ -520,7 +514,6 @@ export default function ReportsPage() {
               type="text"
               value={clinicSubtitle}
               onChange={e => setClinicSubtitle(e.target.value)}
-              onBlur={handleSavePrefs}
               className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
             />
           </div>
@@ -663,9 +656,9 @@ export default function ReportsPage() {
               {r.status === 'ready' && (
                 <RequireRole>
                   <button
-                    onClick={() => downloadHistoryReport(r)}
+                    onClick={() => handleRegenerateAndDownloadReport(r)}
                     disabled={downloadingId === r.id}
-                    title="Baixar relatório"
+                    title="Regenerar e Baixar Relatório"
                     className="text-primary hover:text-primary-dark transition-colors p-1.5 rounded-lg hover:bg-blue-50 disabled:opacity-50"
                   >
                     {downloadingId === r.id ? (
