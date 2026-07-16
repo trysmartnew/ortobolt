@@ -457,7 +457,7 @@ export default function ReportsPage() {
               <Settings size={18} className="text-[var(--color-accent)]" />
               <h3 className="font-bold text-slate-900 text-sm">Report Customization</h3>
             </div>
-            <p className="text-sm text-menu-muted">Personalização de Laudos e Relatórios</p>
+            <p className="text-sm text-slate-400">Personalização de Laudos e Relatórios</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-4">
@@ -535,8 +535,8 @@ export default function ReportsPage() {
             <div className="flex items-center gap-2 mb-4">
               <FileText className="text-[var(--color-accent)]" size={18} />
               <div>
-                <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Relatório Mensal</h3>
-                <p className="text-sm text-menu-muted">KPIs, evolução e casos do período</p>
+                <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>Relatório Mensal</h3>
+                <p className="text-sm text-slate-400">KPIs, evolução e casos do período</p>
               </div>
             </div>
 
@@ -584,8 +584,8 @@ export default function ReportsPage() {
           <Card className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Clinical Reports & Tutor Guides</h3>
-                <p className="text-sm text-menu-muted mt-0.5">Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco.</p>
+                <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>Clinical Reports & Tutor Guides</h3>
+                <p className="text-sm text-slate-400 mt-0.5">Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco.</p>
               </div>
               <Badge variant="info" className="border-0">{availableCasesCount} casos disponíveis</Badge>
             </div>
@@ -594,9 +594,9 @@ export default function ReportsPage() {
               <div className="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-colors">
                 <div className="flex items-center gap-2 mb-2">
                   <FileText className="text-[var(--color-accent)]" size={18} />
-                  <h4 className="text-xs font-bold text-slate-900">Selecionar Caso e Gerar Laudo Técnico</h4>
+                  <h4 className="text-xs font-bold text-white">Selecionar Caso e Gerar Laudo Técnico</h4>
                 </div>
-                <p className="text-xs text-menu-muted mb-3">Gera o laudo técnico completo com métricas de IA, landmarks anatômicos e fatores de risco identificados.</p>
+                <p className="text-xs text-slate-400 mb-3">Gera o laudo técnico completo com métricas de IA, landmarks anatômicos e fatores de risco identificados.</p>
                 <RequireRole>
                   <Button className="w-full" variant="secondary" onClick={handleOpenTechnicalReport} disabled={!cases || cases.length === 0}>
                     <FileText size={14} /> Selecionar Caso
@@ -607,9 +607,9 @@ export default function ReportsPage() {
               <div className="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-colors">
                 <div className="flex items-center gap-2 mb-2">
                   <User className="text-[var(--color-accent)]" size={18} />
-                  <h4 className="text-xs font-bold text-slate-900">Selecionar Caso e Gerar Guia para o Tutor</h4>
+                  <h4 className="text-xs font-bold text-white">Selecionar Caso e Gerar Guia para o Tutor</h4>
                 </div>
-                <p className="text-xs text-menu-muted mb-3">Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal com instruções pós-operatórias.</p>
+                <p className="text-xs text-slate-400 mb-3">Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal com instruções pós-operatórias.</p>
                 <RequireRole>
                   <Button className="w-full" variant="secondary" onClick={handleOpenTutorGuide} disabled={!cases || cases.length === 0}>
                     <User size={14} /> Selecionar Caso
@@ -685,17 +685,17 @@ export default function ReportsPage() {
       {isReportModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="glass-panel-premium rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+            <div className="p-5 border-b border-white/10 flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-slate-900 text-lg">Selecionar Caso para Laudo</h3>
-                <p className="text-base text-menu-muted">Escolha o caso clínico para gerar o PDF personalizado.</p>
+                <h3 className="font-bold text-white text-lg">Selecionar Caso para Laudo</h3>
+                <p className="text-base text-slate-400">Escolha o caso clínico para gerar o PDF personalizado.</p>
               </div>
               <button onClick={handleCloseModal} className="p-2 hover:bg-slate-100 rounded-full transition">
                 <X size={20} className="text-menu-muted" />
               </button>
             </div>
 
-            <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row gap-3">
+            <div className="p-5 border-b border-white/10 flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                 <input
@@ -731,7 +731,7 @@ export default function ReportsPage() {
                     <button
                       key={c.id}
                       onClick={() => handleCaseSelect(c.id)}
-                      className="w-full flex items-center gap-4 p-3 rounded-xl border border-slate-100 hover:border-primary hover:bg-blue-50/50 transition text-left group"
+                      className="w-full flex items-center gap-4 p-3 rounded-xl border border-white/10 hover:border-primary hover:bg-primary/10 transition text-left group"
                     >
                       <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-menu-muted font-bold text-xs overflow-hidden shrink-0">
                         {(c as any).patientAvatar ? (
@@ -741,8 +741,8 @@ export default function ReportsPage() {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-slate-900 text-sm truncate">{c.patientName}</p>
-                        <p className="text-xs text-menu-muted truncate">{c.procedure || 'Procedimento não especificado'}</p>
+                        <p className="font-semibold text-white text-sm truncate">{c.patientName}</p>
+                        <p className="text-xs text-slate-400 truncate">{c.procedure || 'Procedimento não especificado'}</p>
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-xs text-slate-400">{new Date(c.createdAt).toLocaleDateString('pt-BR')}</p>

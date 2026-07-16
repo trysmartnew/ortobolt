@@ -24,7 +24,7 @@ function SettingCard({ icon: Icon, title, description, children, accent }: { ico
           </div>
           <div className="min-w-0">
             <p className="text-sm font-semibold text-[var(--color-text-primary)]">{title}</p>
-            {description && <p className="text-xs text-[var(--color-text-secondary)] mt-0.5 leading-relaxed">{description}</p>}
+            {description && <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{description}</p>}
           </div>
         </div>
         <div className="flex-shrink-0 flex items-center gap-2">{children}</div>
@@ -138,7 +138,7 @@ export default function SettingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <SectionHeader title="Configurações da Conta" subtitle="Preferências do sistema e conta" />
-          <p className="text-[10px] text-slate-500 font-mono mt-1">{timestamp}</p>
+          <p className="text-[10px] text-slate-400 font-mono mt-1">{timestamp}</p>
         </div>
         <Button onClick={handleSaveSettings} loading={saving} className="flex items-center gap-2">
           <Check size={14} />
@@ -149,7 +149,7 @@ export default function SettingsPage() {
       {loading ? (
         <div className="p-6 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent)]" />
-          <p className="ml-3 text-sm text-slate-600">Carregando preferências...</p>
+          <p className="ml-3 text-sm text-slate-300">Carregando preferências...</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -159,7 +159,7 @@ export default function SettingsPage() {
           </SettingCard>
 
           <SettingCard icon={Globe} title="Idioma" description="Língua da interface e relatórios">
-            <select value={prefs.language as string} onChange={e => set('language', e.target.value)} className="border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]">
+            <select value={prefs.language as string} onChange={e => set('language', e.target.value)} className="border border-[var(--color-border)] bg-[var(--color-surface)] text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]">
               <option value="pt">Português (BR)</option>
               <option value="en">English</option>
             </select>
@@ -170,7 +170,7 @@ export default function SettingsPage() {
           </SettingCard>
 
           <SettingCard icon={FileText} title="Formato de Relatório" description="Formato padrão para exportação">
-            <select value={prefs.reportFormat as string} onChange={e => set('reportFormat', e.target.value)} className="border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]">
+            <select value={prefs.reportFormat as string} onChange={e => set('reportFormat', e.target.value)} className="border border-[var(--color-border)] bg-[var(--color-surface)] text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]">
               <option value="pdf">PDF</option>
               <option value="docx">DOCX</option>
             </select>
@@ -178,7 +178,7 @@ export default function SettingsPage() {
 
           <SettingCard icon={Crown} title="Upgrade de Plano" description="Recursos disponíveis e opções de upgrade">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-muted)] px-2 py-1 rounded-lg capitalize border border-[var(--color-border)]">
+              <span className="text-xs font-semibold text-white bg-[var(--color-surface-muted)] px-2 py-1 rounded-lg capitalize border border-[var(--color-border)]">
                 {currentPlan === 'free' ? 'Gratuito' : currentPlan === 'professional' ? 'Professional' : 'Enterprise'}
               </span>
               <Button variant="secondary" size="sm" disabled title="Em breve">

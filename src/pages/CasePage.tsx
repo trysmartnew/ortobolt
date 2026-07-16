@@ -205,9 +205,9 @@ const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave, s
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="glass-panel-premium rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Edit3 size={18} /> Editar Caso</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-menu"><X size={20} /></button>
+        <div className="p-5 border-b border-white/10 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-white flex items-center gap-2"><Edit3 size={18} /> Editar Caso</h3>
+          <button onClick={onClose} className="text-slate-300 hover:text-white"><X size={20} /></button>
         </div>
         <div className="p-6 space-y-5">
           <div>
@@ -243,7 +243,7 @@ const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave, s
             </select>
           </div>
         </div>
-        <div className="p-5 border-t border-slate-100 flex gap-2">
+        <div className="p-5 border-t border-white/10 flex gap-2">
           <Button variant="secondary" onClick={onClose} className="flex-1" disabled={saving}>Cancelar</Button>
           <Button onClick={handleSave} className="flex-1" disabled={saving}>
             {saving ? <><span className="animate-spin inline-block h-4 w-4 border border-current border-t-transparent rounded-full mr-2" />Salvando...</> : <><Check size={14} /> Salvar</>}
@@ -270,9 +270,9 @@ const TutorGuideModal = memo(function TutorGuideModal({ caseData, protocol, onCl
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="glass-panel-premium rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="p-5 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
-          <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2"><Printer size={18} /> Orientações para o Tutor</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-menu"><X size={20} /></button>
+        <div className="p-5 border-b border-white/10 flex items-center justify-between flex-shrink-0">
+          <h3 className="text-lg font-bold text-white flex items-center gap-2"><Printer size={18} /> Orientações para o Tutor</h3>
+          <button onClick={onClose} className="text-slate-300 hover:text-white"><X size={20} /></button>
         </div>
         <div className="flex-1 overflow-y-auto p-6">
           <pre className="text-sm font-mono text-menu whitespace-pre-wrap leading-relaxed premium-header-bg glass-panel-premium p-4 rounded-lg border border-white/10">{guide}</pre>
@@ -543,7 +543,7 @@ export default function CasePage() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {!analysisTool ? (
-        <>
+        <div className="space-y-6">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-xs font-semibold text-menu-muted">
             <button type="button" onClick={() => { closeCase(); setCurrentPage('gallery'); }} className="hover:text-[var(--color-accent)]">Prontuário</button>
@@ -563,11 +563,11 @@ export default function CasePage() {
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-900">{activeCase.patientName}</p>
-                  <p className="text-xs text-menu-muted capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
+                  <p className="text-xs text-slate-400 capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 text-xs text-menu-muted">
+            <div className="flex items-center gap-3 text-xs text-slate-400">
               <span className="flex items-center gap-1"><Ruler size={14} /> {activeCase.ageYears} anos</span>
               <span className="flex items-center gap-1"><Weight size={14} /> {activeCase.weightKg} kg</span>
               <span className="flex items-center gap-1"><Activity size={14} /> {activeCase.status}</span>
@@ -593,10 +593,10 @@ export default function CasePage() {
             </button>
           </div>
 
-          <p className="text-xs text-menu-muted text-center">Selecione uma análise para começar ou arraste imagens da galeria (não visível) para o canvas.</p>
-        </>
+          <p className="text-xs text-slate-400 text-center">Selecione uma análise para começar ou arraste imagens da galeria (não visível) para o canvas.</p>
+        </div>
       ) : analysisTool === 'comparativa' ? (
-        <>
+        <div className="space-y-6">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-xs font-semibold text-menu-muted">
             <button type="button" onClick={handleBackToPatient} className="hover:text-[var(--color-accent)]">Mesa de Luz Digital</button>
@@ -616,11 +616,11 @@ export default function CasePage() {
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-900">{activeCase.patientName}</p>
-                  <p className="text-xs text-menu-muted capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
+                  <p className="text-xs text-slate-400 capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 text-xs text-menu-muted">
+            <div className="flex items-center gap-3 text-xs text-slate-400">
               <span className="flex items-center gap-1"><Ruler size={14} /> {activeCase.ageYears} anos</span>
               <span className="flex items-center gap-1"><Weight size={14} /> {activeCase.weightKg} kg</span>
               <span className="flex items-center gap-1"><Activity size={14} /> {activeCase.status}</span>
@@ -761,8 +761,8 @@ export default function CasePage() {
             </div>
           )}
 
-          <p className="text-xs text-menu-muted text-center">Selecione e arraste mais exames para comparar ou ajuste os parâmetros de IA.</p>
-        </>
+          <p className="text-xs text-slate-400 text-center">Selecione e arraste mais exames para comparar ou ajuste os parâmetros de IA.</p>
+        </div>
       ) : (
         <div className="flex items-center justify-between flex-wrap gap-3">
           <button type="button" onClick={handleBackToPatient} className="flex items-center gap-2 text-sm text-label hover:text-[var(--color-accent)] font-semibold transition-colors">
@@ -783,8 +783,8 @@ export default function CasePage() {
       <Card data-tour="tour-case-patient" className="p-5">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-extrabold text-slate-900 mb-1">{activeCase.title}</h1>
-            <p className="text-sm text-menu-muted font-mono">
+            <h1 className="text-2xl font-extrabold text-white mb-1">{activeCase.title}</h1>
+            <p className="text-sm text-slate-400 font-mono">
               Criado em {formatDate(activeCase.createdAt)} · Atualizado em {formatDate(activeCase.updatedAt)}
             </p>
           </div>
@@ -960,7 +960,7 @@ export default function CasePage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className={`text-xs font-semibold ${done ? 'line-through text-slate-500' : 'text-slate-900'}`}>
-                        <span className="mr-1">{icon}</span> {done ? step.text : step.text}
+                        <span className="mr-1">{icon}</span> {step.text}
                         {step.mgPerKg && (
                           <span className="ml-1 font-mono text-primary font-bold">
                             ({calculateDose(step.mgPerKg, activeCase.weightKg)})

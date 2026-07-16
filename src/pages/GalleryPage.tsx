@@ -24,8 +24,8 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
 
       {[['Paciente', c.patientName], ['Espécie', SPECIES_LABELS[c.species]], ['Raça', c.breed], ['Idade', `${c.ageYears} anos`], ['Peso', `${c.weightKg} kg`], ['Procedimento', PROCEDURE_LABELS[c.procedure]]].map(([k, v]) => (
         <div key={k} className="glass-panel-premium/70 rounded-xl p-3.5">
-          <span className="text-xs font-semibold text-menu-muted">{k}</span>
-          <p className="text-sm font-medium text-slate-900">{v}</p>
+          <span className="text-xs font-semibold text-slate-400">{k}</span>
+          <p className="text-sm font-medium text-white">{v}</p>
         </div>
       ))}
 
@@ -35,7 +35,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
       </div>
 
       {c.precisionScore && (
-        <div className="mt-3 p-3 bg-blue-50/60 rounded-xl">
+        <div className="mt-3 p-3 bg-primary/10 rounded-xl">
           <PrecisionGauge value={c.precisionScore} size={48} />
           <p className="text-xs text-menu-muted mt-1">precisão IA</p>
         </div>
@@ -43,10 +43,10 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
 
       {c.aiAnalysis && (
         <div className="mt-4 space-y-3">
-          <p className="text-xs font-bold text-menu">Análise OrthoVision IA</p>
+          <p className="text-xs font-bold text-white">Análise OrthoVision IA</p>
           {c.aiAnalysis.anatomicalLandmarks.map(l => (
             <div key={l.name} className="flex items-center justify-between text-xs">
-              <span className="text-slate-600">{l.name}</span>
+              <span className="text-slate-300">{l.name}</span>
               <span className={`font-mono font-semibold ${l.detected ? 'text-success' : 'text-error'}`}>
                 {l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗'}
               </span>
@@ -54,24 +54,24 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
           ))}
 
           {c.aiAnalysis.recommendations.length > 0 && (
-            <>
-              <p className="text-xs font-bold text-menu mt-2">Recomendações</p>
-              <ul className="space-y-1">
+            <div className="mt-2">
+              <p className="text-xs font-bold text-white">Recomendações</p>
+              <ul className="space-y-1 mt-1">
                 {c.aiAnalysis.recommendations.map((r, i) => (
-                  <li key={i} className="text-xs text-menu flex gap-2">
-                    <span>›</span> {r}
+                  <li key={i} className="text-xs text-slate-300 flex gap-2">
+                    <span className="text-primary">›</span> {r}
                   </li>
                 ))}
               </ul>
-            </>
+            </div>
           )}
         </div>
       )}
 
       {c.notes && (
         <div className="mt-4 p-3 glass-panel-premium rounded-lg">
-          <p className="text-xs font-bold text-menu mb-1">Observações</p>
-          <p className="text-xs text-slate-600">{c.notes}</p>
+          <p className="text-xs font-bold text-white mb-1">Observações</p>
+          <p className="text-xs text-slate-300">{c.notes}</p>
         </div>
       )}
 
@@ -122,8 +122,8 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
                   </div>
                   <div className="flex items-center justify-between">
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${sim.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
-                        sim.status === 'critical' ? 'bg-red-100 text-red-700' :
-                          'bg-blue-100 text-blue-700'
+                      sim.status === 'critical' ? 'bg-red-100 text-red-700' :
+                        'bg-blue-100 text-blue-700'
                       }`}>
                       {sim.status === 'completed' ? 'Concluído' : sim.status === 'critical' ? 'Crítico' : 'Em Análise'}
                     </span>
@@ -344,8 +344,8 @@ export default function GalleryPage() {
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
               className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition-colors ${statusFilter === f.value
-                  ? 'bg-primary text-white'
-                  : 'glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium'
+                ? 'bg-primary text-white'
+                : 'glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium'
                 }`}
             >
               {f.label}

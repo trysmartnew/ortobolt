@@ -265,7 +265,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
         <button
           onClick={onClose}
           aria-label="Pular tour"
-          className="text-xs font-medium text-slate-800 hover:text-red-600 transition-colors"
+          className="text-xs font-medium text-slate-300 hover:text-red-400 transition-colors"
         >
           Pular
         </button>

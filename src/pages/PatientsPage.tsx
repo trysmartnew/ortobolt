@@ -161,10 +161,10 @@ export default function PatientsPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {activeAssistantCase && (
-        <PatientAssistantPanel 
-          isOpen={!!activeAssistantCase} 
-          onClose={() => setActiveAssistantCase(null)} 
-          caseData={activeAssistantCase} 
+        <PatientAssistantPanel
+          isOpen={!!activeAssistantCase}
+          onClose={() => setActiveAssistantCase(null)}
+          caseData={activeAssistantCase}
         />
       )}
       <div className="flex flex-col gap-1">
@@ -175,13 +175,13 @@ export default function PatientsPage() {
       <Card className="glass-panel-premium !text-[var(--color-text-primary)] p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)]" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input
               type="text"
               placeholder="Search Patients (Pesquisa Pacientes)"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] text-sm placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+              className="w-full pl-9 pr-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
             />
           </div>
 
@@ -208,7 +208,7 @@ export default function PatientsPage() {
           </select>
 
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)]" size={16} />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input
               type="date"
               value={dateFilter}
@@ -236,14 +236,14 @@ export default function PatientsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--color-border)]">
-                  <th className="text-left py-3 px-4 text-[var(--color-text-secondary)] font-semibold">Foto</th>
-                  <th className="text-left py-3 px-4 text-[var(--color-text-secondary)] font-semibold">Nome</th>
-                  <th className="text-left py-3 px-4 text-[var(--color-text-secondary)] font-semibold">Espécie / Raça</th>
-                  <th className="text-left py-3 px-4 text-[var(--color-text-secondary)] font-semibold">Idade</th>
-                  <th className="text-left py-3 px-4 text-[var(--color-text-secondary)] font-semibold">Proprietário</th>
-                  <th className="text-left py-3 px-4 text-[var(--color-text-secondary)] font-semibold">Último Caso</th>
-                  <th className="text-left py-3 px-4 text-[var(--color-text-secondary)] font-semibold">Status Clínico</th>
-                  <th className="text-left py-3 px-4 text-[var(--color-text-secondary)] font-semibold">Ações</th>
+                  <th className="text-left py-3 px-4 text-slate-400 font-semibold">Foto</th>
+                  <th className="text-left py-3 px-4 text-slate-400 font-semibold">Nome</th>
+                  <th className="text-left py-3 px-4 text-slate-400 font-semibold">Espécie / Raça</th>
+                  <th className="text-left py-3 px-4 text-slate-400 font-semibold">Idade</th>
+                  <th className="text-left py-3 px-4 text-slate-400 font-semibold">Proprietário</th>
+                  <th className="text-left py-3 px-4 text-slate-400 font-semibold">Último Caso</th>
+                  <th className="text-left py-3 px-4 text-slate-400 font-semibold">Status Clínico</th>
+                  <th className="text-left py-3 px-4 text-slate-400 font-semibold">Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -254,21 +254,21 @@ export default function PatientsPage() {
                         {p.avatarUrl ? (
                           <img src={p.avatarUrl} alt={p.patientName} className="w-full h-full object-cover" />
                         ) : (
-                          <span className="text-xs font-bold text-[var(--color-text-secondary)]">
+                          <span className="text-xs font-bold text-slate-400">
                             {p.patientName.charAt(0).toUpperCase()}
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <p className="font-semibold text-[var(--color-text-primary)]">{p.patientName}</p>
+                      <p className="font-semibold text-white">{p.patientName}</p>
                     </td>
-                    <td className="py-3 px-4 text-[var(--color-text-secondary)]">
+                    <td className="py-3 px-4 text-slate-400">
                       {SPECIES_LABELS[p.species] ?? p.species} / {p.breed}
                     </td>
-                    <td className="py-3 px-4 text-[var(--color-text-secondary)]">{p.ageYears ?? '-'} anos</td>
-                    <td className="py-3 px-4 text-[var(--color-text-secondary)]">{p.owner || '-'}</td>
-                    <td className="py-3 px-4 text-[var(--color-text-secondary)]">{formatDate(p.lastCaseDate)}</td>
+                    <td className="py-3 px-4 text-slate-400">{p.ageYears ?? '-'} anos</td>
+                    <td className="py-3 px-4 text-slate-400">{p.owner || '-'}</td>
+                    <td className="py-3 px-4 text-slate-400">{formatDate(p.lastCaseDate)}</td>
                     <td className="py-3 px-4">
                       <Badge variant={getPatientStatusVariant(p.status)} className="border-0">
                         {getPatientStatusLabel(p.status)}
@@ -278,21 +278,21 @@ export default function PatientsPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleView(p.id)}
-                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-slate-400 hover:text-[var(--color-accent)] transition-colors"
                           title="Visualizar"
                         >
                           <Eye size={16} />
                         </button>
                         <button
                           onClick={() => setActiveAssistantCase(cases.find(c => c.id === p.id) as any)}
-                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-primary transition-colors"
+                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-slate-400 hover:text-primary transition-colors"
                           title="Assistente Clínico"
                         >
                           <Bot size={16} />
                         </button>
                         <button
                           onClick={() => handleEdit(p.id)}
-                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-slate-400 hover:text-[var(--color-accent)] transition-colors"
                           title="Editar"
                         >
                           <Edit3 size={16} />
@@ -300,7 +300,7 @@ export default function PatientsPage() {
                         <button
                           onClick={() => handleDelete(p.id)}
                           disabled={deleting === p.id}
-                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-[var(--color-error)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-slate-400 hover:text-[var(--color-error)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Excluir"
                         >
                           {deleting === p.id ? <span className="animate-spin inline-block h-4 w-4 border border-current border-t-transparent rounded-full" /> : <Trash2 size={16} />}

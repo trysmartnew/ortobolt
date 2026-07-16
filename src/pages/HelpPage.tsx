@@ -58,11 +58,11 @@ export default function HelpPage() {
                 onClick={() => toggleFaq(index)}
                 className="w-full flex items-center justify-between p-4 text-left hover:bg-[var(--color-surface-muted)] transition-colors"
               >
-                <span className="text-sm font-semibold text-[var(--color-text-primary)]">{item.q}</span>
-                {openIndex === index ? <ChevronUp size={16} className="text-[var(--color-text-secondary)]" /> : <ChevronDown size={16} className="text-[var(--color-text-secondary)]" />}
+                <span className="text-sm font-semibold text-white">{item.q}</span>
+                {openIndex === index ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
               </button>
               {openIndex === index && (
-                <div className="px-4 pb-4 text-sm text-[var(--color-text-secondary)] leading-relaxed border-t border-[var(--color-border)] pt-3">
+                <div className="px-4 pb-4 text-sm text-slate-400 leading-relaxed border-t border-[var(--color-border)] pt-3">
                   {item.a}
                 </div>
               )}
@@ -81,9 +81,9 @@ export default function HelpPage() {
             <div key={index} className="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-colors">
               <div className="flex items-center gap-2 mb-2">
                 <doc.icon size={16} className="text-[var(--color-accent)]" />
-                <h4 className="text-xs font-bold text-[var(--color-text-primary)]">{doc.title}</h4>
+                <h4 className="text-xs font-bold text-white">{doc.title}</h4>
               </div>
-              <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">{doc.description}</p>
+              <p className="text-xs text-slate-400 leading-relaxed">{doc.description}</p>
             </div>
           ))}
         </div>
@@ -96,9 +96,9 @@ export default function HelpPage() {
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold text-[var(--color-text-primary)]">Equipe Vanguard Veterinary</p>
-            <p className="text-sm text-[var(--color-text-secondary)] mt-1">Suporte especializado em ortopedia veterinária e análise de imagem.</p>
-            <p className="text-sm text-[var(--color-text-secondary)] mt-2 font-mono">suporte@ortobolt.com.br</p>
+            <p className="text-sm font-semibold text-white">Equipe Vanguard Veterinary</p>
+            <p className="text-sm text-slate-400 mt-1">Suporte especializado em ortopedia veterinária e análise de imagem.</p>
+            <p className="text-sm text-slate-400 mt-2 font-mono">suporte@ortobolt.com.br</p>
           </div>
           <Button variant="primary" size="sm" className="flex items-center gap-2">
             <Mail size={14} />

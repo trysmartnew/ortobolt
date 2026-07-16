@@ -16,9 +16,9 @@ export default function PatientAssistantPanel({ isOpen, onClose, caseData }: Pat
       <div className="p-4 border-b border-[var(--color-border)] flex justify-between items-center bg-[var(--color-surface)]">
         <div className="flex items-center gap-2">
           <Bot className="text-primary" size={20} />
-          <h3 className="font-bold text-sm">Assistente Clínico: {caseData.patientName}</h3>
+          <h3 className="font-bold text-sm text-white">Assistente Clínico: {caseData.patientName}</h3>
         </div>
-        <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors">
+        <button onClick={onClose} className="p-1 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors">
           <X size={18} />
         </button>
       </div>
