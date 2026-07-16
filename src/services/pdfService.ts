@@ -43,16 +43,17 @@ function addWrappedText(
 function addHeader(
   doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>,
   title: string,
-  subtitle: string
+  subtitle: string,
+  options?: { logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string }
 ) {
-  const clinicName = localStorage.getItem('ortobolt_pdf_clinic_name') || 'Vanguard Veterinary';
-  const clinicSubtitle = localStorage.getItem('ortobolt_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente';
-  const logoData = localStorage.getItem('ortobolt_pdf_logo');
+  const clinicName = options?.clinicName || localStorage.getItem('ortobolt_pdf_clinic_name') || 'Vanguard Veterinary';
+  const clinicSubtitle = options?.clinicSubtitle || localStorage.getItem('ortobolt_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente';
+  const logoData = options?.logoUrl || localStorage.getItem('ortobolt_pdf_logo');
 
   doc.setFillColor(0, 86, 179);
   doc.rect(0, 0, 210, 22, 'F');
   doc.setTextColor(255, 255, 255);
-  
+
   if (logoData) {
     try { doc.addImage(logoData, 'PNG', 14, 5, 12, 12); } catch (e) { console.warn('Erro ao adicionar logo:', e); }
     doc.setFontSize(14);
@@ -165,7 +166,7 @@ export async function generateMonthlyReport(
   cases.slice(0, 8).forEach(c => {
     if (y > 270) { doc.addPage(); y = 30; }
     doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
-    const status = { pending:'Pendente', in_analysis:'Em Análise', completed:'Concluído', critical:'Crítico' }[c.status];
+    const status = { pending: 'Pendente', in_analysis: 'Em Análise', completed: 'Concluído', critical: 'Crítico' }[c.status];
     const precision = c.precisionScore ? `${c.precisionScore}%` : 'N/A';
     // ✅ A-03: wrapping para títulos longos de casos
     y = addWrappedText(doc, `• ${safe(c.title)} (${safe(c.patientName)}) — ${status} — Precisão: ${precision}`, 14, y, 182, 5);
@@ -175,10 +176,15 @@ export async function generateMonthlyReport(
   doc.save(`ortobolt-relatorio-${new Date().toISOString().slice(0, 7)}.pdf`);
 }
 
-export async function generateCaseReport(c: ClinicalCase, tutorMode = false): Promise<void> {
+export async function generateCaseReport(
+  c: ClinicalCase,
+  options?: { isTutorGuide?: boolean; logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string }
+): Promise<void> {
+  const tutorMode = options?.isTutorGuide ?? false;
   const JsPDF = await getJsPDF();
   const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  addHeader(doc, 'Relatório de Caso Clínico', `${safe(c.patientName)} — ${new Date(c.createdAt).toLocaleDateString('pt-BR')}`);
+  const reportTitle = tutorMode ? 'Guia para o Tutor' : 'Relatório de Caso Clínico';
+  addHeader(doc, reportTitle, `${safe(c.patientName)} — ${new Date(c.createdAt).toLocaleDateString('pt-BR')}`, options);
 
   let y = 54;
 
@@ -214,7 +220,7 @@ export async function generateCaseReport(c: ClinicalCase, tutorMode = false): Pr
   // AI Analysis
   if (c.aiAnalysis) {
     if (y > 220) { doc.addPage(); y = 30; }
-    
+
     if (tutorMode) {
       // ── MODO TUTOR (Simplificado para o proprietário do pet) ──
       doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);

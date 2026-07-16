@@ -147,6 +147,7 @@ export default function ReportsPage() {
         throw new Error("Não foi possível obter a URL pública do logo após o upload.");
       }
 
+      console.log('Logo URL carregada:', urlData.publicUrl);
       setLogoPreview(urlData.publicUrl);
       localStorage.setItem('ortobolt_pdf_logo', urlData.publicUrl);
       addToast('Logo enviada com sucesso.', 'success');
@@ -188,7 +189,6 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
-  const [noCaseToast, setNoCaseToast] = useState(false);
 
   // ✅ Estados para dados REAIS do Supabase
   const [kpiMetrics, setKpiMetrics] = useState<KPIMetric[]>([]);
@@ -325,11 +325,11 @@ export default function ReportsPage() {
     try {
       if (r.type === 'monthly') {
         await generateMonthlyReport(user, kpiMetrics, chartData, cases);
-      } else if (r.type === 'case') {
-        // Assumes the Report type has a case_id when type is 'case'
-        const caseToRegenerate = cases.find(c => c.id === (r as any).case_id);
+      } else if (r.type === 'case' && 'case_id' in r) {
+        // Correção de Sanetização: Cast seguro para acessar case_id.
+        const caseToRegenerate = cases.find(c => c.id === (r as Report & { case_id: string }).case_id);
         if (caseToRegenerate) {
-          await generateCaseReport(caseToRegenerate);
+          await generateCaseReport(caseToRegenerate, { logoUrl: logoPreview, clinicName, clinicSubtitle });
         } else {
           addToast(`Caso associado ao relatório não foi encontrado.`, 'error');
         }
@@ -375,7 +375,11 @@ export default function ReportsPage() {
         console.warn('API de laudo técnico não disponível, usando geração client-side.');
         addToast('API não disponível. Gerando laudo localmente...', 'info');
       }
-      await generateCaseReport(selectedCase);
+      await generateCaseReport(selectedCase, {
+        logoUrl: logoPreview,
+        clinicName,
+        clinicSubtitle,
+      });
       addToast('Laudo técnico gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
@@ -418,7 +422,12 @@ export default function ReportsPage() {
         console.warn('API de guia para tutor não disponível, usando geração client-side.');
         addToast('API não disponível. Gerando guia localmente...', 'info');
       }
-      await generateCaseReport(selectedCase, true);
+      await generateCaseReport(selectedCase, {
+        isTutorGuide: true,
+        logoUrl: logoPreview,
+        clinicName,
+        clinicSubtitle,
+      });
       addToast('Guia para o tutor gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
@@ -442,10 +451,6 @@ export default function ReportsPage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
-      {noCaseToast && (
-        <InlineToast message="Nenhum caso com análise IA disponível para gerar relatório de caso." type="info" />
-      )}
-
       {/* Report Customization */}
       <Card className="p-5">
         <div className="flex items-center justify-between flex-wrap gap-4">
@@ -480,7 +485,7 @@ export default function ReportsPage() {
             <div className="flex items-center gap-2">
               {logoPreview ? (
                 <div className="relative">
-                  <img src={logoPreview} alt="Logo" className="w-10 h-10 object-contain rounded border border-[var(--color-border)] glass-panel-premium p-1" />
+                  <img src={logoPreview} alt="Logo" className="w-24 h-10 object-contain rounded-lg border border-[var(--color-border)] glass-panel-premium p-1" />
                   <button
                     onClick={handleRemoveLogo}
                     className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-600"
