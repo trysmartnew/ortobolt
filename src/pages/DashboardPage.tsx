@@ -57,9 +57,9 @@ function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
       <div className="flex items-start gap-3">
         <span className="text-lg">{urgencyIcon}</span>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-slate-900 truncate">{c.patientName}</p>
-          <p className="text-xs text-slate-700 capitalize">{c.species} · {c.procedure}</p>
-          <p className="text-[10px] text-slate-700 mt-0.5">Risco: {c.riskLevel}</p>
+          <p className="text-sm font-semibold text-white truncate">{c.patientName}</p>
+          <p className="text-xs text-slate-300 capitalize">{c.species} · {c.procedure}</p>
+          <p className="text-[10px] text-slate-400 mt-0.5">Risco: {c.riskLevel}</p>
         </div>
         <span className="text-xs font-semibold text-primary">Ver →</span>
       </div>
@@ -141,7 +141,7 @@ export default function DashboardPage() {
               <h2 className="text-base font-bold text-white flex items-center gap-2">
                 <span className="flex items-center gap-2"><Stethoscope size={16} /> Cirurgias de Hoje</span>
               </h2>
-              <span className="text-xs font-mono text-slate-700">{surgeriesToday.length} procedimentos</span>
+              <span className="text-xs font-mono text-slate-400">{surgeriesToday.length} procedimentos</span>
             </div>
             <div className="space-y-3">
               {surgeriesToday.length === 0 ? (
@@ -170,8 +170,8 @@ export default function DashboardPage() {
                 return (
                   <div key={i} className="glass-panel-premium rounded-xl p-4 text-center">
                     <m.icon size={18} className="mx-auto mb-2 text-primary" />
-                    <p className="text-3xl font-bold text-slate-900">{m.today}</p>
-                    <p className="text-xs text-slate-800">{m.label}</p>
+                    <p className="text-3xl font-bold text-white">{m.today}</p>
+                    <p className="text-xs text-slate-300">{m.label}</p>
                     {typeof m.yesterday === 'number' && (
                       <p className="text-xs text-emerald-600 font-semibold mt-1">
                         {arrow} {Math.abs(diff)}
@@ -190,7 +190,7 @@ export default function DashboardPage() {
               <h2 className="text-base font-bold text-white flex items-center gap-2">
                 <span className="flex items-center gap-2"><AlertTriangle size={16} /> Triage Inteligente</span>
               </h2>
-              <span className="text-xs text-slate-700">Prioridade clínica</span>
+              <span className="text-xs text-slate-400">Prioridade clínica</span>
             </div>
             <div className="space-y-2">
               {triageList.map(c => (
@@ -209,7 +209,7 @@ export default function DashboardPage() {
               ].map((a, i) => (
                 <div key={i} className="flex items-center gap-2 p-2 rounded-lg glass-panel-premium">
                   <span className="text-lg">{a.icon}</span>
-                  <span className="text-slate-700">{a.text}</span>
+                  <span className="text-slate-300">{a.text}</span>
                 </div>
               ))}
             </div>
@@ -222,7 +222,7 @@ export default function DashboardPage() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-white">Sugestão OrthoAI</p>
-                <p className="text-xs text-slate-600 mt-1">
+                <p className="text-xs text-slate-400 mt-1">
                   {triageList[0]?.status === 'critical'
                     ? `Caso crítico: ${triageList[0]?.patientName}. Recomendo revisão imediata do protocolo.`
                     : 'Nenhum caso crítico no momento. Revise os casos em análise para otimizar o fluxo.'}
