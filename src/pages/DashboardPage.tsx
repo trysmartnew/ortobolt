@@ -33,13 +33,12 @@ function SurgeryCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-mono font-bold text-slate-500">{formatDate(c.createdAt)}</span>
             <span className="text-xs font-mono font-bold text-slate-700">{formatDate(c.createdAt)}</span>
             {isDone && <CheckCircle2 size={14} className="text-success" />} // No change needed
             {isNext && !isDone && <Clock size={14} className="text-primary animate-pulse" />} // No change needed
           </div>
           <p className="text-sm font-semibold text-slate-900 truncate">{c.patientName}</p>
-          <p className="text-xs text-slate-700 capitalize">{c.species} · {c.breed} · {c.weightKg}kg</p>
+          <p className="text-xs text-slate-800 capitalize">{c.species} · {c.breed} · {c.weightKg}kg</p>
           <p className="text-xs font-mono text-primary mt-1 uppercase">{c.procedure}</p>
         </div>
         <div className="flex flex-col items-end gap-2 flex-shrink-0">
@@ -60,7 +59,7 @@ function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-slate-900 truncate">{c.patientName}</p>
           <p className="text-xs text-slate-700 capitalize">{c.species} · {c.procedure}</p>
-          <p className="text-[10px] text-slate-600 mt-0.5">Risco: {c.riskLevel}</p>
+          <p className="text-[10px] text-slate-700 mt-0.5">Risco: {c.riskLevel}</p>
         </div>
         <span className="text-xs font-semibold text-primary">Ver →</span>
       </div>
@@ -172,7 +171,7 @@ export default function DashboardPage() {
                   <div key={i} className="glass-panel-premium rounded-xl p-4 text-center">
                     <m.icon size={18} className="mx-auto mb-2 text-primary" />
                     <p className="text-3xl font-bold text-slate-900">{m.today}</p>
-                    <p className="text-xs text-slate-700">{m.label}</p>
+                    <p className="text-xs text-slate-800">{m.label}</p>
                     {typeof m.yesterday === 'number' && (
                       <p className="text-xs text-emerald-600 font-semibold mt-1">
                         {arrow} {Math.abs(diff)}
