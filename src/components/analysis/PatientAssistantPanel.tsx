@@ -18,14 +18,14 @@ export default function PatientAssistantPanel({ isOpen, onClose, caseData }: Pat
           <Bot className="text-primary" size={20} />
           <h3 className="font-bold text-sm">Assistente Clínico: {caseData.patientName}</h3>
         </div>
-        <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded-full">
+        <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors">
           <X size={18} />
         </button>
       </div>
       <div className="flex-1 overflow-y-auto p-4">
-        <ClinicalAssistant 
-            caseData={caseData} 
-            originalAnalysis={(caseData.aiAnalysis || { id: 'placeholder', timestamp: new Date().toISOString(), precisionScore: 0, riskFactors: [], anatomicalLandmarks: [], confidence: 0, processingTimeMs: 0, recommendations: [] }) as AIAnalysisResult} 
+        <ClinicalAssistant
+          caseData={caseData}
+          originalAnalysis={(caseData.aiAnalysis || { id: 'placeholder', timestamp: new Date().toISOString(), precisionScore: 0, riskFactors: [], anatomicalLandmarks: [], confidence: 0, processingTimeMs: 0, recommendations: [] }) as AIAnalysisResult}
         />
       </div>
     </div>

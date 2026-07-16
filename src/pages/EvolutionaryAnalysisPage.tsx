@@ -196,7 +196,7 @@ export default function EvolutionaryAnalysisPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+      <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
         <button type="button" onClick={handleBack} className="hover:text-[var(--color-accent)]">Análise Evolutiva</button>
         <span>/</span>
         <span className="text-slate-900">Relatório de Análise Evolutiva Comparativa de {patientName}</span>
@@ -218,11 +218,11 @@ export default function EvolutionaryAnalysisPage() {
             </div>
             <div>
               <p className="text-sm font-bold text-slate-900">{currentPatient.patientName}</p>
-              <p className="text-xs text-slate-500 capitalize">{SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}</p>
+              <p className="text-xs text-slate-600 capitalize">{SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}</p>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs text-slate-500">
+        <div className="flex items-center gap-3 text-xs text-slate-600">
           <span className="flex items-center gap-1"><Ruler size={14} /> {currentPatient.ageYears ?? '—'} anos</span>
           <span className="flex items-center gap-1"><Weight size={14} /> {currentPatient.weightKg ?? '—'} kg</span>
           <span className="flex items-center gap-1"><Activity size={14} /> {currentPatient.status}</span>

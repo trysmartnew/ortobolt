@@ -1,5 +1,5 @@
 import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Activity, Brain, FileText, Users, Shield, Zap,
   ChevronRight, Star, ArrowRight, Check, Menu, X,
@@ -73,9 +73,9 @@ const TESTIMONIALS = [
 
 const STATS = [
   { value: '5.000+', label: 'Casos gerenciados', icon: FileText },
-  { value: '180+',   label: 'Veterinários ativos', icon: Users },
-  { value: '100%',   label: 'Histórico preservado', icon: Shield },
-  { value: '< 60s',  label: 'Laudos gerados', icon: Clock },
+  { value: '180+', label: 'Veterinários ativos', icon: Users },
+  { value: '100%', label: 'Histórico preservado', icon: Shield },
+  { value: '< 60s', label: 'Laudos gerados', icon: Clock },
 ];
 
 export default function HomePage() {
@@ -103,7 +103,7 @@ export default function HomePage() {
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo */}
-          
+
 
           {/* Nav desktop */}
           <nav className="hidden md:flex items-center gap-8">
@@ -185,8 +185,8 @@ export default function HomePage() {
             </button>
           </div>
         )}
-            </header>
-{/* ── HERO ───────────────────────────────────────────────────────── */}
+      </header>
+      {/* ── HERO ───────────────────────────────────────────────────────── */}
       <section
         className="relative min-h-screen flex items-center justify-center overflow-hidden"
         style={{
@@ -205,7 +205,7 @@ export default function HomePage() {
           <svg className="absolute inset-0 w-full h-full opacity-5" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" strokeWidth="0.5"/>
+                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" strokeWidth="0.5" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
@@ -274,7 +274,7 @@ export default function HomePage() {
         {/* Wave bottom */}
         <div className="absolute bottom-0 left-0 right-0">
           <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 80L1440 80L1440 20C1200 60 960 0 720 20C480 40 240 0 0 20L0 80Z" fill="white"/>
+            <path d="M0 80L1440 80L1440 20C1200 60 960 0 720 20C480 40 240 0 0 20L0 80Z" fill="white" />
           </svg>
         </div>
       </section>
@@ -306,7 +306,7 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4" style={{ color: 'var(--color-navy)' }}>
               Tudo que você precisa em uma plataforma
             </h2>
-            <p className="text-base max-w-xl mx-auto" style={{ color: '#64748B' }}>
+            <p className="text-base max-w-xl mx-auto" style={{ color: '#475569' }}>
               Do diagnóstico ao laudo final — o Vanguard Veterinary acompanha cada etapa do seu trabalho clínico.
             </p>
           </div>
@@ -324,7 +324,7 @@ export default function HomePage() {
                   <Icon size={22} style={{ color }} />
                 </div>
                 <h3 className="font-bold text-base mb-2" style={{ color: '#1E293B' }}>{title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>{desc}</p>
+                <p className="text-sm leading-relaxed" style={{ color: '#475569' }}>{desc}</p>
               </div>
             ))}
           </div>
@@ -400,7 +400,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <div className="text-sm font-bold" style={{ color: '#1E293B' }}>{name}</div>
-                    <div className="text-xs" style={{ color: '#94A3B8' }}>{role}</div>
+                    <div className="text-xs" style={{ color: '#64748B' }}>{role}</div>
                   </div>
                 </div>
               </div>
@@ -412,10 +412,10 @@ export default function HomePage() {
 
       {/* ── FOOTER ─────────────────────────────────────────────────────── */}
       <footer className="py-8 glass-panel-premium border-t border-slate-100">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">          <p className="text-xs" style={{ color: '#94A3B8' }}>
-            © 2025 Vanguard Veterinary · Medicina Veterinária com IA · LGPD Compliant
-          </p>
-          <div className="flex items-center gap-2 text-xs" style={{ color: '#94A3B8' }}>
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">          <p className="text-xs" style={{ color: '#64748B' }}>
+          © 2025 Vanguard Veterinary · Medicina Veterinária com IA · LGPD Compliant
+        </p>
+          <div className="flex items-center gap-2 text-xs" style={{ color: '#64748B' }}>
             <Shield size={12} className="text-success" />
             SSL/TLS · Dados protegidos
           </div>
@@ -424,24 +424,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

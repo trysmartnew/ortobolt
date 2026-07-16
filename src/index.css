@@ -88,7 +88,7 @@ pre {
   --color-surface-muted: #252B36;
   --color-border: rgba(255, 255, 255, 0.08);
   --color-text-primary: #FFFFFF;
-  --color-text-secondary: #94A3B8;
+  --color-text-secondary: #64748b;
   --color-text-tertiary: #94a3b8;
 
   /* Feedback */
@@ -189,7 +189,7 @@ pre {
 .text-menu-muted {
   font-size: 14px;
   font-weight: 500;
-  color: #7a828a;
+  color: #4B5563;
 }
 
 .text-label {

@@ -62,7 +62,7 @@ export default function HelpPage() {
                 {openIndex === index ? <ChevronUp size={16} className="text-[var(--color-text-secondary)]" /> : <ChevronDown size={16} className="text-[var(--color-text-secondary)]" />}
               </button>
               {openIndex === index && (
-                <div className="px-4 pb-4 text-xs text-[var(--color-text-secondary)] leading-relaxed border-t border-[var(--color-border)] pt-3">
+                <div className="px-4 pb-4 text-sm text-[var(--color-text-secondary)] leading-relaxed border-t border-[var(--color-border)] pt-3">
                   {item.a}
                 </div>
               )}
@@ -83,7 +83,7 @@ export default function HelpPage() {
                 <doc.icon size={16} className="text-[var(--color-accent)]" />
                 <h4 className="text-xs font-bold text-[var(--color-text-primary)]">{doc.title}</h4>
               </div>
-              <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">{doc.description}</p>
+              <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">{doc.description}</p>
             </div>
           ))}
         </div>
@@ -97,8 +97,8 @@ export default function HelpPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <p className="text-sm font-semibold text-[var(--color-text-primary)]">Equipe Vanguard Veterinary</p>
-            <p className="text-xs text-[var(--color-text-secondary)] mt-1">Suporte especializado em ortopedia veterinária e análise de imagem.</p>
-            <p className="text-xs text-[var(--color-text-secondary)] mt-2 font-mono">suporte@ortobolt.com.br</p>
+            <p className="text-sm text-[var(--color-text-secondary)] mt-1">Suporte especializado em ortopedia veterinária e análise de imagem.</p>
+            <p className="text-sm text-[var(--color-text-secondary)] mt-2 font-mono">suporte@ortobolt.com.br</p>
           </div>
           <Button variant="primary" size="sm" className="flex items-center gap-2">
             <Mail size={14} />

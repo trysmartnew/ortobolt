@@ -169,7 +169,7 @@ export default function PatientsPage() {
       )}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold" style={{ fontFamily: 'Montserrat, sans-serif' }}>Página de Pacientes</h1>
-        <p className="text-sm text-slate-600">Gerencie seus pacientes e acompanhe o histórico clínico.</p>
+        <p className="text-sm text-slate-700">Gerencie seus pacientes e acompanhe o histórico clínico.</p>
       </div>
 
       <Card className="glass-panel-premium !text-[var(--color-text-primary)] p-4">

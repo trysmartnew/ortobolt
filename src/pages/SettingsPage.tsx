@@ -8,7 +8,7 @@ import type { Plan } from '@/types/index';
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <button onClick={() => onChange(!checked)} className={`relative inline-flex w-11 h-6 rounded-full transition-colors ${checked ? 'bg-[var(--color-accent)]' : 'bg-slate-200'}`}>
+    <button onClick={() => onChange(!checked)} className={`relative inline-flex w-11 h-6 rounded-full transition-colors ${checked ? 'bg-[var(--color-accent)]' : 'bg-slate-300'}`}>
       <span className={`absolute top-1 left-1 w-4 h-4 glass-panel-premium rounded-full shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
     </button>
   );
@@ -41,7 +41,7 @@ export default function SettingsPage() {
     try {
       const s = localStorage.getItem('ortobolt_prefs');
       if (s) return JSON.parse(s);
-    } catch {}
+    } catch { }
     return { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' };
   });
   const [timestamp, setTimestamp] = useState(() => new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', ''));
@@ -138,7 +138,7 @@ export default function SettingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <SectionHeader title="Configurações da Conta" subtitle="Preferências do sistema e conta" />
-          <p className="text-[10px] text-slate-400 font-mono mt-1">{timestamp}</p>
+          <p className="text-[10px] text-slate-500 font-mono mt-1">{timestamp}</p>
         </div>
         <Button onClick={handleSaveSettings} loading={saving} className="flex items-center gap-2">
           <Check size={14} />
@@ -149,7 +149,7 @@ export default function SettingsPage() {
       {loading ? (
         <div className="p-6 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent)]" />
-          <p className="ml-3 text-sm text-slate-500">Carregando preferências...</p>
+          <p className="ml-3 text-sm text-slate-600">Carregando preferências...</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -198,4 +198,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-

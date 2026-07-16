@@ -129,11 +129,11 @@ export default function ChatPage() {
       <div className="h-16 glass-panel-premium border-b border-slate-100 flex items-center justify-between px-6 flex-shrink-0">
         <div>
           <h1 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>OrthoAI Assistant</h1>
-          <p className="text-xs text-slate-400 font-mono">Ativo · Gemini 2.5 Flash · Assistente IA</p>
+          <p className="text-xs text-slate-600 font-mono">Ativo · Gemini 2.5 Flash · Assistente IA</p>
         </div>
         <button
           onClick={() => setChatHistory(h => h.length > 0 ? [h[0]] : h)}
-          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-error transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
+          className="flex items-center gap-1.5 text-xs text-slate-700 hover:text-error transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
         >
           <Trash2 size={13} /> Limpar conversa
         </button>
@@ -147,7 +147,7 @@ export default function ChatPage() {
       {chatHistory.length <= 1 && (
         <div data-tour="tour-chat-suggestions" className="px-6 pb-3 flex flex-wrap gap-2 bg-white">
           {SUGGESTED.map((s, i) => (
-            <button key={i} onClick={() => send(s)} className="text-xs text-primary bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors text-left">
+            <button key={i} onClick={() => send(s)} className="text-xs text-teal-700 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-full hover:bg-teal-100 transition-colors text-left">
               {s}
             </button>
           ))}
@@ -167,18 +167,16 @@ export default function ChatPage() {
             }}
             placeholder="Faça uma pergunta sobre ortopedia veterinária... (Enter para enviar, Shift+Enter para nova linha)"
             rows={2}
-            className="flex-1 bg-transparent resize-none outline-none text-sm text-slate-800 placeholder-slate-400 font-mono"
+            className="flex-1 bg-transparent resize-none outline-none text-sm text-slate-800 placeholder-slate-500 font-mono"
           />
           <Button size="sm" onClick={() => send()} disabled={!input.trim() || sending} loading={sending} className="flex-shrink-0 !px-3 !py-2">
             <Send size={15} />
           </Button>
         </div>
-        <p className="text-[10px] text-slate-400 mt-2 font-mono text-center">
+        <p className="text-[10px] text-slate-600 mt-2 font-mono text-center">
           OrthoAI não substitui avaliação clínica. Use como suporte à decisão técnica.
         </p>
       </div>
     </div>
   );
 }
-
-

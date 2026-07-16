@@ -11,15 +11,15 @@ interface Props {
 
 const ICONS = {
   success: <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />,
-  error:   <XCircle    className="w-4 h-4 text-error flex-shrink-0" />,
-  info:    <Info       className="w-4 h-4 text-primary flex-shrink-0" />,
+  error: <XCircle className="w-4 h-4 text-error flex-shrink-0" />,
+  info: <Info className="w-4 h-4 text-primary flex-shrink-0" />,
   warning: <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />,
 };
 
 const STYLES = {
   success: 'bg-white border-emerald-200 shadow-emerald-100',
-  error:   'bg-white border-red-200 shadow-red-100',
-  info:    'bg-white border-blue-200 shadow-blue-100',
+  error: 'bg-white border-red-200 shadow-red-100',
+  info: 'bg-white border-blue-200 shadow-blue-100',
   warning: 'bg-white border-amber-200 shadow-amber-100',
 };
 
@@ -37,7 +37,7 @@ export default function ToastContainer({ toasts, onRemove }: Props) {
           key={toast.id}
           className={`
             flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg
-            text-sm font-medium text-slate-700 max-w-sm w-full
+            text-sm font-medium text-slate-900 max-w-sm w-full
             pointer-events-auto
             animate-[slideInRight_0.25s_ease-out]
             ${STYLES[toast.type]}
@@ -48,7 +48,7 @@ export default function ToastContainer({ toasts, onRemove }: Props) {
           <span className="flex-1 leading-snug">{toast.message}</span>
           <button
             onClick={() => onRemove(toast.id)}
-            className="text-slate-400 hover:text-slate-600 transition-colors ml-1 flex-shrink-0"
+            className="text-slate-600 hover:text-slate-800 transition-colors ml-1 flex-shrink-0"
             aria-label="Fechar notificação"
           >
             <X className="w-3.5 h-3.5" />
@@ -58,4 +58,3 @@ export default function ToastContainer({ toasts, onRemove }: Props) {
     </div>
   );
 }
-

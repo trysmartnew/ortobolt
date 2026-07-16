@@ -38,28 +38,28 @@ export default function AnalysisPage() {
   const [streamError, setStreamError] = useState('');
   const [isAnnotating, setIsAnnotating] = useState<boolean>(false);
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
-  const [imageDimensions, setImageDimensions] = useState<{width: number; height: number} | null>(null);
+  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [aiGeneratedMarkings, setAiGeneratedMarkings] = useState<MarkingsData | null>(null);
-  const { 
-    markings, activeTool, setActiveTool, 
-    addCircle, addAngle, addMarker, addROI, 
-    clearAll, hasUnsavedChanges 
+  const {
+    markings, activeTool, setActiveTool,
+    addCircle, addAngle, addMarker, addROI,
+    clearAll, hasUnsavedChanges
   } = useMarkings();
 
 
   useEffect(() => {
-      if (imageData) {
-        const img = new window.Image();
-        img.crossOrigin = "anonymous";
-        img.src = imageData;
-        img.onload = () => {
-          setImageElement(img);
-          setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-        };
-      } else {
-        setImageElement(null);
-      }
-    }, [imageData]);
+    if (imageData) {
+      const img = new window.Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageData;
+      img.onload = () => {
+        setImageElement(img);
+        setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+    } else {
+      setImageElement(null);
+    }
+  }, [imageData]);
 
 
   // Compute imageBase64 from imageData
@@ -84,7 +84,7 @@ export default function AnalysisPage() {
   // Intercepta o gatilho clínico do Modal e injeta as notas automaticamente no Copiloto
   useEffect(() => {
 
-    }, [session, updateContext]);
+  }, [session, updateContext]);
 
 
   const handleClearMarkings = () => clearAll();
@@ -96,20 +96,20 @@ export default function AnalysisPage() {
         addToast('Médico-veterinário não autenticado no sistema.', 'error');
         return null;
       }
-      
+
       const currentCtx = session?.clinicalContext ?? {};
       const caseTitle = buildCaseTitle(
         currentCtx.patientName,
         currentCtx.procedure ?? 'other'
       );
 
-      const reportText = typeof aiReport === 'string' 
-        ? aiReport 
+      const reportText = typeof aiReport === 'string'
+        ? aiReport
         : (aiReport?.fullAnalysis
-            || [aiReport?.alignment, aiReport?.boneDensity, aiReport?.recommendation]
-                .filter(Boolean)
-                .join('\n\n')
-            || 'Análise comparativa de Mesa de Luz — dados não disponíveis.');
+          || [aiReport?.alignment, aiReport?.boneDensity, aiReport?.recommendation]
+            .filter(Boolean)
+            .join('\n\n')
+          || 'Análise comparativa de Mesa de Luz — dados não disponíveis.');
 
       // Acoplamento estrito e seguro com o pipeline nativo.
       // Ambas as imagens (pre/pos) sao preservadas como um exame
@@ -264,7 +264,7 @@ export default function AnalysisPage() {
     ctx.procedure ?? 'other'
   );
 
-    const handleApprove = async (title: string, destination: 'case' | 'gallery') => {
+  const handleApprove = async (title: string, destination: 'case' | 'gallery') => {
     if (approving) return; // Bloqueio atômico adicional
     if (!user?.id || !imageData || !analysisText.trim()) {
       addToast('Conclua a análise e preencha o contexto clínico antes de aprovar.', 'warning');
@@ -346,10 +346,10 @@ export default function AnalysisPage() {
         title="Análise de Imagem Ortopédica"
         subtitle="Análise → Assistente → Caso completo integrado"
         titleClassName="text-2xl font-semibold text-white"
-        subtitleClassName="text-slate-400 text-sm"
+        subtitleClassName="text-slate-300 text-sm"
       />
 
-{/* Segmented Control - Modo de Análise */}
+      {/* Segmented Control - Modo de Análise */}
       <div className="flex items-center justify-center mb-6">
         <div className="inline-flex items-center bg-[#1a1d1f] rounded-[20px] p-1">
           <button
@@ -365,7 +365,7 @@ export default function AnalysisPage() {
         <>
           {mode === 'idle' && imageData === null && (
             <div className="grid grid-cols-3 gap-4">
-              {[  
+              {[
                 { title: 'Fluxo', value: '5×', sub: 'Páginas integradas' },
                 { title: 'Assistente Clínico', value: '3×', sub: 'Imagem + contexto + chat' },
                 { title: 'Aprovação', value: '1 clique', sub: 'Preenche módulos' },
@@ -373,19 +373,19 @@ export default function AnalysisPage() {
                 <Card key={item.title} className="p-4 text-center">
                   <p className="text-2xl font-bold font-mono text-primary">{item.value}</p>
                   <p className="text-xs font-semibold text-slate-700 mt-1">{item.title}</p>
-                  <p className="text-[10px] text-slate-400 font-mono">{item.sub}</p>
+                  <p className="text-[10px] text-slate-300 font-mono">{item.sub}</p>
                 </Card>
               ))}
             </div>
           )}
-          
+
           {mode === 'idle' && (
             <>
               <div className="flex items-center gap-2 text-xs text-white/60 glass-panel-premium border border-white/10 rounded-lg px-3 py-2 w-fit">
                 <ShieldCheck className="w-3.5 h-3.5 text-success" />
                 Formatos: JPG, PNG, WEBP · Máx. {MAX_FILE_SIZE_MB}MB · Fluxo integrado com Galeria e Relatórios
               </div>
-              
+
               <div className="max-w-lg mx-auto">
                 <button
                   data-tour="tour-upload"
@@ -398,7 +398,7 @@ export default function AnalysisPage() {
                   </div>
                   <div className="text-center">
                     <p className="font-bold text-slate-900">Upload de Imagem</p>
-                    <p className="text-xs text-slate-500 mt-1">Radiografias e imagens clínicas</p>
+                    <p className="text-xs text-slate-600 mt-1">Radiografias e imagens clínicas</p>
                   </div>
                 </button>
                 <input
@@ -411,14 +411,14 @@ export default function AnalysisPage() {
               </div>
             </>
           )}
-          
+
           {streamError && (
             <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-5 flex items-center gap-3 text-[#ffd54f] text-sm">
               <AlertCircle size={16} className="flex-shrink-0" />
               {streamError}
             </div>
           )}
-          
+
           {(mode === 'preview' || mode === 'analyzing') && imageData && (
             <div data-tour="tour-analysis-preview" className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Card className="p-4">
@@ -467,7 +467,7 @@ export default function AnalysisPage() {
               </Card>
             </div>
           )}
-          
+
           {mode === 'result' && result && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               <Card className="lg:col-span-8 bg-[#0B0F19] border border-[#2a2d30]">
@@ -475,30 +475,30 @@ export default function AnalysisPage() {
                   <p className="text-sm font-bold text-white uppercase tracking-wider">
                     Imagem Analisada
                   </p>
-                  {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 || 
-                    aiGeneratedMarkings.angles.length > 0 || 
+                  {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 ||
+                    aiGeneratedMarkings.angles.length > 0 ||
                     aiGeneratedMarkings.markers.length > 0) && (
-                    <span className="text-[10px] font-mono glass-panel-premium/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
-                      ⚡ {aiGeneratedMarkings.circles.length + aiGeneratedMarkings.angles.length} marcações
-                    </span>
-                  )}
+                      <span className="text-[10px] font-mono glass-panel-premium/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        ⚡ {aiGeneratedMarkings.circles.length + aiGeneratedMarkings.angles.length} marcações
+                      </span>
+                    )}
                 </div>
                 <div className="bg-[#050607] border-[2px] border-[#2c3136] rounded-[12px] shadow-[0_20px_40px_rgba(0,0,0,0.6)] overflow-hidden p-2">
-                {imageData && imageDimensions && aiGeneratedMarkings && (
-                  <AiMarkingsOverlay
-                    imageUrl={imageData}
-                    markings={aiGeneratedMarkings}
-                    naturalWidth={imageDimensions.width}
-                    naturalHeight={imageDimensions.height}
-                  />
-                )}
-                {imageData && (!aiGeneratedMarkings || (aiGeneratedMarkings.circles.length === 0 && aiGeneratedMarkings.angles.length === 0 && aiGeneratedMarkings.markers.length === 0 && aiGeneratedMarkings.rois.length === 0)) && (
-                  <img
-                    src={imageData}
-                    alt="Resultado"
-                    className="w-full object-contain max-h-80"
-                  />
-                )}
+                  {imageData && imageDimensions && aiGeneratedMarkings && (
+                    <AiMarkingsOverlay
+                      imageUrl={imageData}
+                      markings={aiGeneratedMarkings}
+                      naturalWidth={imageDimensions.width}
+                      naturalHeight={imageDimensions.height}
+                    />
+                  )}
+                  {imageData && (!aiGeneratedMarkings || (aiGeneratedMarkings.circles.length === 0 && aiGeneratedMarkings.angles.length === 0 && aiGeneratedMarkings.markers.length === 0 && aiGeneratedMarkings.rois.length === 0)) && (
+                    <img
+                      src={imageData}
+                      alt="Resultado"
+                      className="w-full object-contain max-h-80"
+                    />
+                  )}
                 </div>
                 {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 || aiGeneratedMarkings.angles.length > 0) && (
                   <div className="mt-3 pt-3 border-t border-slate-700/60 space-y-1 text-xs">
@@ -551,8 +551,8 @@ export default function AnalysisPage() {
                     onSend={sendMessage}
                     onRefineAnalysis={handleRefine}
                     onRetry={() => {
-                        // Implementação simples de retry para o AnalysisPage
-                        window.location.reload(); 
+                      // Implementação simples de retry para o AnalysisPage
+                      window.location.reload();
                     }}
                   />
 
@@ -566,12 +566,11 @@ export default function AnalysisPage() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-semibold text-slate-400">Hip Dysplasia Index</span>
-                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
-                        dysplasiaBadge.variant === 'success' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' :
-                        dysplasiaBadge.variant === 'warning' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' :
-                        dysplasiaBadge.variant === 'danger' ? 'bg-red-500/20 text-red-300 border-red-500/30' :
-                        'bg-sky-500/20 text-sky-300 border-sky-500/30'
-                      }`}>
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${dysplasiaBadge.variant === 'success' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : // No change needed
+                          dysplasiaBadge.variant === 'warning' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+                            dysplasiaBadge.variant === 'danger' ? 'bg-red-500/20 text-red-300 border-red-500/30' :
+                              'bg-sky-500/20 text-sky-300 border-sky-500/30'
+                        }`}>
                         {dysplasiaBadge.label}
                       </span>
                     </div>
@@ -587,7 +586,7 @@ export default function AnalysisPage() {
                       <p className="text-xs font-semibold text-slate-300 mb-2">Recomendações</p>
                       <ul className="space-y-1">
                         {recommendations.map((rec, i) => (
-                          <li key={i} className="text-xs text-slate-400 flex gap-2">
+                          <li key={i} className="text-xs text-slate-300 flex gap-2">
                             <span className="text-primary">›</span> {rec}
                           </li>
                         ))}
@@ -599,7 +598,7 @@ export default function AnalysisPage() {
                   </div>
                 </Card>
               </div>
-              
+
               <div data-tour="tour-approve-case" className="col-span-full">
                 <ApproveCompleteCaseBar
                   disabled={approving || streaming || refining || !user}

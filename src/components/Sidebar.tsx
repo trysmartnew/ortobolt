@@ -90,7 +90,7 @@ export default function Sidebar() {
             Vanguard <span className="text-[#29a399]">Veterinary</span>
           </h1>
         </div>
-        <p className="mt-1 ml-[40px] font-mono text-[10px] tracking-widest text-white/60 uppercase">
+        <p className="mt-1 ml-[40px] font-mono text-[10px] tracking-widest text-white/70 uppercase">
           Ortopedia de Precisão
         </p>
       </header>
@@ -120,7 +120,7 @@ export default function Sidebar() {
           <div key={section.title}>
             {/* Section Title */}
             <div className={`px-4 mt-6 mb-2`}>
-              <span className="text-xs text-white/60 uppercase tracking-wider">
+              <span className="text-xs text-white/70 uppercase tracking-wider">
                 {section.title}
               </span>
             </div>
@@ -138,8 +138,8 @@ export default function Sidebar() {
                     onClick={() => setCurrentPage(item.page)}
                     style={isActive ? { background: 'linear-gradient(90deg, rgba(41,163,153,0.15) 0%, rgba(41,163,153,0) 100%)' } : {}}
                     className={`w-full flex items-center gap-3 px-4 h-[44px] text-sm transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${isActive
-                        ? 'text-white font-medium'
-                        : 'text-white/60 hover:bg-white/[0.03] hover:translate-x-1 hover:text-white'
+                      ? 'text-white font-medium'
+                      : 'text-white/70 hover:bg-white/[0.03] hover:translate-x-1 hover:text-white'
                       }`}
                   >
                     <Icon className={`w-5 h-5 ${isActive ? 'text-white' : ''}`} />
@@ -166,14 +166,14 @@ export default function Sidebar() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{user.name}</p>
-              <p className="text-xs text-white/60 truncate">{user.email}</p>
+              <p className="text-xs text-white/70 truncate">{user.email}</p>
             </div>
           </div>
         )}
 
         <button
           onClick={logout}
-          className="w-full flex items-center gap-2 px-4 py-4 text-sm text-white/60 hover:text-white transition-colors border-t border-white/5"
+          className="w-full flex items-center gap-2 px-4 py-4 text-sm text-white/70 hover:text-white transition-colors border-t border-white/5"
         >
           <LogOut className="w-5 h-5" />
           <span>Sair da sessão</span>

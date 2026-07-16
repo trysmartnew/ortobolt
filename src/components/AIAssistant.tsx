@@ -33,7 +33,7 @@ export default function AIAssistant() {
 
   useEffect(() => { scrollToBottom(); }, [messages]);
 
-    const handleDeepAnalysis = async () => {
+  const handleDeepAnalysis = async () => {
     if (!activeCase) { alert('Selecione um caso clínico primeiro.'); return; }
     setIsAnalyzing(true);
     try {
@@ -124,7 +124,7 @@ export default function AIAssistant() {
               <Sparkles size={20} />
               <div>
                 <p className="font-bold text-sm">OrthoAI Copiloto</p>
-                <p className="text-[10px] text-white/80">
+                <p className="text-[10px] text-white">
                   {activeCase ? `Contexto: ${activeCase.patientName}` : 'Veterinário online'}
                 </p>
               </div>
@@ -137,16 +137,15 @@ export default function AIAssistant() {
           <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
-                  msg.role === 'user'
+                <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${msg.role === 'user'
                     ? 'bg-primary text-white rounded-br-sm'
                     : 'bg-white text-slate-800 border border-slate-200 rounded-bl-sm shadow-sm'
-                }`}>
+                  }`}>
                   {msg.content ? (
                     <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg.content) }} />
                   ) : (isStreaming && i === messages.length - 1 && (
                     <span className="inline-flex items-center gap-1 text-slate-400">
-                      <Loader2 size={12} className="animate-spin" /> Pensando...
+                      <Loader2 size={12} className="animate-spin" /> <span className="text-slate-600">Pensando...</span>
                     </span>
                   ))}
                 </div>
@@ -157,13 +156,13 @@ export default function AIAssistant() {
 
           {messages.length <= 1 && (
             <div className="px-4 py-2 border-t border-slate-100 bg-white flex-shrink-0">
-              <p className="text-[10px] text-slate-500 mb-2 font-semibold uppercase">Ações rápidas:</p>
+              <p className="text-[10px] text-slate-700 mb-2 font-semibold uppercase">Ações rápidas:</p>
               <div className="flex flex-wrap gap-1">
                 {quickActions.map((a, i) => (
                   <button
                     key={i}
                     onClick={() => { if (a.action === 'deep') { handleDeepAnalysis(); } else if (a.prompt) { setInput(a.prompt); textareaRef.current?.focus(); } }}
-                    className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg transition-colors"
+                    className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-800 px-2 py-1 rounded-lg transition-colors"
                   >
                     {a.label}
                   </button>
@@ -182,7 +181,7 @@ export default function AIAssistant() {
                 placeholder="Descreva o caso ou faça uma pergunta..."
                 rows={2}
                 disabled={isStreaming}
-                className="flex-1 bg-transparent text-sm resize-none focus:outline-none placeholder-slate-400 disabled:opacity-50"
+                className="flex-1 bg-transparent text-sm resize-none focus:outline-none placeholder-slate-500 disabled:opacity-50"
               />
               <button
                 onClick={handleSend}
@@ -192,7 +191,7 @@ export default function AIAssistant() {
                 {isStreaming ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
               </button>
             </div>
-            <p className="text-[9px] text-slate-400 text-center mt-1">
+            <p className="text-[9px] text-slate-600 text-center mt-1">
               OrthoAI segue diretrizes veterinárias · Sempre confirme com exame físico
             </p>
           </div>
@@ -208,4 +207,3 @@ export default function AIAssistant() {
     </>
   );
 }
-

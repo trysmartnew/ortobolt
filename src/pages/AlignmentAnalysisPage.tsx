@@ -217,7 +217,7 @@ export default function AlignmentAnalysisPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+      <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
         <button type="button" onClick={handleBack} className="hover:text-[var(--color-accent)]">Análise de Alinhamento</button>
         <span>/</span>
         <span className="text-slate-900">Relatório de Análise de Alinhamento e Biometria de {patientName}</span>
@@ -239,11 +239,11 @@ export default function AlignmentAnalysisPage() {
             </div>
             <div>
               <p className="text-sm font-bold text-slate-900">{currentPatient.patientName}</p>
-              <p className="text-xs text-slate-500 capitalize">{SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}</p>
+              <p className="text-xs text-slate-600 capitalize">{SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}</p>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs text-slate-500">
+        <div className="flex items-center gap-3 text-xs text-slate-600">
           <span className="flex items-center gap-1"><Ruler size={14} /> {currentPatient.ageYears ?? '—'} anos</span>
           <span className="flex items-center gap-1"><Weight size={14} /> {currentPatient.weightKg ?? '—'} kg</span>
           <span className="flex items-center gap-1"><Activity size={14} /> {currentPatient.status}</span>
@@ -290,7 +290,7 @@ export default function AlignmentAnalysisPage() {
                     </div>
                     <div className="p-3 space-y-1">
                       <p className="text-[10px] font-semibold text-slate-900">{formatDate(img.label === 'Principal' ? currentPatient.createdAt : (currentPatient.updatedAt || currentPatient.createdAt))}</p>
-                      <p className="text-[10px] text-slate-500">{img.label === 'Principal' ? 'Radiografia Principal' : img.label}</p>
+                      <p className="text-[10px] text-slate-600">{img.label === 'Principal' ? 'Radiografia Principal' : img.label}</p>
                       <Badge variant={currentPatient.status === 'completed' ? 'success' : currentPatient.status === 'critical' ? 'danger' : 'info'} className="border-0">
                         {currentPatient.status === 'completed' ? 'Concluído' : currentPatient.status === 'in_analysis' ? 'Em Análise' : currentPatient.status === 'pending' ? 'Pendente' : 'Crítico'}
                       </Badge>
@@ -300,7 +300,7 @@ export default function AlignmentAnalysisPage() {
               )}
             </div>
             {selectedImages.length > 0 && (
-              <p className="text-[10px] text-slate-500 mt-2">Pontos Anatômicos e Eixos de Referência Detectados por IA</p>
+              <p className="text-[10px] text-slate-600 mt-2">Pontos Anatômicos e Eixos de Referência Detectados por IA</p>
             )}
           </Card>
         </div>

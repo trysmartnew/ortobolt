@@ -22,7 +22,7 @@ function calcPasswordStrength(pwd: string): number {
 }
 
 const STRENGTH_LABELS = ['', 'Fraca', 'Razoável', 'Boa', 'Forte'];
-const STRENGTH_COLORS = ['', 'var(--color-error)', 'var(--color-warning)', 'var(--color-primary)', 'var(--color-success)'];
+const STRENGTH_COLORS = ['', 'var(--color-error)', '#d97706', 'var(--color-primary)', 'var(--color-success)'];
 
 interface FormData {
   name: string;
@@ -196,7 +196,7 @@ export default function RegisterPage() {
             Comece agora,<br />
             <span style={{ color: 'var(--color-accent)' }}>é gratuito</span>
           </h2>
-          <p className="text-white/60 text-sm leading-relaxed mb-8">
+          <p className="text-white/80 text-sm leading-relaxed mb-8">
             Crie sua conta e tenha acesso completo às ferramentas de ortopedia veterinária com IA.
           </p>
         </div>
@@ -211,7 +211,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-sm">
           <div className="mb-6">
             <h1 className="text-xl font-extrabold text-slate-800 mb-1">Criar conta</h1>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-600">
               Já tem conta?{' '}
               <button onClick={() => setCurrentView('login')} className="font-semibold" style={{ color: 'var(--color-primary)' }}>
                 Entrar aqui
@@ -339,7 +339,7 @@ export default function RegisterPage() {
                   {form.acceptTerms && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
-              <span className="text-sm text-slate-500 leading-relaxed">
+              <span className="text-sm text-slate-700 leading-relaxed">
                 Aceito os <span style={{ color: 'var(--color-primary)' }} className="font-semibold">Termos de Uso</span> e a{' '}
                 <span style={{ color: 'var(--color-primary)' }} className="font-semibold">Política de Privacidade</span>
               </span>
@@ -354,7 +354,7 @@ export default function RegisterPage() {
                   {form.acceptAiConsent && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
-              <span className="text-sm text-slate-500 leading-relaxed">
+              <span className="text-sm text-slate-700 leading-relaxed">
                 Aceito o envio de <strong>dados clínicos anonimizados</strong> para análise por IA (LGPD Art. 7º).
                 Nomes e identificadores são removidos ou pseudonimizados antes do envio ao provedor de IA.
               </span>
@@ -368,7 +368,7 @@ export default function RegisterPage() {
                   {crmvDeclaration && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
-              <span className="text-sm text-slate-500 leading-relaxed">
+              <span className="text-sm text-slate-700 leading-relaxed">
                 Declaro que possuo registro ativo no CRMV informado.
               </span>
             </label>
@@ -390,11 +390,11 @@ export default function RegisterPage() {
           </div>
 
           <div className="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs text-slate-400">
+            <div className="flex items-center gap-2 text-xs text-slate-600">
               <Shield size={12} className="text-success" /> SSL/TLS · LGPD
             </div>
             <button onClick={() => setCurrentView('home')}
-              className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1">
+              className="text-xs text-slate-600 hover:text-slate-800 flex items-center gap-1">
               <ArrowLeft size={11} /> Página inicial
             </button>
 

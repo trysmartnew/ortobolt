@@ -34,11 +34,12 @@ function SurgeryCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-mono font-bold text-slate-500">{formatDate(c.createdAt)}</span>
-            {isDone && <CheckCircle2 size={14} className="text-success" />}
-            {isNext && !isDone && <Clock size={14} className="text-primary animate-pulse" />}
+            <span className="text-xs font-mono font-bold text-slate-700">{formatDate(c.createdAt)}</span>
+            {isDone && <CheckCircle2 size={14} className="text-success" />} // No change needed
+            {isNext && !isDone && <Clock size={14} className="text-primary animate-pulse" />} // No change needed
           </div>
           <p className="text-sm font-semibold text-slate-900 truncate">{c.patientName}</p>
-          <p className="text-xs text-slate-500 capitalize">{c.species} · {c.breed} · {c.weightKg}kg</p>
+          <p className="text-xs text-slate-700 capitalize">{c.species} · {c.breed} · {c.weightKg}kg</p>
           <p className="text-xs font-mono text-primary mt-1 uppercase">{c.procedure}</p>
         </div>
         <div className="flex flex-col items-end gap-2 flex-shrink-0">
@@ -58,8 +59,8 @@ function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
         <span className="text-lg">{urgencyIcon}</span>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-slate-900 truncate">{c.patientName}</p>
-          <p className="text-xs text-slate-500 capitalize">{c.species} · {c.procedure}</p>
-          <p className="text-[10px] text-slate-400 mt-0.5">Risco: {c.riskLevel}</p>
+          <p className="text-xs text-slate-700 capitalize">{c.species} · {c.procedure}</p>
+          <p className="text-[10px] text-slate-600 mt-0.5">Risco: {c.riskLevel}</p>
         </div>
         <span className="text-xs font-semibold text-primary">Ver →</span>
       </div>
@@ -121,13 +122,13 @@ export default function DashboardPage() {
         <div data-tour="tour-dashboard-hero" className="flex items-center justify-between flex-wrap gap-3 min-h-[120px]">
           <div>
             <h1 className="text-xl font-bold">{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Veterinário'}</h1>
-            <p className="text-white/80 text-sm mt-1">
+            <p className="text-white text-sm mt-1">
               {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
             </p>
           </div>
           <div className="text-right">
             <p className="text-sm font-semibold">Hoje:</p>
-            <p className="text-xs text-white/80">
+            <p className="text-xs text-white">
               {surgeriesToday.length} cirurgias · {triageList.filter(c => c.status === 'critical').length} crítico · {metricsToday.analyzed} análises
             </p>
           </div>
@@ -141,7 +142,7 @@ export default function DashboardPage() {
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <span className="flex items-center gap-2"><Stethoscope size={16} /> Cirurgias de Hoje</span>
               </h2>
-              <span className="text-xs font-mono text-slate-500">{surgeriesToday.length} procedimentos</span>
+              <span className="text-xs font-mono text-slate-700">{surgeriesToday.length} procedimentos</span>
             </div>
             <div className="space-y-3">
               {surgeriesToday.length === 0 ? (
@@ -171,7 +172,7 @@ export default function DashboardPage() {
                   <div key={i} className="glass-panel-premium rounded-xl p-4 text-center">
                     <m.icon size={18} className="mx-auto mb-2 text-primary" />
                     <p className="text-3xl font-bold text-slate-900">{m.today}</p>
-                    <p className="text-xs text-slate-500">{m.label}</p>
+                    <p className="text-xs text-slate-700">{m.label}</p>
                     {typeof m.yesterday === 'number' && (
                       <p className="text-xs text-emerald-600 font-semibold mt-1">
                         {arrow} {Math.abs(diff)}
@@ -190,7 +191,7 @@ export default function DashboardPage() {
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <span className="flex items-center gap-2"><AlertTriangle size={16} /> Triage Inteligente</span>
               </h2>
-              <span className="text-xs text-slate-500">Prioridade clínica</span>
+              <span className="text-xs text-slate-700">Prioridade clínica</span>
             </div>
             <div className="space-y-2">
               {triageList.map(c => (

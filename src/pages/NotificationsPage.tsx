@@ -61,7 +61,7 @@ function NotifRow({ n, onRead, cases, onViewCase, onIgnore, onViewReport, onDown
       </button>
     );
     actions.push(
-      <button key="ignore" onClick={() => onIgnore(n.id)} className="text-[10px] text-slate-500 font-semibold hover:underline flex items-center gap-1">
+      <button key="ignore" onClick={() => onIgnore(n.id)} className="text-[10px] text-slate-700 font-semibold hover:underline flex items-center gap-1">
         <X size={9} /> Ignorar
       </button>
     );
@@ -104,12 +104,12 @@ function NotifRow({ n, onRead, cases, onViewCase, onIgnore, onViewReport, onDown
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-sm font-semibold text-slate-900">{n.title}</p>
-            <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">{n.message}</p>
+            <p className="text-xs text-slate-800 mt-0.5 leading-relaxed">{n.message}</p>
           </div>
           <NotifBadge type={n.type} />
         </div>
         <div className="flex items-center gap-3 mt-2">
-          <span className="text-[10px] text-slate-400 font-mono">{formatRelativeTime(n.timestamp)}</span>
+          <span className="text-[10px] text-slate-600 font-mono">{formatRelativeTime(n.timestamp)}</span>
           <div className="flex items-center gap-3">
             {actions}
             {!n.read && <button onClick={() => onRead(n.id)} className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1"><Check size={9} />Marcar como lida</button>}
@@ -255,7 +255,7 @@ export default function NotificationsPage() {
         <>
           {unread.length > 0 && (
             <div data-tour="tour-unread-notifications" className="space-y-3">
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Não lidas</p>
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">Não lidas</p>
               {unread.map(n => (
                 <NotifRow
                   key={n.id}
@@ -274,7 +274,7 @@ export default function NotificationsPage() {
           )}
           {read.length > 0 && (
             <div className="space-y-3">
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-2">Anteriores</p>
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider mt-2">Anteriores</p>
               {read.map(n => (
                 <NotifRow
                   key={n.id}
@@ -296,4 +296,3 @@ export default function NotificationsPage() {
     </div>
   );
 }
-

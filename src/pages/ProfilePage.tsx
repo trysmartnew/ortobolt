@@ -13,13 +13,13 @@ const RADAR_DATA = [
 
 export default function ProfilePage() {
   const { user, setCurrentPage, addToast } = useApp();
-  const [editMode, setEditMode]   = useState(false);
-  const [editName, setEditName]   = useState(user?.name || '');
-  const [editSpec, setEditSpec]   = useState(user?.specialty || '');
+  const [editMode, setEditMode] = useState(false);
+  const [editName, setEditName] = useState(user?.name || '');
+  const [editSpec, setEditSpec] = useState(user?.specialty || '');
   const [displayName, setDisplayName] = useState(user?.name || '');
   const [displaySpec, setDisplaySpec] = useState(user?.specialty || '');
   const [showAddCert, setShowAddCert] = useState(false);
-  const [certForm, setCertForm]   = useState({ title: '', issuer: '', year: new Date().getFullYear().toString() });
+  const [certForm, setCertForm] = useState({ title: '', issuer: '', year: new Date().getFullYear().toString() });
   const [certifications, setCertifications] = useState(user?.certifications || []);
 
   if (!user) return null;
@@ -69,12 +69,12 @@ export default function ProfilePage() {
             {editMode ? (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Nome completo</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Nome completo</label>
                   <input value={editName} onChange={e => setEditName(e.target.value)}
                     className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Especialidade</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Especialidade</label>
                   <input value={editSpec} onChange={e => setEditSpec(e.target.value)}
                     className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
@@ -89,9 +89,9 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-3">
                   <h2 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>{displayName}</h2>
                   <button onClick={() => { setEditName(displayName); setEditSpec(displaySpec); setEditMode(true); }}
-                    className="text-slate-400 hover:text-primary transition-colors"><Edit2 size={14} /></button>
+                    className="text-slate-600 hover:text-primary transition-colors"><Edit2 size={14} /></button>
                 </div>
-                <p className="text-sm text-slate-500 mt-0.5">{displaySpec}</p>
+                <p className="text-sm text-slate-700 mt-0.5">{displaySpec}</p>
                 <div className="flex flex-wrap gap-2 mt-3">
                   <Badge variant="blue">{user.crmv}</Badge>
                   <Badge variant="info">{user.role}</Badge>
@@ -187,5 +187,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-

@@ -25,24 +25,22 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
   return (
     <div className={`flex gap-2 ${isUser ? 'flex-row-reverse' : ''}`}>
       <div
-        className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center ${
-          isUser ? 'bg-primary text-white' : 'bg-white/10 text-slate-200'
-        }`}
+        className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center ${isUser ? 'bg-primary text-white' : 'bg-white/10 text-slate-200'
+          }`}
       >
         {isUser ? <User size={12} /> : <Bot size={12} />}
       </div>
       <div className={`max-w-[85%] flex flex-col gap-0.5 ${isUser ? 'items-end' : 'items-start'}`}>
         <div
-          className={`rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap ${
-            isUser
-              ? 'bg-primary text-white rounded-tr-sm'
-              : 'bg-[#0B0F19]/60 border border-white/10 text-slate-200 rounded-tl-sm'
-          }`}
+          className={`rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap ${isUser
+            ? 'bg-primary text-white rounded-tr-sm'
+            : 'bg-[#0B0F19]/60 border border-white/10 text-slate-200 rounded-tl-sm'
+            }`}
         >
           {msg.isLoading ? (
             <div className="flex items-center gap-2">
               <Spinner size="sm" />
-              <span className="text-xs text-slate-400">Processando análise...</span>
+              <span className="text-xs text-slate-300">Processando análise...</span>
             </div>
           ) : (
             msg.content
@@ -52,7 +50,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
           <button
             type="button"
             onClick={copy}
-            className="text-[10px] text-slate-400 hover:text-primary flex items-center gap-1"
+            className="text-[10px] text-slate-300 hover:text-primary flex items-center gap-1"
           >
             {copied ? <Check size={10} className="text-success" /> : <Copy size={10} />}
             Copiar
@@ -104,7 +102,7 @@ export default function ClinicalCopilotPanel({
 
   if (!enabled) {
     return (
-      <div className="rounded-2xl border border-dashed border-white/15 bg-[#0B0F19]/60 p-6 text-center text-sm text-slate-400">
+      <div className="rounded-2xl border border-dashed border-white/15 bg-[#0B0F19]/60 p-6 text-center text-sm text-slate-300">
         Conclua a análise visual para ativar o Assistente Clínico contextual.
       </div>
     );
@@ -119,27 +117,27 @@ export default function ClinicalCopilotPanel({
         <div className="flex items-center gap-2">
           <Sparkles size={16} className="text-primary" />
           <div>
-            <p className="text-sm font-bold text-[#9a9fa5]">Assistente Clínico</p>
-            <p className="text-[10px] text-[#9a9fa5] font-mono">
+            <p className="text-sm font-bold text-slate-300">Assistente Clínico</p>
+            <p className="text-[10px] text-slate-300 font-mono">
               Radiografia + contexto + histórico da sessão
             </p>
           </div>
         </div>
         <Button
-            size="sm"
-            variant="secondary"
-            onClick={onRefineAnalysis}
-            disabled={refining || streaming}
-            loading={refining}
-            title="Consolidar chat e contexto na análise visual"
-            className="relative overflow-hidden"
-          >
-            {!refining && !streaming && messages.length > 0 && (
-              <span className="absolute inset-0 rounded-md bg-primary opacity-10 animate-pulse" />
-            )}
-            <RefreshCw size={13} className="relative z-10" />
-            <span className="relative z-10 ml-1.5">Refinar análise</span>
-          </Button>
+          size="sm"
+          variant="secondary"
+          onClick={onRefineAnalysis}
+          disabled={refining || streaming}
+          loading={refining}
+          title="Consolidar chat e contexto na análise visual"
+          className="relative overflow-hidden"
+        >
+          {!refining && !streaming && messages.length > 0 && (
+            <span className="absolute inset-0 rounded-md bg-primary opacity-10 animate-pulse" />
+          )}
+          <RefreshCw size={13} className="relative z-10" />
+          <span className="relative z-10 ml-1.5">Refinar análise</span>
+        </Button>
       </div>
 
       <div className="px-4 py-3 border-b border-white/10 bg-[rgba(26,29,31,0.65)] grid grid-cols-2 gap-2">
@@ -148,7 +146,7 @@ export default function ClinicalCopilotPanel({
           placeholder="Paciente (opcional)"
           value={clinicalContext.patientName ?? ''}
           onChange={(e) => onContextChange({ patientName: e.target.value })}
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#29a399] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-slate-400 focus:border-[#29a399] transition-all"
         />
         <select
           value={clinicalContext.species ?? ''}
@@ -157,7 +155,7 @@ export default function ClinicalCopilotPanel({
               species: (e.target.value || undefined) as AnimalSpecies | undefined,
             })
           }
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#29a399] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-slate-400 focus:border-[#29a399] transition-all"
         >
           <option value="">Espécie</option>
           {(Object.keys(SPECIES_LABELS) as AnimalSpecies[]).map((s) => (
@@ -171,7 +169,7 @@ export default function ClinicalCopilotPanel({
           placeholder="Raça"
           value={clinicalContext.breed ?? ''}
           onChange={(e) => onContextChange({ breed: e.target.value })}
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#29a399] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-slate-400 focus:border-[#29a399] transition-all"
         />
         <input
           type="number"
@@ -182,7 +180,7 @@ export default function ClinicalCopilotPanel({
               weightKg: e.target.value ? Number(e.target.value) : undefined,
             })
           }
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-[#6f767e] focus:border-[#29a399] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 placeholder-slate-400 focus:border-[#29a399] transition-all"
         />
         <select
           value={clinicalContext.procedure ?? ''}
@@ -191,7 +189,7 @@ export default function ClinicalCopilotPanel({
               procedure: (e.target.value || undefined) as ProcedureType | undefined,
             })
           }
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 col-span-2 placeholder-[#6f767e] focus:border-[#29a399] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 col-span-2 placeholder-slate-400 focus:border-[#29a399] transition-all"
         >
           <option value="">Procedimento</option>
           {(Object.keys(PROCEDURE_LABELS) as ProcedureType[]).map((p) => (
@@ -205,7 +203,7 @@ export default function ClinicalCopilotPanel({
           value={clinicalContext.clinicalNotes ?? ''}
           onChange={(e) => onContextChange({ clinicalNotes: e.target.value })}
           rows={2}
-          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 col-span-2 resize-none placeholder-[#6f767e] focus:border-[#29a399] transition-all"
+          className="text-xs text-white border border-[#2a2d30] bg-[#111315] rounded-[6px] px-2 py-1.5 col-span-2 resize-none placeholder-slate-400 focus:border-[#29a399] transition-all"
         />
       </div>
 
@@ -256,7 +254,7 @@ export default function ClinicalCopilotPanel({
             placeholder="Pergunte sobre a radiografia..."
             rows={2}
             disabled={streaming}
-            className="flex-1 text-sm text-white bg-[#111315] border border-[#2a2d30] rounded-[6px] px-3 py-2 resize-none placeholder-[#6f767e] focus:border-[#29a399] transition-all"
+            className="flex-1 text-sm text-white bg-[#111315] border border-[#2a2d30] rounded-[6px] px-3 py-2 resize-none placeholder-slate-400 focus:border-[#29a399] transition-all"
           />
           <Button size="sm" onClick={handleSend} disabled={!input.trim() || streaming} loading={streaming}>
             <Send size={14} />

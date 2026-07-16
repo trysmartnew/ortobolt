@@ -21,26 +21,26 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
   return (
     <Modal open title={c.title} onClose={onClose}>
       {c.imageUrl && <img src={c.imageUrl} alt={c.patientName} className="w-full h-52 object-cover rounded-t-[18px]" />}
-      
+
       {[['Paciente', c.patientName], ['Espécie', SPECIES_LABELS[c.species]], ['Raça', c.breed], ['Idade', `${c.ageYears} anos`], ['Peso', `${c.weightKg} kg`], ['Procedimento', PROCEDURE_LABELS[c.procedure]]].map(([k, v]) => (
         <div key={k} className="glass-panel-premium/70 rounded-xl p-3.5">
           <span className="text-xs font-semibold text-menu-muted">{k}</span>
           <p className="text-sm font-medium text-slate-900">{v}</p>
         </div>
       ))}
-      
+
       <div className="flex items-center gap-2 mt-2">
         <StatusBadge status={c.status} />
         <RiskTag level={c.riskLevel} />
       </div>
-      
+
       {c.precisionScore && (
         <div className="mt-3 p-3 bg-blue-50/60 rounded-xl">
           <PrecisionGauge value={c.precisionScore} size={48} />
           <p className="text-xs text-menu-muted mt-1">precisão IA</p>
         </div>
       )}
-      
+
       {c.aiAnalysis && (
         <div className="mt-4 space-y-3">
           <p className="text-xs font-bold text-menu">Análise OrthoVision IA</p>
@@ -52,7 +52,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
               </span>
             </div>
           ))}
-          
+
           {c.aiAnalysis.recommendations.length > 0 && (
             <>
               <p className="text-xs font-bold text-menu mt-2">Recomendações</p>
@@ -67,14 +67,14 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
           )}
         </div>
       )}
-      
+
       {c.notes && (
         <div className="mt-4 p-3 glass-panel-premium rounded-lg">
           <p className="text-xs font-bold text-menu mb-1">Observações</p>
           <p className="text-xs text-slate-600">{c.notes}</p>
         </div>
       )}
-      
+
       {c.tags.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-3">
           {c.tags.map(t => <Badge key={t} variant="blue">#{t}</Badge>)}
@@ -101,7 +101,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
         return (
           <div className="mt-6 pt-4 border-t border-white/10">
             <p className="text-xs font-bold text-menu mb-3 flex items-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
               Casos Similares Sugeridos
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -121,14 +121,13 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
-                      sim.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
-                      sim.status === 'critical' ? 'bg-red-100 text-red-700' :
-                      'bg-blue-100 text-blue-700'
-                    }`}>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${sim.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
+                        sim.status === 'critical' ? 'bg-red-100 text-red-700' :
+                          'bg-blue-100 text-blue-700'
+                      }`}>
                       {sim.status === 'completed' ? 'Concluído' : sim.status === 'critical' ? 'Crítico' : 'Em Análise'}
                     </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-primary transition-colors"><path d="m9 18 6-6-6-6"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-primary transition-colors"><path d="m9 18 6-6-6-6" /></svg>
                   </div>
                 </button>
               ))}
@@ -183,7 +182,7 @@ export default function GalleryPage() {
     }
     setAvatarCaseId(null);
   };
-  
+
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [filterProcedure, setFilterProcedure] = useState<ProcedureType | 'all'>('all');
@@ -219,7 +218,7 @@ export default function GalleryPage() {
       const matchStatus = statusFilter === 'all' || c.status === statusFilter;
       const matchProcedure = filterProcedure === 'all' || c.procedure === filterProcedure;
       const matchSpecies = filterSpecies === 'all' || c.species === filterSpecies;
-      
+
       let matchPeriod = true;
       if (filterPeriod !== 'all') {
         const days = filterPeriod === '7days' ? 7 : filterPeriod === '30days' ? 30 : 90;
@@ -227,7 +226,7 @@ export default function GalleryPage() {
         cutoff.setDate(cutoff.getDate() - days);
         matchPeriod = new Date(c.createdAt) >= cutoff;
       }
-      
+
       return matchSearch && matchStatus && matchProcedure && matchSpecies && matchPeriod;
     });
   }, [cases, search, statusFilter, filterProcedure, filterSpecies, filterPeriod]);
@@ -235,58 +234,58 @@ export default function GalleryPage() {
   // ✅ CORREÇÃO: handleAdd com user?.id e tipagem correta
   const handleAdd = () => {
     const addWithImage = async () => {
-    const errs = validateCaseForm(form);
-    if (errs.length > 0) {
-      setFormErrors(errs);
-      // ✅ U-02: toast de validação
-      addToast('Preencha todos os campos obrigatórios.', 'warning');
-      return;
-    }
-    setFormErrors([]);
-    
-    let imageUrl: string | undefined;
-    if (form.imageFile) {
-      addToast('Processando imagem...', 'info');
-      const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(form.imageFile as File);
-      });
-      const uploadResult = await uploadImageToStorage(base64, {
-        storagePath: `gallery-${Date.now()}`,
-        type: 'radiograph'
-      });
-      imageUrl = uploadResult.url ?? undefined;
-      if (!uploadResult.url) {
-        addToast('Falha no upload da imagem. Caso salvo sem imagem.', 'warning');
+      const errs = validateCaseForm(form);
+      if (errs.length > 0) {
+        setFormErrors(errs);
+        // ✅ U-02: toast de validação
+        addToast('Preencha todos os campos obrigatórios.', 'warning');
+        return;
       }
-    }
+      setFormErrors([]);
 
-    addCase({
-      id: crypto.randomUUID(),
-      ...form,
-      ageYears: Number(form.ageYears) || 0,
-      weightKg: Number(form.weightKg) || 0,
-      // ✅ CORREÇÃO: Tipagem explícita em vez de 'as any'
-      procedure: form.procedure as ProcedureType,
-      species: form.species as AnimalSpecies,
-      status: 'pending',
-      riskLevel: 'medium',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      tags: [form.procedure, form.species],
-      // ✅ CORREÇÃO: Usar ID real do usuário logado
-      veterinarianId: user?.id ?? '',
-      imageUrl: imageUrl ?? undefined,
-      exams: imageUrl ? [{
-        id: `exam-${crypto.randomUUID()}`,
-        modality: 'radiograph' as const,
-        imageUrls: [imageUrl],
+      let imageUrl: string | undefined;
+      if (form.imageFile) {
+        addToast('Processando imagem...', 'info');
+        const base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(form.imageFile as File);
+        });
+        const uploadResult = await uploadImageToStorage(base64, {
+          storagePath: `gallery-${Date.now()}`,
+          type: 'radiograph'
+        });
+        imageUrl = uploadResult.url ?? undefined;
+        if (!uploadResult.url) {
+          addToast('Falha no upload da imagem. Caso salvo sem imagem.', 'warning');
+        }
+      }
+
+      addCase({
+        id: crypto.randomUUID(),
+        ...form,
+        ageYears: Number(form.ageYears) || 0,
+        weightKg: Number(form.weightKg) || 0,
+        // ✅ CORREÇÃO: Tipagem explícita em vez de 'as any'
+        procedure: form.procedure as ProcedureType,
+        species: form.species as AnimalSpecies,
+        status: 'pending',
+        riskLevel: 'medium',
         createdAt: new Date().toISOString(),
-      }] : undefined,
-    });
+        updatedAt: new Date().toISOString(),
+        tags: [form.procedure, form.species],
+        // ✅ CORREÇÃO: Usar ID real do usuário logado
+        veterinarianId: user?.id ?? '',
+        imageUrl: imageUrl ?? undefined,
+        exams: imageUrl ? [{
+          id: `exam-${crypto.randomUUID()}`,
+          modality: 'radiograph' as const,
+          imageUrls: [imageUrl],
+          createdAt: new Date().toISOString(),
+        }] : undefined,
+      });
 
-    setShowAdd(false);
+      setShowAdd(false);
     };
     addWithImage();
 
@@ -299,7 +298,7 @@ export default function GalleryPage() {
       ageYears: '',
       weightKg: '',
       notes: '',
-    imageFile: null as File | null
+      imageFile: null as File | null
     });
 
     // ✅ U-02: toast de sucesso
@@ -344,55 +343,54 @@ export default function GalleryPage() {
             <button
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
-              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition-colors ${
-                statusFilter === f.value
+              className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition-colors ${statusFilter === f.value
                   ? 'bg-primary text-white'
                   : 'glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium'
-              }`}
+                }`}
             >
               {f.label}
             </button>
           ))}
-              <div className="flex gap-2 flex-wrap">
-                <select
-                  value={filterProcedure}
-                  onChange={e => setFilterProcedure(e.target.value as ProcedureType | 'all')}
-                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="all">Todos os Procedimentos</option>
-                  {Object.entries(PROCEDURE_LABELS).map(([k, v]) => (
-                    <option key={k} value={k}>{v}</option>
-                  ))}
-                </select>
-                <select
-                  value={filterSpecies}
-                  onChange={e => setFilterSpecies(e.target.value as AnimalSpecies | 'all')}
-                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="all">Todas as Espécies</option>
-                  {Object.entries(SPECIES_LABELS).map(([k, v]) => (
-                    <option key={k} value={k}>{v}</option>
-                  ))}
-                </select>
-                <select
-                  value={filterPeriod}
-                  onChange={e => setFilterPeriod(e.target.value as 'all' | '7days' | '30days' | '90days')}
-                  className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="all">Todo o Período</option>
-                  <option value="7days">Últimos 7 dias</option>
-                  <option value="30days">Últimos 30 dias</option>
-                  <option value="90days">Últimos 90 dias</option>
-                </select>
-                {(filterProcedure !== 'all' || filterSpecies !== 'all' || filterPeriod !== 'all') && (
-                  <button
-                    onClick={() => { setFilterProcedure('all'); setFilterSpecies('all'); setFilterPeriod('all'); }}
-                    className="px-3 py-1.5 rounded-xl text-[13px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
-                  >
-                    Limpar Filtros
-                  </button>
-                )}
-              </div>
+          <div className="flex gap-2 flex-wrap">
+            <select
+              value={filterProcedure}
+              onChange={e => setFilterProcedure(e.target.value as ProcedureType | 'all')}
+              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Todos os Procedimentos</option>
+              {Object.entries(PROCEDURE_LABELS).map(([k, v]) => (
+                <option key={k} value={k}>{v}</option>
+              ))}
+            </select>
+            <select
+              value={filterSpecies}
+              onChange={e => setFilterSpecies(e.target.value as AnimalSpecies | 'all')}
+              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Todas as Espécies</option>
+              {Object.entries(SPECIES_LABELS).map(([k, v]) => (
+                <option key={k} value={k}>{v}</option>
+              ))}
+            </select>
+            <select
+              value={filterPeriod}
+              onChange={e => setFilterPeriod(e.target.value as 'all' | '7days' | '30days' | '90days')}
+              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Todo o Período</option>
+              <option value="7days">Últimos 7 dias</option>
+              <option value="30days">Últimos 30 dias</option>
+              <option value="90days">Últimos 90 dias</option>
+            </select>
+            {(filterProcedure !== 'all' || filterSpecies !== 'all' || filterPeriod !== 'all') && (
+              <button
+                onClick={() => { setFilterProcedure('all'); setFilterSpecies('all'); setFilterPeriod('all'); }}
+                className="px-3 py-1.5 rounded-xl text-[13px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
+              >
+                Limpar Filtros
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -428,7 +426,7 @@ export default function GalleryPage() {
                   </div>
                 )}
                 {c.avatarUrl && <img src={c.avatarUrl} alt={`${c.patientName} avatar`} className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-premium-card" />}
-                
+
                 {c.status === 'critical' && (
                   <div className="absolute top-2 right-2 flex items-center gap-1 bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold">
                     <AlertTriangle size={10} /> CRÍTICO
@@ -463,7 +461,7 @@ export default function GalleryPage() {
                 <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
                   <button
                     onClick={() => setSelected(c)}
-                    className="flex-1 text-xs text-menu-muted hover:text-menu py-1.5 rounded-lg hover:glass-panel-premium transition-colors font-medium"
+                    className="flex-1 text-xs text-slate-700 hover:text-slate-900 py-1.5 rounded-lg hover:glass-panel-premium transition-colors font-medium"
                   >
                     Ver detalhes
                   </button>
@@ -479,7 +477,7 @@ export default function GalleryPage() {
                       avatarInputRef.current?.click();
                     }}
                     title="Upload Avatar"
-                    className="p-1.5 rounded-lg text-slate-300 hover:text-success hover:bg-emerald-50 transition-colors"
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-success hover:bg-emerald-50 transition-colors"
                   >
                     <Upload size={13} />
                   </button>
@@ -491,7 +489,7 @@ export default function GalleryPage() {
                       }
                     }}
                     title="Excluir caso"
-                    className="p-1.5 rounded-lg text-slate-300 hover:text-error hover:bg-red-50 transition-colors"
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-error hover:bg-red-50 transition-colors"
                   >
                     <Trash2 size={13} />
                   </button>
@@ -520,23 +518,22 @@ export default function GalleryPage() {
             { label: 'Raça *', key: 'breed' as const, placeholder: 'Raça/Espécie detalhada' },
           ].map(({ label, key, placeholder }) => (
             <div key={key}>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">{label}</label>
-                  <input
-                    value={form[key]}
-                    onChange={e => {
-                      setForm(f => ({ ...f, [key]: e.target.value }));
-                      setFormErrors([]);
-                    }}
-                    placeholder={placeholder}
-                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono ${
-                      !form[key] && formErrors.length > 0 ? 'border-red-300 bg-red-50' : 'border-white/10'
-                    }`}
-                  />
+              <label className="block text-xs font-semibold text-slate-800 mb-1">{label}</label>
+              <input
+                value={form[key]}
+                onChange={e => {
+                  setForm(f => ({ ...f, [key]: e.target.value }));
+                  setFormErrors([]);
+                }}
+                placeholder={placeholder}
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono ${!form[key] && formErrors.length > 0 ? 'border-red-300 bg-red-50 placeholder:text-red-700' : 'border-white/10'
+                  }`}
+              />
             </div>
           ))}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Espécie</label>
+              <label className="block text-xs font-semibold text-slate-800 mb-1">Espécie</label>
               <select
                 value={form.species}
                 onChange={e => setForm(f => ({ ...f, species: e.target.value as AnimalSpecies }))}
@@ -548,7 +545,7 @@ export default function GalleryPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Procedimento</label>
+              <label className="block text-xs font-semibold text-slate-800 mb-1">Procedimento</label>
               <select
                 value={form.procedure}
                 onChange={e => setForm(f => ({ ...f, procedure: e.target.value as ProcedureType }))}
@@ -560,7 +557,7 @@ export default function GalleryPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Idade (anos)</label>
+              <label className="block text-xs font-semibold text-slate-800 mb-1">Idade (anos)</label>
               <input
                 type="number"
                 min="0"
@@ -576,7 +573,7 @@ export default function GalleryPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Peso (kg)</label>
+              <label className="block text-xs font-semibold text-slate-800 mb-1">Peso (kg)</label>
               <input
                 type="number"
                 min="0.1"
@@ -593,7 +590,7 @@ export default function GalleryPage() {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Observações</label>
+            <label className="block text-xs font-semibold text-slate-800 mb-1">Observações</label>
             <textarea
               value={form.notes}
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
@@ -602,9 +599,9 @@ export default function GalleryPage() {
               className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono resize-none"
             />
           </div>
-  
+
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Radiografia / Imagem</label>
+            <label className="block text-xs font-semibold text-slate-800 mb-1">Radiografia / Imagem</label>
             <input
               type="file"
               accept="image/*"
@@ -615,10 +612,10 @@ export default function GalleryPage() {
               className="w-full text-sm text-menu-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[var(--color-primary)] cursor-pointer"
             />
             {form.imageFile && (
-              <p className="text-xs text-green-600 mt-1">Imagem selecionada: {form.imageFile.name}</p>
+              <p className="text-xs text-emerald-700 mt-1">Imagem selecionada: {form.imageFile.name}</p>
             )}
           </div>
-        <div className="flex gap-3 pt-2">
+          <div className="flex gap-3 pt-2">
             <Button className="flex-1" onClick={handleAdd}>Adicionar Caso</Button>
             <Button variant="secondary" className="flex-1" onClick={handleCloseAdd}>Cancelar</Button>
           </div>
@@ -627,6 +624,3 @@ export default function GalleryPage() {
     </div>
   );
 }
-
-
-

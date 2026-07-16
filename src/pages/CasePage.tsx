@@ -243,12 +243,12 @@ const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave, s
             </select>
           </div>
         </div>
-          <div className="p-5 border-t border-slate-100 flex gap-2">
-            <Button variant="secondary" onClick={onClose} className="flex-1" disabled={saving}>Cancelar</Button>
-            <Button onClick={handleSave} className="flex-1" disabled={saving}>
-              {saving ? <><span className="animate-spin inline-block h-4 w-4 border border-current border-t-transparent rounded-full mr-2" />Salvando...</> : <><Check size={14} /> Salvar</>}
-            </Button>
-          </div>
+        <div className="p-5 border-t border-slate-100 flex gap-2">
+          <Button variant="secondary" onClick={onClose} className="flex-1" disabled={saving}>Cancelar</Button>
+          <Button onClick={handleSave} className="flex-1" disabled={saving}>
+            {saving ? <><span className="animate-spin inline-block h-4 w-4 border border-current border-t-transparent rounded-full mr-2" />Salvando...</> : <><Check size={14} /> Salvar</>}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -639,9 +639,8 @@ export default function CasePage() {
                   </div>
                 </div>
                 <div
-                  className={`aspect-[4/3] bg-[var(--color-surface-muted)] border rounded-xl overflow-hidden flex items-center justify-center transition-colors ${
-                    selectedDropTarget === 'left' && isDragging ? 'border-[var(--color-accent)]' : 'border-[var(--color-border)]'
-                  }`}
+                  className={`aspect-[4/3] bg-[var(--color-surface-muted)] border rounded-xl overflow-hidden flex items-center justify-center transition-colors ${selectedDropTarget === 'left' && isDragging ? 'border-[var(--color-accent)]' : 'border-[var(--color-border)]'
+                    }`}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, 'left')}
                   onDragEnter={() => handleDragEnter('left')}
@@ -683,7 +682,7 @@ export default function CasePage() {
                       min="0"
                       max="100"
                       defaultValue="50"
-                      onChange={(e) => {}}
+                      onChange={(e) => { }}
                       className="w-full h-2 premium-header-bg bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[var(--color-accent)]"
                     />
                   </div>
@@ -708,9 +707,8 @@ export default function CasePage() {
                   </div>
                 </div>
                 <div
-                  className={`aspect-[4/3] bg-[var(--color-surface-muted)] border rounded-xl overflow-hidden flex items-center justify-center transition-colors ${
-                    selectedDropTarget === 'right' && isDragging ? 'border-[var(--color-accent)]' : 'border-[var(--color-border)]'
-                  }`}
+                  className={`aspect-[4/3] bg-[var(--color-surface-muted)] border rounded-xl overflow-hidden flex items-center justify-center transition-colors ${selectedDropTarget === 'right' && isDragging ? 'border-[var(--color-accent)]' : 'border-[var(--color-border)]'
+                    }`}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, 'right')}
                   onDragEnter={() => handleDragEnter('right')}
@@ -744,11 +742,10 @@ export default function CasePage() {
                       handleSelectComparisonImage('left', img.url);
                     }
                   }}
-                  className={`flex-shrink-0 w-24 h-24 rounded-lg border-2 overflow-hidden transition-colors cursor-grab active:cursor-grabbing ${
-                    comparisonImages.left === img.url || comparisonImages.right === img.url
-                      ? 'border-[var(--color-accent)]'
-                      : 'border-[var(--color-border)] hover:border-[var(--color-accent)]'
-                  }`}
+                  className={`flex-shrink-0 w-24 h-24 rounded-lg border-2 overflow-hidden transition-colors cursor-grab active:cursor-grabbing ${comparisonImages.left === img.url || comparisonImages.right === img.url
+                    ? 'border-[var(--color-accent)]'
+                    : 'border-[var(--color-border)] hover:border-[var(--color-accent)]'
+                    }`}
                 >
                   <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
                 </div>
@@ -798,7 +795,7 @@ export default function CasePage() {
         </div>
       </Card>
 
-            {/* ═══════════════════════════════════════════════════════════ */}
+      {/* ═══════════════════════════════════════════════════════════ */}
       {/* Seção de Análise Visual & Refinamento IA (CopilotClinical)  */}
       {/* Aparece apenas quando há análise vinculada ao caso ativo    */}
       {/* ═══════════════════════════════════════════════════════════ */}
@@ -816,10 +813,10 @@ export default function CasePage() {
                 <span className="text-xs font-mono text-menu-muted w-10 text-center">{zoom}%</span>
                 <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:premium-header-bg bg-slate-200 text-sm font-bold">+</button>
                 <button onClick={() => setZoom(100)} className="text-xs text-menu-muted hover:text-primary px-2">Reset</button>
-                  <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
-                    {uploading ? <span className="animate-spin inline-block h-3 w-3 border border-current border-t-transparent rounded-full" /> : <Upload size={14} />}
-                    {uploading ? 'Enviando...' : 'Upload'}
-                  </button>
+                <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
+                  {uploading ? <span className="animate-spin inline-block h-3 w-3 border border-current border-t-transparent rounded-full" /> : <Upload size={14} />}
+                  {uploading ? 'Enviando...' : 'Upload'}
+                </button>
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
                 <button onClick={() => avatarInputRef.current?.click()} disabled={uploading} className="text-xs text-emerald-600 hover:text-emerald-800 px-2 flex items-center gap-1 font-medium">
                   {uploading ? <span className="animate-spin inline-block h-3 w-3 border border-current border-t-transparent rounded-full" /> : <Upload size={14} />}
@@ -962,8 +959,8 @@ export default function CasePage() {
                       {done && <Check size={12} />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-xs font-semibold ${done ? 'line-through text-slate-400' : 'text-slate-900'}`}>
-                        <span className="mr-1">{icon}</span> {step.text}
+                      <p className={`text-xs font-semibold ${done ? 'line-through text-slate-500' : 'text-slate-900'}`}>
+                        <span className="mr-1">{icon}</span> {done ? step.text : step.text}
                         {step.mgPerKg && (
                           <span className="ml-1 font-mono text-primary font-bold">
                             ({calculateDose(step.mgPerKg, activeCase.weightKg)})
@@ -999,13 +996,3 @@ export default function CasePage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-

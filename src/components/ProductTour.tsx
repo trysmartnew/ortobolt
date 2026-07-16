@@ -265,7 +265,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
         <button
           onClick={onClose}
           aria-label="Pular tour"
-          className="text-xs font-medium text-slate-600 hover:text-red-600 transition-colors"
+          className="text-xs font-medium text-slate-800 hover:text-red-600 transition-colors"
         >
           Pular
         </button>
@@ -273,7 +273,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
           {Array.from({ length: total }).map((_, i) => (
             <div
               key={i}
-              className={`rounded-full transition-all duration-300 ${i === stepIndex ? 'w-5 h-2 bg-primary' : 'w-2 h-2 bg-slate-300'}`}
+              className={`rounded-full transition-all duration-300 ${i === stepIndex ? 'w-5 h-2 bg-primary' : 'w-2 h-2 bg-slate-400'}`}
               aria-label={`Passo ${i + 1} de ${total}`}
             />
           ))}
@@ -283,7 +283,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
             <button
               onClick={onPrev}
               aria-label="Passo anterior"
-              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-700 bg-slate-100 hover:premium-header-bg hover:text-white bg-slate-200 transition-colors"
+              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-800 bg-slate-100 hover:premium-header-bg hover:text-white bg-slate-200 transition-colors"
             >
               <ChevronLeft size={14} /> Anterior
             </button>
@@ -480,7 +480,7 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
         <Spotlight rect={rect} visible={spotlightVisible} />
       )}
       {targetMissing && currentStep?.target !== '__welcome__' && (
-        <div className="fixed top-4 right-4 z-[10000] bg-warning text-white px-4 py-2 rounded-xl shadow-lg" role="alert">
+        <div className="fixed top-4 right-4 z-[10000] bg-warning text-slate-900 px-4 py-2 rounded-xl shadow-lg" role="alert">
           ⚠️ Elemento do tour não encontrado: <code>{currentStep.target}</code>
         </div>
       )}

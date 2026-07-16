@@ -193,7 +193,7 @@ export default function PatientDetailPage() {
           <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             Prontuário: {currentPatient.patientName}
           </h1>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-700">
             {SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}
           </p>
         </div>
@@ -214,10 +214,10 @@ export default function PatientDetailPage() {
                 <h2 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                   {currentPatient.patientName}
                 </h2>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-slate-700">
                   {SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}
                 </p>
-                <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-500">
+                <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-600">
                   <span className="flex items-center gap-1">
                     <UserRound size={14} /> {user?.name || 'Profissional'}
                   </span>
@@ -360,7 +360,7 @@ export default function PatientDetailPage() {
                 {labs.slice(0, 5).map((lab) => (
                   <div key={lab.id} className="text-xs">
                     <p className="font-semibold text-slate-700">{lab.name}</p>
-                    <p className="text-slate-500">{formatShortDate(lab.date)} · {lab.result}</p>
+                    <p className="text-slate-600">{formatShortDate(lab.date)} · {lab.result}</p>
                   </div>
                 ))}
               </div>

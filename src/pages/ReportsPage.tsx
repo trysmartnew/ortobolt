@@ -26,7 +26,7 @@ const TYPE_LABELS: Record<string, string> = {
   performance: 'Desempenho'
 };
 
-const TYPE_COLORS: Record<string, 'blue'|'success'|'warning'|'info'> = {
+const TYPE_COLORS: Record<string, 'blue' | 'success' | 'warning' | 'info'> = {
   monthly: 'blue',
   case: 'info',
   audit: 'warning',
@@ -306,11 +306,11 @@ export default function ReportsPage() {
           addToast('Relatório mensal gerado com sucesso.', 'success');
           return;
         }
-        } catch {
-          console.warn('API de relatório mensal não disponível, usando geração client-side.');
-          addToast('API não disponível. Gerando relatório localmente...', 'info');
-        }
-        await generateMonthlyReport(user, kpiMetrics, chartData, cases);
+      } catch {
+        console.warn('API de relatório mensal não disponível, usando geração client-side.');
+        addToast('API não disponível. Gerando relatório localmente...', 'info');
+      }
+      await generateMonthlyReport(user, kpiMetrics, chartData, cases);
       addToast('Relatório mensal gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
@@ -457,7 +457,7 @@ export default function ReportsPage() {
               <Settings size={18} className="text-[var(--color-accent)]" />
               <h3 className="font-bold text-slate-900 text-sm">Report Customization</h3>
             </div>
-            <p className="text-xs text-menu-muted">Personalização de Laudos e Relatórios</p>
+            <p className="text-sm text-menu-muted">Personalização de Laudos e Relatórios</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-4">
@@ -536,7 +536,7 @@ export default function ReportsPage() {
               <FileText className="text-[var(--color-accent)]" size={18} />
               <div>
                 <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Relatório Mensal</h3>
-                <p className="text-xs text-menu-muted">KPIs, evolução e casos do período</p>
+                <p className="text-sm text-menu-muted">KPIs, evolução e casos do período</p>
               </div>
             </div>
 
@@ -568,8 +568,8 @@ export default function ReportsPage() {
             </div>
 
             <RequireRole>
-                <Button
-                  onClick={handleGenerateMonthlyReport}
+              <Button
+                onClick={handleGenerateMonthlyReport}
                 className="w-full mt-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
                 disabled={generating === 'monthly' || metricsLoading}
               >
@@ -585,7 +585,7 @@ export default function ReportsPage() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>Clinical Reports & Tutor Guides</h3>
-                <p className="text-xs text-menu-muted mt-0.5">Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco.</p>
+                <p className="text-sm text-menu-muted mt-0.5">Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco.</p>
               </div>
               <Badge variant="info" className="border-0">{availableCasesCount} casos disponíveis</Badge>
             </div>
@@ -596,7 +596,7 @@ export default function ReportsPage() {
                   <FileText className="text-[var(--color-accent)]" size={18} />
                   <h4 className="text-xs font-bold text-slate-900">Selecionar Caso e Gerar Laudo Técnico</h4>
                 </div>
-                <p className="text-[11px] text-menu-muted mb-3">Gera o laudo técnico completo com métricas de IA, landmarks anatômicos e fatores de risco identificados.</p>
+                <p className="text-xs text-menu-muted mb-3">Gera o laudo técnico completo com métricas de IA, landmarks anatômicos e fatores de risco identificados.</p>
                 <RequireRole>
                   <Button className="w-full" variant="secondary" onClick={handleOpenTechnicalReport} disabled={!cases || cases.length === 0}>
                     <FileText size={14} /> Selecionar Caso
@@ -609,7 +609,7 @@ export default function ReportsPage() {
                   <User className="text-[var(--color-accent)]" size={18} />
                   <h4 className="text-xs font-bold text-slate-900">Selecionar Caso e Gerar Guia para o Tutor</h4>
                 </div>
-                <p className="text-[11px] text-menu-muted mb-3">Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal com instruções pós-operatórias.</p>
+                <p className="text-xs text-menu-muted mb-3">Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal com instruções pós-operatórias.</p>
                 <RequireRole>
                   <Button className="w-full" variant="secondary" onClick={handleOpenTutorGuide} disabled={!cases || cases.length === 0}>
                     <User size={14} /> Selecionar Caso
@@ -688,7 +688,7 @@ export default function ReportsPage() {
             <div className="p-5 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-slate-900 text-lg">Selecionar Caso para Laudo</h3>
-                <p className="text-sm text-menu-muted">Escolha o caso clínico para gerar o PDF personalizado.</p>
+                <p className="text-base text-menu-muted">Escolha o caso clínico para gerar o PDF personalizado.</p>
               </div>
               <button onClick={handleCloseModal} className="p-2 hover:bg-slate-100 rounded-full transition">
                 <X size={20} className="text-menu-muted" />
@@ -763,4 +763,3 @@ export default function ReportsPage() {
     </div>
   );
 }
-

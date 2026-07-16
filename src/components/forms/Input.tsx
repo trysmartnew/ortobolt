@@ -17,16 +17,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <input
           ref={ref}
-          className={`w-full px-3 py-3 h-[42px] rounded-xl border border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
-            error ? 'border-error focus:ring-error' : 'focus:ring-primary'
-          } ${className || ''}`}
+          className={`w-full px-3 py-3 h-[42px] rounded-xl border border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all ${error ? 'border-error focus:ring-error' : 'focus:ring-primary'
+            } ${className || ''}`}
           {...props}
         />
         {error && (
           <span className="text-xs text-error">{error}</span>
         )}
         {helperText && !error && (
-          <span className="text-xs text-menu-muted">{helperText}</span>
+          <span className="text-xs text-slate-600">{helperText}</span>
         )}
       </div>
     );
