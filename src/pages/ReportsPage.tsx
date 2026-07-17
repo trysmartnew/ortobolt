@@ -346,6 +346,13 @@ export default function ReportsPage() {
       return;
     }
 
+    // Filtragem de conteúdo para remover histórico do Copilot
+    const copilotMessages = (selectedCase as any).copilotHistory || [];
+    const finalAnalysis = copilotMessages
+      .filter((msg: any) => msg.role === 'copilot' && msg.content?.includes('[[BILLY'))
+      .pop();
+    const filteredNotes = finalAnalysis?.content || selectedCase.notes || '';
+
     setGenerating('case');
     try {
       try {
@@ -375,6 +382,7 @@ export default function ReportsPage() {
         logoUrl: logoPreview,
         clinicName,
         clinicSubtitle,
+        notes: filteredNotes,
       });
       addToast('Laudo técnico gerado com sucesso.', 'success');
     } finally {
@@ -392,6 +400,13 @@ export default function ReportsPage() {
       addToast(`Caso com ID ${caseId} não encontrado.`, 'error');
       return;
     }
+
+    // Filtragem de conteúdo para remover histórico do Copilot
+    const copilotMessages = (selectedCase as any).copilotHistory || [];
+    const finalAnalysis = copilotMessages
+      .filter((msg: any) => msg.role === 'copilot' && msg.content?.includes('[[BILLY'))
+      .pop();
+    const filteredNotes = finalAnalysis?.content || selectedCase.notes || '';
 
     setGenerating('case');
     try {
@@ -423,6 +438,7 @@ export default function ReportsPage() {
         logoUrl: logoPreview,
         clinicName,
         clinicSubtitle,
+        notes: filteredNotes,
       });
       addToast('Guia para o tutor gerado com sucesso.', 'success');
     } finally {

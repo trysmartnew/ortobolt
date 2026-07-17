@@ -51,7 +51,7 @@ function addWrappedText(
       doc.addPage();
       y = 30;
     }
-    doc.text(line, x, y);
+    doc.text(line, x, y, { charSpace: 0 });
     y += lineHeight;
   }
   return y;
@@ -101,11 +101,11 @@ async function addHeader(
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.text(safe(title), 14, 35);
+  doc.text(safe(title), 14, 35, { charSpace: 0 });
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 116, 139);
-  doc.text(safe(subtitle), 14, 42);
+  doc.text(safe(subtitle), 14, 42, { charSpace: 0 });
   doc.setDrawColor(226, 232, 240);
   doc.line(14, 46, 196, 46);
 }
@@ -119,10 +119,10 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.setFont('helvetica', 'normal');
-    const clinicNameF = localStorage.getItem('ortobolt_pdf_clinic_name') || 'Vanguard Veterinary';
-    doc.text(safe(clinicNameF) + ' — Plataforma de Ortopedia Veterinária com IA', 14, 290);
-    doc.text(`Página ${i} de ${pageCount}`, 185, 290, { align: 'right' });
-    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 290, { align: 'center' });
+    const clinicNameF = localStorage.getItem('ortobolt_pdf_clinic_name') || 'REABLITAVET';
+    doc.text(safe(clinicNameF) + ' — Ortopedia Veterinária', 14, 290, { charSpace: 0 });
+    doc.text(`Página ${i} de ${pageCount}`, 185, 290, { align: 'right', charSpace: 0 });
+    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 290, { align: 'center', charSpace: 0 });
   }
 }
 
@@ -138,7 +138,7 @@ export async function generateMonthlyReport(
 
   // Professional info
   doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-  doc.text('Dados do Profissional', 14, y); y += 7;
+  doc.text('Dados do Profissional', 14, y, { charSpace: 0 }); y += 7;
   doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
 
   const profFields: [string, string][] = [
@@ -156,7 +156,7 @@ export async function generateMonthlyReport(
   // KPIs
   doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
   if (y > 260) { doc.addPage(); y = 30; }
-  doc.text('Indicadores de Desempenho (KPIs)', 14, y); y += 7;
+  doc.text('Indicadores de Desempenho (KPIs)', 14, y, { charSpace: 0 }); y += 7;
   metrics.forEach(m => {
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
     const val = `${m.value}${m.unit || ''}`;
@@ -168,13 +168,13 @@ export async function generateMonthlyReport(
   // Monthly evolution table
   if (y > 220) { doc.addPage(); y = 30; }
   doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-  doc.text('Evolução Mensal de Precisão', 14, y); y += 7;
+  doc.text('Evolução Mensal de Precisão', 14, y, { charSpace: 0 }); y += 7;
   const headers = ['Mês', 'Precisão (%)', 'Casos', 'Sucessos'];
   const colW = [35, 40, 30, 30];
   let x = 14;
   doc.setFillColor(0, 86, 179); doc.setTextColor(255, 255, 255);
   doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-  headers.forEach((h, i) => { doc.rect(x, y, colW[i], 7, 'F'); doc.text(safe(h), x + 2, y + 5); x += colW[i]; });
+  headers.forEach((h, i) => { doc.rect(x, y, colW[i], 7, 'F'); doc.text(safe(h), x + 2, y + 5, { charSpace: 0 }); x += colW[i]; });
   y += 7;
   chartData.forEach((row, ri) => {
     if (y > 270) { doc.addPage(); y = 30; }
@@ -182,7 +182,7 @@ export async function generateMonthlyReport(
     doc.setFillColor(ri % 2 === 0 ? 248 : 255, ri % 2 === 0 ? 250 : 255, ri % 2 === 0 ? 252 : 255);
     doc.setTextColor(0, 0, 0); doc.setFont('helvetica', 'normal');
     const cells = [safe(row.label), row.precision.toFixed(1), String(row.cases), String(row.success)];
-    cells.forEach((c, i) => { doc.rect(x, y, colW[i], 6, 'F'); doc.text(c, x + 2, y + 4); x += colW[i]; });
+    cells.forEach((c, i) => { doc.rect(x, y, colW[i], 6, 'F'); doc.text(c, x + 2, y + 4, { charSpace: 0 }); x += colW[i]; });
     y += 6;
   });
   y += 8;
@@ -190,7 +190,7 @@ export async function generateMonthlyReport(
   // Recent cases
   if (y > 220) { doc.addPage(); y = 30; }
   doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-  doc.text('Casos do Período', 14, y); y += 7;
+  doc.text('Casos do Período', 14, y, { charSpace: 0 }); y += 7;
   cases.slice(0, 8).forEach(c => {
     if (y > 270) { doc.addPage(); y = 30; }
     doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
@@ -206,7 +206,7 @@ export async function generateMonthlyReport(
 
 export async function generateCaseReport(
   c: ClinicalCase,
-  options?: { isTutorGuide?: boolean; logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string }
+  options?: { isTutorGuide?: boolean; logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string; notes?: string }
 ): Promise<void> {
   const tutorMode = options?.isTutorGuide ?? false;
   const JsPDF = await getJsPDF();
@@ -218,7 +218,7 @@ export async function generateCaseReport(
 
   // Patient
   doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-  doc.text('Dados do Paciente', 14, y); y += 7;
+  doc.text('Dados do Paciente', 14, y, { charSpace: 0 }); y += 7;
   doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
   const patientFields: [string, string][] = [
     ['Nome', safe(c.patientName)],
@@ -231,17 +231,18 @@ export async function generateCaseReport(
   ];
   for (const [label, value] of patientFields) {
     if (y > 270) { doc.addPage(); y = 30; }
-    doc.text(`${label}: ${value}`, 14, y); y += 5;
+    doc.text(`${label}: ${value}`, 14, y, { charSpace: 0 }); y += 5;
   }
   y += 5;
 
   // Notes — ✅ A-03: wrapping para notas longas
-  if (c.notes) {
+  const cleanNotes = (options?.notes || c.notes || '').replace(/---\s*Análise\s*IA.*?---/gi, '').trim();
+  if (cleanNotes) {
     if (y > 250) { doc.addPage(); y = 30; }
     doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-    doc.text('Notas Clínicas', 14, y); y += 6;
+    doc.text('Notas Clínicas', 14, y, { charSpace: 0 }); y += 6;
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
-    y = addWrappedText(doc, safe(c.notes), 14, y, 182, 5);
+    y = addWrappedText(doc, safe(cleanNotes), 14, y, 182, 5);
     y += 5;
   }
 
@@ -252,14 +253,14 @@ export async function generateCaseReport(
     if (tutorMode) {
       // ── MODO TUTOR (Simplificado para o proprietário do pet) ──
       doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-      doc.text('Orientações para o Tutor', 14, y); y += 7;
+      doc.text('Orientações para o Tutor', 14, y, { charSpace: 0 }); y += 7;
       doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
       y = addWrappedText(doc, 'Este documento foi preparado pela equipe veterinária para orientar os cuidados com seu pet após o procedimento.', 14, y, 182, 5);
       y += 8;
 
       // Recommendations
       if (y > 240) { doc.addPage(); y = 30; }
-      doc.setFont('helvetica', 'bold'); doc.text('Cuidados Importantes:', 14, y); y += 6;
+      doc.setFont('helvetica', 'bold'); doc.text('Cuidados Importantes:', 14, y, { charSpace: 0 }); y += 6;
       doc.setFont('helvetica', 'normal');
       c.aiAnalysis.recommendations.forEach(r => {
         y = addWrappedText(doc, `• ${safe(r)}`, 14, y, 182, 5);
@@ -269,7 +270,7 @@ export async function generateCaseReport(
       if (c.aiAnalysis.riskFactors.length > 0) {
         if (y > 240) { doc.addPage(); y = 30; }
         y += 5;
-        doc.setFont('helvetica', 'bold'); doc.text('Pontos de Atenção:', 14, y); y += 6;
+        doc.setFont('helvetica', 'bold'); doc.text('Pontos de Atenção:', 14, y, { charSpace: 0 }); y += 6;
         doc.setFont('helvetica', 'normal');
         c.aiAnalysis.riskFactors.forEach(rf => {
           y = addWrappedText(doc, `• ${safe(rf.description)}`, 14, y, 182, 5);
@@ -278,25 +279,22 @@ export async function generateCaseReport(
     } else {
       // ── MODO VETERINÁRIO (Técnico Completo) ──
       doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-      doc.text('Análise IA — OrthoVision', 14, y); y += 7;
+      doc.text('Análise de Imagem', 14, y, { charSpace: 0 }); y += 7;
       doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
-      doc.text(`Pontuação de Precisão: ${c.aiAnalysis.precisionScore}%`, 14, y); y += 5;
-      doc.text(`Confiança do Modelo: ${(c.aiAnalysis.confidence * 100).toFixed(0)}%`, 14, y); y += 5;
-      doc.text(`Tempo de Processamento: ${c.aiAnalysis.processingTimeMs}ms`, 14, y); y += 8;
 
       // Landmarks
-      doc.setFont('helvetica', 'bold'); doc.text('Landmarks Anatômicos Detectados:', 14, y); y += 6;
+      doc.setFont('helvetica', 'bold'); doc.text('Landmarks Anatômicos Detectados:', 14, y, { charSpace: 0 }); y += 6;
       doc.setFont('helvetica', 'normal');
       c.aiAnalysis.anatomicalLandmarks.forEach(l => {
         if (y > 270) { doc.addPage(); y = 30; }
         const status = l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗ Não detectado';
-        doc.text(`• ${safe(l.name)}: ${status}`, 14, y); y += 5;
+        doc.text(`• ${safe(l.name)}: ${status}`, 14, y, { charSpace: 0 }); y += 5;
       });
       y += 5;
 
       // Recommendations
       if (y > 240) { doc.addPage(); y = 30; }
-      doc.setFont('helvetica', 'bold'); doc.text('Recomendações:', 14, y); y += 6;
+      doc.setFont('helvetica', 'bold'); doc.text('Recomendações:', 14, y, { charSpace: 0 }); y += 6;
       doc.setFont('helvetica', 'normal');
       c.aiAnalysis.recommendations.forEach(r => {
         y = addWrappedText(doc, `• ${safe(r)}`, 14, y, 182, 5);
@@ -306,7 +304,7 @@ export async function generateCaseReport(
       if (c.aiAnalysis.riskFactors.length > 0) {
         if (y > 240) { doc.addPage(); y = 30; }
         y += 3;
-        doc.setFont('helvetica', 'bold'); doc.text('Fatores de Risco:', 14, y); y += 6;
+        doc.setFont('helvetica', 'bold'); doc.text('Fatores de Risco:', 14, y, { charSpace: 0 }); y += 6;
         doc.setFont('helvetica', 'normal');
         c.aiAnalysis.riskFactors.forEach(rf => {
           y = addWrappedText(doc, `• [${safe(rf.severity).toUpperCase()}] ${safe(rf.category)}: ${safe(rf.description)}`, 14, y, 182, 5);
