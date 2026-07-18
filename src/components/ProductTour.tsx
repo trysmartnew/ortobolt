@@ -58,11 +58,6 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-report-customize', title: '🎨 Personalização de Marca', content: 'Configure a identidade visual da sua clínica (logo, cores, cabeçalho) para que todos os PDFs saiam profissionais e padronizados.', placement: 'right', highlight: true },
     { target: 'tour-report-history', title: '📂 Histórico', content: 'Baixe novamente qualquer PDF gerado anteriormente.', placement: 'top', highlight: true },
   ],
-  profile: [
-    { target: '__welcome__', title: '👨‍⚕️ Perfil', content: 'Suas estatísticas profissionais e configurações de conta.', placement: 'center' },
-    { target: 'tour-profile-stats', title: '📊 Estatísticas', content: 'Acompanhe seu volume de cirurgias e taxa de sucesso.', placement: 'bottom', highlight: true },
-    { target: 'tour-competency-chart', title: '🕸️ Radar', content: 'Visualize seu desempenho por área de atuação clínica.', placement: 'top', highlight: true },
-  ],
   notifications: [
     { target: '__welcome__', title: '🔔 Notificações', content: 'Alertas de casos críticos e atualizações do sistema.', placement: 'center' },
     { target: 'tour-unread-notifications', title: '🔴 Alertas não lidos', content: 'Clique para visualizar ou limpar seus alertas pendentes.', placement: 'bottom', highlight: true },

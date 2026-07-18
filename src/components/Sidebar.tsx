@@ -40,7 +40,6 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'SISTEMA',
     items: [
       { label: 'Notificações', icon: Bell, page: 'notifications' },
-      { label: 'Perfil', icon: User, page: 'profile' },
       { label: 'Configurações', icon: Settings, page: 'settings' },
       { label: 'Ajuda', icon: HelpCircle, page: 'help' },
     ]

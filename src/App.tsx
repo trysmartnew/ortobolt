@@ -1,54 +1,52 @@
 import { lazy, Suspense, useEffect, useRef } from 'react';
 import { AppProvider, useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
-import HomePage          from '@/pages/HomePage';
-import LoginPage         from '@/pages/LoginPage';
-import RegisterPage      from '@/pages/RegisterPage';
+import HomePage from '@/pages/HomePage';
+import LoginPage from '@/pages/LoginPage';
+import RegisterPage from '@/pages/RegisterPage';
 import ResetPasswordPage from '@/pages/ResetPasswordPage';
 
 // Code-split: cada pagina gera chunk proprio; carrega so quando navegada
-const DashboardPage     = lazy(() => import('@/pages/DashboardPage'));
-const ChatPage          = lazy(() => import('@/pages/ChatPage'));
-const AnalysisPage      = lazy(() => import('@/pages/AnalysisPage'));
-const GalleryPage       = lazy(() => import('@/pages/GalleryPage'));
-const CasePage          = lazy(() => import('@/pages/CasePage'));
-const ProfilePage       = lazy(() => import('@/pages/ProfilePage'));
-const ReportsPage       = lazy(() => import('@/pages/ReportsPage'));
-const SettingsPage      = lazy(() => import('@/pages/SettingsPage'));
+const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
+const ChatPage = lazy(() => import('@/pages/ChatPage'));
+const AnalysisPage = lazy(() => import('@/pages/AnalysisPage'));
+const GalleryPage = lazy(() => import('@/pages/GalleryPage'));
+const CasePage = lazy(() => import('@/pages/CasePage'));
+const ReportsPage = lazy(() => import('@/pages/ReportsPage'));
+const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
 const NotificationsPage = lazy(() => import('@/pages/NotificationsPage'));
-const PatientsPage       = lazy(() => import('@/pages/PatientsPage'));
-const PatientDetailPage  = lazy(() => import('@/pages/PatientDetailPage'));
-const HelpPage           = lazy(() => import('@/pages/HelpPage'));
+const PatientsPage = lazy(() => import('@/pages/PatientsPage'));
+const PatientDetailPage = lazy(() => import('@/pages/PatientDetailPage'));
+const HelpPage = lazy(() => import('@/pages/HelpPage'));
 const EvolutionaryAnalysisPage = lazy(() => import('@/pages/EvolutionaryAnalysisPage'));
 const AlignmentAnalysisPage = lazy(() => import('@/pages/AlignmentAnalysisPage'));
 const ComparativeAnalysisPage = lazy(() => import('@/pages/ComparativeAnalysisPage'));
-import AppLayout         from '@/components/AppLayout';
-import Sidebar           from '@/components/Sidebar';
-import TopBar            from '@/components/TopBar';
-import ProductTour       from '@/components/ProductTour';
-import ToastContainer    from '@/components/ToastContainer';
-import AIAssistant       from '@/components/AIAssistant';
+import AppLayout from '@/components/AppLayout';
+import Sidebar from '@/components/Sidebar';
+import TopBar from '@/components/TopBar';
+import ProductTour from '@/components/ProductTour';
+import ToastContainer from '@/components/ToastContainer';
+import AIAssistant from '@/components/AIAssistant';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AnalysisProvider } from '@/contexts/AnalysisContext';
 
 
 const PAGE_MAP = {
-  dashboard:     DashboardPage,
-  chat:          ChatPage,
-  analysis:      AnalysisPage,
-  gallery:       GalleryPage,
-  case:          CasePage,
-  profile:       ProfilePage,
-  reports:       ReportsPage,
-    settings:      SettingsPage,
-      help:           HelpPage,
-      notifications: NotificationsPage,
-    patients:       PatientsPage,
-    patientDetail:  PatientDetailPage,
-    evolutionaryAnalysis: EvolutionaryAnalysisPage,
-    alignmentAnalysis: AlignmentAnalysisPage,
-    comparative: ComparativeAnalysisPage,
-  } as const;
+  dashboard: DashboardPage,
+  chat: ChatPage,
+  analysis: AnalysisPage,
+  gallery: GalleryPage,
+  case: CasePage,
+  reports: ReportsPage,
+  settings: SettingsPage,
+  help: HelpPage,
+  notifications: NotificationsPage,
+  patients: PatientsPage,
+  patientDetail: PatientDetailPage,
+  evolutionaryAnalysis: EvolutionaryAnalysisPage,
+  alignmentAnalysis: AlignmentAnalysisPage,
+  comparative: ComparativeAnalysisPage,
+} as const;
 
 function AppInner() {
   // Inicializar view reset se token de recovery foi detectado no main.tsx
@@ -66,7 +64,7 @@ function AppInner() {
 
   const isAnalysisPage = currentPage === 'analysis' || currentPage === 'evolutionaryAnalysis' || currentPage === 'alignmentAnalysis' || currentPage === 'comparative';
 
-  const logoutRef     = useRef(logout);
+  const logoutRef = useRef(logout);
   const setSessionRef = useRef(setUserFromSession);
 
   useEffect(() => { logoutRef.current = logout; }, [logout]);
@@ -139,10 +137,10 @@ function AppInner() {
     );
   }
 
-  if (currentView === 'home')     return <><HomePage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
-  if (currentView === 'login')    return <><LoginPage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
+  if (currentView === 'home') return <><HomePage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
+  if (currentView === 'login') return <><LoginPage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
   if (currentView === 'register') return <><RegisterPage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
-  if (currentView === 'reset')    return <><ResetPasswordPage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
+  if (currentView === 'reset') return <><ResetPasswordPage /><ToastContainer toasts={toasts} onRemove={removeToast} /></>;
 
   const PageComponent = PAGE_MAP[currentPage as keyof typeof PAGE_MAP] || DashboardPage;
 
@@ -181,12 +179,10 @@ export default function App() {
   return (
     <AppProvider>
       <AnalysisProvider>
-                    <ErrorBoundary>
-        <AppInner />
-      </ErrorBoundary>
-                </AnalysisProvider>
+        <ErrorBoundary>
+          <AppInner />
+        </ErrorBoundary>
+      </AnalysisProvider>
     </AppProvider>
   );
 }
-
-
