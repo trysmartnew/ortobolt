@@ -132,7 +132,7 @@ function Spotlight({ rect, visible }: SpotlightProps) {
   const PAD = 10;
   return (
     <div
-      className="fixed pointer-events-none z-[9998]"
+      className="fixed z-[9998] pointer-events-none"
       style={{
         top: rect.top - PAD,
         left: rect.left - PAD,
@@ -245,27 +245,27 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
       aria-modal="true"
       aria-labelledby="tour-title"
       aria-describedby="tour-content"
-      style={{ ...style, width: TW }}
-      className="glass-panel-premium rounded-2xl shadow-2xl border border-slate-200/60 overflow-hidden animate-in fade-in zoom-in-95 duration-300"
+      style={{ ...style, width: TW }} // A classe 'glass-panel-premium' foi substituída por classes de utilitário para conformidade com o linter.
+      className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 shadow-2xl backdrop-blur-md duration-300 animate-in fade-in zoom-in-95 dark:bg-slate-900/80"
     >
-      <div className="bg-gradient-to-r from-primary to-accent px-5 py-4 flex items-center justify-between">
+      <div className="flex items-center justify-between bg-gradient-to-r from-primary to-accent px-5 py-4">
         <span id="tour-title" className="text-white font-bold text-base">{step.title}</span>
         <button
           onClick={onClose}
           aria-label="Fechar tour"
-          className="text-white/80 hover:text-white transition-colors rounded-lg p-1 hover:bg-white/10"
+          className="rounded-lg p-1 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
         >
           <X size={18} />
         </button>
       </div>
       <div className="px-5 py-4">
-        <p id="tour-content" className="text-slate-200 text-[15px] leading-relaxed">{step.content}</p>
+        <p id="tour-content" className="text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">{step.content}</p>
       </div>
-      <div className="px-5 pb-4 flex items-center justify-between flex-wrap gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-4">
         <button
           onClick={onClose}
           aria-label="Pular tour"
-          className="text-xs font-medium text-slate-300 hover:text-red-400 transition-colors"
+          className="text-xs font-medium text-slate-500 transition-colors hover:text-red-400 dark:text-slate-300"
         >
           Pular
         </button>
@@ -273,7 +273,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
           {Array.from({ length: total }).map((_, i) => (
             <div
               key={i}
-              className={`rounded-full transition-all duration-300 ${i === stepIndex ? 'w-5 h-2 bg-primary' : 'w-2 h-2 bg-slate-400'}`}
+              className={`rounded-full transition-all duration-300 ${i === stepIndex ? 'h-2 w-5 bg-primary' : 'size-2 bg-slate-200 dark:bg-slate-400'}`}
               aria-label={`Passo ${i + 1} de ${total}`}
             />
           ))}
@@ -283,7 +283,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
             <button
               onClick={onPrev}
               aria-label="Passo anterior"
-              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-800 bg-slate-100 hover:premium-header-bg hover:text-white bg-slate-200 transition-colors"
+              className="flex items-center gap-1 rounded-xl bg-slate-200 px-4 py-2 text-[13px] font-semibold text-slate-900 transition-colors hover:bg-slate-800 hover:text-white"
             >
               <ChevronLeft size={14} /> Anterior
             </button>
@@ -292,7 +292,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
             <button
               onClick={onNext}
               aria-label="Próximo passo"
-              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-white bg-primary hover:bg-primary-dark transition-colors"
+              className="flex items-center gap-1 rounded-xl bg-primary px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-primary/90"
             >
               Próximo <ChevronRight size={14} />
             </button>
@@ -300,7 +300,7 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
             <button
               onClick={onClose}
               aria-label="Concluir tour"
-              className="flex items-center gap-1 px-4 py-2 rounded-xl text-[13px] font-semibold text-white bg-accent hover:bg-accent/90 transition-colors"
+              className="flex items-center gap-1 rounded-xl bg-accent px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-accent/90"
             >
               Concluir ✓
             </button>
@@ -472,7 +472,7 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
       {(currentStep?.target === '__welcome__' || !rect) && (
         <div
           className="fixed inset-0 bg-black/65 z-[9997] transition-opacity duration-300"
-          onClick={handleClose}
+          onClick={() => handleClose()}
           aria-hidden="true"
         />
       )}
@@ -480,7 +480,7 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
         <Spotlight rect={rect} visible={spotlightVisible} />
       )}
       {targetMissing && currentStep?.target !== '__welcome__' && (
-        <div className="fixed top-4 right-4 z-[10000] bg-warning text-slate-900 px-4 py-2 rounded-xl shadow-lg" role="alert">
+        <div className="fixed right-4 top-4 z-[10000] rounded-xl bg-warning px-4 py-2 text-slate-900 shadow-lg" role="alert">
           ⚠️ Elemento do tour não encontrado: <code>{currentStep.target}</code>
         </div>
       )}

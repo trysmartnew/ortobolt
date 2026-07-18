@@ -84,22 +84,11 @@ function matchesMagicBytes(header: Uint8Array, pattern: readonly number[]): bool
  */
 function matchesWebpMagicBytes(header: Uint8Array): boolean {
   if (header.length < 12) return false;
-  const riff = header[0] === 0x52 && header[1] === 0x49 && 
-               header[2] === 0x46 && header[3] === 0x46;
-  const webp = header[8] === 0x57 && header[9] === 0x45 && 
-               header[10] === 0x42 && header[11] === 0x50;
+  const riff = header[0] === 0x52 && header[1] === 0x49 &&
+    header[2] === 0x46 && header[3] === 0x46;
+  const webp = header[8] === 0x57 && header[9] === 0x45 &&
+    header[10] === 0x42 && header[11] === 0x50;
   return riff && webp;
-}
-
-/**
- * Detecta o formato da imagem baseado no MIME type.
- */
-export function detectImageFormat(file: File): ImageFormat {
-  const mimeType = file.type.toLowerCase();
-  if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') return 'jpg';
-  if (mimeType === 'image/png') return 'png';
-  if (mimeType === 'image/webp') return 'webp';
-  return 'unknown';
 }
 
 /**
@@ -206,9 +195,9 @@ export async function uploadImageToStorage(
     // 0.1 Validar dimensões mínimas (segurança contra imagens inadequadas)
     const dimensions = await validateImageDimensions(file);
     if (!dimensions.valid) {
-      return { 
-        url: null, 
-        error: `Imagem muito pequena ou distorcida. Mínimo: ${MIN_IMAGE_WIDTH}x${MIN_IMAGE_HEIGHT}px` 
+      return {
+        url: null,
+        error: `Imagem muito pequena ou distorcida. Mínimo: ${MIN_IMAGE_WIDTH}x${MIN_IMAGE_HEIGHT}px`
       };
     }
 
