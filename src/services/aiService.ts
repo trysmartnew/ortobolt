@@ -428,7 +428,7 @@ function extractMarkingsFromAnalysis(
     const angle = parseFloat(norbergMatch[1].replace(',', '.'));
     const isNormal = angle >= 105;
     markings.circles.push({
-      id: `norberg-${Date.now()}`,
+      id: crypto.randomUUID(),
       cx: w * 0.25,
       cy: h * 0.4,
       radius: Math.min(w, h) * 0.08,
@@ -436,7 +436,7 @@ function extractMarkingsFromAnalysis(
       stage: isNormal ? 'normal' : 'abnormal',
     });
     markings.angles.push({
-      id: `angle-norberg-${Date.now()}`,
+      id: crypto.randomUUID(),
       points: [
         { x: w * 0.25, y: h * 0.3 },
         { x: w * 0.25, y: h * 0.4 },
@@ -452,7 +452,7 @@ function extractMarkingsFromAnalysis(
     const angle = parseFloat(tpaMatch[1].replace(',', '.'));
     const isNormal = angle >= 18 && angle <= 25;
     markings.circles.push({
-      id: `tpa-${Date.now()}`,
+      id: crypto.randomUUID(),
       cx: w * 0.75,
       cy: h * 0.45,
       radius: Math.min(w, h) * 0.08,
@@ -460,7 +460,7 @@ function extractMarkingsFromAnalysis(
       stage: isNormal ? 'normal' : 'abnormal',
     });
     markings.angles.push({
-      id: `angle-tpa-${Date.now()}`,
+      id: crypto.randomUUID(),
       points: [
         { x: w * 0.65, y: h * 0.35 },
         { x: w * 0.75, y: h * 0.45 },
@@ -474,14 +474,14 @@ function extractMarkingsFromAnalysis(
   // Fracture markers — high severity
   if (fractureMatch) {
     markings.markers.push({
-      id: `fracture-${Date.now()}`,
+      id: crypto.randomUUID(),
       x: w * 0.5,
       y: h * 0.6,
       label: '⚠️ Fratura',
       type: 'fracture',
     });
     markings.rois.push({
-      id: `roi-fracture-${Date.now()}`,
+      id: crypto.randomUUID(),
       x: w * 0.4,
       y: h * 0.5,
       width: w * 0.2,
@@ -494,7 +494,7 @@ function extractMarkingsFromAnalysis(
   // Dysplasia/Arthritis ROI — medium severity
   if (displasiaMatch) {
     markings.rois.push({
-      id: `roi-dysplasia-${Date.now()}`,
+      id: crypto.randomUUID(),
       x: w * 0.2,
       y: h * 0.35,
       width: w * 0.15,
