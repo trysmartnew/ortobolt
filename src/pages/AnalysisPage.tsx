@@ -343,7 +343,7 @@ export default function AnalysisPage() {
   return (
     <div className="p-4 w-full space-y-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011] text-white">
       <SectionHeader
-        title="Análise de Imagem Ortopédica"
+        title="Análise Diagnóstica"
         subtitle="Análise → Assistente → Caso completo integrado"
         titleClassName="text-2xl font-semibold text-white"
         subtitleClassName="text-slate-300 text-sm"
@@ -567,9 +567,9 @@ export default function AnalysisPage() {
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-semibold text-slate-400">Hip Dysplasia Index</span>
                       <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${dysplasiaBadge.variant === 'success' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : // No change needed
-                          dysplasiaBadge.variant === 'warning' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-                            dysplasiaBadge.variant === 'danger' ? 'bg-red-500/20 text-red-300 border-red-500/30' :
-                              'bg-sky-500/20 text-sky-300 border-sky-500/30'
+                        dysplasiaBadge.variant === 'warning' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+                          dysplasiaBadge.variant === 'danger' ? 'bg-red-500/20 text-red-300 border-red-500/30' :
+                            'bg-sky-500/20 text-sky-300 border-sky-500/30'
                         }`}>
                         {dysplasiaBadge.label}
                       </span>

@@ -26,7 +26,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-chat-input', title: '✍️ Digite sua dúvida', content: 'Escreva sua pergunta clínica e pressione Enter.', placement: 'top', highlight: true },
   ],
   analysis: [
-    { target: '__welcome__', title: '🔬 Análise de Imagem', content: 'Envie radiografias para a IA analisar. O laudo e os landmarks serão integrados ao caso.', placement: 'center' },
+    { target: '__welcome__', title: '🔬 Análise Diagnóstica', content: 'Envie radiografias para a IA analisar. O laudo e os landmarks serão integrados ao caso.', placement: 'center' },
     { target: 'tour-upload', title: '📁 Upload da Imagem', content: 'Selecione o arquivo (JPG, PNG, WEBP). Após o envio, clique em Iniciar Análise.', placement: 'bottom', highlight: true },
     { target: 'tour-analysis-preview', title: '🖼️ Preview e Landmarks', content: 'Visualize a radiografia carregada. Os landmarks anatômicos detectados pela IA serão plotados em verde sobre a imagem.', placement: 'right', highlight: true },
     { target: 'tour-analysis-result', title: '🧠 Resultado da IA', content: 'Leia o laudo e os diagnósticos diferenciais sugeridos pela inteligência artificial.', placement: 'top', highlight: true },
