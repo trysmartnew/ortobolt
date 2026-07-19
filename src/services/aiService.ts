@@ -1,7 +1,7 @@
 // src/services/aiService.ts
 // Chave removida do cliente — todas as chamadas vão para /api/ai
 // Anonimização no cliente + servidor; consentimento via aiConsent
-// Modelo: Gemini 2.5 Flash Lite (primary) → Flash (fallback)
+// Modelo: Modelo de IA Avançada (primário) → Modelo Rápido (fallback)
 
 import type { ClinicalCase } from '@/types/index';
 import type { ClinicalCopilotPayload } from '@/types/clinicalCopilot';
@@ -38,10 +38,10 @@ interface CacheEntry {
 type MessageContent =
   | string
   | Array<{
-      type: 'text' | 'image_url';
-      text?: string;
-      image_url?: { url: string };
-    }>;
+    type: 'text' | 'image_url';
+    text?: string;
+    image_url?: { url: string };
+  }>;
 
 interface ProxyMessage {
   role: 'user' | 'assistant' | 'system';
@@ -185,7 +185,7 @@ export async function compressImageBase64(
 }
 
 const AI_PROXY = '/api/ai';
-export const PRIMARY_MODEL = 'gemini-2.5-flash-lite';  // Gemini API direta
+export const PRIMARY_MODEL = 'gemini-2.5-flash-lite';  // Modelo de IA primário
 
 const AUTH_ERROR_MESSAGE =
   '⚠️ Sessão expirada ou não autenticada. Faça login novamente para usar a IA.';
@@ -467,9 +467,9 @@ export async function sendChatMessageStream(
       err instanceof AiConsentDeniedError
         ? err.message
         : mapAiProxyError(
-            err,
-            '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.'
-          );
+          err,
+          '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.'
+        );
     onChunk(msg);
     return msg;
   }
@@ -588,12 +588,12 @@ function extractMarkingsFromAnalysis(
     console.warn('extractMarkingsFromAnalysis: nenhum padrão reconhecido na resposta da IA');
   }
 
-    const validated = MarkingsDataSchema.safeParse(markings);
-    if (!validated.success) {
-      console.error('Validação de markings falhou:', validated.error.message);
-      throw new Error(`Markings inválidas retornadas pela IA: ${validated.error.message}`);
-    }
-    return validated.data;
+  const validated = MarkingsDataSchema.safeParse(markings);
+  if (!validated.success) {
+    console.error('Validação de markings falhou:', validated.error.message);
+    throw new Error(`Markings inválidas retornadas pela IA: ${validated.error.message}`);
+  }
+  return validated.data;
 }
 
 // ── analyzeImage — ✅ COM COMPRESSÃO DE IMAGEM + MARKINGS ────────────────────
@@ -781,14 +781,14 @@ Seja objetivo e técnico. NUNCA alucine dados não visíveis.`;
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
-        
+
         // Validação de segurança: se IA detectou inconsistência, abortar
         if (parsed.validationPassed === false) {
           const errorMsg = parsed.validationError || 'Inconsistência detectada nas imagens pré/pós-operatórias.';
           console.warn('[SAFETY] AI validation failed:', errorMsg);
           throw new Error(`⚠️ VALIDAÇÃO DE SEGURANÇA: ${errorMsg}`);
         }
-        
+
         // Validação defensiva dos campos obrigatórios
         if (!parsed.alignment && !parsed.fullAnalysis) {
           console.warn('AI comparison response missing required fields');
@@ -931,8 +931,8 @@ export async function refineClinicalAnalysis(
 
   const chatBlock = payload.history.length
     ? payload.history
-        .map((m) => `${m.role === 'user' ? 'Veterinário' : 'Copiloto'}: ${m.content}`)
-        .join('\n\n')
+      .map((m) => `${m.role === 'user' ? 'Veterinário' : 'Copiloto'}: ${m.content}`)
+      .join('\n\n')
     : '(Sem mensagens no copiloto ainda.)';
 
   const contextBlock = buildClinicalCopilotSystemMessage({

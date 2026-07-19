@@ -51,7 +51,15 @@ const PAGE_MAP = {
 function AppInner() {
   // Inicializar view reset se token de recovery foi detectado no main.tsx
   useEffect(() => {
-    const raw = sessionStorage.getItem('ortobolt_recovery_token');
+    let raw = sessionStorage.getItem('vanguard-veterinary_recovery_token');
+    if (raw === null) {
+      const valorAntigo = sessionStorage.getItem('ortobolt_recovery_token');
+      if (valorAntigo !== null) {
+        sessionStorage.setItem('vanguard-veterinary_recovery_token', valorAntigo);
+        sessionStorage.removeItem('ortobolt_recovery_token');
+      }
+      raw = valorAntigo;
+    }
     if (raw) setCurrentView('reset');
   }, []);
   const {
@@ -91,7 +99,16 @@ function AppInner() {
       // ✅ SIGNED_IN é disparado APÓS login() já ter setado user+view
       // Evitar race condition: não chamar setUserFromSession aqui se isLoggedIn já é true
       if (event === 'SIGNED_IN' && session?.user) {
-        const remember = sessionStorage.getItem('ortobolt_remember_me');
+        let remember = sessionStorage.getItem('vanguard-veterinary_remember_me');
+        if (remember === null) {
+          const valorAntigo = sessionStorage.getItem('ortobolt_remember_me');
+          if (valorAntigo !== null) {
+            sessionStorage.setItem('vanguard-veterinary_remember_me', valorAntigo);
+            sessionStorage.removeItem('ortobolt_remember_me');
+          }
+          remember = valorAntigo;
+        }
+
         if (remember === '0') {
           const projectRef = import.meta.env.VITE_SUPABASE_URL
             .replace('https://', '').split('.')[0];
@@ -101,7 +118,7 @@ function AppInner() {
             sessionStorage.setItem(key, token);
             localStorage.removeItem(key);
           }
-          sessionStorage.removeItem('ortobolt_remember_me');
+          sessionStorage.removeItem('vanguard-veterinary_remember_me');
         }
         // ✅ Não chamar setUserFromSession; deixar login() e syncProfile em AppContext handlearem
         return;

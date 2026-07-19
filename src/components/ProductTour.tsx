@@ -314,7 +314,7 @@ export interface ProductTourProps {
   onStepChange?: (stepIndex: number, step: TourStep) => void;
 }
 
-const TOUR_STORAGE_KEY = 'ortobolt-tour-completed';
+const TOUR_STORAGE_KEY = 'vanguard-veterinary-tour-completed';
 
 export default memo(function ProductTour({ page, active, onClose, forceShow = false, onStepChange }: ProductTourProps) {
   const [stepIndex, setStepIndex] = useState(0);

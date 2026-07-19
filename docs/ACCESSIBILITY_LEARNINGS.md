@@ -2,7 +2,7 @@
 
 **Data:** 16 de julho de 2026
 **Componente:** `DashboardPage.tsx`
-**Autor:** Gemini Code Assist
+**Autor:** Assistente de Código
 
 ---
 
