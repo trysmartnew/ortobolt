@@ -343,8 +343,8 @@ export default function AnalysisPage() {
   return (
     <div className="p-4 w-full space-y-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011] text-white">
       <SectionHeader
-        title="Análise Diagnóstica"
-        subtitle="Análise → Assistente → Caso completo integrado"
+        title="Análise Visual"
+        subtitle="Análise Avançada · Sistema de Suporte"
         titleClassName="text-2xl font-semibold text-white"
         subtitleClassName="text-slate-300 text-sm"
       />
