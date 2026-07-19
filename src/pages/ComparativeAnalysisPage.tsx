@@ -23,10 +23,10 @@ export default function ComparativeAnalysisPage() {
       const reportText = typeof aiReport === 'string'
         ? aiReport
         : (aiReport?.fullAnalysis
-            || [aiReport?.alignment, aiReport?.boneDensity, aiReport?.recommendation]
-                .filter(Boolean)
-                .join('\n\n')
-            || 'Análise comparativa de Mesa de Luz — dados não disponíveis.');
+          || [aiReport?.alignment, aiReport?.boneDensity, aiReport?.recommendation]
+            .filter(Boolean)
+            .join('\n\n')
+          || 'Análise comparativa de Mesa de Luz — dados não disponíveis.');
 
       const caseTitle = buildCaseTitle(
         'Paciente Comparativo',
@@ -79,10 +79,10 @@ export default function ComparativeAnalysisPage() {
   return (
     <div className="p-4 w-full space-y-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011] text-white">
       <SectionHeader
-        title="Estudo Comparativo"
-        subtitle="Análise Comparativa - Pré e Pós Operatório"
+        title="Mesa de Luz Digital"
+        subtitle="Comparação de exames pré e pós-operatórios"
       />
-       
+
       <Card className="p-6">
         <Suspense fallback={
           <div className="flex items-center justify-center p-12">

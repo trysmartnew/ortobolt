@@ -12,6 +12,8 @@ const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   gallery: { title: 'Galeria de Casos', subtitle: 'Casos clínicos e histórico' },
   reports: { title: 'Relatórios', subtitle: 'Exportação e análise de dados' },
   profile: { title: 'Perfil Profissional', subtitle: 'Dados e certificações' },
+  comparative: { title: 'Estudo Comparativo', subtitle: 'Análise Comparativa - Pré e Pós Operatório' },
+  evolutionaryAnalysis: { title: 'Análise Evolutiva', subtitle: 'Relatório de Análise Evolutiva Comparativa' },
   settings: { title: 'Configurações', subtitle: 'Preferências do sistema' },
   case: { title: 'Colaboração Clínica', subtitle: 'Discussão e visualização conjunta de casos' },
   notifications: { title: 'Notificações', subtitle: 'Alertas e atualizações' },
