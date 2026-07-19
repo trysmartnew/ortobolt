@@ -70,6 +70,13 @@ export interface AnalysisWithMarkings {
 const responseCache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
 
+// Helper assíncrono para gerar hash SHA-256
+async function sha256(str: string): Promise<string> {
+  const buffer = new TextEncoder().encode(str);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 function hashContent(s: string): string {
   let h = 0;
   for (let i = 0; i < s.length; i++) {
@@ -78,29 +85,44 @@ function hashContent(s: string): string {
   return (h >>> 0).toString(36);
 }
 
-function contentFingerprint(content: unknown): string {
-  if (typeof content === 'string') return content.slice(0, 300);
-  if (Array.isArray(content)) {
-    return content
-      .map((c) =>
-        c.type === 'text'
-          ? c.text ?? ''
-          : `img:${c.image_url?.url?.slice(-64) ?? 'none'}`
-      )
-      .join('|')
-      .slice(0, 300);
+async function contentFingerprint(content: unknown): Promise<string> {
+  if (typeof content === 'string') {
+    return content.slice(0, 300);
   }
+
+  if (Array.isArray(content)) {
+    const textPart = content
+      .filter((c) => c.type === 'text')
+      .map((c) => c.text ?? '')
+      .join(' ')
+      .slice(0, 300);
+
+    // Gera hashes reais para todas as imagens em paralelo
+    const imageHashes = await Promise.all(
+      content
+        .filter((c) => c.type === 'image_url' && c.image_url?.url)
+        .map((c) => sha256(c.image_url!.url))
+    );
+
+    const imgPart = imageHashes.map(hash => `img:${hash}`).join('|');
+
+    return imgPart ? `${textPart}|${imgPart}` : textPart;
+  }
+
   return '';
 }
 
-function getCacheKey(model: string, messages: ProxyMessage[]): string {
+async function getCacheKey(model: string, messages: ProxyMessage[]): Promise<string> {
   const systemSig = messages
     .filter((m) => m.role === 'system')
-    .map((m) => contentFingerprint(m.content))
+    .map((m) => (typeof m.content === 'string' ? m.content.slice(0, 300) : ''))
     .join('|');
+
   const msgCount = messages.length;
   const lastMsg = messages[messages.length - 1];
-  const lastContent = contentFingerprint(lastMsg?.content);
+
+  const lastContent = await contentFingerprint(lastMsg?.content);
+
   return `${model}:${hashContent(systemSig)}:${msgCount}:${lastContent}`;
 }
 
@@ -243,7 +265,7 @@ export async function proxyRequest(body: {
   assertAiConsentGranted();
 
   const sanitizedMessages = sanitizeProxyMessages(body.messages);
-  const cacheKey = getCacheKey(body.model, sanitizedMessages);
+  const cacheKey = await getCacheKey(body.model, sanitizedMessages);
   const cached = getCachedResponse(cacheKey);
   if (cached) {
     if (import.meta.env.DEV) console.log('📦 Cache hit:', cacheKey.slice(0, 40));
