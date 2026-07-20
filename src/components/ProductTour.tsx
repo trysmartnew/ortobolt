@@ -133,7 +133,7 @@ function Spotlight({ rect, visible }: SpotlightProps) {
         width: rect.width + PAD * 2,
         height: rect.height + PAD * 2,
         borderRadius: 18,
-        boxShadow: '0 0 0 9999px rgba(0, 0, 0, 1)',
+        boxShadow: '0 0 0 9999px var(--color-surface-dim)',
         border: '2px solid var(--color-primary)',
         animation: 'tourPulse 2s ease-in-out infinite',
         transition: 'top 0.3s ease-out, left 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out, opacity 0.3s ease-out',
@@ -454,11 +454,11 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
         @keyframes tourPulse {
           0%, 100% {
             border-color: var(--color-primary);
-              box-shadow: 0 0 0 9999px rgba(0, 0, 0, 1), 0 0 20px rgba(10,61,143,1);
+              box-shadow: 0 0 0 9999px var(--color-surface-dim), 0 0 20px rgba(10,61,143,0.4);
             }
             50% {
               border-color: var(--color-accent);
-              box-shadow: 0 0 0 9999px rgba(0, 0, 0, 1), 0 0 30px rgba(0,179,166,1);
+              box-shadow: 0 0 0 9999px var(--color-surface-dim), 0 0 30px rgba(0,179,166,0.6);
           }
         }
         @keyframes fadeZoomIn {
@@ -469,7 +469,7 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
       `}</style>
       {(currentStep?.target === '__welcome__' || !rect) && (
         <div
-          className="fixed inset-0 bg-black z-[9997] transition-opacity duration-300"
+          className="fixed inset-0 bg-black/65 z-[9997] transition-opacity duration-300"
           onClick={() => handleClose()}
           aria-hidden="true"
         />
