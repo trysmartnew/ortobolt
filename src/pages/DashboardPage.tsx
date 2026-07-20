@@ -1,6 +1,6 @@
 // src/pages/DashboardPage.tsx
 // 🏥 Centro de Comando Cirúrgico — Foco em ações operacionais de HOJE
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, StatusBadge, RiskTag, Spinner, EmptyState } from '@/components/ui';
 import { AlertTriangle, Clock, CheckCircle2, Calendar, PawPrint, Stethoscope, Pill, Activity } from 'lucide-react';
@@ -25,20 +25,22 @@ function getClinicalPriority(status: CaseStatus): number {
   return 3;
 }
 
-function SurgeryCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
+const SurgeryCard = memo(({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) => {
   const isDone = c.status === 'completed';
   const isNext = !isDone && c.procedure?.match(/tplo|fho|tta|lcp|fracture/i);
+  const isDefaultDark = !isDone && !isNext;
+
   return (
-    <button onClick={onOpen} className={`w-full text-left p-4 rounded-xl border transition-all ${isDone ? 'bg-emerald-50 border-emerald-200' : isNext ? 'bg-blue-50 border-blue-200 hover:border-blue-400' : 'bg-white border-slate-100 hover:border-slate-300'}`}>
+    <button onClick={onOpen} className={`w-full text-left p-4 rounded-xl transition-all ${isDone ? 'border bg-emerald-50 border-emerald-200' : isNext ? 'border bg-blue-50 border-blue-200 hover:border-blue-400' : 'glass-panel-premium'}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-mono font-bold text-slate-700">{formatDate(c.createdAt)}</span>
-            {isDone && <CheckCircle2 size={14} className="text-success" />} // No change needed
-            {isNext && !isDone && <Clock size={14} className="text-primary animate-pulse" />} // No change needed
+            <span className={`text-xs font-mono font-bold ${isDefaultDark ? 'text-slate-400' : 'text-slate-700'}`}>{formatDate(c.createdAt)}</span>
+            {isDone && <CheckCircle2 size={14} className="text-success" />}
+            {isNext && !isDone && <Clock size={14} className="text-primary animate-pulse" />}
           </div>
-          <p className="text-sm font-semibold text-slate-900 truncate">{c.patientName}</p>
-          <p className="text-xs text-slate-800 capitalize">{c.species} · {c.breed} · {c.weightKg}kg</p>
+          <p className={`text-sm font-semibold truncate ${isDefaultDark ? 'text-white' : 'text-slate-900'}`}>{c.patientName}</p>
+          <p className={`text-xs capitalize ${isDefaultDark ? 'text-slate-300' : 'text-slate-800'}`}>{c.species} · {c.breed} · {c.weightKg}kg</p>
           <p className="text-xs font-mono text-primary mt-1 uppercase">{c.procedure}</p>
         </div>
         <div className="flex flex-col items-end gap-2 flex-shrink-0">
@@ -48,7 +50,8 @@ function SurgeryCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
       </div>
     </button>
   );
-}
+});
+SurgeryCard.displayName = 'SurgeryCard';
 
 function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
   const urgencyIcon = c.status === 'critical' ? '🔴' : c.status === 'in_analysis' ? '🟡' : '🟢';
