@@ -15,26 +15,26 @@ export const RespostaOrtopedicaSchema = z.object({
   proximos_passos: z.array(z.string()),
   tratamento_inicial_sugerido: z.string(),
   alertas_criticos: z.array(z.string()),
-  
+
   // Campos quantitativos opcionais (para análise de imagens)
   implantCount: z.object({
     proximal: z.number().min(0).optional(),
     distal: z.number().min(0).optional(),
     total: z.number().min(0).optional(),
   }).optional().describe('Contagem de parafusos/pinos visíveis na imagem'),
-  
+
   alignmentStatus: z.enum(['Neutro', 'Varo', 'Valgo', 'Procurvatum', 'Recurvatum', 'Indeterminado']).optional()
     .describe('Avaliação do eixo mecânico do membro'),
-  
+
   healingStage: z.enum(['Agudo', 'Calo Mole', 'Calo Duro', 'Consolidado', 'Não União', 'Indeterminado']).optional()
     .describe('Estágio de consolidação da fratura'),
-  
+
   boneSegment: z.string().optional()
     .describe('Segmento ósseo afetado (ex: diáfise média da tíbia)'),
-  
+
   redFlags: z.array(z.string()).optional()
     .describe('Lista de problemas críticos detectados (parafuso intra-articular, falha do implante, etc)'),
-  
+
   clinicalReasoning: z.string().optional()
     .describe('Raciocínio clínico passo a passo (Chain-of-Thought)'),
 
@@ -59,8 +59,8 @@ export const RespostaOrtopedicaSchema = z.object({
   })).optional().describe('Lista de problemas críticos detectados'),
 }).superRefine((data, ctx) => {
   // Validação cruzada: fratura fixada deve ter implantCount
-  if (data.diagnostico_principal.toLowerCase().includes('fratura') && 
-      data.diagnostico_principal.toLowerCase().includes('fixada')) {
+  if (data.diagnostico_principal.toLowerCase().includes('fratura') &&
+    data.diagnostico_principal.toLowerCase().includes('fixada')) {
     if (!data.implantCount) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -69,7 +69,7 @@ export const RespostaOrtopedicaSchema = z.object({
       });
     }
   }
-  
+
   // Validação cruzada: red flags graves exigem alertas_criticos
   if (data.redFlagsEstruturadas?.some((f: any) => f.severidade === 'grave' || f.severidade === 'crítica')) {
     if (!data.alertas_criticos || data.alertas_criticos.length === 0) {
@@ -91,8 +91,8 @@ export function validarRespostaMedica(resposta: any): RespostaOrtopedica {
   const texto = JSON.stringify(parsed).toLowerCase();
 
   // Regra 1: AINEs devem ter alerta renal/hepático
-  if ((texto.includes('meloxicam') || texto.includes('carprofeno') || texto.includes('aines')) && 
-      !texto.includes('renal') && !texto.includes('hepática')) {
+  if ((texto.includes('meloxicam') || texto.includes('carprofeno') || texto.includes('aines')) &&
+    !texto.includes('renal') && !texto.includes('hepática')) {
     erros.push('⚠️ REGRA DE SEGURANÇA: Menção a AINEs sem alerta de avaliação renal/hepática.');
   }
 
@@ -126,6 +126,19 @@ export function validarRespostaMedica(resposta: any): RespostaOrtopedica {
   // Regra 6: Implante sem contagem
   if (texto.includes('parafuso') && !parsed.implantCount) {
     erros.push('⚠️ REGRA DE SEGURANÇA: Menção a parafusos sem contagem estruturada (implantCount).');
+  }
+
+  // GUARDRAIL DE SEGURANÇA: Detecção de Infecção
+  const palavrasRisco = ['infecção', 'infeccao', 'lise óssea', 'lise ossea', 'abscesso', 'osteomielite'];
+  // Analisa campos clínicos relevantes (diagnóstico e raciocínio) para sinais de infecção.
+  const textoParaAnalise = `${parsed.diagnostico_principal} ${parsed.clinicalReasoning || ''}`.toLowerCase();
+  const suspeitaInfeccao = palavrasRisco.some(palavra => textoParaAnalise.includes(palavra));
+
+  if (suspeitaInfeccao) {
+    const alertaInfeccao = '⚠️ REGRA DE SEGURANÇA: Suspeita de infecção detectada. Considerar Cultura e Antibiograma.';
+    if (!parsed.alertas_criticos.some((a: string) => a.includes('Cultura e Antibiograma'))) {
+      erros.push(alertaInfeccao);
+    }
   }
 
   if (erros.length > 0) {
