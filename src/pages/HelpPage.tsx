@@ -14,7 +14,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Como funciona a análise de IA?',
-    a: 'Ao carregar exames na Mesa de Luz Digital, o OrthoAI processa as imagens e gera análise com score de precisão, landmarks anatômicos e fatores de risco. O resultado é exibido na barra lateral e pode ser revisado pelo profissional.',
+    a: 'Ao carregar exames na Mesa de Luz Digital, o Assistente IA processa as imagens e gera análise com score de precisão, landmarks anatômicos e fatores de risco. O resultado é exibido na barra lateral e pode ser revisado pelo profissional.',
   },
   {
     q: 'Como exportar meus dados?',

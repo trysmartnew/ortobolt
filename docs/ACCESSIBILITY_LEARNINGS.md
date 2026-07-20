@@ -15,7 +15,7 @@ Após um deploy, foi identificado um problema crítico de usabilidade no Painel 
     *   **Aumento da Carga Cognitiva:** Dificuldade para distinguir rapidamente o status de uma cirurgia ou a criticidade de um caso.
     *   **Redução da Eficiência:** Mais tempo gasto para decifrar informações, impactando o fluxo de atendimento.
     *   **Risco de Erro Clínico:** Potencial para má interpretação de dados críticos, como a identificação de um paciente na fila de triagem.
-*   **Elementos Afetados:** O problema impactou todas as seções principais do dashboard, incluindo "Cirurgias de Hoje", "Triage Inteligente", "Métricas Operacionais", "Próximas Ações" e "Sugestão OrthoAI".
+*   **Elementos Afetados:** O problema impactou todas as seções principais do dashboard, incluindo "Cirurgias de Hoje", "Triage Inteligente", "Métricas Operacionais", "Próximas Ações" e "Sugestão do Assistente IA".
 
 ### 2. Processo de Auditoria e Diagnóstico Técnico
 

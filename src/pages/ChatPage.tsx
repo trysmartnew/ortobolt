@@ -1,5 +1,4 @@
 // src/pages/ChatPage.tsx
-// ✅ BUG-05 FIX: Modelo atualizado para OrthoVision v3.2
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, Trash2, Bot, User, Copy, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
@@ -42,7 +41,7 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
           {msg.isLoading ? (
             <div className="flex items-center gap-2 py-0.5">
               <Spinner size="sm" />
-              <span className="text-xs font-mono text-slate-400 animate-pulse">OrthoAI está analisando...</span>
+              <span className="text-xs font-mono text-slate-400 animate-pulse">Assistente IA está analisando...</span>
             </div>
           ) : (
             <div className={`space-y-0.5 ${isUser ? 'text-white' : 'text-slate-800'}`}>
@@ -128,8 +127,8 @@ export default function ChatPage() {
     <div className="flex flex-col h-full overflow-hidden">
       <div className="h-16 glass-panel-premium border-b border-slate-100 flex items-center justify-between px-6 flex-shrink-0">
         <div>
-          <h1 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>OrthoAI Assistant</h1>
-          <p className="text-xs text-slate-600 font-mono">Ativo · Gemini 2.5 Flash · Assistente IA</p>
+          <h1 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>Assistente Clínico IA</h1>
+          <p className="text-xs text-slate-600 font-mono">Ativo · Modelo de IA Avançada</p>
         </div>
         <button
           onClick={() => setChatHistory(h => h.length > 0 ? [h[0]] : h)}
@@ -174,7 +173,7 @@ export default function ChatPage() {
           </Button>
         </div>
         <p className="text-[10px] text-slate-600 mt-2 font-mono text-center">
-          OrthoAI não substitui avaliação clínica. Use como suporte à decisão técnica.
+          O Assistente IA não substitui avaliação clínica. Use como suporte à decisão técnica.
         </p>
       </div>
     </div>

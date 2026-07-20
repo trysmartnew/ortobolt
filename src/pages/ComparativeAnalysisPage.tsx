@@ -1,6 +1,6 @@
 // src/pages/ComparativeAnalysisPage.tsx
 import React, { Suspense, lazy } from 'react';
-import { SectionHeader, Card } from '@/components/ui';
+import { SectionHeader, Card, EmptyState } from '@/components/ui';
 import { useApp } from '@/contexts/AppContext';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { buildCaseTitle } from '@/services/clinicalCaseIntegrationService';
@@ -8,10 +8,23 @@ import { PRIMARY_MODEL } from '@/services/aiService';
 import type { ClinicalCase, CaseExam } from '@/types';
 
 const PrePostComparison = lazy(() => import('@/components/analysis/PrePostComparison'));
+import { User } from 'lucide-react';
 
 export default function ComparativeAnalysisPage() {
-  const { user, approveAndIntegrateCase, addToast } = useApp();
+  const { user, approveAndIntegrateCase, addToast, activeCase } = useApp();
   const { addAnalysisToHistory } = useAnalysis();
+
+  if (!activeCase) {
+    return (
+      <div className="p-6 flex items-center justify-center h-full">
+        <EmptyState
+          icon={<User size={48} className="text-slate-300" />}
+          title="Nenhum Paciente Ativo"
+          description="Por favor, selecione um paciente na galeria antes de iniciar uma análise comparativa."
+        />
+      </div>
+    );
+  }
 
   const handleSaveComparisonCase = async (beforeImage: string, afterImage: string, aiReport: any): Promise<ClinicalCase | null> => {
     try {
@@ -29,8 +42,8 @@ export default function ComparativeAnalysisPage() {
           || 'Análise comparativa de Mesa de Luz — dados não disponíveis.');
 
       const caseTitle = buildCaseTitle(
-        'Paciente Comparativo',
-        'other'
+        activeCase.patientName,
+        activeCase.procedure ?? 'other'
       );
 
       const comparativeExam: CaseExam = {
@@ -46,8 +59,8 @@ export default function ComparativeAnalysisPage() {
         imageDataUrl: afterImage || beforeImage || '',
         analysisText: `[Mesa de Luz - Comparativo Antes/Depois]\n\n${reportText}`,
         clinicalContext: {
-          patientName: 'Estudo Comparativo',
-          procedure: 'other'
+          patientName: activeCase.patientName,
+          procedure: activeCase.procedure ?? 'other'
         },
         titleOverride: caseTitle,
         status: 'completed',
@@ -62,8 +75,8 @@ export default function ComparativeAnalysisPage() {
         createdAt: new Date().toISOString(),
         model: PRIMARY_MODEL,
         context: {
-          patientName: 'Estudo Comparativo',
-          procedure: 'other',
+          patientName: activeCase.patientName,
+          procedure: activeCase.procedure ?? 'other',
         },
       });
 

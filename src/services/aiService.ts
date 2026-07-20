@@ -830,7 +830,7 @@ Seja objetivo e técnico. NUNCA alucine dados não visíveis.`;
 
 // ── Copiloto Clínico — radiografia + contexto + histórico ─────────────────────
 
-export async function sendClinicalCopilotStream(
+/** Consolida chat + contexto em análise diagnóstica refinada (multimodal) */ export async function sendClinicalCopilotStream(
   payload: ClinicalCopilotPayload,
   onChunk: (accumulatedText: string) => void
 ): Promise<string> {

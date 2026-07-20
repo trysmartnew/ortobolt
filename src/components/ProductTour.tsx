@@ -16,11 +16,10 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-dashboard-hero', title: '☀️ Resumo do Dia', content: 'Acompanhe aqui suas cirurgias agendadas e os casos críticos pendentes de hoje.', placement: 'bottom', highlight: true },
     { target: 'tour-dashboard-surgeries', title: '🏥 Cirurgias de Hoje', content: 'Lista de procedimentos do dia. Clique em qualquer cirurgia para abrir o caso e o protocolo.', placement: 'bottom', highlight: true },
     { target: 'tour-dashboard-triage', title: '⚡ Fila de Triagem', content: 'Casos ordenados por prioridade clínica. Críticos no topo. Clique para iniciar o atendimento.', placement: 'left', highlight: true },
-    { target: 'tour-dashboard-metrics', title: '📊 Métricas do Dia', content: 'Acompanhe o volume de casos novos e em análise. Para o histórico mensal, acesse Relatórios.', placement: 'top', highlight: true },
-    { target: 'tour-ai-widget', title: '🤖 OrthoAI Rápido', content: 'Tire dúvidas clínicas rápidas sem sair da tela atual.', placement: 'left', highlight: true },
+    { target: 'tour-dashboard-metrics', title: '📊 Métricas do Dia', content: 'Acompanhe o volume de casos novos e em análise. Para o histórico mensal, acesse Relatórios.', placement: 'top', highlight: true }, { target: 'tour-ai-widget', title: '🤖 Assistente Rápido', content: 'Tire dúvidas clínicas rápidas sem sair da tela atual.', placement: 'left', highlight: true },
   ],
   chat: [
-    { target: '__welcome__', title: '🤖 OrthoAI', content: 'Assistente de texto para tirar dúvidas clínicas, protocolos e dosagens.', placement: 'center' },
+    { target: '__welcome__', title: '🤖 Assistente IA', content: 'Assistente de texto para tirar dúvidas clínicas, protocolos e dosagens.', placement: 'center' },
     { target: 'tour-chat-suggestions', title: '💡 Perguntas Sugeridas', content: 'Clique em uma sugestão para iniciar (ex: protocolos TPLO, dosagens).', placement: 'bottom', highlight: true },
     { target: 'tour-chat-messages', title: '💬 Histórico', content: 'A conversa mantém o contexto durante sua sessão de trabalho.', placement: 'bottom', highlight: true },
     { target: 'tour-chat-input', title: '✍️ Digite sua dúvida', content: 'Escreva sua pergunta clínica e pressione Enter.', placement: 'top', highlight: true },

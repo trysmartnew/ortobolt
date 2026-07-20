@@ -221,7 +221,7 @@ export default function DashboardPage() {
                 <Pill size={16} className="text-white" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-white">Sugestão OrthoAI</p>
+                <p className="text-sm font-semibold text-white">Sugestão do Assistente IA</p>
                 <p className="text-xs text-slate-400 mt-1">
                   {triageList[0]?.status === 'critical'
                     ? `Caso crítico: ${triageList[0]?.patientName}. Recomendo revisão imediata do protocolo.`

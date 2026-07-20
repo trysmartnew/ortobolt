@@ -47,21 +47,6 @@ export default function AnalysisPage() {
   } = useMarkings();
 
 
-  useEffect(() => {
-    if (imageData) {
-      const img = new window.Image();
-      img.crossOrigin = "anonymous";
-      img.src = imageData;
-      img.onload = () => {
-        setImageElement(img);
-        setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-      };
-    } else {
-      setImageElement(null);
-    }
-  }, [imageData]);
-
-
   // Compute imageBase64 from imageData
   const imageBase64 = useMemo(
     () => (imageData ? imageData.split(',')[1] || imageData : null),
@@ -81,88 +66,6 @@ export default function AnalysisPage() {
     resetCopilot,
   } = useClinicalCopilot(imageBase64);
 
-  // Intercepta o gatilho clínico do Modal e injeta as notas automaticamente no Copiloto
-  useEffect(() => {
-
-  }, [session, updateContext]);
-
-
-  const handleClearMarkings = () => clearAll();
-  const handleSaveNow = () => { /* marcações ficam em estado local */ };
-
-  const handleSaveComparisonCase = async (beforeImage: string, afterImage: string, aiReport: any): Promise<ClinicalCase | null> => {
-    try {
-      if (!user) {
-        addToast('Médico-veterinário não autenticado no sistema.', 'error');
-        return null;
-      }
-
-      const currentCtx = session?.clinicalContext ?? {};
-      const caseTitle = buildCaseTitle(
-        currentCtx.patientName,
-        currentCtx.procedure ?? 'other'
-      );
-
-      const reportText = typeof aiReport === 'string'
-        ? aiReport
-        : (aiReport?.fullAnalysis
-          || [aiReport?.alignment, aiReport?.boneDensity, aiReport?.recommendation]
-            .filter(Boolean)
-            .join('\n\n')
-          || 'Análise comparativa de Mesa de Luz — dados não disponíveis.');
-
-      // Acoplamento estrito e seguro com o pipeline nativo.
-      // Ambas as imagens (pre/pos) sao preservadas como um exame
-      // comparativo vinculado ao Caso, em vez de descartar uma delas.
-      const comparativeExam: CaseExam = {
-        id: `exam-compare-${Date.now()}`,
-        modality: 'comparative_study',
-        imageUrls: [beforeImage, afterImage].filter(Boolean),
-        analysisText: reportText,
-        createdAt: new Date().toISOString(),
-      };
-
-      const clinicalCase = approveAndIntegrateCase({
-        veterinarianId: user.id,
-        imageDataUrl: afterImage || beforeImage || '',
-        analysisText: `[Mesa de Luz - Comparativo Antes/Depois]\n\n${reportText}`,
-        clinicalContext: currentCtx,
-        copilotMessages: session?.messages,
-        copilotSessionId: session?.sessionId,
-        titleOverride: caseTitle,
-        status: 'completed',
-        additionalExams: [comparativeExam],
-      });
-
-      addAnalysisToHistory({
-        id: `analysis-${clinicalCase.id}`,
-        caseId: clinicalCase.id,
-        imageData: afterImage || beforeImage || '',
-        analysisResult: reportText,
-        createdAt: new Date().toISOString(),
-        model: PRIMARY_MODEL,
-        context: {
-          patientName: currentCtx.patientName,
-          species: currentCtx.species,
-          breed: currentCtx.breed,
-          procedure: currentCtx.procedure,
-        },
-      });
-
-      if (!clinicalCase?.id) {
-        console.error('[Mesa de Luz] approveAndIntegrateCase retornou caso invalido.');
-        addToast('Erro ao integrar o caso. Verifique os dados e tente novamente.', 'error');
-        return null;
-      }
-
-      addToast(`Caso do paciente "${clinicalCase.patientName || 'Não Identificado'}" salvo com sucesso!`, 'success');
-      return clinicalCase;
-    } catch (err: any) {
-      console.error('[Mesa de Luz] Erro ao salvar caso comparativo:', err);
-      addToast(`Falha ao salvar o caso: ${err.message || 'erro desconhecido'}`, 'error');
-      return null;
-    }
-  };
   const [approving, setApproving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -207,7 +110,7 @@ export default function AnalysisPage() {
       );
       setResult(res.analysisText);
       setAiGeneratedMarkings(res.markings);
-      sessionStorage.setItem('ortobolt_ai_markings', JSON.stringify(res.markings));
+      sessionStorage.setItem('vanguard-veterinary_ai_markings', JSON.stringify(res.markings));
       setMode('result');
       initSession(res.analysisText);
     } catch {
@@ -221,7 +124,7 @@ export default function AnalysisPage() {
     setImageData(null);
     setResult(null);
     setAiGeneratedMarkings(null);
-    sessionStorage.removeItem('ortobolt_ai_markings');
+    sessionStorage.removeItem('vanguard-veterinary_ai_markings');
     setStreamError('');
     resetCopilot();
     if (fileRef.current) fileRef.current.value = '';
@@ -247,11 +150,14 @@ export default function AnalysisPage() {
     return 'Alto';
   }, [norbergAngle]);
 
+  // Lógica de badge refatorada para maior clareza
   const dysplasiaBadge = useMemo(() => {
-    if (dysplasiaRisk === 'Alto') return { label: 'Alto', variant: 'danger' as const };
-    if (dysplasiaRisk === 'Moderado') return { label: 'Moderado', variant: 'warning' as const };
-    if (dysplasiaRisk === 'Baixo') return { label: 'Baixo', variant: 'success' as const };
-    return { label: 'Indeterminado', variant: 'info' as const };
+    const riskMap: Record<string, { label: string; variant: 'danger' | 'warning' | 'success' | 'info' }> = {
+      Alto: { label: 'Alto', variant: 'danger' },
+      Moderado: { label: 'Moderado', variant: 'warning' },
+      Baixo: { label: 'Baixo', variant: 'success' },
+    };
+    return riskMap[dysplasiaRisk] || { label: 'Indeterminado', variant: 'info' };
   }, [dysplasiaRisk]);
 
   const recommendations = useMemo(() => {

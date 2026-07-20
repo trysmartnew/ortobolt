@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef } from 'react';
 import { AppProvider, useApp } from '@/contexts/AppContext';
+import type { Page } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
 import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
@@ -49,6 +50,26 @@ const PAGE_MAP = {
 } as const;
 
 function AppInner() {
+  // FASE 2 MIGRATION: Executa uma vez no load para migrar chaves de sessão legadas.
+  useEffect(() => {
+    const migrateStorageKey = (oldKey: string, newKey: string) => {
+      try {
+        const oldValue = sessionStorage.getItem(oldKey);
+        // Migra apenas se a chave antiga existir E a nova não, para evitar sobreescrever dados.
+        if (oldValue && !sessionStorage.getItem(newKey)) {
+          sessionStorage.setItem(newKey, oldValue);
+          sessionStorage.removeItem(oldKey);
+          if (import.meta.env.DEV) {
+            console.log(`[Migration] Chave de sessão migrada: ${oldKey} → ${newKey}`);
+          }
+        }
+      } catch (e) {
+        console.error(`[Migration Error] Falha ao migrar ${oldKey} → ${newKey}:`, e);
+      }
+    };
+    migrateStorageKey('ortobolt_ai_markings', 'vanguard-veterinary_ai_markings');
+    migrateStorageKey('ortobolt_evolution_report', 'vanguard-veterinary_evolution_report');
+  }, []);
   // Inicializar view reset se token de recovery foi detectado no main.tsx
   useEffect(() => {
     let raw = sessionStorage.getItem('vanguard-veterinary_recovery_token');
@@ -70,7 +91,8 @@ function AppInner() {
     toasts, removeToast,
   } = useApp();
 
-  const isAnalysisPage = currentPage === 'analysis' || currentPage === 'evolutionaryAnalysis' || currentPage === 'alignmentAnalysis' || currentPage === 'comparative';
+  const ANALYSIS_PAGES: Page[] = ['analysis', 'evolutionaryAnalysis', 'alignmentAnalysis', 'comparative'];
+  const isAnalysisPage = ANALYSIS_PAGES.includes(currentPage);
 
   const logoutRef = useRef(logout);
   const setSessionRef = useRef(setUserFromSession);

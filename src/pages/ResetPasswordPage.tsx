@@ -7,28 +7,40 @@ import { Input } from '@/components/forms/Input';
 
 export default function ResetPasswordPage() {
   const { setCurrentView, addToast } = useApp();
-  const [password, setPassword]       = useState('');
-  const [confirm, setConfirm]         = useState('');
-  const [showPass, setShowPass]       = useState(false);
-  const [validToken, setValidToken]   = useState(false);
-  const [checking, setChecking]       = useState(true);
-  const [error, setError]             = useState('');
-  const [loading, setLoading]         = useState(false);
-  const [done, setDone]               = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [showPass, setShowPass] = useState(false);
+  const [validToken, setValidToken] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
-    const raw = sessionStorage.getItem('ortobolt_recovery_token');
+    let raw = sessionStorage.getItem('vanguard-veterinary_recovery_token');
+    const oldKey = 'ortobolt_recovery_token';
+    const newKey = 'vanguard-veterinary_recovery_token';
+
+    if (!raw) {
+      const oldValue = sessionStorage.getItem(oldKey);
+      if (oldValue) {
+        raw = oldValue;
+        // Migra imediatamente para a nova chave e remove a antiga
+        sessionStorage.setItem(newKey, oldValue);
+        sessionStorage.removeItem(oldKey);
+      }
+    }
+
     if (!raw) { setChecking(false); return; }
 
     const { access_token, refresh_token } = JSON.parse(raw);
 
     supabase.auth.setSession({ access_token, refresh_token })
       .then(({ error: err }) => {
-        if (err) {
-          setError('Link inválido ou expirado. Solicite uma nova redefinição.');
-        } else {
+        if (err) setError('Link inválido ou expirado. Solicite uma nova redefinição.');
+        else {
           setValidToken(true);
-          sessionStorage.removeItem('ortobolt_recovery_token');
+          sessionStorage.removeItem(newKey); // Remove a chave nova após o uso
         }
       })
       .finally(() => setChecking(false));
@@ -113,21 +125,21 @@ export default function ResetPasswordPage() {
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Nova senha</label>
-                <div className="relative">
-                  <Input
-                    type={showPass ? 'text' : 'password'}
-                    label="Nova senha"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="Mínimo 8 caracteres"
-                    onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-                    className="pr-10"
-                  />
-                  <button type="button" onClick={() => setShowPass(v => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                    {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
-                  </button>
-                </div>
+              <div className="relative">
+                <Input
+                  type={showPass ? 'text' : 'password'}
+                  label="Nova senha"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Mínimo 8 caracteres"
+                  onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                  className="pr-10"
+                />
+                <button type="button" onClick={() => setShowPass(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                  {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
             </div>
             <div>
               <Input
@@ -154,4 +166,3 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
-

@@ -1,19 +1,19 @@
 // src/components/TopBar.tsx
-// ✅ Modelo atualizado para OrthoVision v3.2 (Gemma 4 31B)
 import React from 'react';
 import { Bell, Wifi, WifiOff, MapPin } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
+import type { Page } from '@/contexts/AppContext';
 import { TOUR_STEPS } from '@/components/ProductTour';
 
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   dashboard: { title: 'Painel Clínico', subtitle: 'Visão geral em tempo real' },
-  chat: { title: 'Consultor IA', subtitle: 'OrthoAI · Gemini 2.5 Flash' },
+  chat: { title: 'Consultor IA', subtitle: 'Assistente para dúvidas clínicas' },
   analysis: { title: 'Análise Diagnóstica', subtitle: 'Análise → Assistente → Caso completo integrado' },
   gallery: { title: 'Galeria de Casos', subtitle: 'Casos clínicos e histórico' },
   reports: { title: 'Relatórios', subtitle: 'Exportação e análise de dados' },
   profile: { title: 'Perfil Profissional', subtitle: 'Dados e certificações' },
-  comparative: { title: 'Estudo Comparativo', subtitle: 'Análise Comparativa - Pré e Pós Operatório' },
-  evolutionaryAnalysis: { title: 'Análise Evolutiva', subtitle: 'Relatório de Análise Evolutiva Comparativa' },
+  comparative: { title: 'ANÁLISE COMPARATIVA', subtitle: 'Análise Comparativa - Pré e Pós Operatório' },
+  evolutionaryAnalysis: { title: 'Análise Evolutiva', subtitle: 'Acompanhamento de métricas e exames ao longo do tempo' },
   settings: { title: 'Configurações', subtitle: 'Preferências do sistema' },
   case: { title: 'Colaboração Clínica', subtitle: 'Discussão e visualização conjunta de casos' },
   notifications: { title: 'Notificações', subtitle: 'Alertas e atualizações' },
@@ -22,10 +22,12 @@ const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
 export default React.memo(function TopBar() {
   const { currentPage, setCurrentPage, unreadCount, tourActive, startTour, user } = useApp();
   const { title, subtitle } = PAGE_TITLES[currentPage] || PAGE_TITLES.dashboard;
-  const isAnalysisPage = currentPage === 'analysis' || currentPage === 'evolutionaryAnalysis' || currentPage === 'alignmentAnalysis';
+  // Centraliza a lógica de quais páginas são consideradas de "análise"
+  const ANALYSIS_PAGES: Page[] = ['analysis', 'evolutionaryAnalysis', 'alignmentAnalysis', 'comparative'];
+  const isAnalysisPage = ANALYSIS_PAGES.includes(currentPage);
   const [online, setOnline] = React.useState(navigator.onLine);
   const hasTour = (TOUR_STEPS[currentPage]?.length ?? 0) > 0;
-  const [timeString, setTimeString] = React.useState(() => `${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`);
+  const [timeString, setTimeString] = React.useState(() => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
 
   React.useEffect(() => {
     const handleOnline = () => setOnline(true);
@@ -42,8 +44,10 @@ export default React.memo(function TopBar() {
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setTimeString(`${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`);
-    }, 60000);
+      // Otimização: cria o objeto Date apenas uma vez
+      const now = new Date();
+      setTimeString(now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
+    }, 30000); // Atualiza a cada 30s para manter o relógio mais preciso
 
     return () => clearInterval(interval);
   }, []);

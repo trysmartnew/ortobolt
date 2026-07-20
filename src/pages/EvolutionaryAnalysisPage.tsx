@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
-import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
+import { Card, Button, Badge, EmptyState, Spinner, SectionHeader } from '@/components/ui';
 import { ArrowLeft, User, PawPrint, Ruler, Weight, Activity, Calendar, FileText } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -141,14 +141,14 @@ export default function EvolutionaryAnalysisPage() {
   }, [trends, boneDensityData]);
 
   const handleBack = () => {
-    setCurrentPage('gallery');
-    addToast('Voltando para Galeria.', 'info');
+    setCurrentPage('patientDetail');
+    addToast('Voltando ao prontuário do paciente.', 'info');
   };
 
   const handleGenerateReport = () => {
     setLoading(true);
     try {
-      sessionStorage.setItem('ortobolt_evolution_report', JSON.stringify(reportPayload));
+      sessionStorage.setItem('vanguard-veterinary_evolution_report', JSON.stringify(reportPayload));
     } catch {
       console.warn('Falha ao serializar relatório evolutivo.');
     }
@@ -195,19 +195,14 @@ export default function EvolutionaryAnalysisPage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-        <button type="button" onClick={handleBack} className="hover:text-[var(--color-accent)]">Análise Evolutiva</button>
-        <span>/</span>
-        <span className="text-slate-900">Relatório de Análise Evolutiva Comparativa de {patientName}</span>
-      </div>
+      <SectionHeader
+        title="Dashboard de Evolução"
+        subtitle="Métricas de densidade óssea e espaço articular"
+      />
 
       {/* Header do Paciente */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <button type="button" onClick={handleBack} className="px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-slate-700 hover:text-[var(--color-accent)] transition-colors">
-            <ArrowLeft size={14} className="inline mr-1" /> Voltar ao Prontuário
-          </button>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[var(--color-surface-muted)] border border-[var(--color-border)] flex items-center justify-center overflow-hidden">
               {currentPatient.avatarUrl ? (
