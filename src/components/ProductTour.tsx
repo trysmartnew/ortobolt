@@ -154,7 +154,7 @@ interface TooltipBoxProps {
   onStepChange?: (stepIndex: number, step: TourStep) => void;
 }
 
-function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onStepChange }: TooltipBoxProps) {
+const TooltipBox = memo(function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onStepChange }: TooltipBoxProps) {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const isCenter = step.placement === 'center' || !rect;
   const PAD = 16;
@@ -239,8 +239,8 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
       aria-modal="true"
       aria-labelledby="tour-title"
       aria-describedby="tour-content"
-      style={{ ...style, width: TW }} // A classe 'glass-panel-premium' foi substituída por classes de utilitário para conformidade com o linter.
-      className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 shadow-2xl backdrop-blur-md duration-300 animate-in fade-in zoom-in-95 dark:bg-slate-900/80"
+      style={{ ...style, width: TW }}
+      className="glass-panel-premium overflow-hidden rounded-2xl duration-300 animate-in fade-in zoom-in-95"
     >
       <div className="flex items-center justify-between bg-gradient-to-r from-primary to-accent px-5 py-4">
         <span id="tour-title" className="text-white font-bold text-base">{step.title}</span>
@@ -253,13 +253,13 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
         </button>
       </div>
       <div className="px-5 py-4">
-        <p id="tour-content" className="text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">{step.content}</p>
+        <p id="tour-content" className="text-[15px] leading-relaxed text-slate-200">{step.content}</p>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-4">
         <button
           onClick={onClose}
           aria-label="Pular tour"
-          className="text-xs font-medium text-slate-500 transition-colors hover:text-red-400 dark:text-slate-300"
+          className="text-xs font-medium text-slate-400 transition-colors hover:text-red-400"
         >
           Pular
         </button>
@@ -303,7 +303,8 @@ function TooltipBox({ step, rect, stepIndex, total, onNext, onPrev, onClose, onS
       </div>
     </div>
   );
-}
+});
+TooltipBox.displayName = 'TooltipBox';
 
 export interface ProductTourProps {
   page: string;
