@@ -125,12 +125,13 @@ pre {
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.glass-panel-premium {
-  background: rgba(18, 21, 23, 0.6);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+@layer components {
+  .glass-panel-premium {
+    background-color: rgba(22, 26, 30, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
 }
 
 .ai-accuracy-badge {
