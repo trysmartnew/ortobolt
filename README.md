@@ -1,95 +1,185 @@
-# Vanguard Veterinary - Development & AI Agent Rules
+# Vanguard Veterinary
 
-## 💻 Ambiente & Stack
-- **Repositório:** github.com/trysmartnew/ortobolt
-- **Local:** `C:\Dev\OrtoBolt`
-- **SO:** Windows 10 Pro + PowerShell 7
-- **Comandos PS7:** Use obrigatoriamente `Select-String` (nunca grep) e `Copy-Item` (nunca cp).
-- **Stack:** React 19 · TypeScript strict · Vite · Tailwind v4 + tailwind.config.js centralizado · Supabase · Vercel serverless
-- **Integridade:** Zero mocks, placeholders ou dados fictícios. Tudo deve ser implementado de forma real e funcional.
+## Visão Geral
 
-## 🚀 Fluxo de Git & Deploy
+**Nome do Projeto:** Vanguard Veterinary
+**Propósito Clínico:** Plataforma de ortopedia veterinária de precisão.
+**URL de Produção:** `https://vanguardvet.vercel.app`
 
-### Pipeline Obrigatório de Pré-Commit
-**Ordem Exata (inviolável):**
-1. `npx tsc --noEmit` — Checagem de tipos TypeScript (zero erros permitidos)
-2. `npm run build` — Compilação de produção Vite (The Rule of One: executar UMA VEZ após consolidar edits)
-3. `git add [arquivos específicos]` — Stage APENAS arquivos validados
-4. `git commit -m "..."` — Mensagem descritiva (Conventional Commits)
-5. Vercel deployment (push para `main` dispara build automático)
+## Stack Técnica
 
-### Protocolo de Segurança Git
-- **Proibido Commitar:** Arquivos com extensões `.py`, `.ps1`, `.bkp`, pasta `_audit/` e arquivos `.json` de auditoria
-- **Regra de Ouro Stage:** ⚠️ **TERMINANTEMENTE PROIBIDO** usar `git add .` ou `git add -A`
-- **Obrigatoriedade:** Stage deve ser feito sempre apontando arquivos específicos: `git add src/components/File.tsx`
+**Dependências:**
+- `@supabase/supabase-js`: `^2.98.0`
+- `@tailwindcss/vite`: `^4.1.14`
+- `@types/dompurify`: `^3.0.5`
+- `@vitejs/plugin-react`: `^5.0.4`
+- `dompurify`: `^3.4.11`
+- `jspdf`: `^4.2.0`
+- `konva`: `^10.3.0`
+- `lucide-react`: `^0.546.0`
+- `react`: `^19.0.0`
+- `react-dom`: `^19.0.0`
+- `react-konva`: `^19.2.5`
+- `recharts`: `^2.15.4`
+- `tailwindcss`: `^4.1.14`
+- `zod`: `^4.4.3`
 
-## 🚨 CRITICAL: Quota & Execution Protocol (RPM/TPM Protection)
-To prevent "429 Too Many Requests" and optimize Google AI Studio quota usage, you MUST strictly adhere to these execution rules:
+**Dev Dependências:**
+- `@types/node`: `^22.19.15`
+- `@types/react`: `^19.0.0`
+- `@types/react-dom`: `^19.0.0`
+- `@vercel/node`: `^5.8.4`
+- `sharp`: `^0.35.2`
+- `typescript`: `~5.8.2`
+- `vite`: `^6.2.0`
+- `vitest`: `^3.2.4`
 
-### 1. Smart Compilation & Validation Throttling
-- **The Rule of One:** Do NOT run build commands (`npx tsc` or `npm run build`) recursively after every small line edit.
-- **Execution Timing:** Apply ALL planned edits to the files first. Only run the validation terminal commands ONCE per task phase, or when explicitly requested by the user.
+## Ambiente & Comandos
 
-### 2. Batch Processing (No Chain-Tooling)
-- Never call a tool immediately after another tool without a consolidated plan. Group your file reads and file edits into the fewest steps possible.
-- State your rationale before opening or scanning files.
+**Sistema Operacional:** Windows 10
+**Shell:** PowerShell 7 (PS7)
 
-### 3. Preventing Loop Hallucinations
-- If a compilation error occurs, do not blindly attempt to fix it and re-run the build immediately. Pause, analyze the error output completely, apply the definitive fix, and only then re-run the validation.
-- If you fail to fix a bug after 2 attempts, STOP tool execution immediately and ask the user for guidance.
+**Scripts do `package.json`:**
+- `dev`: `vite --port 3000 --host 0.0.0.0` (Inicia o servidor de desenvolvimento)
+- `build`: `vite build` (Compila o projeto para produção)
+- `preview`: `vite preview` (Pré-visualiza a build de produção localmente)
+- `lint`: `tsc --noEmit` (Executa o TypeScript para verificar erros sem gerar arquivos JS)
+- `test`: `vitest run` (Executa os testes unitários com Vitest)
 
-## 🏗️ Padrões de Desenvolvimento & Arquitetura
+## Arquitetura de Navegação
 
-### 1. Navegação Centralizada via AppContext
-- **Princípio:** Roteamento interno de telas é controlado **exclusivamente** via estado nativo do `AppContext`
-- **Mecanismo:** Usar `setCurrentPage(page: Page)` do contexto — **NUNCA** usar React Router ou outros roteadores externos
-- **Benefício:** Single source of truth; navegação acoplada a estado global (cases, notifications, user context)
-- **Implementação:** Componentes disparam `setCurrentPage()` para navegar; `App.tsx` renderiza página baseada em `currentPage`
-- **Exemplo:** Modal de análises chama `setCurrentPage('analysis')` em vez de `navigate('/analysis')`
+**Tipo `Page`:**
+```typescript
+  | 'dashboard' | 'chat' | 'analysis' | 'gallery'
+  | 'case' | 'profile' | 'reports' | 'settings' | 'notifications'
+  | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'comparative' | 'help';
+```
 
-### 2. Memoização Incremental (Performance Crítica)
-Todos os componentes de **lista**, **modal interativo** ou **hub de ações rápidas** devem seguir:
+**`PAGE_MAP` (Mapeamento de Páginas para Componentes):**
+```typescript
+const PAGE_MAP = {
+  dashboard: DashboardPage,
+  chat: ChatPage,
+  analysis: AnalysisPage,
+  gallery: GalleryPage,
+  case: CasePage,
+  reports: ReportsPage,
+  settings: SettingsPage,
+  help: HelpPage,
+  notifications: NotificationsPage,
+  patients: PatientsPage,
+  patientDetail: PatientDetailPage,
+  evolutionaryAnalysis: EvolutionaryAnalysisPage,
+  alignmentAnalysis: AlignmentAnalysisPage,
+  comparative: ComparativeAnalysisPage,
+} as const;
+```
 
-**2.1 Arrays Estáticos Fora do Escopo**
-- Declarar arrays de configuração/dados **FORA** do componente funcional
-- Evita realocação de memória a cada render
-- Exemplo: `const ANALYSIS_TYPES = [...]` (fora do componente)
+**Regra `setCurrentPage`:** A função `setCurrentPage` persiste a página atual no `sessionStorage` sob a chave `ortobolt_page` para sobreviver a recarregamentos (F5).
 
-**2.2 Sub-componentes Memoizados**
-- Envolver componentes "folha" (que recebem poucos props) em `React.memo()`
-- Exemplo: `const CardItem = memo(({ data, onClick }) => ...)` com `displayName`
+## Páginas do Sistema
 
-**2.3 Handlers em useCallback**
-- Encapsular funções de evento em `useCallback` com array de dependências apropriado
-- Protege re-renders desnecessários da lista/grid
-- Exemplo: `const handleSelect = useCallback((id) => { ... }, [dependência])`
+- `AlignmentAnalysisPage.tsx`: Exibe análises de alinhamento ósseo.
+- `AnalysisPage.tsx`: Página principal para análises de casos clínicos.
+- `CasePage.tsx`: Detalhes de um caso clínico específico.
+- `ChatPage.tsx`: Interface de chat com o OrthoAI.
+- `ComparativeAnalysisPage.tsx`: Permite a comparação entre diferentes análises.
+- `DashboardPage.tsx`: Painel clínico com visão geral de atividades e casos.
+- `EvolutionaryAnalysisPage.tsx`: Apresenta a evolução de casos clínicos ao longo do tempo.
+- `GalleryPage.tsx`: Galeria de imagens e casos clínicos.
+- `HelpPage.tsx`: Seção de ajuda e FAQs.
+- `HomePage.tsx`: Página inicial da aplicação.
+- `LoginPage.tsx`: Página de autenticação para entrada no sistema.
+- `NotificationsPage.tsx`: Exibe notificações do sistema para o usuário.
+- `PatientDetailPage.tsx`: Detalhes de um paciente específico.
+- `PatientsPage.tsx`: Lista e gerencia pacientes.
+- `RegisterPage.tsx`: Página para registro de novos usuários.
+- `ReportsPage.tsx`: Geração e visualização de relatórios.
+- `ResetPasswordPage.tsx`: Funcionalidade para redefinição de senha.
+- `SettingsPage.tsx`: Configurações do usuário e da aplicação.
 
-**2.4 Validação de Tipos**
-- Interfaces bem definidas para props do sub-componente
-- TypeScript strict para garantir contrato entre pai e filho
+## Componentes Principais
 
-## 🎨 Padrões de UI e Design System (OrtoBolt Prime)
+- `AIAssistant.tsx`: Componente para interação com o assistente de IA.
+- `AnalysisQuickSelectModal.tsx`: Modal para seleção rápida de tipo de análise.
+- `AppLayout.tsx`: Layout geral da aplicação.
+- `CaseAnalysisTab.tsx`: Aba de análise dentro da página de caso.
+- `ClinicalEvidenceView.tsx`: Exibição de evidências clínicas.
+- `CopilotClinical.tsx`: Componente para o copilot clínico.
+- `ErrorBoundary.tsx`: Componente para captura de erros na UI.
+- `OrthoDeepAnalysis.tsx`: Componente para análises ortopédicas aprofundadas.
+- `PatientForm.tsx`: Formulário para cadastro ou edição de pacientes.
+- `ProductTour.tsx`: Componente para tour guiado do produto.
+- `RadiographGallery.tsx`: Galeria de radiografias.
+- `Sidebar.tsx`: Barra lateral de navegação.
+- `ToastContainer.tsx`: Container para exibir mensagens de notificação (toasts).
+- `TopBar.tsx`: Barra superior da aplicação.
+- `ui.tsx`: Coleção de componentes de UI genéricos.
 
-Esta seção é a fonte de verdade "pixel-perfect" para toda a interface. Qualquer implementação de UI deve respeitar estes tokens e dimensões.
+## Serviços & API
 
-### Design Tokens
+**Serviços Locais (`src/services/`):**
+- `aiConsent.ts`: Gerencia o consentimento do usuário para análises de IA.
+- `aiService.ts`: Funções para interagir com serviços de IA.
+- `backupService.ts`: Utilitários para backup de dados.
+- `clinicalCaseIntegrationService.ts`: Integração de casos clínicos com a plataforma.
+- `clinicalCopilotService.ts`: Funções do copilot clínico.
+- `clinicalEngine.ts`: Lógica central do motor clínico.
+- `feedbackService.ts`: Gerencia o envio de feedback.
+- `imageService.ts`: Serviços para manipulação e processamento de imagens.
+- `localAuditService.ts`: Serviços de auditoria local.
+- `ortoboltEngine.ts`: Motor principal do OrtoBolt.
+- `pdfService.ts`: Geração de documentos PDF.
+- `supabase.ts`: Configuração e interação com o Supabase.
+- `veterinaryPrompts.ts`: Gerencia prompts específicos para veterinária.
 
-- **Primária / IA:** `#29a399`
-- **Fundo Canvas (App):** `linear-gradient(180deg, #0a0c0d, #121517)`
+**Endpoints Serverless (`api/`):**
+- `ai.ts`: Endpoint da API para operações de IA.
+- `embeddings.ts`: Endpoint da API para geração de embeddings.
+- `anonymizeClinical.ts`: Lógica para anonimização de dados clínicos.
+- `cors.ts`: Configurações CORS para a API.
+- `rateLimit.ts`: Lógica de rate limiting para a API.
+- `verifySupabaseJwt.ts`: Middleware para verificação de JWT do Supabase.
+
+## Design System (OrtoBolt Prime):
+
+- **Primária / IA:** `#29a399` (verde água)
+- **Fundo Canvas:** `linear-gradient(180deg, #0a0c0d, #121517)`
 - **Sidebar:** `#0e1011`
 - **Painel Raio-X:** `#050607`
-- **Glassmorphism:** `rgba(22, 26, 30, 0.45)` com `backdrop-blur(20px)`
+- **Glassmorphism:** `rgba(22, 26, 30, 0.45)` + `backdrop-blur(20px)`
+- **Dimensões:**
+    - Sidebar: `280px`
+    - Painel Direito: `380px`
+    - Input: `42px`
+- **Proibições:** `#0A3D8F`, `#3caea3`, `bg-blue-600`, `bg-slate-50`, `bg-white`
+- **Obrigatório em todo novo componente:** `glass-panel-premium`, `premium-header-bg`
 
-> ⚠️ **OBSOLETO:** Não utilizar a cor primária antiga `#3caea3` nem quaisquer outros valores de cor legados. Todo componente deve consumir exclusivamente os tokens acima.
+## Pipeline de Pré-Commit
 
-### Componentes
+A ordem de execução do pipeline de pré-commit é inviolável para garantir a qualidade do código e a integridade da build:
 
-- **Governança Obrigatória:** Todo novo componente de UI deve herdar obrigatoriamente as classes de design premium (`glass-panel-premium`, `premium-header-bg`). O uso de `bg-slate-50` ou `bg-white` é proibido em qualquer rota.
+1.  **`tsc --noEmit`**: Garante que o código TypeScript não possui erros de tipo.
+2.  **`npm run build`**: Compila o projeto para produção, verificando possíveis erros de build.
+3.  **`git add README.md`**: Adiciona o arquivo `README.md` ao staging area para commit.
+4.  **`git commit -m "docs: update README with current project state, navigation map and known gaps"`**: Confirma as alterações com uma mensagem padronizada.
+5.  **`git push`**: Envia as alterações para o repositório remoto.
 
-### Layout
+## Regras de Segurança Git
 
-- **Dimensões Padrão:**
-  - Sidebar: `280px`
-  - Painel Direito: `380px`
-  - Altura de Inputs: `42px`
-- **Fundo Absoluto:** O gradiente radial `from-[#0a0c0d] to-[#121517]` é o padrão absoluto do `App.tsx` (fundo base de todas as rotas).
+- **Proibido:** Fazer commit diretamente na branch `main`. Sempre utilize branches de feature ou correção.
+- **Obrigatório:** Revisão de código (pull request) para todas as alterações que serão mescladas na `main`.
+- **Proibido:** Commitar credenciais, chaves de API ou informações sensíveis diretamente no código.
+- **Obrigatório:** Utilizar `.gitignore` para arquivos e diretórios que não devem ser versionados.
+
+## Padrões de Desenvolvimento
+
+- **Rule of One:** Evitar chain-tooling (chamar uma ferramenta imediatamente após a outra sem um plano consolidado). Agrupar leituras e edições de arquivos nas menores etapas possíveis.
+- **Backup:** Sempre fazer backup de arquivos importantes antes de modificá-los (`Copy-Item 'file.ext' 'file.ext.bkp'`).
+- **Anti-Loop:** Em caso de erro de compilação, não tentar corrigir cegamente e re-executar a build. Analisar o erro, formular a correção definitiva, aplicar a correção e só então re-executar a validação. Se a correção falhar após 2 tentativas, parar a execução e pedir orientação ao usuário.
+- **Memoização:** Utilizar `useMemo` e `useCallback` em React para otimizar re-renders e evitar cálculos desnecessários, como no `unreadCount` em `AppContext.tsx`.
+
+## Gaps & Pendências Conhecidas:
+
+- Rota `profile` órfã (enum sem componente no `PAGE_MAP`)
+- `ComparativeAnalysisPage` sem saída de navegação (botão de 
