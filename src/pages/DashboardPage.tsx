@@ -11,13 +11,6 @@ function formatDate(iso: string): string {
   catch { return iso; }
 }
 
-function getGreeting(): string {
-  const h = new Date().getHours();
-  if (h < 12) return '☀️ Bom dia';
-  if (h < 18) return '🌤️ Boa tarde';
-  return '🌙 Boa noite';
-}
-
 function getClinicalPriority(status: CaseStatus): number {
   if (status === 'critical') return 0;
   if (status === 'in_analysis') return 1;
@@ -120,23 +113,6 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-5">
-      <Card className="p-6 bg-gradient-to-br from-primary via-primary-mid to-accent text-white">
-        <div data-tour="tour-dashboard-hero" className="flex items-center justify-between flex-wrap gap-3 min-h-[120px]">
-          <div>
-            <h1 className="text-xl font-bold">{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Veterinário'}</h1>
-            <p className="text-white text-sm mt-1">
-              {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm font-semibold">Hoje:</p>
-            <p className="text-xs text-white">
-              {surgeriesToday.length} cirurgias · {triageList.filter(c => c.status === 'critical').length} crítico · {metricsToday.analyzed} análises
-            </p>
-          </div>
-        </div>
-      </Card>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-5">
           <Card className="p-4">
