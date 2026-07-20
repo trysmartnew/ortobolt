@@ -133,7 +133,7 @@ function Spotlight({ rect, visible }: SpotlightProps) {
         width: rect.width + PAD * 2,
         height: rect.height + PAD * 2,
         borderRadius: 18,
-        boxShadow: '0 0 0 9999px var(--color-surface-dim)',
+        boxShadow: '0 0 0 9999px rgba(0, 0, 0, 1)',
         border: '2px solid var(--color-primary)',
         animation: 'tourPulse 2s ease-in-out infinite',
         transition: 'top 0.3s ease-out, left 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out, opacity 0.3s ease-out',
@@ -240,26 +240,26 @@ const TooltipBox = memo(function TooltipBox({ step, rect, stepIndex, total, onNe
       aria-labelledby="tour-title"
       aria-describedby="tour-content"
       style={{ ...style, width: TW }}
-      className="glass-panel-premium overflow-hidden rounded-2xl duration-300 animate-in fade-in zoom-in-95"
+      className="bg-[#16191b] border border-slate-800 overflow-hidden rounded-2xl duration-300 animate-in fade-in zoom-in-95"
     >
       <div className="flex items-center justify-between bg-gradient-to-r from-primary to-accent px-5 py-4">
         <span id="tour-title" className="text-white font-bold text-base">{step.title}</span>
         <button
           onClick={onClose}
           aria-label="Fechar tour"
-          className="rounded-lg p-1 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+          className="rounded-lg p-1 text-white transition-colors hover:bg-slate-800 hover:text-white"
         >
           <X size={18} />
         </button>
       </div>
       <div className="px-5 py-4">
-        <p id="tour-content" className="text-[15px] leading-relaxed text-slate-200">{step.content}</p>
+        <p id="tour-content" className="text-[15px] leading-relaxed text-slate-100">{step.content}</p>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-4">
         <button
           onClick={onClose}
           aria-label="Pular tour"
-          className="text-xs font-medium text-slate-400 transition-colors hover:text-red-400"
+          className="text-xs font-medium text-slate-200 transition-colors hover:text-red-400"
         >
           Pular
         </button>
@@ -286,7 +286,7 @@ const TooltipBox = memo(function TooltipBox({ step, rect, stepIndex, total, onNe
             <button
               onClick={onNext}
               aria-label="Próximo passo"
-              className="flex items-center gap-1 rounded-xl bg-primary px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-primary/90"
+              className="flex items-center gap-1 rounded-xl bg-primary px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#1c6b62]"
             >
               Próximo <ChevronRight size={14} />
             </button>
@@ -294,7 +294,7 @@ const TooltipBox = memo(function TooltipBox({ step, rect, stepIndex, total, onNe
             <button
               onClick={onClose}
               aria-label="Concluir tour"
-              className="flex items-center gap-1 rounded-xl bg-accent px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-accent/90"
+              className="flex items-center gap-1 rounded-xl bg-accent px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#009a8f]"
             >
               Concluir ✓
             </button>
@@ -427,23 +427,26 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
     return () => window.removeEventListener('keydown', handler);
   }, [active, handleClose]);
 
+  const navigateTour = useCallback((newIndex: number) => {
+    setSpotlightVisible(false);
+    setTimeout(() => setStepIndex(newIndex), 150);
+  }, []);
+
   const handleNext = useCallback(() => {
     if (stepIndex < steps.length - 1) {
-      setSpotlightVisible(false);
-      setTimeout(() => setStepIndex(s => s + 1), 150);
+      navigateTour(stepIndex + 1);
     } else {
       handleClose();
     }
-  }, [stepIndex, steps.length, handleClose]);
+  }, [stepIndex, steps.length, handleClose, navigateTour]);
+
+  const handlePrev = useCallback(() => {
+    if (stepIndex > 0) {
+      navigateTour(stepIndex - 1);
+    }
+  }, [stepIndex, navigateTour]);
 
   if (!active || steps.length === 0) return null;
-
-  const handlePrev = () => {
-    if (stepIndex > 0) {
-      setSpotlightVisible(false);
-      setTimeout(() => setStepIndex(s => Math.max(0, s - 1)), 150);
-    }
-  };
 
   return (
     <>
@@ -451,11 +454,11 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
         @keyframes tourPulse {
           0%, 100% {
             border-color: var(--color-primary);
-              box-shadow: 0 0 0 9999px var(--color-surface-dim), 0 0 20px rgba(10,61,143,0.4);
+              box-shadow: 0 0 0 9999px rgba(0, 0, 0, 1), 0 0 20px rgba(10,61,143,1);
             }
             50% {
               border-color: var(--color-accent);
-              box-shadow: 0 0 0 9999px var(--color-surface-dim), 0 0 30px rgba(0,179,166,0.6);
+              box-shadow: 0 0 0 9999px rgba(0, 0, 0, 1), 0 0 30px rgba(0,179,166,1);
           }
         }
         @keyframes fadeZoomIn {
@@ -466,7 +469,7 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
       `}</style>
       {(currentStep?.target === '__welcome__' || !rect) && (
         <div
-          className="fixed inset-0 bg-black/65 z-[9997] transition-opacity duration-300"
+          className="fixed inset-0 bg-black z-[9997] transition-opacity duration-300"
           onClick={() => handleClose()}
           aria-hidden="true"
         />
