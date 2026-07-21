@@ -269,56 +269,9 @@ export default function AnalysisPage() {
 
       {analysisMode === 'analysis' && (
         <>
-          {mode === 'idle' && imageData === null && (
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { title: 'Fluxo', value: '5×', sub: 'Páginas integradas' },
-                { title: 'Assistente Clínico', value: '3×', sub: 'Imagem + contexto + chat' },
-                { title: 'Aprovação', value: '1 clique', sub: 'Preenche módulos' },
-              ].map((item) => (
-                <Card key={item.title} className="p-4 text-center">
-                  <p className="text-2xl font-bold font-mono text-primary">{item.value}</p>
-                  <p className="text-xs font-semibold text-slate-700 mt-1">{item.title}</p>
-                  <p className="text-[10px] text-slate-300 font-mono">{item.sub}</p>
-                </Card>
-              ))}
-            </div>
-          )}
+
 
           {mode === 'idle' && (
-            <>
-              <div className="flex items-center gap-2 text-xs text-white/60 glass-panel-premium border border-white/10 rounded-lg px-3 py-2 w-fit">
-                <ShieldCheck className="w-3.5 h-3.5 text-success" />
-                Formatos: JPG, PNG, WEBP · Máx. {MAX_FILE_SIZE_MB}MB · Fluxo integrado com Galeria e Relatórios
-              </div>
-
-              <div className="max-w-lg mx-auto">
-                <button
-                  data-tour="tour-upload"
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  className="w-full flex flex-col items-center gap-4 p-8 glass-panel-premium border-2 border-dashed border-white/10 rounded-2xl hover:border-primary transition-all group"
-                >
-                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Upload className="h-7 w-7 text-primary" />
-                  </div>
-                  <div className="text-center">
-                    <p className="font-bold text-slate-900">Upload de Imagem</p>
-                    <p className="text-xs text-slate-600 mt-1">Radiografias e imagens clínicas</p>
-                  </div>
-                </button>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  className="hidden"
-                  onChange={handleFile}
-                />
-              </div>
-            </>
-          )}
-
-          {streamError && (
             <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-5 flex items-center gap-3 text-[#ffd54f] text-sm">
               <AlertCircle size={16} className="flex-shrink-0" />
               {streamError}
@@ -420,98 +373,6 @@ export default function AnalysisPage() {
                     ))}
                   </div>
                 )}
-              </Card>
-
-              <div className="lg:col-span-4 w-[380px] mr-8 flex flex-col gap-4">
-                <Card className="p-5 bg-[rgba(26,29,31,0.65)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)] rounded-[12px] text-white" data-tour="tour-analysis-result">
-                  <div className="flex items-center gap-2 mb-4">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <p className="font-bold text-slate-100">
-                      {session?.refinedAnalysis ? 'Análise Refinada' : 'Análise Concluída'}
-                    </p>
-                    {session?.refinedAnalysis && (
-                      <span className="text-[10px] font-mono glass-panel-premium/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Sparkles size={10} /> Assistente Clínico
-                      </span>
-                    )}
-                  </div>
-                  <div className="prose-sm space-y-1 overflow-y-auto max-h-[400px] pr-1">
-                    {renderResult(analysisText)}
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-white/10">
-                    <Button variant="secondary" size="sm" onClick={reset} className="w-full bg-transparent border border-[#2a2d30] text-[#9a9fa5] hover:bg-white/5 transition-all">
-                      <RefreshCw size={13} /> Nova Análise
-                    </Button>
-                  </div>
-                </Card>
-
-                <Card className="bg-[rgba(26,29,31,0.65)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)] rounded-[12px]">
-                  <ClinicalCopilotPanel
-                    enabled={Boolean(session && imageBase64)}
-                    messages={session?.messages ?? []}
-                    streaming={streaming}
-                    refining={refining}
-                    error={copilotError}
-                    clinicalContext={ctx}
-                    onContextChange={updateContext}
-                    onSend={sendMessage}
-                    onRefineAnalysis={handleRefine}
-                    onRetry={() => {
-                      // Implementação simples de retry para o AnalysisPage
-                      window.location.reload();
-                    }}
-                  />
-
-                </Card>
-
-                <Card className="bg-[#001941]/40 backdrop-blur-md border border-white/10 rounded-lg p-5">
-                  <div className="flex items-center gap-2 mb-4">
-                    <ShieldCheck className="h-5 w-5 text-primary" />
-                    <p className="text-sm font-bold text-white tracking-wide">Laudo Técnico de Suporte</p>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-400">Hip Dysplasia Index</span>
-                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${dysplasiaBadge.variant === 'success' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : // No change needed
-                        dysplasiaBadge.variant === 'warning' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-                          dysplasiaBadge.variant === 'danger' ? 'bg-red-500/20 text-red-300 border-red-500/30' :
-                            'bg-sky-500/20 text-sky-300 border-sky-500/30'
-                        }`}>
-                        {dysplasiaBadge.label}
-                      </span>
-                    </div>
-                    {norbergAngle !== null && (
-                      <div className="text-xs text-slate-300">
-                        <span className="font-semibold">Ângulo de Norberg:</span> {norbergAngle.toFixed(1)}°
-                      </div>
-                    )}
-                    <div className="text-xs text-slate-300">
-                      <span className="font-semibold">Confiança:</span> {Math.round(85 + Math.random() * 10)}%
-                    </div>
-                    <div className="pt-3 border-t border-white/10">
-                      <p className="text-xs font-semibold text-slate-300 mb-2">Recomendações</p>
-                      <ul className="space-y-1">
-                        {recommendations.map((rec, i) => (
-                          <li key={i} className="text-xs text-slate-300 flex gap-2">
-                            <span className="text-primary">›</span> {rec}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <Button variant="primary" size="sm" className="w-full" onClick={() => setCurrentPage('reports')}>
-                      Gerar Relatório
-                    </Button>
-                  </div>
-                </Card>
-              </div>
-
-              <div data-tour="tour-approve-case" className="col-span-full">
-                <ApproveCompleteCaseBar
-                  disabled={approving || streaming || refining || !user}
-                  defaultTitle={defaultCaseTitle}
-                  onApprove={(title, dest) => handleApprove(title, dest)}
-                />
-              </div>
             </div>
           )}
         </>
@@ -519,3 +380,4 @@ export default function AnalysisPage() {
     </div>
   );
 }
+
