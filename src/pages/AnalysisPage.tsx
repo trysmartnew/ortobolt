@@ -373,6 +373,7 @@ export default function AnalysisPage() {
                     ))}
                   </div>
                 )}
+              </Card>
             </div>
           )}
         </>
