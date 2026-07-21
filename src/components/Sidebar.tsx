@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import {
   ClipboardList, Scan, Activity, BarChart3,
   Bot, Bell, User, Settings, LogOut,
-  Users, TrendingUp, Ruler, HelpCircle, Sparkles
+  Users, TrendingUp, Ruler, HelpCircle, Sparkles, Images
 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import type { Page } from '@/contexts/AppContext';
@@ -27,6 +27,12 @@ const MENU_SECTIONS: MenuSection[] = [
     items: [
       { label: 'Pacientes', icon: Users, page: 'patients' },
       { label: 'Painel Clínico', icon: Activity, page: 'dashboard' },
+    ]
+  },
+  {
+    title: 'ARQUIVOS',
+    items: [
+      { label: 'Galeria', icon: Images, page: 'gallery' },
     ]
   },
   {
