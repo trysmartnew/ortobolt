@@ -46,6 +46,38 @@ export type Page =
   | 'case' | 'reports' | 'settings' | 'notifications'
   | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'comparative' | 'help';
 
+const PAGE_STORAGE_KEY = 'vanguard-veterinary_page';
+const LEGACY_PAGE_STORAGE_KEY = 'ortobolt_page';
+
+const PAGE_VALUES: Record<Page, true> = {
+  dashboard: true,
+  chat: true,
+  analysis: true,
+  gallery: true,
+  case: true,
+  reports: true,
+  settings: true,
+  notifications: true,
+  patients: true,
+  patientDetail: true,
+  evolutionaryAnalysis: true,
+  alignmentAnalysis: true,
+  comparative: true,
+  help: true,
+};
+
+const isPage = (value: string | null): value is Page => {
+  return value !== null && value in PAGE_VALUES;
+};
+
+const getInitialPage = (): Page => {
+  const stored =
+    sessionStorage.getItem(PAGE_STORAGE_KEY) ??
+    sessionStorage.getItem(LEGACY_PAGE_STORAGE_KEY);
+
+  return isPage(stored) ? stored : 'dashboard';
+};
+
 export type AppView = 'home' | 'login' | 'register' | 'app' | 'reset';
 
 export interface Toast {
@@ -166,7 +198,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [profileSyncStatus, setProfileSyncStatus] = useState<'idle' | 'syncing' | 'done' | 'error'>('idle');
   const [pendingProfileSync, setPendingProfileSync] = useState<{ id: string; email: string } | null>(null);
   const [currentView, setCurrentView] = useState<AppView>('home');
-  const [currentPage, setCurrentPage] = useState<Page>(() => (sessionStorage.getItem('ortobolt_page') as Page) ?? 'dashboard');
+  const [currentPage, setCurrentPage] = useState<Page>(getInitialPage);
 
   const [cases, setCases] = useState<ClinicalCase[]>([]);
   const [activeCase, setActiveCase] = useState<ClinicalCase | null>(null);
@@ -268,7 +300,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Persiste página atual para sobreviver ao F5
   useEffect(() => {
-    sessionStorage.setItem('ortobolt_page', currentPage);
+    sessionStorage.setItem(PAGE_STORAGE_KEY, currentPage);
+    sessionStorage.removeItem(LEGACY_PAGE_STORAGE_KEY);
   }, [currentPage]);
 
   // ✅ D-01: Fetch casos reais COM mapeamento seguro
