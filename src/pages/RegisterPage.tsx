@@ -172,8 +172,8 @@ export default function RegisterPage() {
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-success-bg)' }}>
             <CheckCircle size={32} className="text-success" />
           </div>
-          <h2 className="font-bold text-slate-800 text-xl mb-2">Cadastro realizado!</h2>
-          <p className="text-sm text-slate-500 mb-6">
+          <h2 className="font-bold text-white text-xl mb-2">Cadastro realizado!</h2>
+          <p className="text-sm text-white/60 mb-6">
             Verifique seu e-mail <strong>{form.email}</strong> para confirmar sua conta antes de acessar a plataforma.
           </p>
           <button onClick={() => setCurrentView('login')}
@@ -204,14 +204,14 @@ export default function RegisterPage() {
       </div>
 
       {/* Painel direito */}
-      <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-6 bg-white overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-6 bg-transparent text-white overflow-y-auto">
         <div className="lg:hidden mb-6">
           <OrtoBoltLogo variant="horizontal" size="small" showSubtitle={false} />
         </div>
         <div className="w-full max-w-sm">
           <div className="mb-6">
-            <h1 className="text-xl font-extrabold text-slate-800 mb-1">Criar conta</h1>
-            <p className="text-sm text-slate-600">
+            <h1 className="text-xl font-extrabold text-white mb-1">Criar conta</h1>
+            <p className="text-sm text-white/70">
               Já tem conta?{' '}
               <button onClick={() => setCurrentView('login')} className="font-semibold" style={{ color: 'var(--color-primary)' }}>
                 Entrar aqui
@@ -259,9 +259,9 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Estado do CRMV</label>
+              <label className="block text-xs font-semibold text-white/70 mb-1.5">Estado do CRMV</label>
               <select value={crmvState} onChange={e => setCrmvState(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
+                className="w-full px-3 py-2 rounded-xl border border-white/10 text-sm focus:outline-none focus:ring-2 transition-all bg-[#111315] text-white">
                 <option value="">Selecione...</option>
                 {['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'].map(uf => <option key={uf} value={uf}>{uf}</option>)}
               </select>
@@ -269,9 +269,9 @@ export default function RegisterPage() {
 
             {/* Especialidade */}
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Especialidade</label>
+              <label className="block text-xs font-semibold text-white/70 mb-1.5">Especialidade</label>
               <select value={form.specialty} onChange={e => update('specialty', e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 transition-all bg-white">
+                className="w-full px-3 py-2 rounded-xl border border-white/10 text-sm focus:outline-none focus:ring-2 transition-all bg-[#111315] text-white">
                 <option value="">Selecione...</option>
                 {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
@@ -279,7 +279,7 @@ export default function RegisterPage() {
 
             {/* Senha */}
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Senha</label>
+              <label className="block text-xs font-semibold text-white/70 mb-1.5">Senha</label>
               <div className="relative">
                 <Input
                   type={showPass ? 'text' : 'password'}
@@ -313,7 +313,7 @@ export default function RegisterPage() {
 
             {/* Confirmar senha */}
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Confirmar senha</label>
+              <label className="block text-xs font-semibold text-white/70 mb-1.5">Confirmar senha</label>
               <div className="relative">
                 <Input
                   type={showConfirm ? 'text' : 'password'}
@@ -389,12 +389,12 @@ export default function RegisterPage() {
             )}
           </div>
 
-          <div className="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs text-slate-600">
+          <div className="mt-5 pt-5 border-t border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs text-white/70">
               <Shield size={12} className="text-success" /> SSL/TLS · LGPD
             </div>
             <button onClick={() => setCurrentView('home')}
-              className="text-xs text-slate-600 hover:text-slate-800 flex items-center gap-1">
+              className="text-xs text-white/70 hover:text-white flex items-center gap-1">
               <ArrowLeft size={11} /> Página inicial
             </button>
 

@@ -1,4 +1,4 @@
-import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
+﻿import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
 // src/pages/LoginPage.tsx
 // ✅ C-02: UI de bloqueio por tentativas excessivas (loginLocked / loginLockSecondsLeft)
 // ✅ U-01: rememberMe passado para login() e respeitado na sessão
@@ -100,7 +100,7 @@ export default function LoginPage() {
           </div>
           <div className="glass-panel-premium rounded-2xl shadow-2xl p-8">
             <button onClick={() => { setForgotMode(false); setForgotSent(false); setError(''); }}
-              className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 mb-5 transition-colors">
+              className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white/70 mb-5 transition-colors">
               <ArrowLeft size={13} /> Voltar ao login
             </button>
             {forgotSent ? (
@@ -108,8 +108,8 @@ export default function LoginPage() {
                 <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-success-bg)' }}>
                   <Shield size={24} className="text-success" />
                 </div>
-                <h2 className="font-bold text-slate-800 mb-2">E-mail enviado!</h2>
-                <p className="text-sm text-slate-500 mb-6">Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.</p>
+                <h2 className="font-bold text-white mb-2">E-mail enviado!</h2>
+                <p className="text-sm text-white/60 mb-6">Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.</p>
                 <button onClick={() => { setForgotMode(false); setForgotSent(false); }}
                   className="w-full py-2.5 rounded-xl text-sm font-semibold text-white" style={{ background: 'var(--color-primary)' }}>
                   Voltar ao login
@@ -117,7 +117,7 @@ export default function LoginPage() {
               </div>
             ) : (
               <>
-                <h2 className="font-bold text-slate-800 text-lg mb-1">Recuperar senha</h2>
+                <h2 className="font-bold text-white text-lg mb-1">Recuperar senha</h2>
                 <p className="text-xs text-slate-400 mb-6">Informe seu e-mail e enviaremos um link para redefinir sua senha.</p>
                 <div className="space-y-4">
                   <div>
@@ -173,13 +173,13 @@ export default function LoginPage() {
       </div>
 
       {/* Painel direito — formulário */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white">
+      <div className="flex-1 flex flex-col items-center justify-center p-6 bg-transparent text-white">
         <div className="lg:hidden mb-8">
           <OrtoBoltLogo variant="horizontal" size="medium" showSubtitle={false} />
         </div>
         <div className="w-full max-w-sm">
           <div className="mb-7">
-            <h1 className="text-2xl font-extrabold text-slate-800 mb-1">Entrar na plataforma</h1>
+            <h1 className="text-2xl font-extrabold text-white mb-1">Entrar na plataforma</h1>
             <p className="text-sm text-slate-400">
               Não tem conta?{' '}
               <button onClick={() => setCurrentView('register')} className="font-semibold" style={{ color: 'var(--color-primary)' }}>
@@ -207,7 +207,7 @@ export default function LoginPage() {
               <button key={id}
                 onClick={() => handleSocialLogin(id as 'google')}
                 disabled={!!socialLoading || loginLocked}
-                className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl text-sm font-medium transition-all disabled:opacity-50 hover:bg-slate-50"
+                className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl text-sm font-medium transition-all disabled:opacity-50 hover:bg-white/5"
                 style={{ border: '1.5px solid #E2E8F0', color: '#374151', background: '#fff' }}>
                 <Icon />
                 {socialLoading === id ? 'Conectando...' : label}
@@ -217,7 +217,7 @@ export default function LoginPage() {
 
           <div className="flex items-center gap-3 mb-6">
             <div className="flex-1 h-px bg-slate-200" />
-            <span className="text-xs text-slate-600 font-medium">ou entre com e-mail</span>
+            <span className="text-xs text-white/70 font-medium">ou entre com e-mail</span>
             <div className="flex-1 h-px bg-slate-200" />
           </div>
 
@@ -234,7 +234,7 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-slate-600">Senha</label>
+                <label className="text-xs font-semibold text-white/70">Senha</label>
                 <button onClick={() => setForgotMode(true)} className="text-xs font-medium" style={{ color: 'var(--color-primary)' }}>
                   Esqueci minha senha
                 </button>
@@ -251,7 +251,7 @@ export default function LoginPage() {
                   className="pr-10"
                 />
                 <button type="button" onClick={() => setShowPass(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white/70">
                   {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
@@ -266,7 +266,7 @@ export default function LoginPage() {
                   {rememberMe && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-white/60">
                 Manter conectado{' '}
                 <span className="text-slate-400">
                   ({rememberMe ? 'sessão salva no navegador' : 'sessão encerra ao fechar o navegador'})
@@ -285,12 +285,12 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs text-slate-600">
+          <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs text-white/70">
               <Shield size={12} className="text-success" /> SSL/TLS · LGPD
             </div>
             <button onClick={() => setCurrentView('home')}
-              className="text-xs text-slate-600 hover:text-slate-800 transition-colors flex items-center gap-1">
+              className="text-xs text-white/70 hover:text-white transition-colors flex items-center gap-1">
               <ArrowLeft size={11} /> Página inicial
             </button>
           </div>

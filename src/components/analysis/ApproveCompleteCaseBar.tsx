@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { CheckCircle2, FolderOpen, FileText } from 'lucide-react';
 import { Button } from '@/components/ui';
 
@@ -27,8 +27,8 @@ export default function ApproveCompleteCaseBar({
       <div className="flex items-start gap-2">
         <CheckCircle2 className="text-emerald-600 flex-shrink-0 mt-0.5" size={18} />
         <div>
-          <p className="text-sm font-bold text-slate-900">Aprovar Caso Completo</p>
-          <p className="text-xs text-slate-600 mt-0.5">
+          <p className="text-sm font-bold text-white">Aprovar Caso Completo</p>
+          <p className="text-xs text-white/70 mt-0.5">
             Propaga automaticamente para Galeria, Caso, Painel Clínico e Relatórios — sem retrabalho.
           </p>
         </div>
@@ -38,7 +38,7 @@ export default function ApproveCompleteCaseBar({
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Título do caso"
-        className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white"
+        className="w-full text-sm border border-white/10 rounded-lg px-3 py-2 bg-[#111315] text-white"
       />
       <div className="flex flex-col sm:flex-row gap-2">
         <Button

@@ -154,7 +154,7 @@ const PAGE_MAP = {
     - Input: `42px`
 - **Proibições:** `#0A3D8F`, `#3caea3`, `bg-blue-600`, `bg-slate-50`, `bg-white`
 - **Obrigatório em todo novo componente:** `glass-panel-premium`, `premium-header-bg`
-- **Pendência real de UI:** existem ocorrências legadas de `bg-white` e `bg-slate-50` em páginas públicas/auth/chat; novos componentes devem seguir os tokens premium e evitar classes claras.
+- **UI legada:** as ocorrências sólidas de `bg-white` e `bg-slate-50` foram migradas para tokens premium; variantes translúcidas `bg-white/*` permanecem como overlays permitidos no design escuro.
 
 ## Pipeline de Pré-Commit
 
@@ -189,5 +189,5 @@ A ordem de execução do pipeline de pré-commit é inviolável para garantir a 
 
 - A chave de página foi migrada para `vanguard-veterinary_page`, com fallback legado `ortobolt_page`.
 - As chaves legadas de storage `ortobolt_*` e `ortobolt-*` são migradas automaticamente no startup para `vanguard-veterinary_*` e `vanguard-veterinary-*`; referências remanescentes são apenas fallback/migração ou branding interno.
-- Existem componentes/páginas com classes claras legadas (`bg-white`, `bg-slate-50`); novos componentes devem usar `glass-panel-premium` e `premium-header-bg`.
+- As classes claras legadas (`bg-white`, `bg-slate-50`) foram migradas para tokens premium; novos componentes devem usar `glass-panel-premium` e `premium-header-bg`.
 - O branding interno ainda referencia `OrtoBolt` em arquivos legados, enquanto o nome público atual é `Vanguard Veterinary`.

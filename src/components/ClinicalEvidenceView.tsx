@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { ClinicalEvidence } from '@/schemas/clinicalEvidence';
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 
 export const ClinicalEvidenceView: React.FC<Props> = ({ evidence }) => {
   return (
-    <div className="p-4 border rounded-lg bg-slate-50 shadow-sm space-y-4">
+    <div className="p-4 border border-white/10 rounded-lg bg-surface shadow-sm space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="font-bold text-lg">Evidência Clínica</h3>
         <span className="text-xs font-mono bg-slate-200 px-2 py-1 rounded">

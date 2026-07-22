@@ -33,18 +33,18 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
 
   return (
     <div className={`flex gap-3 group ${isUser ? 'flex-row-reverse' : ''}`}>
-      <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold ${isUser ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600'}`}>
+      <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold ${isUser ? 'bg-primary text-white' : 'bg-slate-100 text-white/70'}`}>
         {isUser ? <User size={14} /> : <Bot size={14} />}
       </div>
       <div className={`max-w-[78%] ${isUser ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
-        <div className={`rounded-2xl px-5 py-4 text-[16px] leading-relaxed ${isUser ? 'bg-primary text-white rounded-tr-sm' : 'bg-slate-50 text-slate-800 border border-slate-100 rounded-tl-sm'}`}>
+        <div className={`rounded-2xl px-5 py-4 text-[16px] leading-relaxed ${isUser ? 'bg-primary text-white rounded-tr-sm' : 'bg-surface text-white border border-white/10 rounded-tl-sm'}`}>
           {msg.isLoading ? (
             <div className="flex items-center gap-2 py-0.5">
               <Spinner size="sm" />
               <span className="text-xs font-mono text-slate-400 animate-pulse">Assistente IA está analisando...</span>
             </div>
           ) : (
-            <div className={`space-y-0.5 ${isUser ? 'text-white' : 'text-slate-800'}`}>
+            <div className={`space-y-0.5 ${isUser ? 'text-white' : 'text-white'}`}>
               {renderContent(msg.content)}
             </div>
           )}
@@ -125,10 +125,10 @@ export default function ChatPage() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="h-16 glass-panel-premium border-b border-slate-100 flex items-center justify-between px-6 flex-shrink-0">
+      <div className="h-16 glass-panel-premium border-b border-white/10 flex items-center justify-between px-6 flex-shrink-0">
         <div>
-          <h1 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat' }}>Assistente Clínico IA</h1>
-          <p className="text-xs text-slate-600 font-mono">Ativo · Modelo de IA Avançada</p>
+          <h1 className="text-base font-bold text-white" style={{ fontFamily: 'Montserrat' }}>Assistente Clínico IA</h1>
+          <p className="text-xs text-white/70 font-mono">Ativo · Modelo de IA Avançada</p>
         </div>
         <button
           onClick={() => setChatHistory(h => h.length > 0 ? [h[0]] : h)}
@@ -138,13 +138,13 @@ export default function ChatPage() {
         </button>
       </div>
 
-      <div data-tour="tour-chat-messages" className="flex-1 overflow-y-auto px-6 py-5 space-y-5 bg-white">
+      <div data-tour="tour-chat-messages" className="flex-1 overflow-y-auto px-6 py-5 space-y-5 bg-transparent">
         {chatHistory.map(m => <MessageBubble key={m.id} msg={m} />)}
         <div ref={bottomRef} />
       </div>
 
       {chatHistory.length <= 1 && (
-        <div data-tour="tour-chat-suggestions" className="px-6 pb-3 flex flex-wrap gap-2 bg-white">
+        <div data-tour="tour-chat-suggestions" className="px-6 pb-3 flex flex-wrap gap-2 bg-transparent">
           {SUGGESTED.map((s, i) => (
             <button key={i} onClick={() => send(s)} className="text-xs text-teal-700 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-full hover:bg-teal-100 transition-colors text-left">
               {s}
@@ -153,8 +153,8 @@ export default function ChatPage() {
         </div>
       )}
 
-      <div data-tour="tour-chat-input" className="flex-shrink-0 px-6 py-4 border-t border-slate-100 bg-white">
-        <div className="flex items-end gap-3 bg-slate-50 rounded-2xl border border-slate-200/60 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all px-4 py-3">
+      <div data-tour="tour-chat-input" className="flex-shrink-0 px-6 py-4 border-t border-white/10 bg-surface">
+        <div className="flex items-end gap-3 bg-[#111315] rounded-2xl border border-white/10 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all px-4 py-3">
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -166,13 +166,13 @@ export default function ChatPage() {
             }}
             placeholder="Faça uma pergunta sobre ortopedia veterinária... (Enter para enviar, Shift+Enter para nova linha)"
             rows={2}
-            className="flex-1 bg-transparent resize-none outline-none text-sm text-slate-800 placeholder-slate-500 font-mono"
+            className="flex-1 bg-transparent resize-none outline-none text-sm text-white placeholder-slate-500 font-mono"
           />
           <Button size="sm" onClick={() => send()} disabled={!input.trim() || sending} loading={sending} className="flex-shrink-0 !px-3 !py-2">
             <Send size={15} />
           </Button>
         </div>
-        <p className="text-[10px] text-slate-600 mt-2 font-mono text-center">
+        <p className="text-[10px] text-white/70 mt-2 font-mono text-center">
           O Assistente IA não substitui avaliação clínica. Use como suporte à decisão técnica.
         </p>
       </div>

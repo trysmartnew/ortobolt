@@ -118,7 +118,7 @@ export default function AIAssistant() {
       )}
 
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)] glass-panel-premium rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+        <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)] glass-panel-premium rounded-2xl shadow-2xl border border-white/10 flex flex-col overflow-hidden">
           <div className="bg-gradient-to-r from-primary to-accent text-white p-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
               <Sparkles size={20} />
@@ -134,18 +134,18 @@ export default function AIAssistant() {
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-transparent">
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${msg.role === 'user'
                     ? 'bg-primary text-white rounded-br-sm'
-                    : 'bg-white text-slate-800 border border-slate-200 rounded-bl-sm shadow-sm'
+                    : 'bg-surface text-white border border-white/10 rounded-bl-sm shadow-sm'
                   }`}>
                   {msg.content ? (
                     <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg.content) }} />
                   ) : (isStreaming && i === messages.length - 1 && (
                     <span className="inline-flex items-center gap-1 text-slate-400">
-                      <Loader2 size={12} className="animate-spin" /> <span className="text-slate-600">Pensando...</span>
+                      <Loader2 size={12} className="animate-spin" /> <span className="text-white/70">Pensando...</span>
                     </span>
                   ))}
                 </div>
@@ -155,14 +155,14 @@ export default function AIAssistant() {
           </div>
 
           {messages.length <= 1 && (
-            <div className="px-4 py-2 border-t border-slate-100 bg-white flex-shrink-0">
+            <div className="px-4 py-2 border-t border-white/10 bg-surface flex-shrink-0">
               <p className="text-[10px] text-white/70 mb-2 font-semibold uppercase">Ações rápidas:</p>
               <div className="flex flex-wrap gap-1">
                 {quickActions.map((a, i) => (
                   <button
                     key={i}
                     onClick={() => { if (a.action === 'deep') { handleDeepAnalysis(); } else if (a.prompt) { setInput(a.prompt); textareaRef.current?.focus(); } }}
-                    className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-800 px-2 py-1 rounded-lg transition-colors"
+                    className="text-xs bg-slate-100 hover:bg-slate-200 text-white px-2 py-1 rounded-lg transition-colors"
                   >
                     {a.label}
                   </button>
@@ -171,8 +171,8 @@ export default function AIAssistant() {
             </div>
           )}
 
-          <div className="p-3 border-t border-slate-200 bg-white flex-shrink-0">
-            <div className="flex items-end gap-2 bg-slate-50 rounded-xl border border-slate-200 p-2">
+          <div className="p-3 border-t border-white/10 bg-surface flex-shrink-0">
+            <div className="flex items-end gap-2 bg-[#111315] rounded-xl border border-white/10 p-2">
               <textarea
                 ref={textareaRef}
                 value={input}
@@ -191,7 +191,7 @@ export default function AIAssistant() {
                 {isStreaming ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
               </button>
             </div>
-            <p className="text-[9px] text-slate-600 text-center mt-1">
+            <p className="text-[9px] text-white/70 text-center mt-1">
               OrthoAI segue diretrizes veterinárias · Sempre confirme com exame físico
             </p>
           </div>

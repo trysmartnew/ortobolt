@@ -50,7 +50,7 @@ function NotifRow({ n, onRead, cases, onViewCase, onIgnore, onViewReport, onDown
   onConfirmReminder: (id: string) => void;
 }) {
   const Icon = NOTIF_ICONS[n.type] || Info;
-  const colorCls = NOTIF_COLORS[n.type] || 'text-slate-500 bg-slate-50';
+  const colorCls = NOTIF_COLORS[n.type] || 'text-[var(--color-text-tertiary)] bg-surface';
 
   const actions: React.ReactNode[] = [];
 
@@ -96,20 +96,20 @@ function NotifRow({ n, onRead, cases, onViewCase, onIgnore, onViewReport, onDown
   }
 
   return (
-    <div className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${n.read ? 'bg-white border-slate-100 opacity-75' : 'bg-blue-50/30 border-blue-100 border-l-4 border-l-[var(--color-accent)]'}`}>
+    <div className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${n.read ? 'bg-surface border-white/10 opacity-75' : 'bg-primary-light border-[rgba(41,163,153,0.3)] border-l-4 border-l-[var(--color-accent)]'}`}>
       <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${colorCls}`}>
         <Icon size={17} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-sm font-semibold text-slate-900">{n.title}</p>
-            <p className="text-xs text-slate-800 mt-0.5 leading-relaxed">{n.message}</p>
+            <p className="text-sm font-semibold text-white">{n.title}</p>
+            <p className="text-xs text-white mt-0.5 leading-relaxed">{n.message}</p>
           </div>
           <NotifBadge type={n.type} />
         </div>
         <div className="flex items-center gap-3 mt-2">
-          <span className="text-[10px] text-slate-600 font-mono">{formatRelativeTime(n.timestamp)}</span>
+          <span className="text-[10px] text-white/70 font-mono">{formatRelativeTime(n.timestamp)}</span>
           <div className="flex items-center gap-3">
             {actions}
             {!n.read && <button onClick={() => onRead(n.id)} className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1"><Check size={9} />Marcar como lida</button>}

@@ -109,7 +109,7 @@ export default function CopilotClinical({
             <Bot size={16} className="text-white" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 text-sm">Copiloto Clínico</h3>
+            <h3 className="font-bold text-white text-sm">Copiloto Clínico</h3>
             <p className="text-[10px] text-slate-400 font-mono">
               {mode === 'analysis' && 'Análise de Imagem'}
               {mode === 'comparative' && 'Estudo Comparativo'}
@@ -134,7 +134,7 @@ export default function CopilotClinical({
         {messages.length === 0 && (
           <div className="text-center py-6">
             <Bot size={32} className="text-slate-200 mx-auto mb-2" />
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-white/60">
               Sou o Assistente Clínico. Como posso ajudar a refinar esta análise?
             </p>
             <div className="flex flex-wrap gap-1.5 mt-3 justify-center">
@@ -166,7 +166,7 @@ export default function CopilotClinical({
               <div className={`rounded-2xl px-3 py-2 ${
                 msg.role === 'user' 
                   ? 'bg-primary text-white rounded-tr-sm' 
-                  : 'bg-slate-50 text-slate-800 border border-slate-100 rounded-tl-sm'
+                  : 'bg-surface text-white border border-white/10 rounded-tl-sm'
               }`}>
                 {msg.role === 'assistant' ? (
                   <div className="space-y-0.5">{renderContent(msg.content)}</div>
@@ -191,7 +191,7 @@ export default function CopilotClinical({
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center flex-shrink-0">
               <Bot size={12} className="text-white" />
             </div>
-            <div className="bg-slate-50 border border-slate-100 rounded-2xl rounded-tl-sm px-3 py-2">
+            <div className="bg-surface border border-white/10 rounded-2xl rounded-tl-sm px-3 py-2">
               <Spinner size="sm" />
             </div>
           </div>
@@ -208,7 +208,7 @@ export default function CopilotClinical({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
             placeholder="Refinar análise..."
-            className="flex-1 text-xs border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+            className="flex-1 text-xs border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
           />
           <button
             onClick={handleSend}

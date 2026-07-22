@@ -19,7 +19,7 @@ export default memo(function CaseAnalysisTab() {
     return (
       <div className="p-8 text-center">
         <Scan className="w-12 h-12 text-white/40 mx-auto mb-3" />
-        <p className="text-slate-500 text-sm">Nenhuma análise de IA vinculada a este caso.</p>
+        <p className="text-white/60 text-sm">Nenhuma análise de IA vinculada a este caso.</p>
         <p className="text-xs text-slate-400 mt-2">Vá para a página "Análise Visual" para realizar o exame.</p>
       </div>
     );
@@ -30,17 +30,17 @@ export default memo(function CaseAnalysisTab() {
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-3">
           <Scan size={16} className="text-primary" />
-          <h3 className="font-bold text-slate-900 text-sm">Análise de Imagem Vinculada</h3>
+          <h3 className="font-bold text-white text-sm">Análise de Imagem Vinculada</h3>
         </div>
         <img 
           src={analysis.imageData} 
           alt="Análise" 
-          className="w-full rounded-xl border border-slate-100 max-h-64 object-contain bg-slate-50" 
+          className="w-full rounded-xl border border-white/10 max-h-64 object-contain bg-[#111315]" 
         />
         <div className="mt-4 text-sm text-white/70 whitespace-pre-wrap leading-relaxed">
           {analysis.analysisResult}
         </div>
-        <div className="mt-3 pt-3 border-t border-slate-100 flex justify-between items-center">
+        <div className="mt-3 pt-3 border-t border-white/10 flex justify-between items-center">
           <span className="text-[10px] text-slate-400 font-mono">
             Gerado em: {new Date(analysis.createdAt).toLocaleString('pt-BR')}
           </span>

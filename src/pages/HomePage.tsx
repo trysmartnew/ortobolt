@@ -90,7 +90,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+    <div className="min-h-screen bg-[#0a0c0d] text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
 
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
       <header
@@ -163,7 +163,7 @@ export default function HomePage() {
 
         {/* Mobile menu dropdown */}
         {menuOpen && (
-          <div className="md:hidden glass-panel-premium border-t border-slate-100 px-6 py-4 space-y-3">
+          <div className="md:hidden glass-panel-premium border-t border-white/10 px-6 py-4 space-y-3">
             {['Funcionalidades', 'Depoimentos', 'Planos'].map(item => (
               <a key={item} href={`#${item.toLowerCase()}`} className="block text-sm font-medium text-white/70 py-1" onClick={() => setMenuOpen(false)}>
                 {item}
@@ -280,7 +280,7 @@ export default function HomePage() {
       </section>
 
       {/* ── STATS ──────────────────────────────────────────────────────── */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-transparent">
         <div className="max-w-5xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {STATS.map(({ value, label, icon: Icon }) => (
@@ -296,7 +296,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURES ───────────────────────────────────────────────────── */}
-      <section id="funcionalidades" className="py-20 premium-header-bg bg-slate-50">
+      <section id="funcionalidades" className="py-20 premium-header-bg">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4"
@@ -315,7 +315,7 @@ export default function HomePage() {
             {FEATURES.map(({ icon: Icon, title, desc, color, bg }) => (
               <div
                 key={title}
-                className="p-6 rounded-2xl bg-white transition-all duration-200 cursor-default"
+                className="p-6 rounded-2xl glass-panel-premium transition-all duration-200 cursor-default"
                 style={{ border: '1px solid #E2E8F0' }}
                 onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
@@ -370,7 +370,7 @@ export default function HomePage() {
       </section>
 
       {/* ── TESTIMONIALS ───────────────────────────────────────────────── */}
-      <section id="depoimentos" className="py-20 bg-white">
+      <section id="depoimentos" className="py-20 bg-transparent">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4"
@@ -411,7 +411,7 @@ export default function HomePage() {
 
 
       {/* ── FOOTER ─────────────────────────────────────────────────────── */}
-      <footer className="py-8 glass-panel-premium border-t border-slate-100">
+      <footer className="py-8 glass-panel-premium border-t border-white/10">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">          <p className="text-xs" style={{ color: '#64748B' }}>
           © 2025 Vanguard Veterinary · Medicina Veterinária com IA · LGPD Compliant
         </p>
