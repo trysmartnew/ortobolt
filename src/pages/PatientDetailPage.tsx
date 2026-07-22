@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { ArrowLeft, User, PawPrint, Ruler, Activity, Pill, FlaskConical, Image, TrendingUp, Calendar, UserRound } from 'lucide-react';
@@ -33,7 +33,7 @@ function getStatusLabel(status: CaseStatus): string {
 }
 
 export default function PatientDetailPage() {
-  const { cases, activeCase, openCase, setCurrentPage, user, authLoading, addToast } = useApp();
+  const { cases, activeCase, setActiveCase, openCase, setCurrentPage, user, authLoading, addToast } = useApp();
   const [loading, setLoading] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
 
@@ -302,7 +302,7 @@ export default function PatientDetailPage() {
             </div>
             <div className="space-y-3">
               <button
-                onClick={() => setCurrentPage('analysis')}
+                onClick={() => { if (activeCase) setActiveCase(activeCase); setCurrentPage('analysis'); }}
                 className="w-full p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] hover:bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-all group"
               >
                 <div className="flex items-center gap-3">
