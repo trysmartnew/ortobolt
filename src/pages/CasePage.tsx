@@ -1,4 +1,4 @@
-import { ClinicalEvidenceView } from '@/components/ClinicalEvidenceView';
+﻿import { ClinicalEvidenceView } from '@/components/ClinicalEvidenceView';
 import { useCaseRealtime } from '@/hooks/useCaseRealtime';
 import { RadiographViewer } from '@/components/radiographs/RadiographViewer';
 // src/pages/CasePage.tsx
@@ -6,7 +6,7 @@ import { RadiographViewer } from '@/components/radiographs/RadiographViewer';
 import { useState, useMemo, useRef, useEffect, useCallback, memo } from 'react';
 import CaseAnalysisTab from '@/components/CaseAnalysisTab';
 import { useAnalysis } from '@/contexts/AnalysisContext';
-import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity, GitCompare, LineChart, Ruler as RulerIcon } from 'lucide-react';
+import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity, GitCompare, LineChart, Ruler as RulerIcon, Images } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { uploadCaseImage } from '@/services/supabase';
 import { uploadImageToStorage } from '@/services/imageService';
@@ -795,6 +795,37 @@ export default function CasePage() {
         </div>
       </Card>
 
+
+      {/* Painel Pós-Aprovação */}
+      {activeCase.status === 'completed' && (
+        <div className="glass-panel-premium rounded-2xl p-5 border border-primary/30 flex flex-col gap-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Check size={18} className="text-primary" />
+            <span className="text-sm font-bold text-white">Caso Concluído</span>
+          </div>
+          <p className="text-xs text-white/60 mb-2">O caso foi aprovado. Selecione a próxima ação:</p>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={handleGoToReports}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/20 hover:bg-primary/30 text-primary text-xs font-semibold transition-all border border-primary/30"
+            >
+              <FileText size={14} /> Gerar Laudo
+            </button>
+            <button
+              onClick={() => setCurrentPage('gallery')}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 text-xs font-semibold transition-all border border-white/10"
+            >
+              <Images size={14} /> Ver Galeria
+            </button>
+            <button
+              onClick={() => setCurrentPage('dashboard')}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 text-xs font-semibold transition-all border border-white/10"
+            >
+              <ArrowLeft size={14} /> Voltar ao Início
+            </button>
+          </div>
+        </div>
+      )}
       {/* ═══════════════════════════════════════════════════════════ */}
       {/* Seção de Análise Visual & Refinamento IA (CopilotClinical)  */}
       {/* Aparece apenas quando há análise vinculada ao caso ativo    */}
