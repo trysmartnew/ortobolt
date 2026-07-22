@@ -1,10 +1,10 @@
-# Vanguard Veterinary
+﻿# Vanguard Veterinary
 
 ## Visão Geral
 
 **Nome do Projeto:** Vanguard Veterinary
 **Propósito Clínico:** Plataforma de ortopedia veterinária de precisão.
-**URL de Produção:** `https://vanguardvet.vercel.app`
+**URL de Produção:** `https://vanguard-veterinary.vercel.app`
 
 ## Stack Técnica
 
@@ -75,7 +75,7 @@ const PAGE_MAP = {
 } as const;
 ```
 
-**Regra `setCurrentPage`:** A função `setCurrentPage` persiste a página atual no `sessionStorage` sob a chave `ortobolt_page` para sobreviver a recarregamentos (F5).
+**Regra `setCurrentPage`:** A função `setCurrentPage` persiste a página atual no `sessionStorage` sob a chave `vanguard-veterinary_page`, para sobreviver a recarregamentos (F5). A chave legada `ortobolt_page` é lida como fallback e removida automaticamente após migração.
 
 ## Páginas do Sistema
 
@@ -154,6 +154,7 @@ const PAGE_MAP = {
     - Input: `42px`
 - **Proibições:** `#0A3D8F`, `#3caea3`, `bg-blue-600`, `bg-slate-50`, `bg-white`
 - **Obrigatório em todo novo componente:** `glass-panel-premium`, `premium-header-bg`
+- **Pendência real de UI:** existem ocorrências legadas de `bg-white` e `bg-slate-50` em páginas públicas/auth/chat; novos componentes devem seguir os tokens premium e evitar classes claras.
 
 ## Pipeline de Pré-Commit
 
@@ -161,7 +162,7 @@ A ordem de execução do pipeline de pré-commit é inviolável para garantir a 
 
 1.  **`tsc --noEmit`**: Garante que o código TypeScript não possui erros de tipo.
 2.  **`npm run build`**: Compila o projeto para produção, verificando possíveis erros de build.
-3.  **`git add README.md`**: Adiciona o arquivo `README.md` ao staging area para commit.
+3.  **`git add [arquivos específicos]`**: Stage apenas dos arquivos validados (nunca `git add .` ou `git add -A`).
 4.  **`git commit -m "docs: update README with current project state, navigation map and known gaps"`**: Confirma as alterações com uma mensagem padronizada.
 5.  **`git push`**: Envia as alterações para o repositório remoto.
 
@@ -182,4 +183,11 @@ A ordem de execução do pipeline de pré-commit é inviolável para garantir a 
 ## Gaps & Pendências Conhecidas:
 
 - Rota `profile` órfã (enum sem componente no `PAGE_MAP`)
-- `ComparativeAnalysisPage` sem saída de navegação (botão de 
+- `ComparativeAnalysisPage` sem saída de navegação (botão de
+
+## Pendências de Auditoria (estado real)
+
+- A chave de página foi migrada para `vanguard-veterinary_page`, com fallback legado `ortobolt_page`.
+- Outras chaves legadas `ortobolt_*` ainda existem em funcionalidades específicas e devem ser migradas gradualmente.
+- Existem componentes/páginas com classes claras legadas (`bg-white`, `bg-slate-50`); novos componentes devem usar `glass-panel-premium` e `premium-header-bg`.
+- O branding interno ainda referencia `OrtoBolt` em arquivos legados, enquanto o nome público atual é `Vanguard Veterinary`.
