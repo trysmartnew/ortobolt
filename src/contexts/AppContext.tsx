@@ -1,4 +1,4 @@
-// src/contexts/AppContext.tsx
+﻿// src/contexts/AppContext.tsx
 // ✅ C-02: Rate limiting — 5 tentativas → bloqueio 15 min
 // ✅ A-05: useMemo para unreadCount
 // ✅ U-02: Sistema de Toast global
@@ -43,7 +43,7 @@ import { setAiConsentFromProfile } from '@/services/aiConsent';
 
 export type Page =
   | 'dashboard' | 'chat' | 'analysis' | 'gallery'
-  | 'case' | 'profile' | 'reports' | 'settings' | 'notifications'
+  | 'case' | 'reports' | 'settings' | 'notifications'
   | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'comparative' | 'help';
 
 export type AppView = 'home' | 'login' | 'register' | 'app' | 'reset';

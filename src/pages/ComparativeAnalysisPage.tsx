@@ -1,4 +1,4 @@
-// src/pages/ComparativeAnalysisPage.tsx
+﻿// src/pages/ComparativeAnalysisPage.tsx
 import React, { Suspense, lazy } from 'react';
 import { SectionHeader, Card, EmptyState } from '@/components/ui';
 import { useApp } from '@/contexts/AppContext';
@@ -8,10 +8,10 @@ import { PRIMARY_MODEL } from '@/services/aiService';
 import type { ClinicalCase, CaseExam } from '@/types';
 
 const PrePostComparison = lazy(() => import('@/components/analysis/PrePostComparison'));
-import { User } from 'lucide-react';
+import { User, ArrowLeft } from 'lucide-react';
 
 export default function ComparativeAnalysisPage() {
-  const { user, approveAndIntegrateCase, addToast, activeCase } = useApp();
+  const { user, approveAndIntegrateCase, addToast, activeCase, setCurrentPage } = useApp();
   const { addAnalysisToHistory } = useAnalysis();
 
   if (!activeCase) {
@@ -99,12 +99,21 @@ export default function ComparativeAnalysisPage() {
       <Card className="p-6">
         <Suspense fallback={
           <div className="flex items-center justify-center p-12">
-            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
           </div>
         }>
           <PrePostComparison onSaveCase={handleSaveComparisonCase} />
         </Suspense>
       </Card>
+      {/* Navegação de Saída */}
+      <div className="flex justify-start pt-2">
+        <button
+          onClick={() => setCurrentPage('gallery')}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 text-xs font-semibold transition-all border border-white/10"
+        >
+          <ArrowLeft size={14} /> Voltar à Galeria
+        </button>
+      </div>
     </div>
   );
 }
