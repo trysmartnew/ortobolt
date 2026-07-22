@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import {
     Stethoscope,
     GitCompare,
@@ -21,8 +21,8 @@ const ANALYSIS_TYPES = [
         description: 'Laudo e identificação inicial',
         page: 'analysis' as const,
         icon: Stethoscope,
-        color: 'from-blue-500 to-blue-600',
-        hoverColor: 'hover:border-blue-400',
+        color: 'from-teal-500 to-teal-600',
+        hoverColor: 'hover:border-teal-400',
         accentColor: '#00A36C', // Verde Jade para glow
     },
     {
@@ -45,7 +45,16 @@ const ANALYSIS_TYPES = [
         hoverColor: 'hover:border-green-400',
         accentColor: '#00A36C',
     },
-    
+    {
+        id: 'clinical',
+        label: 'Clínica',
+        description: 'Correlação com sintomas',
+        page: 'analysis' as const,
+        icon: Activity,
+        color: 'from-orange-500 to-orange-600',
+        hoverColor: 'hover:border-orange-400',
+        accentColor: '#00A36C',
+    },
 ] as const;
 
 /**
@@ -177,18 +186,30 @@ export const AnalysisQuickSelectModal = memo<AnalysisQuickSelectModalProps>(
          * Handler de seleção memoizado com useCallback
          * Mantém referência consistente se dependências não mudarem
          */
-const handleSelect = useCallback(
+        const handleSelect = useCallback(
             (item: typeof ANALYSIS_TYPES[number]) => {
+                onClose(); // Fecha modal
                 if (item.id === 'comparative') {
                     setAnalysisMode('compare');
+                    setCurrentPage(item.page);
+                } else if (item.id === 'clinical') {
+                    setAnalysisMode('analysis');
+                    // Injeta uma flag temporária no sessionStorage para sinalizar à página o modo clínico
+                    sessionStorage.setItem('ortobolt_pending_clinical_trigger', 'true');
+                    setCurrentPage(item.page);
                 } else {
                     setAnalysisMode('analysis');
+                    setCurrentPage(item.page);
                 }
-                setCurrentPage(item.page);
-                onClose();
             },
             [setCurrentPage, setAnalysisMode, onClose]
         );
+
+        useEffect(() => {
+          const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+          document.addEventListener('keydown', onKey);
+          return () => document.removeEventListener('keydown', onKey);
+        }, [onClose]);
 
         // Evita render do portal se modal está fechado
         if (!isOpen) return null;
@@ -218,7 +239,7 @@ const handleSelect = useCallback(
                     <div
                         className="
               pointer-events-auto
-              bg-gradient-to-b from-[#001941] to-[#0A2E5C]
+              glass-panel-premium
               border border-[#00A36C]/20
               rounded-2xl
               shadow-2xl shadow-[#00A36C]/10
@@ -227,11 +248,14 @@ const handleSelect = useCallback(
               animate-scale-in
             "
                         onClick={(e) => e.stopPropagation()}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="analysis-quick-select-title"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center justify-between mb-8 premium-header-bg rounded-xl p-4">
                             <div>
-                                <h2 className="text-2xl font-bold text-white">
+                                <h2 id="analysis-quick-select-title" className="text-2xl font-bold text-white">
                                     Selecionar Análise
                                 </h2>
                                 <p className="text-sm text-stone-400 mt-1">
