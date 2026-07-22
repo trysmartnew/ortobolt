@@ -1,4 +1,4 @@
-// src/pages/HelpPage.tsx
+﻿// src/pages/HelpPage.tsx
 import React, { useState } from 'react';
 import { BookOpen, Mail, ChevronDown, ChevronUp, FileText, Stethoscope, Monitor, Brain, BarChart3, Settings } from 'lucide-react';
 import { Card, Button, SectionHeader, Badge } from '@/components/ui';
@@ -98,7 +98,7 @@ export default function HelpPage() {
           <div>
             <p className="text-sm font-semibold text-white">Equipe Vanguard Veterinary</p>
             <p className="text-sm text-slate-400 mt-1">Suporte especializado em ortopedia veterinária e análise de imagem.</p>
-            <p className="text-sm text-slate-400 mt-2 font-mono">suporte@ortobolt.com.br</p>
+            <a href="https://github.com/trysmartnew/ortobolt/issues" target="_blank" rel="noopener noreferrer" aria-label="Abrir suporte da Vanguard Veterinary" title="Abrir central de suporte no GitHub" className="text-sm text-primary mt-2 font-mono hover:underline">Suporte Vanguard Veterinary</a>
           </div>
           <Button variant="primary" size="sm" className="flex items-center gap-2">
             <Mail size={14} />
