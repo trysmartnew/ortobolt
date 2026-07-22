@@ -1,4 +1,4 @@
-// src/pages/SettingsPage.tsx
+﻿// src/pages/SettingsPage.tsx
 import React, { useState, useEffect } from 'react';
 import { Bell, Globe, Brain, FileText, Download, Check, Crown } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
@@ -149,7 +149,7 @@ export default function SettingsPage() {
       {loading ? (
         <div className="p-6 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent)]" />
-          <p className="ml-3 text-sm text-slate-300">Carregando preferências...</p>
+          <p className="ml-3 text-sm text-white/40">Carregando preferências...</p>
         </div>
       ) : (
         <div className="space-y-4">

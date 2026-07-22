@@ -1,4 +1,4 @@
-// src/pages/ChatPage.tsx
+﻿// src/pages/ChatPage.tsx
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, Trash2, Bot, User, Copy, Check } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
@@ -132,7 +132,7 @@ export default function ChatPage() {
         </div>
         <button
           onClick={() => setChatHistory(h => h.length > 0 ? [h[0]] : h)}
-          className="flex items-center gap-1.5 text-xs text-slate-700 hover:text-error transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
+          className="flex items-center gap-1.5 text-xs text-white/70 hover:text-error transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
         >
           <Trash2 size={13} /> Limpar conversa
         </button>

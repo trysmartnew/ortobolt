@@ -1,4 +1,4 @@
-// src/components/CopilotClinical.tsx
+﻿// src/components/CopilotClinical.tsx
 // ✅ Copiloto Clínico reutilizável — integrado em AnalysisPage e CasePage
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, Send, Copy, Check, RefreshCw } from 'lucide-react';
@@ -232,7 +232,7 @@ export default function CopilotClinical({
            </div>
          )}
 
-        <p className="text-[10px] text-slate-300 font-mono text-center">
+        <p className="text-[10px] text-white/40 font-mono text-center">
           ⚡ Copiloto Clínico · OrthoAI · {PRIMARY_MODEL}
         </p>
       </div>

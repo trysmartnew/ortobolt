@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import type { ClinicalCase } from '@/types';
 import { useApp } from '@/contexts/AppContext';
 import { Upload, X, Columns, Layers, AlertCircle, RefreshCw, Eye, Brain, Save, Download } from 'lucide-react';
@@ -292,7 +292,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 viewMode === 'side'
                   ? 'bg-navy text-white shadow-premium-light'
-                  : 'text-slate-300 hover:text-white'
+                  : 'text-white/40 hover:text-white'
               }`}
             >
               <Columns className="w-3.5 h-3.5" />
@@ -303,7 +303,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 viewMode === 'slider'
                   ? 'bg-navy text-white shadow-premium-light'
-                  : 'text-slate-300 hover:text-white'
+                  : 'text-white/40 hover:text-white'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -359,7 +359,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
               variant="ghost"
               size="sm"
               onClick={clearImages}
-              className="border border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white text-xs gap-1.5"
+              className="border border-slate-700 text-white/40 hover:bg-slate-800 hover:text-white text-xs gap-1.5"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               Limpar Painel
@@ -435,7 +435,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                   >
                     <X className="w-4 h-4" />
                   </button>
-                  <div className="absolute bottom-3 left-3 bg-slate-950/85 border border-slate-800 px-2.5 py-1 rounded text-[10px] font-mono tracking-wider text-slate-300">
+                  <div className="absolute bottom-3 left-3 bg-slate-950/85 border border-slate-800 px-2.5 py-1 rounded text-[10px] font-mono tracking-wider text-white/40">
                     EXAME INICIAL / PRÉ
                   </div>
                 </>
@@ -444,7 +444,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                   <div className="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center mx-auto mb-3 border border-slate-700/50">
                     <Upload className="w-5 h-5 text-slate-400" />
                   </div>
-                  <p className="text-xs font-medium text-slate-300">Carregar Imagem Base</p>
+                  <p className="text-xs font-medium text-white/40">Carregar Imagem Base</p>
                   <p className="text-[11px] text-menu-muted mt-1">Exame Inicial / Pré-operatório</p>
                 </div>
               )}
@@ -468,7 +468,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                   >
                     <X className="w-4 h-4" />
                   </button>
-                  <div className="absolute bottom-3 left-3 bg-slate-950/85 border border-slate-800 px-2.5 py-1 rounded text-[10px] font-mono tracking-wider text-slate-300">
+                  <div className="absolute bottom-3 left-3 bg-slate-950/85 border border-slate-800 px-2.5 py-1 rounded text-[10px] font-mono tracking-wider text-white/40">
                     EXAME EVOLUTIVO / PÓS
                   </div>
                 </>
@@ -477,7 +477,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                   <div className="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center mx-auto mb-3 border border-slate-700/50">
                     <Upload className="w-5 h-5 text-slate-400" />
                   </div>
-                  <p className="text-xs font-medium text-slate-300">Carregar Imagem Evolutiva</p>
+                  <p className="text-xs font-medium text-white/40">Carregar Imagem Evolutiva</p>
                   <p className="text-[11px] text-menu-muted mt-1">Exame Evolutivo / Pós-operatório</p>
                 </div>
               )}
@@ -496,7 +496,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
               <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-800">
                 <div className="relative aspect-[4/3] bg-slate-950 flex items-center justify-center p-2">
                   <img src={imageBefore} alt="Pré" className="max-w-full max-h-full object-contain" />
-                  <div className="absolute bottom-3 left-3 bg-slate-950/90 px-2.5 py-1 rounded text-[10px] font-semibold text-slate-300 border border-slate-800 uppercase tracking-wider">
+                  <div className="absolute bottom-3 left-3 bg-slate-950/90 px-2.5 py-1 rounded text-[10px] font-semibold text-white/40 border border-slate-800 uppercase tracking-wider">
                     EXAME INICIAL
                   </div>
                 </div>

@@ -160,7 +160,7 @@ export default function PatientDetailPage() {
     return (
       <div className="p-6">
         <EmptyState
-          icon={<UserRound size={48} className="text-slate-300" />}
+          icon={<UserRound size={48} className="text-white/40" />}
           title="Nenhum paciente selecionado"
           description="Abra um caso clínico para visualizar o prontuário completo."
         />
@@ -193,7 +193,7 @@ export default function PatientDetailPage() {
           <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             Prontuário: {currentPatient.patientName}
           </h1>
-          <p className="text-sm text-slate-700">
+          <p className="text-sm text-white/70">
             {SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}
           </p>
         </div>
@@ -214,7 +214,7 @@ export default function PatientDetailPage() {
                 <h2 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                   {currentPatient.patientName}
                 </h2>
-                <p className="text-sm text-slate-700">
+                <p className="text-sm text-white/70">
                   {SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}
                 </p>
                 <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-600">
@@ -242,7 +242,7 @@ export default function PatientDetailPage() {
 
             {patientCases.length === 0 ? (
               <EmptyState
-                icon={<Activity size={48} className="text-slate-300" />}
+                icon={<Activity size={48} className="text-white/40" />}
                 title="Sem histórico clínico"
                 description="Este paciente ainda não possui registros de evolução."
               />
@@ -359,7 +359,7 @@ export default function PatientDetailPage() {
               <div className="space-y-2">
                 {labs.slice(0, 5).map((lab) => (
                   <div key={lab.id} className="text-xs">
-                    <p className="font-semibold text-slate-700">{lab.name}</p>
+                    <p className="font-semibold text-white/70">{lab.name}</p>
                     <p className="text-slate-600">{formatShortDate(lab.date)} · {lab.result}</p>
                   </div>
                 ))}

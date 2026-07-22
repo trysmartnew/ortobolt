@@ -1,4 +1,4 @@
-// src/pages/AnalysisPage.tsx
+﻿// src/pages/AnalysisPage.tsx
 // Upload → Análise → Copiloto → Aprovar Caso Completo → pipeline integrado
 
 import React, { useState, useRef, useMemo, useEffect } from 'react';
@@ -232,7 +232,7 @@ export default function AnalysisPage() {
         );
       if (line.startsWith('- ') || line.startsWith('• '))
         return (
-          <li key={i} className="ml-4 text-sm text-slate-700 list-disc">
+          <li key={i} className="ml-4 text-sm text-white/70 list-disc">
             {line.slice(2)}
           </li>
         );
@@ -243,7 +243,7 @@ export default function AnalysisPage() {
           </h3>
         );
       if (line === '') return <br key={i} />;
-      return <p key={i} className="text-sm text-slate-700" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(line) }} />;
+      return <p key={i} className="text-sm text-white/70" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(line) }} />;
     });
 
   return (
@@ -252,7 +252,7 @@ export default function AnalysisPage() {
         title="Análise Visual"
         subtitle="Análise Avançada · Sistema de Suporte"
         titleClassName="text-2xl font-semibold text-white"
-        subtitleClassName="text-slate-300 text-sm"
+        subtitleClassName="text-white/40 text-sm"
       />
 
       {/* Segmented Control - Modo de Análise */}
@@ -303,7 +303,7 @@ export default function AnalysisPage() {
                     ].map(([step, label]) => (
                       <div key={step} className="flex gap-2">
                         <span className="font-mono text-primary font-bold">{step}</span>
-                        <span className="text-slate-700">{label}</span>
+                        <span className="text-white/70">{label}</span>
                       </div>
                     ))}
                   </div>
@@ -312,7 +312,7 @@ export default function AnalysisPage() {
                   {mode === 'analyzing' ? (
                     <div className="flex items-center justify-center gap-3 py-4">
                       <Spinner />
-                      <p className="text-sm font-semibold text-slate-700">Analisando imagem...</p>
+                      <p className="text-sm font-semibold text-white/70">Analisando imagem...</p>
                     </div>
                   ) : (
                     <Button className="w-full" size="lg" onClick={analyze}>
@@ -362,12 +362,12 @@ export default function AnalysisPage() {
                 {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 || aiGeneratedMarkings.angles.length > 0) && (
                   <div className="mt-3 pt-3 border-t border-slate-700/60 space-y-1 text-xs">
                     {aiGeneratedMarkings.circles.map((c) => (
-                      <div key={c.id} className="text-slate-300">
+                      <div key={c.id} className="text-white/40">
                         <span className="font-semibold text-slate-100">{c.label || 'Círculo'}</span> — {c.stage === 'abnormal' ? '⚠️ Anormal' : '✓ Normal'}
                       </div>
                     ))}
                     {aiGeneratedMarkings.angles.map((a) => (
-                      <div key={a.id} className="text-slate-300">
+                      <div key={a.id} className="text-white/40">
                         <span className="font-semibold text-slate-100">Ângulo {a.type}:</span> {a.value.toFixed(1)}°
                       </div>
                     ))}

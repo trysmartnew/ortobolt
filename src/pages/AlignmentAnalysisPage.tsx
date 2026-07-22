@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { ArrowLeft, User, PawPrint, Ruler, Weight, Activity, Calendar, FileText } from 'lucide-react';
@@ -204,7 +204,7 @@ export default function AlignmentAnalysisPage() {
     return (
       <div className="p-6">
         <EmptyState
-          icon={<Activity size={48} className="text-slate-300" />}
+          icon={<Activity size={48} className="text-white/40" />}
           title="Nenhum caso disponível"
           description="Cadastre casos na Análise de Imagens para visualizar o alinhamento biomecânico."
         />
@@ -226,7 +226,7 @@ export default function AlignmentAnalysisPage() {
       {/* Header do Paciente */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <button type="button" onClick={handleBack} className="px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-slate-700 hover:text-[var(--color-accent)] transition-colors">
+          <button type="button" onClick={handleBack} className="px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-white/70 hover:text-[var(--color-accent)] transition-colors">
             <ArrowLeft size={14} className="inline mr-1" /> Voltar ao Prontuário
           </button>
           <div className="flex items-center gap-3">
@@ -255,11 +255,11 @@ export default function AlignmentAnalysisPage() {
         {/* Coluna ESQUERDA: Exames e Pontos de Referência */}
         <div className="lg:col-span-5 space-y-4">
           <Card className="p-4">
-            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Exames e Pontos de Referência</h3>
+            <h3 className="text-xs font-bold text-white/70 uppercase tracking-wider mb-3">Exames e Pontos de Referência</h3>
             <div className="space-y-3">
               {selectedImages.length === 0 ? (
                 <EmptyState
-                  icon={<Calendar size={32} className="text-slate-300" />}
+                  icon={<Calendar size={32} className="text-white/40" />}
                   title="Sem exames disponíveis"
                   description="Não há imagens registradas para este paciente."
                 />
@@ -317,7 +317,7 @@ export default function AlignmentAnalysisPage() {
 
             {/* Gauge chart real */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-slate-700 mb-2">Variação de Ângulo de Inclinação</p>
+              <p className="text-xs font-semibold text-white/70 mb-2">Variação de Ângulo de Inclinação</p>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
@@ -344,7 +344,7 @@ export default function AlignmentAnalysisPage() {
 
             {/* Bar chart real */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-slate-700 mb-2">Simetria de Comprimento de Membros</p>
+              <p className="text-xs font-semibold text-white/70 mb-2">Simetria de Comprimento de Membros</p>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={symmetryData}>
                   <XAxis dataKey="name" stroke="var(--color-text-secondary)" fontSize={12} />
@@ -366,7 +366,7 @@ export default function AlignmentAnalysisPage() {
 
             {/* Line chart real */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-slate-700 mb-2">Variação de Ângulo de Cobb</p>
+              <p className="text-xs font-semibold text-white/70 mb-2">Variação de Ângulo de Cobb</p>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={cobbAngleData}>
                   <XAxis dataKey="name" stroke="var(--color-text-secondary)" fontSize={12} />

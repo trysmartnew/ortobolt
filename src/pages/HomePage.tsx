@@ -1,4 +1,4 @@
-import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
+﻿import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
 import { useState, useEffect } from 'react';
 import {
   Activity, Brain, FileText, Users, Shield, Zap,
@@ -165,7 +165,7 @@ export default function HomePage() {
         {menuOpen && (
           <div className="md:hidden glass-panel-premium border-t border-slate-100 px-6 py-4 space-y-3">
             {['Funcionalidades', 'Depoimentos', 'Planos'].map(item => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="block text-sm font-medium text-slate-700 py-1" onClick={() => setMenuOpen(false)}>
+              <a key={item} href={`#${item.toLowerCase()}`} className="block text-sm font-medium text-white/70 py-1" onClick={() => setMenuOpen(false)}>
                 {item}
               </a>
             ))}

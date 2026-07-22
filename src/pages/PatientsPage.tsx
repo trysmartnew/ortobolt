@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { Search, Plus, Edit3, Eye, Trash2, Calendar, Activity, Bot } from 'lucide-react';
@@ -169,7 +169,7 @@ export default function PatientsPage() {
       )}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold" style={{ fontFamily: 'Montserrat, sans-serif' }}>Página de Pacientes</h1>
-        <p className="text-sm text-slate-700">Gerencie seus pacientes e acompanhe o histórico clínico.</p>
+        <p className="text-sm text-white/70">Gerencie seus pacientes e acompanhe o histórico clínico.</p>
       </div>
 
       <Card className="glass-panel-premium !text-[var(--color-text-primary)] p-4">
@@ -227,7 +227,7 @@ export default function PatientsPage() {
       <Card className="glass-panel-premium !text-[var(--color-text-primary)] overflow-hidden">
         {filtered.length === 0 ? (
           <EmptyState
-            icon={<Activity size={48} className="text-slate-300" />}
+            icon={<Activity size={48} className="text-white/40" />}
             title="Nenhum paciente encontrado"
             description="Cadastre casos na Análise de Imagens para começar a montar a sua lista de pacientes."
           />

@@ -1,4 +1,4 @@
-// src/pages/DashboardPage.tsx
+﻿// src/pages/DashboardPage.tsx
 // 🏥 Centro de Comando Cirúrgico — Foco em ações operacionais de HOJE
 import { useMemo, memo } from 'react';
 import { useApp } from '@/contexts/AppContext';
@@ -28,12 +28,12 @@ const SurgeryCard = memo(({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className={`text-xs font-mono font-bold ${isDefaultDark ? 'text-slate-400' : 'text-slate-700'}`}>{formatDate(c.createdAt)}</span>
+            <span className={`text-xs font-mono font-bold ${isDefaultDark ? 'text-slate-400' : 'text-white/70'}`}>{formatDate(c.createdAt)}</span>
             {isDone && <CheckCircle2 size={14} className="text-success" />}
             {isNext && !isDone && <Clock size={14} className="text-primary animate-pulse" />}
           </div>
           <p className={`text-sm font-semibold truncate ${isDefaultDark ? 'text-white' : 'text-slate-900'}`}>{c.patientName}</p>
-          <p className={`text-xs capitalize ${isDefaultDark ? 'text-slate-300' : 'text-slate-800'}`}>{c.species} · {c.breed} · {c.weightKg}kg</p>
+          <p className={`text-xs capitalize ${isDefaultDark ? 'text-white/40' : 'text-slate-800'}`}>{c.species} · {c.breed} · {c.weightKg}kg</p>
           <p className="text-xs font-mono text-primary mt-1 uppercase">{c.procedure}</p>
         </div>
         <div className="flex flex-col items-end gap-2 flex-shrink-0">
@@ -54,7 +54,7 @@ function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
         <span className="text-lg">{urgencyIcon}</span>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-white truncate">{c.patientName}</p>
-          <p className="text-xs text-slate-300 capitalize">{c.species} · {c.procedure}</p>
+          <p className="text-xs text-white/40 capitalize">{c.species} · {c.procedure}</p>
           <p className="text-[10px] text-slate-400 mt-0.5">Risco: {c.riskLevel}</p>
         </div>
         <span className="text-xs font-semibold text-primary">Ver →</span>
@@ -150,7 +150,7 @@ export default function DashboardPage() {
                   <div key={i} className="glass-panel-premium rounded-xl p-4 text-center">
                     <m.icon size={18} className="mx-auto mb-2 text-primary" />
                     <p className="text-3xl font-bold text-white">{m.today}</p>
-                    <p className="text-xs text-slate-300">{m.label}</p>
+                    <p className="text-xs text-white/40">{m.label}</p>
                     {typeof m.yesterday === 'number' && (
                       <p className="text-xs text-emerald-600 font-semibold mt-1">
                         {arrow} {Math.abs(diff)}
@@ -188,7 +188,7 @@ export default function DashboardPage() {
               ].map((a, i) => (
                 <div key={i} className="flex items-center gap-2 p-2 rounded-lg glass-panel-premium">
                   <span className="text-lg">{a.icon}</span>
-                  <span className="text-slate-300">{a.text}</span>
+                  <span className="text-white/40">{a.text}</span>
                 </div>
               ))}
             </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { Bot, Send, User, Sparkles, RefreshCw, Copy, Check } from 'lucide-react';
 import type { ChatMessage } from '@/types/index';
 import type { ClinicalContextDraft } from '@/types/clinicalCopilot';
@@ -40,7 +40,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
           {msg.isLoading ? (
             <div className="flex items-center gap-2">
               <Spinner size="sm" />
-              <span className="text-xs text-slate-300">Processando análise...</span>
+              <span className="text-xs text-white/40">Processando análise...</span>
             </div>
           ) : (
             msg.content
@@ -50,7 +50,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
           <button
             type="button"
             onClick={copy}
-            className="text-[10px] text-slate-300 hover:text-primary flex items-center gap-1"
+            className="text-[10px] text-white/40 hover:text-primary flex items-center gap-1"
           >
             {copied ? <Check size={10} className="text-success" /> : <Copy size={10} />}
             Copiar
@@ -102,7 +102,7 @@ export default function ClinicalCopilotPanel({
 
   if (!enabled) {
     return (
-      <div className="rounded-2xl border border-dashed border-white/15 bg-[#0B0F19]/60 p-6 text-center text-sm text-slate-300">
+      <div className="rounded-2xl border border-dashed border-white/15 bg-[#0B0F19]/60 p-6 text-center text-sm text-white/40">
         Conclua a análise visual para ativar o Assistente Clínico contextual.
       </div>
     );
@@ -117,8 +117,8 @@ export default function ClinicalCopilotPanel({
         <div className="flex items-center gap-2">
           <Sparkles size={16} className="text-primary" />
           <div>
-            <p className="text-sm font-bold text-slate-300">Assistente Clínico</p>
-            <p className="text-[10px] text-slate-300 font-mono">
+            <p className="text-sm font-bold text-white/40">Assistente Clínico</p>
+            <p className="text-[10px] text-white/40 font-mono">
               Radiografia + contexto + histórico da sessão
             </p>
           </div>

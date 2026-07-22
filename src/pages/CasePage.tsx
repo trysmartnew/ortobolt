@@ -207,7 +207,7 @@ const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave, s
       <div className="glass-panel-premium rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="p-5 border-b border-white/10 flex items-center justify-between">
           <h3 className="text-lg font-bold text-white flex items-center gap-2"><Edit3 size={18} /> Editar Caso</h3>
-          <button onClick={onClose} className="text-slate-300 hover:text-white"><X size={20} /></button>
+          <button onClick={onClose} className="text-white/40 hover:text-white"><X size={20} /></button>
         </div>
         <div className="p-6 space-y-5">
           <div>
@@ -272,7 +272,7 @@ const TutorGuideModal = memo(function TutorGuideModal({ caseData, protocol, onCl
       <div className="glass-panel-premium rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-5 border-b border-white/10 flex items-center justify-between flex-shrink-0">
           <h3 className="text-lg font-bold text-white flex items-center gap-2"><Printer size={18} /> Orientações para o Tutor</h3>
-          <button onClick={onClose} className="text-slate-300 hover:text-white"><X size={20} /></button>
+          <button onClick={onClose} className="text-white/40 hover:text-white"><X size={20} /></button>
         </div>
         <div className="flex-1 overflow-y-auto p-6">
           <pre className="text-sm font-mono text-menu whitespace-pre-wrap leading-relaxed premium-header-bg glass-panel-premium p-4 rounded-lg border border-white/10">{guide}</pre>
@@ -477,7 +477,7 @@ export default function CasePage() {
     return (
       <div className="p-6 flex items-center justify-center h-full">
         <div className="text-center">
-          <AlertCircle size={40} className="mx-auto mb-3 text-slate-300" />
+          <AlertCircle size={40} className="mx-auto mb-3 text-white/40" />
           <EmptyState icon={<AlertCircle size={40} />} title="Sem Casos" description="Nenhum caso selecionado." />
           <Button onClick={() => setCurrentPage('gallery')} className="mt-4">Ir para Galeria</Button>
         </div>

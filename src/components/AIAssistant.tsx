@@ -1,4 +1,4 @@
-// src/components/AIAssistant.tsx
+﻿// src/components/AIAssistant.tsx
 // 🤖 OrthoAI Copiloto Global — Widget flutuante com diretrizes veterinárias
 import { useState, useRef, useEffect } from 'react';
 import DOMPurify from 'dompurify';
@@ -156,7 +156,7 @@ export default function AIAssistant() {
 
           {messages.length <= 1 && (
             <div className="px-4 py-2 border-t border-slate-100 bg-white flex-shrink-0">
-              <p className="text-[10px] text-slate-700 mb-2 font-semibold uppercase">Ações rápidas:</p>
+              <p className="text-[10px] text-white/70 mb-2 font-semibold uppercase">Ações rápidas:</p>
               <div className="flex flex-wrap gap-1">
                 {quickActions.map((a, i) => (
                   <button

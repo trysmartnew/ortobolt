@@ -18,7 +18,7 @@ export default function ComparativeAnalysisPage() {
     return (
       <div className="p-6 flex items-center justify-center h-full">
         <EmptyState
-          icon={<User size={48} className="text-slate-300" />}
+          icon={<User size={48} className="text-white/40" />}
           title="Nenhum Paciente Ativo"
           description="Por favor, selecione um paciente na galeria antes de iniciar uma análise comparativa."
         />

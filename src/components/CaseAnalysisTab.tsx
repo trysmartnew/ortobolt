@@ -1,4 +1,4 @@
-// src/components/CaseAnalysisTab.tsx
+﻿// src/components/CaseAnalysisTab.tsx
 // ✅ Componente isolado para exibir Análise IA e Copiloto dentro do Caso Clínico
 import React, { memo } from 'react';
 import { useAnalysis } from '@/contexts/AnalysisContext';
@@ -18,7 +18,7 @@ export default memo(function CaseAnalysisTab() {
   if (!analysis) {
     return (
       <div className="p-8 text-center">
-        <Scan className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+        <Scan className="w-12 h-12 text-white/40 mx-auto mb-3" />
         <p className="text-slate-500 text-sm">Nenhuma análise de IA vinculada a este caso.</p>
         <p className="text-xs text-slate-400 mt-2">Vá para a página "Análise Visual" para realizar o exame.</p>
       </div>
@@ -37,7 +37,7 @@ export default memo(function CaseAnalysisTab() {
           alt="Análise" 
           className="w-full rounded-xl border border-slate-100 max-h-64 object-contain bg-slate-50" 
         />
-        <div className="mt-4 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+        <div className="mt-4 text-sm text-white/70 whitespace-pre-wrap leading-relaxed">
           {analysis.analysisResult}
         </div>
         <div className="mt-3 pt-3 border-t border-slate-100 flex justify-between items-center">

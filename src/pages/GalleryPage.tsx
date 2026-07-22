@@ -1,4 +1,4 @@
-// ✅ U-02: addToast no handleAdd — feedback visual ao criar caso
+﻿// ✅ U-02: addToast no handleAdd — feedback visual ao criar caso
 // ✅ D-01: veterinarianId usa user?.id em vez de hardcoded 'vet-001'
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2, Upload } from 'lucide-react';
@@ -46,7 +46,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
           <p className="text-xs font-bold text-white">Análise OrthoVision IA</p>
           {c.aiAnalysis.anatomicalLandmarks.map(l => (
             <div key={l.name} className="flex items-center justify-between text-xs">
-              <span className="text-slate-300">{l.name}</span>
+              <span className="text-white/40">{l.name}</span>
               <span className={`font-mono font-semibold ${l.detected ? 'text-success' : 'text-error'}`}>
                 {l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗'}
               </span>
@@ -58,7 +58,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
               <p className="text-xs font-bold text-white">Recomendações</p>
               <ul className="space-y-1 mt-1">
                 {c.aiAnalysis.recommendations.map((r, i) => (
-                  <li key={i} className="text-xs text-slate-300 flex gap-2">
+                  <li key={i} className="text-xs text-white/40 flex gap-2">
                     <span className="text-primary">›</span> {r}
                   </li>
                 ))}
@@ -71,7 +71,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
       {c.notes && (
         <div className="mt-4 p-3 glass-panel-premium rounded-lg">
           <p className="text-xs font-bold text-white mb-1">Observações</p>
-          <p className="text-xs text-slate-300">{c.notes}</p>
+          <p className="text-xs text-white/40">{c.notes}</p>
         </div>
       )}
 
@@ -461,7 +461,7 @@ export default function GalleryPage() {
                 <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
                   <button
                     onClick={() => setSelected(c)}
-                    className="flex-1 text-xs text-slate-700 hover:text-slate-900 py-1.5 rounded-lg hover:glass-panel-premium transition-colors font-medium"
+                    className="flex-1 text-xs text-white/70 hover:text-slate-900 py-1.5 rounded-lg hover:glass-panel-premium transition-colors font-medium"
                   >
                     Ver detalhes
                   </button>

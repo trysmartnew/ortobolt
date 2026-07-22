@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, Badge, EmptyState, Spinner, SectionHeader } from '@/components/ui';
 import { ArrowLeft, User, PawPrint, Ruler, Weight, Activity, Calendar, FileText } from 'lucide-react';
@@ -183,7 +183,7 @@ export default function EvolutionaryAnalysisPage() {
     return (
       <div className="p-6">
         <EmptyState
-          icon={<Activity size={48} className="text-slate-300" />}
+          icon={<Activity size={48} className="text-white/40" />}
           title="Nenhum caso disponível"
           description="Cadastre casos na Análise de Imagens para visualizar a evolução temporal."
         />
@@ -229,11 +229,11 @@ export default function EvolutionaryAnalysisPage() {
         {/* Coluna ESQUERDA: Exame Anterior */}
         <div className="lg:col-span-3 space-y-4">
           <Card className="p-4">
-            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Exame Anterior</h3>
+            <h3 className="text-xs font-bold text-white/70 uppercase tracking-wider mb-3">Exame Anterior</h3>
             <div className="space-y-3">
               {previousExams.length === 0 ? (
                 <EmptyState
-                  icon={<Calendar size={32} className="text-slate-300" />}
+                  icon={<Calendar size={32} className="text-white/40" />}
                   title="Sem exames anteriores"
                   description="Não há registros anteriores para este paciente."
                 />
@@ -275,7 +275,7 @@ export default function EvolutionaryAnalysisPage() {
 
             {/* Gráfico de barras real */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-slate-700 mb-2">Variação de Densidade Óssea</p>
+              <p className="text-xs font-semibold text-white/70 mb-2">Variação de Densidade Óssea</p>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={boneDensityData}>
                   <XAxis dataKey="name" stroke="var(--color-text-secondary)" fontSize={10} tickLine={false} axisLine={false} />
@@ -300,7 +300,7 @@ export default function EvolutionaryAnalysisPage() {
 
             {/* Gráfico de linha real */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-slate-700 mb-2">Evolução do Espaço Articular</p>
+              <p className="text-xs font-semibold text-white/70 mb-2">Evolução do Espaço Articular</p>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={jointSpaceData}>
                   <XAxis dataKey="name" stroke="var(--color-text-secondary)" fontSize={10} tickLine={false} axisLine={false} />
@@ -330,11 +330,11 @@ export default function EvolutionaryAnalysisPage() {
         {/* Coluna DIREITA: Exame Atual */}
         <div className="lg:col-span-3 space-y-4">
           <Card className="p-4">
-            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Exame Atual</h3>
+            <h3 className="text-xs font-bold text-white/70 uppercase tracking-wider mb-3">Exame Atual</h3>
             <div className="space-y-3">
               {currentExams.length === 0 ? (
                 <EmptyState
-                  icon={<Calendar size={32} className="text-slate-300" />}
+                  icon={<Calendar size={32} className="text-white/40" />}
                   title="Sem exames atuais"
                   description="Não há registros recentes para este paciente."
                 />

@@ -1,4 +1,4 @@
-import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
+﻿import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
 // src/pages/RegisterPage.tsx
 // ✅ U-03: Senha fraca bloqueia envio — score mínimo 2 obrigatório
 // (restante do arquivo mantido igual ao original)
@@ -339,7 +339,7 @@ export default function RegisterPage() {
                   {form.acceptTerms && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
-              <span className="text-sm text-slate-700 leading-relaxed">
+              <span className="text-sm text-white/70 leading-relaxed">
                 Aceito os <span style={{ color: 'var(--color-primary)' }} className="font-semibold">Termos de Uso</span> e a{' '}
                 <span style={{ color: 'var(--color-primary)' }} className="font-semibold">Política de Privacidade</span>
               </span>
@@ -354,7 +354,7 @@ export default function RegisterPage() {
                   {form.acceptAiConsent && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
-              <span className="text-sm text-slate-700 leading-relaxed">
+              <span className="text-sm text-white/70 leading-relaxed">
                 Aceito o envio de <strong>dados clínicos anonimizados</strong> para análise por IA (LGPD Art. 7º).
                 Nomes e identificadores são removidos ou pseudonimizados antes do envio ao provedor de IA.
               </span>
@@ -368,7 +368,7 @@ export default function RegisterPage() {
                   {crmvDeclaration && <svg viewBox="0 0 10 10" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" /></svg>}
                 </div>
               </div>
-              <span className="text-sm text-slate-700 leading-relaxed">
+              <span className="text-sm text-white/70 leading-relaxed">
                 Declaro que possuo registro ativo no CRMV informado.
               </span>
             </label>

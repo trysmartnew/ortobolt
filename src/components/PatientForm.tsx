@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Card, Button, EmptyState, Spinner } from '@/components/ui';
 import { Upload, X, User, UserRound, Phone, Mail, MapPin, FileText, Save, ArrowLeft } from 'lucide-react';
 import { uploadCaseImage } from '@/services/supabase';
@@ -175,7 +175,7 @@ export default function PatientForm({ caseData, onClose }: PatientFormProps) {
     return (
       <div className="p-6">
         <EmptyState
-          icon={<FileText size={48} className="text-slate-300" />}
+          icon={<FileText size={48} className="text-white/40" />}
           title="Selecione um caso"
           description="Abra um caso clínico para editar a ficha cadastral."
         />

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { ArrowLeft, User, PawPrint, Ruler, Activity, Calendar, Image, FileText, ChevronRight, Save } from 'lucide-react';
 import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';
@@ -165,7 +165,7 @@ export default function RadiographGallery({
         </h2>
         {timelineCards.length === 0 ? (
           <EmptyState
-            icon={<Image size={48} className="text-slate-300" />}
+            icon={<Image size={48} className="text-white/40" />}
             title="Sem imagens registradas"
             description="Adicione radiografias ou fotos clínicas para montar a linha do tempo visual."
           />
@@ -193,7 +193,7 @@ export default function RadiographGallery({
         </h2>
 
         <div>
-          <h3 className="text-sm font-semibold text-slate-700 mb-3">Radiografias (RX)</h3>
+          <h3 className="text-sm font-semibold text-white/70 mb-3">Radiografias (RX)</h3>
           {radiographs.length === 0 ? (
             <p className="text-xs text-slate-500">Sem radiografias registradas.</p>
           ) : (
@@ -217,7 +217,7 @@ export default function RadiographGallery({
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-slate-700 mb-3">Tomografia Computadorizada (TC)</h3>
+          <h3 className="text-sm font-semibold text-white/70 mb-3">Tomografia Computadorizada (TC)</h3>
           {ctScans.length === 0 ? (
             <p className="text-xs text-slate-500">Sem tomografias registradas.</p>
           ) : (
@@ -247,7 +247,7 @@ export default function RadiographGallery({
         </h2>
         {historyItems.length === 0 ? (
           <EmptyState
-            icon={<FileText size={48} className="text-slate-300" />}
+            icon={<FileText size={48} className="text-white/40" />}
             title="Sem histórico visual"
             description="Registros clínicos com imagens aparecerão aqui."
           />

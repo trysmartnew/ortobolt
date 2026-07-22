@@ -1,4 +1,4 @@
-// src/pages/ReportsPage.tsx
+﻿// src/pages/ReportsPage.tsx
 // ✅ Produção Real — Dados do Supabase (SEM MOCKS)
 // ✅ RESTAURADO: Personalização de Laudos + Modal de Seleção de Caso
 import { useState, useEffect, useMemo } from 'react';
@@ -566,7 +566,7 @@ export default function ReportsPage() {
             </div>
 
             <div className="mb-4">
-              <p className="text-xs font-semibold text-slate-700 mb-2">Evolução Temporal dos últimos 7 meses</p>
+              <p className="text-xs font-semibold text-white/70 mb-2">Evolução Temporal dos últimos 7 meses</p>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={monthlyData}>
                   <XAxis dataKey="name" stroke="var(--color-text-secondary)" fontSize={12} />

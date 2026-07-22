@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { Bell, AlertTriangle, CheckCircle, Info, AlertCircle, Check, X, Download, Eye } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
@@ -61,7 +61,7 @@ function NotifRow({ n, onRead, cases, onViewCase, onIgnore, onViewReport, onDown
       </button>
     );
     actions.push(
-      <button key="ignore" onClick={() => onIgnore(n.id)} className="text-[10px] text-slate-700 font-semibold hover:underline flex items-center gap-1">
+      <button key="ignore" onClick={() => onIgnore(n.id)} className="text-[10px] text-white/70 font-semibold hover:underline flex items-center gap-1">
         <X size={9} /> Ignorar
       </button>
     );
@@ -255,7 +255,7 @@ export default function NotificationsPage() {
         <>
           {unread.length > 0 && (
             <div data-tour="tour-unread-notifications" className="space-y-3">
-              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">Não lidas</p>
+              <p className="text-xs font-bold text-white/70 uppercase tracking-wider">Não lidas</p>
               {unread.map(n => (
                 <NotifRow
                   key={n.id}
@@ -274,7 +274,7 @@ export default function NotificationsPage() {
           )}
           {read.length > 0 && (
             <div className="space-y-3">
-              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider mt-2">Anteriores</p>
+              <p className="text-xs font-bold text-white/70 uppercase tracking-wider mt-2">Anteriores</p>
               {read.map(n => (
                 <NotifRow
                   key={n.id}
