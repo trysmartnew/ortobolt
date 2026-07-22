@@ -39,7 +39,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [prefs, setPrefs] = useState(() => {
     try {
-      const s = localStorage.getItem('ortobolt_prefs');
+      const s = localStorage.getItem('vanguard-veterinary_prefs');
       if (s) return JSON.parse(s);
     } catch { }
     return { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' };
@@ -67,7 +67,7 @@ export default function SettingsPage() {
   const handleSaveSettings = async () => {
     setSaving(true);
     try {
-      localStorage.setItem('ortobolt_prefs', JSON.stringify(prefs));
+      localStorage.setItem('vanguard-veterinary_prefs', JSON.stringify(prefs));
       if (user?.id) {
         await supabase.from('profiles').update({ preferences: prefs }).eq('id', user.id);
       }
@@ -125,7 +125,7 @@ export default function SettingsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ortobolt-data-export-${user.id}-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `vanguard-veterinary-data-export-${user.id}-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);

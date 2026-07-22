@@ -262,7 +262,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           setAiConsentFromProfile(profile.preferences?.autoAnalysis);
           setProfileSyncStatus('done');
           addToast(`Bem-vindo(a), ${profile.name.split(' ')[0]}!`, 'success');
-          const hasSeenTour = localStorage.getItem(`ortobolt_tour_v1_${profile.id}`);
+          const hasSeenTour = localStorage.getItem(`vanguard-veterinary_tour_v1_${profile.id}`);
           if (!hasSeenTour) {
             setTimeout(() => setTourActive(true), 600);
           }
@@ -388,7 +388,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     setLoginAttempts(0);
     setLockedUntil(null);
-    sessionStorage.setItem('ortobolt_remember_me', rememberMe ? '1' : '0');
+    sessionStorage.setItem('vanguard-veterinary_remember_me', rememberMe ? '1' : '0');
 
     // ✅ FASE 1: Autenticação (bloqueante) — rápida
     // Criar perfil mínimo in-memory com email extraído do JWT
@@ -478,7 +478,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setAiConsentFromProfile(profile.preferences?.autoAnalysis);
       setIsLoggedIn(true);
       setCurrentView((prev) => prev === 'reset' ? 'reset' : 'app');
-      const hasSeenTourSession = localStorage.getItem(`ortobolt_tour_v1_${profile.id}`);
+      const hasSeenTourSession = localStorage.getItem(`vanguard-veterinary_tour_v1_${profile.id}`);
       if (!hasSeenTourSession) {
         setTimeout(() => setTourActive(true), 600);
       }
@@ -493,13 +493,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const openCase = useCallback((c: ClinicalCase) => {
     setActiveCase(c);
-    sessionStorage.setItem('ortobolt_active_case_id', c.id);
+    sessionStorage.setItem('vanguard-veterinary_active_case_id', c.id);
     setCurrentPage('case');
   }, []);
 
   const closeCase = useCallback(() => {
     setActiveCase(null);
-    sessionStorage.removeItem('ortobolt_active_case_id');
+    sessionStorage.removeItem('vanguard-veterinary_active_case_id');
     setCurrentPage('gallery');
   }, []);
 
@@ -637,7 +637,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setTourActive(false);
     setTourForceShow(false);
     if (user?.id) {
-      localStorage.setItem(`ortobolt_tour_v1_${user.id}`, '1');
+      localStorage.setItem(`vanguard-veterinary_tour_v1_${user.id}`, '1');
     }
   }, [user]);
 

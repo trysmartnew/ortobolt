@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Consentimento IA — cache leve (30s) para evitar leituras repetidas de storage.
  */
 
@@ -29,7 +29,7 @@ export function isAiConsentGranted(): boolean {
   let allowed = profileFallback ?? true;
 
   try {
-    const raw = localStorage.getItem('ortobolt_prefs');
+    const raw = localStorage.getItem('vanguard-veterinary_prefs');
     if (raw) {
       const prefs = JSON.parse(raw) as { autoAnalysis?: boolean };
       if (typeof prefs.autoAnalysis === 'boolean') {

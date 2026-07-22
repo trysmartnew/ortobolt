@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   AIAnalysisResult,
   AnatomicalLandmark,
   ClinicalCase,
@@ -13,8 +13,8 @@ import { PIPELINE_TAG_ANALYSIS, PIPELINE_TAG_INTEGRATED } from '@/types/casePipe
 import { ApproveCompleteCaseInputSchema } from '@/schemas/casePipeline';
 import { deriveClinicalEvidence } from './clinicalEngine';
 
-const AI_STORAGE_PREFIX = 'ortobolt-case-ai-';
-const LAST_INTEGRATED_KEY = 'ortobolt-last-integrated-case';
+const AI_STORAGE_PREFIX = 'vanguard-veterinary-case-ai-';
+const LAST_INTEGRATED_KEY = 'vanguard-veterinary-last-integrated-case';
 
 export function persistCaseAiAnalysis(
   caseId: string,

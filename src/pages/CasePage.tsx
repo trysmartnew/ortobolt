@@ -295,11 +295,11 @@ export default function CasePage() {
 
   useEffect(() => {
     try {
-      const raw = sessionStorage.getItem('ortobolt_ai_markings');
+      const raw = sessionStorage.getItem('vanguard-veterinary_ai_markings');
       if (raw) {
         const parsed = JSON.parse(raw) as MarkingsData;
         setAiMarkingsFromSession(parsed);
-        sessionStorage.removeItem('ortobolt_ai_markings');
+        sessionStorage.removeItem('vanguard-veterinary_ai_markings');
       }
     } catch {
       setAiMarkingsFromSession(null);
@@ -486,7 +486,7 @@ export default function CasePage() {
   }
 
   const protocol = POST_OP_PROTOCOLS[activeCase.procedure] || POST_OP_PROTOCOLS.other;
-  const completedKey = `ortobolt-checklist-${activeCase.id}`;
+  const completedKey = `vanguard-veterinary-checklist-${activeCase.id}`;
   const completedSteps: string[] = (() => {
     try { return JSON.parse(localStorage.getItem(completedKey) || '[]'); } catch { return []; }
   })();

@@ -72,9 +72,9 @@ export default function ReportsPage() {
   }, [cases]);
 
   // ── Personalização de Laudos (Logo e Cabeçalho) ──
-  const [clinicName, setClinicName] = useState(localStorage.getItem('ortobolt_pdf_clinic_name') || 'Vanguard Veterinary');
-  const [clinicSubtitle, setClinicSubtitle] = useState(localStorage.getItem('ortobolt_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente');
-  const [logoPreview, setLogoPreview] = useState<string | null>(localStorage.getItem('ortobolt_pdf_logo'));
+  const [clinicName, setClinicName] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary');
+  const [clinicSubtitle, setClinicSubtitle] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente');
+  const [logoPreview, setLogoPreview] = useState<string | null>(localStorage.getItem('vanguard-veterinary_pdf_logo'));
   const [tutorMode, setTutorMode] = useState(false);
 
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -110,8 +110,8 @@ export default function ReportsPage() {
   };
 
   const handleSavePrefs = () => {
-    localStorage.setItem('ortobolt_pdf_clinic_name', clinicName);
-    localStorage.setItem('ortobolt_pdf_clinic_subtitle', clinicSubtitle);
+    localStorage.setItem('vanguard-veterinary_pdf_clinic_name', clinicName);
+    localStorage.setItem('vanguard-veterinary_pdf_clinic_subtitle', clinicSubtitle);
     // O toast já existe, não precisa adicionar outro.
     addToast('Preferências de Laudo salvas.', 'success');
   };
@@ -139,7 +139,7 @@ export default function ReportsPage() {
       reader.onloadend = () => {
         const base64String = reader.result as string;
         setLogoPreview(base64String);
-        localStorage.setItem('ortobolt_pdf_logo', base64String);
+        localStorage.setItem('vanguard-veterinary_pdf_logo', base64String);
         addToast('Logo salvo localmente com sucesso.', 'success');
       };
       reader.onerror = () => {
@@ -154,7 +154,7 @@ export default function ReportsPage() {
 
   const handleRemoveLogo = () => {
     setLogoPreview(null);
-    localStorage.removeItem('ortobolt_pdf_logo');
+    localStorage.removeItem('vanguard-veterinary_pdf_logo');
     addToast('Logo removida.', 'info');
   };
 

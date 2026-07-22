@@ -1,4 +1,4 @@
-// src/services/pdfService.ts
+﻿// src/services/pdfService.ts
 // ✅ A-03: addWrappedText helper — elimina overflow silencioso
 // ✅ A-03: safe() — sanitiza conteúdo da IA antes de inserir no PDF
 
@@ -63,9 +63,9 @@ async function addHeader(
   subtitle: string,
   options?: { logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string }
 ) {
-  const clinicName = options?.clinicName || localStorage.getItem('ortobolt_pdf_clinic_name') || 'Vanguard Veterinary';
-  const clinicSubtitle = options?.clinicSubtitle || localStorage.getItem('ortobolt_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente';
-  const logoUrl = options?.logoUrl || localStorage.getItem('ortobolt_pdf_logo');
+  const clinicName = options?.clinicName || localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary';
+  const clinicSubtitle = options?.clinicSubtitle || localStorage.getItem('vanguard-veterinary_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente';
+  const logoUrl = options?.logoUrl || localStorage.getItem('vanguard-veterinary_pdf_logo');
 
   doc.setFillColor(0, 86, 179);
   doc.rect(0, 0, 210, 22, 'F');
@@ -119,7 +119,7 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.setFont('helvetica', 'normal');
-    const clinicNameF = localStorage.getItem('ortobolt_pdf_clinic_name') || 'REABLITAVET';
+    const clinicNameF = localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'REABLITAVET';
     doc.text(safe(clinicNameF) + ' — Ortopedia Veterinária', 14, 290, { charSpace: 0 });
     doc.text(`Página ${i} de ${pageCount}`, 185, 290, { align: 'right', charSpace: 0 });
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 290, { align: 'center', charSpace: 0 });
@@ -201,7 +201,7 @@ export async function generateMonthlyReport(
   });
 
   addFooter(doc);
-  doc.save(`ortobolt-relatorio-${new Date().toISOString().slice(0, 7)}.pdf`);
+  doc.save(`vanguard-veterinary-relatorio-${new Date().toISOString().slice(0, 7)}.pdf`);
 }
 
 export async function generateCaseReport(
@@ -314,5 +314,5 @@ export async function generateCaseReport(
   }
 
   addFooter(doc);
-  doc.save(`ortobolt-caso-${safe(c.id)}-${safe(c.patientName).toLowerCase().replace(/\s+/g, '-')}.pdf`);
+  doc.save(`vanguard-veterinary-caso-${safe(c.id)}-${safe(c.patientName).toLowerCase().replace(/\s+/g, '-')}.pdf`);
 }

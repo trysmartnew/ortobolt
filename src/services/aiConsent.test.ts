@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+﻿import { describe, it, expect, beforeEach } from 'vitest';
 import {
   isAiConsentGranted,
   invalidateAiConsentCache,
@@ -17,22 +17,22 @@ describe('aiConsent', () => {
   });
 
   it('bloqueia quando autoAnalysis=false no localStorage', () => {
-    localStorage.setItem('ortobolt_prefs', JSON.stringify({ autoAnalysis: false }));
+    localStorage.setItem('vanguard-veterinary_prefs', JSON.stringify({ autoAnalysis: false }));
     invalidateAiConsentCache();
     expect(isAiConsentGranted()).toBe(false);
   });
 
   it('memoiza resultado por 30s', () => {
-    localStorage.setItem('ortobolt_prefs', JSON.stringify({ autoAnalysis: true }));
+    localStorage.setItem('vanguard-veterinary_prefs', JSON.stringify({ autoAnalysis: true }));
     expect(isAiConsentGranted()).toBe(true);
-    localStorage.setItem('ortobolt_prefs', JSON.stringify({ autoAnalysis: false }));
+    localStorage.setItem('vanguard-veterinary_prefs', JSON.stringify({ autoAnalysis: false }));
     expect(isAiConsentGranted()).toBe(true);
   });
 
   it('invalida cache ao chamar invalidateAiConsentCache', () => {
-    localStorage.setItem('ortobolt_prefs', JSON.stringify({ autoAnalysis: true }));
+    localStorage.setItem('vanguard-veterinary_prefs', JSON.stringify({ autoAnalysis: true }));
     isAiConsentGranted();
-    localStorage.setItem('ortobolt_prefs', JSON.stringify({ autoAnalysis: false }));
+    localStorage.setItem('vanguard-veterinary_prefs', JSON.stringify({ autoAnalysis: false }));
     invalidateAiConsentCache();
     expect(isAiConsentGranted()).toBe(false);
   });

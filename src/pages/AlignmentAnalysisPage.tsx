@@ -180,7 +180,7 @@ export default function AlignmentAnalysisPage() {
         selectedImages,
         patientCases,
       };
-      sessionStorage.setItem('ortobolt_alignment_report', JSON.stringify(reportData));
+      sessionStorage.setItem('vanguard-veterinary_alignment_report', JSON.stringify(reportData));
     } catch {
       console.warn('Falha ao serializar relatório de alinhamento.');
     }

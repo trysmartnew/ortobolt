@@ -1,4 +1,4 @@
-// src/services/supabase.ts
+﻿// src/services/supabase.ts
 // ✅ C-03: select('*') substituído por lista explícita de campos
 // ✅ C-03: Tipagem (c: any) em certifications substituída por interface explícita
 // ✅ Segurança: URLs assinadas com expiração de 24h para imagens médicas
@@ -46,7 +46,7 @@ export async function getSupabaseAccessToken(): Promise<string | null> {
 // Captura PASSWORD_RECOVERY antes do React montar
 supabase.auth.onAuthStateChange((event) => {
   if (event === 'PASSWORD_RECOVERY') {
-    sessionStorage.setItem('ortobolt_recovery_pending', '1');
+    sessionStorage.setItem('vanguard-veterinary_recovery_pending', '1');
   }
 });
 

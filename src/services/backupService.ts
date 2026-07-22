@@ -1,4 +1,4 @@
-// src/services/backupService.ts
+﻿// src/services/backupService.ts
 import { supabase } from './supabase';
 import type { User, ClinicalCase, CaseExam } from '@/types/index';
 
@@ -74,7 +74,7 @@ export async function exportUserData(userId: string): Promise<void> {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `ortobolt-backup-${new Date().toISOString().split('T')[0]}.json`;
+  a.download = `vanguard-veterinary-backup-${new Date().toISOString().split('T')[0]}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
