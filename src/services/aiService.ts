@@ -1,4 +1,4 @@
-// src/services/aiService.ts
+﻿// src/services/aiService.ts
 // Chave removida do cliente — todas as chamadas vão para /api/ai
 // Anonimização no cliente + servidor; consentimento via aiConsent
 // Modelo: Modelo de IA Avançada (primário) → Modelo Rápido (fallback)
@@ -23,10 +23,10 @@ import {
 } from '@/lib/anonymizeClinical';
 import {
   validarRespostaMedica,
-  ORTOBOLT_STRUCTURED_PROMPT,
+  VANGUARD_STRUCTURED_PROMPT,
   buscarContextoRAG,
   type RespostaOrtopedica,
-} from './ortoboltEngine';
+} from './vanguardEngine';
 import type { MarkingsData, AlignmentCircle, AngleMeasurement, FractureMarker, ROI } from '@/types/markings';
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
@@ -969,8 +969,8 @@ export async function getStructuredOrthopedicAnalysis(
     const contextoRAG = await buscarContextoRAG(descAnon);
     const promptFinal =
       contextoRAG && contextoRAG.trim().length > 0
-        ? `${ORTOBOLT_STRUCTURED_PROMPT}\n\nCONTEXTO DE LITERATURA/CASOS SIMILARES (Use estritamente se aplicável):\n${contextoRAG}`
-        : ORTOBOLT_STRUCTURED_PROMPT;
+        ? `${VANGUARD_STRUCTURED_PROMPT}\n\nCONTEXTO DE LITERATURA/CASOS SIMILARES (Use estritamente se aplicável):\n${contextoRAG}`
+        : VANGUARD_STRUCTURED_PROMPT;
 
     const response = await proxyRequest({
       model: PRIMARY_MODEL,

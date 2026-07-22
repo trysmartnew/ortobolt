@@ -1,14 +1,14 @@
-import React from 'react';
-import { OrtoBoltSymbol } from './OrtoBoltSymbol';
+﻿import React from 'react';
+import { VanguardSymbol } from './VanguardSymbol';
 
-interface OrtoBoltLogoProps {
+interface VanguardLogoProps {
   variant?: 'horizontal' | 'vertical' | 'icon';
   size?: 'small' | 'medium' | 'large';
   showSubtitle?: boolean;
   className?: string;
 }
 
-export const OrtoBoltLogo: React.FC<OrtoBoltLogoProps> = ({
+export const VanguardLogo: React.FC<VanguardLogoProps> = ({
   variant = 'horizontal',
   size = 'medium',
   showSubtitle = true,
@@ -30,20 +30,20 @@ export const OrtoBoltLogo: React.FC<OrtoBoltLogoProps> = ({
   };
 
   if (variant === 'icon') {
-    return <OrtoBoltSymbol size={symbolSize} className={className} />;
+    return <VanguardSymbol size={symbolSize} className={className} />;
   }
 
   if (variant === 'vertical') {
     return (
       <div className={`flex flex-col items-center justify-center gap-2 ${className}`}>
-        <OrtoBoltSymbol size={symbolSize * 1.5} />
+        <VanguardSymbol size={symbolSize * 1.5} />
         <div className="flex flex-col items-center">
           <h1 className={`${textSizes[size]} font-semibold tracking-tight`}>
             <span style={{ color: 'var(--color-primary)' }}>Vanguard</span>
             <span style={{ color: 'var(--color-accent)' }}>Veterinary</span>
           </h1>
           {showSubtitle && (
-            <p className={`${subtitleSizes[size]} text-slate-500 tracking-widest uppercase mt-1`}>
+            <p className={`${subtitleSizes[size]} text-[var(--color-text-tertiary)] tracking-widest uppercase mt-1`}>
               Ortopedia Veterinária Inteligente
             </p>
           )}
@@ -54,14 +54,14 @@ export const OrtoBoltLogo: React.FC<OrtoBoltLogoProps> = ({
 
   return (
     <div className={`flex items-center justify-center gap-3 ${className}`}>
-      <OrtoBoltSymbol size={symbolSize} />
+      <VanguardSymbol size={symbolSize} />
       <div className="flex flex-col">
         <h1 className={`${textSizes[size]} font-semibold tracking-tight leading-none`}>
           <span style={{ color: 'var(--color-primary)' }}>Vanguard</span>
           <span style={{ color: 'var(--color-accent)' }}>Veterinary</span>
         </h1>
         {showSubtitle && (
-          <p className={`${subtitleSizes[size]} text-slate-500 tracking-widest uppercase mt-1`}>
+          <p className={`${subtitleSizes[size]} text-[var(--color-text-tertiary)] tracking-widest uppercase mt-1`}>
             Ortopedia Veterinária Inteligente
           </p>
         )}

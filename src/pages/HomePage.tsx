@@ -1,4 +1,4 @@
-﻿import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
+﻿import { VanguardLogo } from '../components/brand/VanguardLogo';
 import { useState, useEffect } from 'react';
 import {
   Activity, Brain, FileText, Users, Shield, Zap,
@@ -213,7 +213,7 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-24 pb-20">
-          <div className="flex items-center justify-center mb-6"><OrtoBoltLogo variant="vertical" size="large" /></div>
+          <div className="flex items-center justify-center mb-6"><VanguardLogo variant="vertical" size="large" /></div>
 
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 text-xs font-semibold"

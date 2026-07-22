@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { validarRespostaMedica } from '@/services/ortoboltEngine';
+﻿import { describe, it, expect } from 'vitest';
+import { validarRespostaMedica } from '@/services/vanguardEngine';
 
 const baseResposta = {
   diagnostico_principal: 'Fratura fixada de tíbia',

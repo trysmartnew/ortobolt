@@ -9,7 +9,7 @@ import { anonymizeCaseContext } from '@/lib/anonymizeClinical';
 import { useApp } from '@/contexts/AppContext';
 import OrthoDeepAnalysis from './OrthoDeepAnalysis';
 import { getStructuredOrthopedicAnalysis } from '@/services/aiService';
-import type { RespostaOrtopedica } from '@/services/ortoboltEngine';
+import type { RespostaOrtopedica } from '@/services/vanguardEngine';
 
 interface Message {
   role: 'user' | 'assistant';

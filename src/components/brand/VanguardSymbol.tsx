@@ -1,12 +1,12 @@
-import React from 'react';
+﻿import React from 'react';
 
-interface OrtoBoltSymbolProps {
+interface VanguardSymbolProps {
   size?: number | string;
   variant?: 'default' | 'monochrome' | 'negative' | 'positive';
   className?: string;
 }
 
-export const OrtoBoltSymbol: React.FC<OrtoBoltSymbolProps> = ({
+export const VanguardSymbol: React.FC<VanguardSymbolProps> = ({
   size = 48,
   variant = 'default',
   className = ''

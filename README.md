@@ -190,4 +190,4 @@ A ordem de execução do pipeline de pré-commit é inviolável para garantir a 
 - A chave de página foi migrada para `vanguard-veterinary_page`, com fallback legado `ortobolt_page`.
 - As chaves legadas de storage `ortobolt_*` e `ortobolt-*` são migradas automaticamente no startup para `vanguard-veterinary_*` e `vanguard-veterinary-*`; referências remanescentes são apenas fallback/migração ou branding interno.
 - As classes claras legadas (`bg-white`, `bg-slate-50`) foram migradas para tokens premium; novos componentes devem usar `glass-panel-premium` e `premium-header-bg`.
-- O branding interno ainda referencia `OrtoBolt` em arquivos legados, enquanto o nome público atual é `Vanguard Veterinary`.
+- O branding interno foi migrado para `Vanguard Veterinary`; o nome `OrtoBoltAuditDB` (IndexedDB) é mantido como legado para preservar dados locais de auditoria.

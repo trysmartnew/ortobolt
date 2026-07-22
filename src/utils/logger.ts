@@ -1,5 +1,5 @@
-/**
- * Sistema de logging estruturado para OrtoBolt
+﻿/**
+ * Sistema de logging estruturado para Vanguard Veterinary
  * Formato: [TIMESTAMP] [LEVEL] [MODULE] message
  */
 

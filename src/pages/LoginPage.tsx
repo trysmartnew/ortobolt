@@ -1,4 +1,4 @@
-﻿import { OrtoBoltLogo } from '../components/brand/OrtoBoltLogo';
+﻿import { VanguardLogo } from '../components/brand/VanguardLogo';
 // src/pages/LoginPage.tsx
 // ✅ C-02: UI de bloqueio por tentativas excessivas (loginLocked / loginLockSecondsLeft)
 // ✅ U-01: rememberMe passado para login() e respeitado na sessão
@@ -96,7 +96,7 @@ export default function LoginPage() {
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)', fontFamily: 'Montserrat, sans-serif' }}>
         <div className="w-full max-w-sm">
           <div className="flex justify-center mb-8">
-            <OrtoBoltLogo variant="vertical" size="large" />
+            <VanguardLogo variant="vertical" size="large" />
           </div>
           <div className="glass-panel-premium rounded-2xl shadow-2xl p-8">
             <button onClick={() => { setForgotMode(false); setForgotSent(false); setError(''); }}
@@ -149,7 +149,7 @@ export default function LoginPage() {
       {/* Painel esquerdo desktop */}
       <div className="hidden lg:flex flex-col justify-between w-2/5 p-12"
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
-        <OrtoBoltLogo variant="horizontal" size="medium" showSubtitle={false} />
+        <VanguardLogo variant="horizontal" size="medium" showSubtitle={false} />
         <div>
           <h2 className="text-3xl font-extrabold text-white mb-4 leading-tight">
             Precisão cirúrgica com<br />
@@ -175,7 +175,7 @@ export default function LoginPage() {
       {/* Painel direito — formulário */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 bg-transparent text-white">
         <div className="lg:hidden mb-8">
-          <OrtoBoltLogo variant="horizontal" size="medium" showSubtitle={false} />
+          <VanguardLogo variant="horizontal" size="medium" showSubtitle={false} />
         </div>
         <div className="w-full max-w-sm">
           <div className="mb-7">

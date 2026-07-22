@@ -98,7 +98,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
     setSliderValue(percentage);
   };
 
-  // Processamento da IA OrtoBolt com Análise Comparativa Real
+  // Processamento da IA Vanguard Veterinary com Análise Comparativa Real
   const runAIAnalysis = async () => {
     if (!imageBefore || !imageAfter) return;
     setIsAnalyzing(true);
@@ -375,7 +375,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
         </div>
       )}
 
-      {/* Box Dinâmico de Resultados da IA OrtoBolt */}
+      {/* Box Dinâmico de Resultados da IA Vanguard Veterinary */}
       {aiAnalysisResult && (
         <div className="bg-slate-900 border-b border-slate-800 p-4 px-6 animate-fade-in">
           {/* Disclaimer de segurança para métricas estimadas */}
