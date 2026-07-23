@@ -389,10 +389,20 @@ export default function AnalysisPage() {
                   )}
                 </div>
               </Card>
-              <div className="lg:col-span-5">
+              <div className="lg:col-span-5 flex flex-col gap-4">
+                <Card className="glass-panel-premium">
+                  <div className="premium-header-bg px-4 py-3">
+                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                      <Sparkles size={14} className="text-[#29a399]" /> Laudo Radiográfico
+                    </h3>
+                  </div>
+                  <div className="p-4 max-h-[50vh] overflow-y-auto space-y-1">
+                    {renderResult(analysisText)}
+                  </div>
+                </Card>
                 <Card className="glass-panel-premium h-full">
                   <div className="premium-header-bg px-4 py-3">
-                    <h3 className="text-sm font-bold text-white">Laudo & Copiloto</h3>
+                    <h3 className="text-sm font-bold text-white flex items-center gap-2"><Sparkles size={14} className="text-[#29a399]" /> Copiloto Clínico</h3>
                   </div>
                   <div className="p-4 h-full">
                     <ClinicalCopilotPanel
