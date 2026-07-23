@@ -10,8 +10,8 @@ const AlignmentCircleSchema = z.object({
   cx: z.number(),
   cy: z.number(),
   radius: z.number().positive(),
-  label: z.string().optional(),
-  stage: z.enum(['pre', 'post']).optional(),
+  label: z.string(),
+  stage: z.enum(['pre', 'post', 'normal', 'abnormal', 'reference']),
 });
 
 const AngleMeasurementSchema = z.object({
@@ -25,8 +25,8 @@ const FractureMarkerSchema = z.object({
   id: z.string().uuid(),
   x: z.number(),
   y: z.number(),
-  label: z.string().optional(),
-  type: z.string().optional(),
+  label: z.string(),
+  type: z.string(),
 });
 
 const ROISchema = z.object({
@@ -35,8 +35,8 @@ const ROISchema = z.object({
   y: z.number(),
   width: z.number().positive(),
   height: z.number().positive(),
-  label: z.string().optional(),
-  severity: z.enum(['low', 'medium', 'high']).optional(),
+  label: z.string(),
+  severity: z.enum(['low', 'medium', 'high']),
 });
 
 export const MarkingsDataSchema = z.object({

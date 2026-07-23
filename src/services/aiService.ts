@@ -495,31 +495,44 @@ export async function sendChatMessageStream(
 function extractMarkingsFromAnalysis(analysisText: string): MarkingsData {
   const emptyMarkings: MarkingsData = { circles: [], angles: [], markers: [], rois: [] };
 
-  try {
-    const jsonBlockMatch = analysisText.match(/```json\s*([\s\S]*?)\s*```/);
-    if (!jsonBlockMatch || !jsonBlockMatch[1]) {
-      console.warn('extractMarkingsFromAnalysis: Nenhum bloco JSON de marcações encontrado na resposta da IA.');
-      return emptyMarkings;
-    }
+  const jsonBlockRegex = /```json\s*([\s\S]*?)\s*```/;
+  const jsonBlockMatch = analysisText.match(jsonBlockRegex);
 
-    const jsonString = jsonBlockMatch[1];
-    const parsed = JSON.parse(jsonString);
-
-    // A IA retorna um objeto { "markings": { ... } }
-    const markingsData = parsed.markings || parsed;
-
-    const validated = MarkingsDataSchema.safeParse(markingsData);
-    if (!validated.success) {
-      console.error('Validação de marcações da IA falhou:', validated.error.message);
-      // Retorna vazio em caso de falha de validação para não quebrar a UI
-      return emptyMarkings;
-    }
-
-    return validated.data;
-  } catch (err) {
-    console.error('Falha ao fazer parse das marcações JSON da IA:', err);
+  if (!jsonBlockMatch || !jsonBlockMatch[1]) {
+    console.debug('[OrthoAI] Falha na extração de marcações. Motivo: Bloco JSON não encontrado na resposta da IA.');
     return emptyMarkings;
   }
+
+  let jsonString = jsonBlockMatch[1];
+  let parsedJson;
+
+  try {
+    parsedJson = JSON.parse(jsonString);
+  } catch (err) {
+    console.debug('[OrthoAI] Parse JSON inicial falhou, tentando recuperação.', { error: (err as Error).message });
+    // C6: Recuperação conservadora: Tenta encontrar a maior substring JSON válida
+    const looseJsonMatch = jsonString.match(/\{[\s\S]*\}/);
+    if (looseJsonMatch && looseJsonMatch[0]) {
+      try {
+        parsedJson = JSON.parse(looseJsonMatch[0]);
+      } catch (recoveryErr) {
+        console.debug('[OrthoAI] Recuperação do JSON falhou.', { error: (recoveryErr as Error).message });
+        return emptyMarkings;
+      }
+    } else {
+      return emptyMarkings;
+    }
+  }
+  
+  const markingsData = parsedJson.markings || parsedJson;
+  const validated = MarkingsDataSchema.safeParse(markingsData);
+
+  if (!validated.success) {
+    console.debug('[OrthoAI] Validação Zod das marcações falhou.', { error: validated.error.format() });
+    return emptyMarkings;
+  }
+
+  return validated.data;
 }
 
 // ── analyzeImage — ✅ COM COMPRESSÃO DE IMAGEM + MARKINGS ────────────────────
@@ -538,13 +551,15 @@ export async function analyzeImage(
 IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste paciente.`
     : '';
 
-  const promptText = caseInfo
+  const promptText = (caseInfo
     ? caseInfo.status === 'completed'
       ? `\n\n${patientContext}\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
       : `\n\n${patientContext}\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.`
-    : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.`;
+    : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.`)
+    // C5: Reforço do prompt local em Português
+    + `\n\nIMPORTANTE: Ao final de sua análise, anexe as marcações geométricas em um bloco de código JSON. O formato \`\`\`json\n{...}\n\`\`\` é obrigatório.`;
 
-  const analysisText = await proxyRequest({
+  const fullResponseText = await proxyRequest({
     model: PRIMARY_MODEL,
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
@@ -559,11 +574,13 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
     max_tokens: 1000,
   });
 
-  // Extract markings from AI analysis
-  const markings = extractMarkingsFromAnalysis(analysisText);
+  const markings = extractMarkingsFromAnalysis(fullResponseText);
+  
+  // Remove o bloco JSON do texto para não poluir o laudo
+  const reportTextOnly = fullResponseText.replace(/```json\s*([\s\S]*?)\s*```/, '').trim();
 
   return {
-    analysisText,
+    analysisText: reportTextOnly,
     markings,
     metrics: {
       // Could be populated from extracted IA data in future

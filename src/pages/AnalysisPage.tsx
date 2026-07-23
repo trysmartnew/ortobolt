@@ -362,9 +362,9 @@ export default function AnalysisPage() {
             </div>
           )}
 
-          {mode === 'result' && result && (
+          {mode === 'result' && analysisText && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-              <Card className="lg:col-span-8 bg-[#0B0F19] border border-[#2a2d30]">
+              <Card className="lg:col-span-7 bg-[#0B0F19] border border-[#2a2d30]">
                 <div className="flex items-center justify-between mb-3 p-4 pb-2">
                   <p className="text-sm font-bold text-white uppercase tracking-wider">
                     Imagem Analisada
@@ -373,46 +373,51 @@ export default function AnalysisPage() {
                     aiGeneratedMarkings.angles.length > 0 ||
                     aiGeneratedMarkings.markers.length > 0) && (
                       <span className="text-[10px] font-mono glass-panel-premium/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        ⚡ {aiGeneratedMarkings.circles.length + aiGeneratedMarkings.angles.length} marcações
+                        <Sparkles size={12} className="text-primary" />
+                        {aiGeneratedMarkings.circles.length + aiGeneratedMarkings.angles.length} marcações IA
                       </span>
                     )}
                 </div>
                 <div className="bg-[#050607] border-[2px] border-[#2c3136] rounded-[12px] shadow-[0_20px_40px_rgba(0,0,0,0.6)] overflow-hidden p-2">
-                  {imageData && imageDimensions && aiGeneratedMarkings && (
+                  {imageData && imageDimensions && (
                     <AiMarkingsOverlay
                       imageUrl={imageData}
-                      markings={aiGeneratedMarkings}
+                      markings={aiGeneratedMarkings ?? { circles: [], angles: [], markers: [], rois: [] }}
                       naturalWidth={imageDimensions.width}
                       naturalHeight={imageDimensions.height}
                     />
                   )}
-                  {imageData && (!aiGeneratedMarkings || (aiGeneratedMarkings.circles.length === 0 && aiGeneratedMarkings.angles.length === 0 && aiGeneratedMarkings.markers.length === 0 && aiGeneratedMarkings.rois.length === 0)) && (
-                    <img
-                      src={imageData}
-                      alt="Resultado"
-                      className="w-full object-contain max-h-80"
-                    />
-                  )}
                 </div>
-                {aiGeneratedMarkings && (aiGeneratedMarkings.circles.length > 0 || aiGeneratedMarkings.angles.length > 0) && (
-                  <div className="mt-3 pt-3 border-t border-slate-700/60 space-y-1 text-xs">
-                    {aiGeneratedMarkings.circles.map((c) => (
-                      <div key={c.id} className="text-white/40">
-                        <span className="font-semibold text-slate-100">{c.label || 'Círculo'}</span> — {c.stage === 'abnormal' ? '⚠️ Anormal' : '✓ Normal'}
-                      </div>
-                    ))}
-                    {aiGeneratedMarkings.angles.map((a) => (
-                      <div key={a.id} className="text-white/40">
-                        <span className="font-semibold text-slate-100">Ângulo {a.type}:</span> {a.value.toFixed(1)}°
-                      </div>
-                    ))}
-                  </div>
-                )}
               </Card>
+              <div className="lg:col-span-5">
+                <Card className="glass-panel-premium h-full">
+                  <div className="premium-header-bg px-4 py-3">
+                    <h3 className="text-sm font-bold text-white">Laudo & Copiloto</h3>
+                  </div>
+                  <div className="p-4 h-full">
+                    <ClinicalCopilotPanel
+                      enabled={mode === 'result'}
+                      messages={session?.messages ?? []}
+                      streaming={streaming}
+                      refining={refining}
+                      error={copilotError}
+                      clinicalContext={session?.clinicalContext ?? {}}
+                      onContextChange={updateContext}
+                      onSend={sendMessage}
+                      onRefineAnalysis={handleRefine}
+                      onRetry={() => {
+                        const lastMsg = session?.messages.findLast(m => m.role === 'user');
+                        if (lastMsg) sendMessage(lastMsg.content);
+                      }}
+                    />
+                  </div>
+                </Card>
+              </div>
             </div>
           )}
         </>
       )}
+      {/* C3: O painel antigo que ficava aqui foi movido para dentro do layout de resultado */}
     </div>
   );
 }
