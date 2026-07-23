@@ -5,9 +5,9 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
-import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings } from '@/services/aiService';
+import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings, ApiError } from '@/services/aiService';
 import { uploadRadiografia } from '@/services/supabase';
-import { uploadImageToStorage } from '@/services/imageService';
+
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
 import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
 import ApproveCompleteCaseBar from '@/components/analysis/ApproveCompleteCaseBar';
@@ -113,8 +113,26 @@ export default function AnalysisPage() {
       sessionStorage.setItem('vanguard-veterinary_ai_markings', JSON.stringify(res.markings));
       setMode('result');
       initSession(res.analysisText);
-    } catch {
-      setStreamError('Falha na análise visual. Tente novamente.');
+    } catch (err) {
+      if (err instanceof ApiError) {
+        switch (err.status) {
+          case 401:
+            addToast('Sua sessão expirou. Por favor, faça login novamente.', 'error');
+            setCurrentPage('login');
+            break;
+          case 429:
+            addToast('Limite de requisições atingido. Tente mais tarde.', 'warning');
+            break;
+          case 503:
+            addToast('O serviço de análise está sobrecarregado. Por favor, aguarde alguns minutos.', 'warning');
+            break;
+          default:
+            setStreamError(`Erro na análise: ${err.message}`);
+            break;
+        }
+      } else {
+        setStreamError('Falha na análise visual. Tente novamente.');
+      }
       setMode('preview');
     }
   };
@@ -178,12 +196,15 @@ export default function AnalysisPage() {
     }
     setApproving(true);
     try {
-      const storagePath = `${user.id}-${Date.now()}`;
-      const imageStorageUrl = await uploadRadiografia(imageData, storagePath).catch(() => null) ?? undefined;
+      // Etapa 1: Fazer o upload da imagem. A função agora lança erro em caso de falha.
+      const storagePath = `${user.id}/${new Date().toISOString()}`;
+      const imageStorageUrl = await uploadRadiografia(imageData, storagePath);
+
+      // Etapa 2: Somente se o upload for bem-sucedido, integrar o caso.
       const clinicalCase = approveAndIntegrateCase({
         veterinarianId: user.id,
-        imageDataUrl: imageData,
-        imageStorageUrl,
+        imageDataUrl: imageData, // Mantém a versão local para visualização imediata
+        imageStorageUrl: imageStorageUrl ?? undefined, // URL do Supabase Storage
         analysisText,
         clinicalContext: ctx,
         copilotMessages: session?.messages,
@@ -208,19 +229,21 @@ export default function AnalysisPage() {
         },
       });
 
-      addToast(`Caso "${clinicalCase.patientName}" integrado em todos os módulos.`, 'success');
+      addToast(`Caso "${clinicalCase.patientName}" integrado com sucesso.`, 'success');
 
       if (destination === 'case') {
         openCase(clinicalCase);
       } else {
         setCurrentPage('gallery');
       }
-    } catch {
-      addToast('Erro ao integrar caso. Tente novamente.', 'error');
+    } catch (err) {
+      console.error('Erro ao aprovar o caso:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      addToast(`Erro ao salvar a radiografia. O caso não foi criado. (${errorMessage})`, 'error');
     } finally {
       setApproving(false);
     }
-  };;
+  };
 
   const renderResult = (text: string) =>
     text.split('\n').map((line, i) => {

@@ -44,7 +44,7 @@ import { setAiConsentFromProfile } from '@/services/aiConsent';
 export type Page =
   | 'dashboard' | 'chat' | 'analysis' | 'gallery'
   | 'case' | 'reports' | 'settings' | 'notifications'
-  | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'comparative' | 'help';
+  | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'comparative' | 'help' | 'login';
 
 const PAGE_STORAGE_KEY = 'vanguard-veterinary_page';
 const LEGACY_PAGE_STORAGE_KEY = 'ortobolt_page';
@@ -64,6 +64,7 @@ const PAGE_VALUES: Record<Page, true> = {
   alignmentAnalysis: true,
   comparative: true,
   help: true,
+  login: true,
 };
 
 const isPage = (value: string | null): value is Page => {

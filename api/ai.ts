@@ -200,6 +200,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const sanitizedMessages = sanitizeAiMessages(body.messages);
+
+    // S1: Add system message to enforce structured JSON output for markings
+    const structuredOutputInstruction = {
+      role: 'system',
+      content: `In addition to the clinical analysis text, append a structured JSON object with all identified geometric markings. The JSON object must follow this schema: { "markings": { "circles": [], "angles": [] } }. Enclose this JSON object in a markdown code block like this: \`\`\`json\n{...json...}\n\`\`\``
+    };
+
+    const finalMessages = [structuredOutputInstruction, ...sanitizedMessages];
+
     const maxTokens = Math.min(body.max_tokens ?? 1000, 1000);
     const isStream = body.stream === true;
     const jsonMode = body.json_mode === true;
@@ -212,7 +221,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // 1. Gemini Primary
     if (GEMINI_API_KEY) {
       console.log('[AI Proxy] Trying provider: Gemini Primary');
-      response = await callGemini(PRIMARY_MODEL, sanitizedMessages, maxTokens, GEMINI_API_KEY, options)
+      response = await callGemini(PRIMARY_MODEL, finalMessages, maxTokens, GEMINI_API_KEY, options)
         .catch(err => {
           console.warn(`[AI Proxy] Gemini Primary failed (network error: ${err.message})`);
           return null;
@@ -223,7 +232,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (GEMINI_API_KEY && (!response || !response.ok)) {
       if(response) console.warn(`[AI Proxy] Gemini Primary failed (status: ${response.status})`);
       console.log('[AI Proxy] Falling back to: Gemini Fallback');
-      response = await callGemini(GEMINI_FALLBACK_MODEL, sanitizedMessages, maxTokens, GEMINI_API_KEY, options)
+      response = await callGemini(GEMINI_FALLBACK_MODEL, finalMessages, maxTokens, GEMINI_API_KEY, options)
         .catch(err => {
           console.warn(`[AI Proxy] Gemini Fallback failed (network error: ${err.message})`);
           return null;
@@ -234,7 +243,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (OPENROUTER_API_KEY && (!response || !response.ok)) {
       if(response) console.warn(`[AI Proxy] Gemini Fallback failed (status: ${response.status})`);
       console.log('[AI Proxy] Falling back to: OpenRouter');
-      response = await callOpenRouter(sanitizedMessages, maxTokens, OPENROUTER_API_KEY, options)
+      response = await callOpenRouter(finalMessages, maxTokens, OPENROUTER_API_KEY, options)
         .catch(err => {
           console.warn(`[AI Proxy] OpenRouter failed (network error: ${err.message})`);
           return null;
@@ -245,7 +254,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (GROQ_API_KEY && (!response || !response.ok)) {
        if(response) console.warn(`[AI Proxy] OpenRouter failed (status: ${response.status})`);
        console.log('[AI Proxy] Falling back to: Groq');
-       response = await callGroq(sanitizedMessages, maxTokens, GROQ_API_KEY, options)
+       response = await callGroq(finalMessages, maxTokens, GROQ_API_KEY, options)
         .catch(err => {
           console.warn(`[AI Proxy] Groq failed (network error: ${err.message})`);
           return null;

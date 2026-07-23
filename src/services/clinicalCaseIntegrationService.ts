@@ -170,6 +170,12 @@ export function formatIntegratedNotes(
 }
 
 export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): ClinicalCase {
+    // B2: Defesa em profundidade — garante que um caso nunca seja criado sem URL de imagem.
+    if (!input.imageStorageUrl) {
+      throw new Error(
+        'Defensive Guard: Tentativa de criar caso clínico sem URL de imagem de armazenamento.'
+      );
+    }
     const parsed = ApproveCompleteCaseInputSchema.safeParse(input);
     if (!parsed.success) {
       throw new Error(`Dados inválidos em buildIntegratedClinicalCase: ${parsed.error.message}`);

@@ -307,7 +307,15 @@ Responda APENAS no seguinte formato Markdown, sem texto introdutório ou conclus
 - Se a qualidade da imagem limitar a avaliação, declare explicitamente.
 - Nunca forneça diagnósticos definitivos sem correlação clínico-cirúrgica.
 - Cite intervalos de normalidade ao reportar valores angulares ou métricos.
-`;// ── proxyRequest (modo JSON — analyzeImage, structured analysis) ──────────────
+`;// ── Erro Customizado ──────────────────────────────────────────────────────────
+export class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+// ── proxyRequest (modo JSON — analyzeImage, structured analysis) ──────────────
 export async function proxyRequest(body: {
   model: string;
   messages: ProxyMessage[];
@@ -343,15 +351,24 @@ export async function proxyRequest(body: {
   } catch (err) {
     clearTimeout(timeoutId);
     if (err instanceof Error && err.name === 'AbortError') {
-      throw new Error('AI_PROXY_TIMEOUT: A requisição excedeu 60 segundos.');
+      throw new ApiError(408, 'A requisição para a IA excedeu o tempo limite de 60 segundos.');
     }
+    // Re-lança outros erros de rede/fetch
     throw err;
   }
   clearTimeout(timeoutId);
 
   if (!res.ok) {
     const errorText = await res.text();
-    throw new Error(`AI proxy ${res.status}: ${errorText}`);
+    // Extrai a mensagem de erro do JSON, se possível
+    let errorMessage = errorText;
+    try {
+      const errorJson = JSON.parse(errorText);
+      errorMessage = errorJson.error || errorText;
+    } catch {
+      // Ignora se o erro não for JSON
+    }
+    throw new ApiError(res.status, errorMessage);
   }
 
   const d: AIResponse = await res.json();
@@ -385,10 +402,8 @@ export async function sendChatMessage(
   } catch (err) {
     console.error('AI chat error:', err);
     if (err instanceof AiConsentDeniedError) return err.message;
-    return mapAiProxyError(
-      err,
-      '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.'
-    );
+    if (err instanceof ApiError) return `⚠️ Erro ${err.status}: ${err.message}`;
+    return '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.';
   }
 }
 
@@ -423,7 +438,7 @@ export async function sendChatMessageStream(
 
     if (!res.ok) {
       const errText = await res.text();
-      throw new Error(`AI proxy ${res.status}: ${errText}`);
+      throw new ApiError(res.status, errText);
     }
 
     const reader = res.body!.getReader();
@@ -463,137 +478,48 @@ export async function sendChatMessageStream(
     return stripThinking(accumulated) || 'Resposta não disponível.';
   } catch (err) {
     console.error('AI chat stream error:', err);
-    const msg =
-      err instanceof AiConsentDeniedError
-        ? err.message
-        : mapAiProxyError(
-          err,
-          '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.'
-        );
+    let msg: string;
+    if (err instanceof AiConsentDeniedError) {
+      msg = err.message;
+    } else if (err instanceof ApiError) {
+      msg = `⚠️ Erro ${err.status}: ${err.message}`;
+    } else {
+      msg = 'Erro ao conectar com o copiloto.';
+    }
     onChunk(msg);
-    return msg;
+    throw err; // Re-throw to signal failure to the caller
   }
 }
 
 // ── extractMarkingsFromAnalysis — Parse IA response to generate marking data ──
-function extractMarkingsFromAnalysis(
-  analysisText: string,
-  imageWidth: number,
-  imageHeight: number
-): MarkingsData {
-  const markings: MarkingsData = {
-    circles: [],
-    angles: [],
-    markers: [],
-    rois: [],
-  };
+function extractMarkingsFromAnalysis(analysisText: string): MarkingsData {
+  const emptyMarkings: MarkingsData = { circles: [], angles: [], markers: [], rois: [] };
 
-  const h = imageHeight;
-  const w = imageWidth;
+  try {
+    const jsonBlockMatch = analysisText.match(/```json\s*([\s\S]*?)\s*```/);
+    if (!jsonBlockMatch || !jsonBlockMatch[1]) {
+      console.warn('extractMarkingsFromAnalysis: Nenhum bloco JSON de marcações encontrado na resposta da IA.');
+      return emptyMarkings;
+    }
 
-  // Extract key metrics from analysis text
-  const norbergMatch = analysisText.match(/Norberg[:\s]+(\d+[.,]\d*)/i);
-  const tpaMatch = analysisText.match(/TPA[:\s]+(\d+[.,]\d*)/i);
-  const fractureMatch = analysisText.match(/fratura|fraturas|quebra/i);
-  const displasiaMatch = analysisText.match(/displasia|artrite|osteoartrite/i);
+    const jsonString = jsonBlockMatch[1];
+    const parsed = JSON.parse(jsonString);
 
-  // Norberg angle (hip dysplasia metric) — mark center-left
-  if (norbergMatch) {
-    const angle = parseFloat(norbergMatch[1].replace(',', '.'));
-    const isNormal = angle >= 105;
-    markings.circles.push({
-      id: crypto.randomUUID(),
-      cx: w * 0.25,
-      cy: h * 0.4,
-      radius: Math.min(w, h) * 0.08,
-      label: `Norberg: ${angle}°`,
-      stage: isNormal ? 'normal' : 'abnormal',
-    });
-    markings.angles.push({
-      id: crypto.randomUUID(),
-      points: [
-        { x: w * 0.25, y: h * 0.3 },
-        { x: w * 0.25, y: h * 0.4 },
-        { x: w * 0.35, y: h * 0.4 },
-      ],
-      value: angle,
-      type: 'Norberg',
-    });
+    // A IA retorna um objeto { "markings": { ... } }
+    const markingsData = parsed.markings || parsed;
+
+    const validated = MarkingsDataSchema.safeParse(markingsData);
+    if (!validated.success) {
+      console.error('Validação de marcações da IA falhou:', validated.error.message);
+      // Retorna vazio em caso de falha de validação para não quebrar a UI
+      return emptyMarkings;
+    }
+
+    return validated.data;
+  } catch (err) {
+    console.error('Falha ao fazer parse das marcações JSON da IA:', err);
+    return emptyMarkings;
   }
-
-  // TPA angle (tibial plateau angle) — mark right-center
-  if (tpaMatch) {
-    const angle = parseFloat(tpaMatch[1].replace(',', '.'));
-    const isNormal = angle >= 18 && angle <= 25;
-    markings.circles.push({
-      id: crypto.randomUUID(),
-      cx: w * 0.75,
-      cy: h * 0.45,
-      radius: Math.min(w, h) * 0.08,
-      label: `TPA: ${angle}°`,
-      stage: isNormal ? 'normal' : 'abnormal',
-    });
-    markings.angles.push({
-      id: crypto.randomUUID(),
-      points: [
-        { x: w * 0.65, y: h * 0.35 },
-        { x: w * 0.75, y: h * 0.45 },
-        { x: w * 0.85, y: h * 0.45 },
-      ],
-      value: angle,
-      type: 'TPA',
-    });
-  }
-
-  // Fracture markers — high severity
-  if (fractureMatch) {
-    markings.markers.push({
-      id: crypto.randomUUID(),
-      x: w * 0.5,
-      y: h * 0.6,
-      label: '⚠️ Fratura',
-      type: 'fracture',
-    });
-    markings.rois.push({
-      id: crypto.randomUUID(),
-      x: w * 0.4,
-      y: h * 0.5,
-      width: w * 0.2,
-      height: h * 0.2,
-      label: 'Região de fratura',
-      severity: 'high',
-    });
-  }
-
-  // Dysplasia/Arthritis ROI — medium severity
-  if (displasiaMatch) {
-    markings.rois.push({
-      id: crypto.randomUUID(),
-      x: w * 0.2,
-      y: h * 0.35,
-      width: w * 0.15,
-      height: h * 0.15,
-      label: 'Displasia/Artrite',
-      severity: 'medium',
-    });
-  }
-
-  const hasAnyMarkings =
-    markings.circles.length > 0 ||
-    markings.angles.length > 0 ||
-    markings.markers.length > 0 ||
-    markings.rois.length > 0;
-
-  if (!hasAnyMarkings) {
-    console.warn('extractMarkingsFromAnalysis: nenhum padrão reconhecido na resposta da IA');
-  }
-
-  const validated = MarkingsDataSchema.safeParse(markings);
-  if (!validated.success) {
-    console.error('Validação de markings falhou:', validated.error.message);
-    throw new Error(`Markings inválidas retornadas pela IA: ${validated.error.message}`);
-  }
-  return validated.data;
 }
 
 // ── analyzeImage — ✅ COM COMPRESSÃO DE IMAGEM + MARKINGS ────────────────────
@@ -602,91 +528,47 @@ export async function analyzeImage(
   caseInfo?: Partial<ClinicalCase>,
   imageDimensions?: { width: number; height: number }
 ): Promise<AnalysisWithMarkings> {
-  try {
-    // ✅ Comprimir imagem antes de enviar (reduz payload em ~70%)
-    const compressed = await compressImageBase64(imageBase64);
+  // ✅ Comprimir imagem antes de enviar (reduz payload em ~70%)
+  const compressed = await compressImageBase64(imageBase64);
 
-    // Default dimensions if not provided
-    const dims = imageDimensions || { width: 800, height: 600 };
+  const ctx = caseInfo ? anonymizeCaseContext(caseInfo) : '';
 
-    const ctx = caseInfo ? anonymizeCaseContext(caseInfo) : '';
-
-    const patientContext = caseInfo
-      ? `PACIENTE: ${caseInfo.species} | ${caseInfo.breed} | ${caseInfo.ageYears} anos | ${caseInfo.weightKg} kg
+  const patientContext = caseInfo
+    ? `PACIENTE: ${caseInfo.species} | ${caseInfo.breed} | ${caseInfo.ageYears} anos | ${caseInfo.weightKg} kg
 IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste paciente.`
-      : '';
+    : '';
 
-    const promptText = caseInfo
-      ? caseInfo.status === 'completed'
-        ? `\n\n${patientContext}\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.
+  const promptText = caseInfo
+    ? caseInfo.status === 'completed'
+      ? `\n\n${patientContext}\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
+      : `\n\n${patientContext}\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.`
+    : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.`;
 
-MÉTRICAS VETERINÁRIAS (se detectadas):
-- Ângulo de Norberg (displasia coxofemoral): normal ≥ 105°
-- Ângulo do Platô Tibial (TPA, ligamento cruzado): normal 18-25°
-- Densidade óssea (escala 0-100%)
-
-Inclua no texto: "Ângulo de Norberg: XXX°" ou "TPA: XXX°" se detectados.`
-        : `\n\n${patientContext}\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.
-
-MÉTRICAS VETERINÁRIAS (se aplicável):
-- Ângulo de Norberg (displasia coxofemoral): normal ≥ 105°
-- Ângulo do Platô Tibial (TPA): normal 18-25°
-
-Inclua no texto: "Ângulo de Norberg: XXX°" ou "TPA: XXX°" se detectados.`
-      : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.
-
-MÉTRICAS VETERINÁRIAS (se aplicável):
-- Ângulo de Norberg (displasia): normal ≥ 105°
-- Ângulo do Platô Tibial (TPA): normal 18-25°
-
-Inclua no texto: "Ângulo de Norberg: XXX°" ou "TPA: XXX°" se detectados.`;
-
-    const analysisText = await proxyRequest({
-      model: PRIMARY_MODEL,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        {
-          role: 'user',
-          content: buildMultimodalUserContent(
-            promptText,
-            buildImageDataUrl(compressed)
-          ),
-        },
-      ],
-      max_tokens: 1000,
-    });
-
-    // Extract markings from AI analysis
-    const markings = extractMarkingsFromAnalysis(
-      analysisText,
-      dims.width,
-      dims.height
-    );
-
-    return {
-      analysisText,
-      markings,
-      metrics: {
-        // Could be populated from extracted IA data in future
+  const analysisText = await proxyRequest({
+    model: PRIMARY_MODEL,
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      {
+        role: 'user',
+        content: buildMultimodalUserContent(
+          promptText,
+          buildImageDataUrl(compressed)
+        ),
       },
-    };
-  } catch (err) {
-    console.error('Vision error:', err);
-    if (err instanceof AiConsentDeniedError) {
-      return {
-        analysisText: err.message,
-        markings: { circles: [], angles: [], markers: [], rois: [] },
-      };
-    }
-    const errorMsg = mapAiProxyError(
-      err,
-      '⚠️ Erro na análise de imagem. Verifique o formato (JPG/PNG/WEBP, máx. 15MB) e tente novamente.'
-    );
-    return {
-      analysisText: errorMsg,
-      markings: { circles: [], angles: [], markers: [], rois: [] },
-    };
-  }
+    ],
+    max_tokens: 1000,
+  });
+
+  // Extract markings from AI analysis
+  const markings = extractMarkingsFromAnalysis(analysisText);
+
+  return {
+    analysisText,
+    markings,
+    metrics: {
+      // Could be populated from extracted IA data in future
+    },
+  };
 }
 
 

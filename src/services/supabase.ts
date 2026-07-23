@@ -190,7 +190,7 @@ export async function uploadRadiografia(
 
   if (error) {
     logger.error('Erro no upload de radiografia', error.message);
-    return null;
+    throw new Error(`Falha no upload da imagem: ${error.message}`);
   }
 
   // Gerar URL assinada com expiração de 24h (segurança LGPD)
