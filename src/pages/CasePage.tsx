@@ -6,9 +6,9 @@ import { RadiographViewer } from '@/components/radiographs/RadiographViewer';
 import { useState, useMemo, useRef, useEffect, useCallback, memo } from 'react';
 import CaseAnalysisTab from '@/components/CaseAnalysisTab';
 import { useAnalysis } from '@/contexts/AnalysisContext';
-import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity, GitCompare, LineChart, Ruler as RulerIcon, Images } from 'lucide-react';
+import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity, GitCompare, LineChart, Ruler as RulerIcon, Images, Loader2 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
-import { uploadCaseImage } from '@/services/supabase';
+import { getSupabaseAccessToken, uploadCaseImage } from '@/services/supabase';
 import { uploadImageToStorage } from '@/services/imageService';
 import { Card, Button, StatusBadge, RiskTag, EmptyState } from '@/components/ui';
 import type { ClinicalCase, ProcedureType } from '@/types/index';
@@ -292,6 +292,107 @@ export default function CasePage() {
   const [aiMarkingsFromSession, setAiMarkingsFromSession] = useState<MarkingsData | null>(null);
   const [saving, setSaving] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
+  const [displayImageUrl, setDisplayImageUrl] = useState<string | null>(null);
+  const [isDisplayUrlLoading, setIsDisplayUrlLoading] = useState<boolean>(true);
+  const [displayAvatarUrl, setDisplayAvatarUrl] = useState<string | null>(null);
+
+  // Efeito para buscar a URL assinada da imagem principal
+  useEffect(() => {
+    if (activeCase?.image_path) {
+      let isMounted = true;
+      setIsDisplayUrlLoading(true);
+      
+      const fetchUrl = async () => {
+        try {
+          const token = await getSupabaseAccessToken();
+          if (!token) {
+            throw new Error('Authentication token not found.');
+          }
+          const response = await fetch('/api/signed-url', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ path: activeCase.image_path }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to fetch signed URL: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          if (isMounted) {
+            setDisplayImageUrl(data.signedUrl);
+          }
+        } catch (error) {
+          console.error("Error fetching signed URL for main image:", error);
+          if (isMounted) {
+            setDisplayImageUrl(null);
+          }
+        } finally {
+          if (isMounted) {
+            setIsDisplayUrlLoading(false);
+          }
+        }
+      };
+
+      fetchUrl();
+
+      return () => {
+        isMounted = false;
+      };
+    } else {
+      setIsDisplayUrlLoading(false);
+      setDisplayImageUrl(null);
+    }
+  }, [activeCase?.image_path]);
+
+  // Efeito para buscar a URL assinada do avatar
+  useEffect(() => {
+    if (activeCase?.avatar_path) {
+      let isMounted = true;
+      
+      const fetchUrl = async () => {
+        try {
+          const token = await getSupabaseAccessToken();
+          if (!token) {
+            throw new Error('Authentication token not found.');
+          }
+          const response = await fetch('/api/signed-url', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ path: activeCase.avatar_path }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to fetch signed URL for avatar: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          if (isMounted) {
+            setDisplayAvatarUrl(data.signedUrl);
+          }
+        } catch (error) {
+          console.error("Error fetching signed URL for avatar:", error);
+          if (isMounted) {
+            setDisplayAvatarUrl(null);
+          }
+        }
+      };
+
+      fetchUrl();
+
+      return () => {
+        isMounted = false;
+      };
+    } else {
+      setDisplayAvatarUrl(null);
+    }
+  }, [activeCase?.avatar_path]);
 
   useEffect(() => {
     try {
@@ -332,16 +433,16 @@ export default function CasePage() {
         type: 'xray',
         caseId: activeCase.id
       });
-      if (uploadResult.url) {
-        updateCase(activeCase.id, { imageUrl: uploadResult.url, updatedAt: new Date().toISOString() });
+      if (uploadResult.path) {
+        updateCase(activeCase.id, { image_path: uploadResult.path, updatedAt: new Date().toISOString() });
         addToast('Radiografia salva na nuvem.', 'success');
       } else {
-        addToast('Falha no upload da radiografia.', 'warning');
+        addToast(`Falha no upload da radiografia: ${uploadResult.error || 'Erro desconhecido'}.`, 'warning');
       }
     } finally {
       setUploading(false);
     }
-  }, [activeCase, setUploading, addToast]);
+  }, [activeCase, updateCase, setUploading, addToast]);
 
   const handleAvatarUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -359,16 +460,16 @@ export default function CasePage() {
         type: 'avatar',
         caseId: activeCase.id
       });
-      if (uploadResult.url) {
-        updateCase(activeCase.id, { avatarUrl: uploadResult.url, updatedAt: new Date().toISOString() });
+      if (uploadResult.path) {
+        updateCase(activeCase.id, { avatar_path: uploadResult.path, updatedAt: new Date().toISOString() });
         addToast('Avatar salvo na nuvem.', 'success');
       } else {
-        addToast('Falha no upload do avatar.', 'warning');
+        addToast(`Falha no upload do avatar: ${uploadResult.error || 'Erro desconhecido'}.`, 'warning');
       }
     } finally {
       setUploading(false);
     }
-  }, [activeCase, setUploading, addToast]);
+  }, [activeCase, updateCase, setUploading, addToast]);
 
   const [zoom, setZoom] = useState(100);
   const [showEdit, setShowEdit] = useState(false);
@@ -540,6 +641,9 @@ export default function CasePage() {
 
   const progress = protocol.steps.length > 0 ? Math.round((completedSteps.length / protocol.steps.length) * 100) : 0;
 
+  const finalAvatarUrl = displayAvatarUrl || activeCase.avatarUrl;
+  const finalImageUrl = displayImageUrl || activeCase.imageUrl;
+
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {!analysisTool ? (
@@ -559,7 +663,7 @@ export default function CasePage() {
               </button>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[var(--color-surface-muted)] border border-[var(--color-border)] flex items-center justify-center overflow-hidden">
-                  {activeCase.avatarUrl ? <img src={activeCase.avatarUrl} alt={activeCase.patientName} className="w-full h-full object-cover" /> : <UserIcon size={18} className="text-slate-400" />}
+                  {finalAvatarUrl ? <img src={finalAvatarUrl} alt={activeCase.patientName} className="w-full h-full object-cover" /> : <UserIcon size={18} className="text-slate-400" />}
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-900">{activeCase.patientName}</p>
@@ -612,7 +716,7 @@ export default function CasePage() {
               </button>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[var(--color-surface-muted)] border border-[var(--color-border)] flex items-center justify-center overflow-hidden">
-                  {activeCase.avatarUrl ? <img src={activeCase.avatarUrl} alt={activeCase.patientName} className="w-full h-full object-cover" /> : <UserIcon size={18} className="text-slate-400" />}
+                  {finalAvatarUrl ? <img src={finalAvatarUrl} alt={activeCase.patientName} className="w-full h-full object-cover" /> : <UserIcon size={18} className="text-slate-400" />}
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-900">{activeCase.patientName}</p>
@@ -856,10 +960,16 @@ export default function CasePage() {
                 <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
               </div>
             </div>
-            <div className="premium-header-bg bg-slate-900 p-6 flex items-center justify-center min-h-[400px] overflow-auto relative">`n              {activeCase.avatarUrl && <img src={activeCase.avatarUrl} alt="Avatar do paciente" className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
-              {activeCase.imageUrl ? (
+            <div className="premium-header-bg bg-slate-900 p-6 flex items-center justify-center min-h-[400px] overflow-auto relative">
+              {finalAvatarUrl && <img src={finalAvatarUrl} alt="Avatar do paciente" className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-white object-cover z-10 shadow-lg" />}
+              {isDisplayUrlLoading ? (
+                <div className="flex flex-col items-center gap-2 text-menu-muted">
+                  <Loader2 size={32} className="animate-spin" />
+                  <p>Carregando imagem segura...</p>
+                </div>
+              ) : finalImageUrl ? (
                 <div className="relative inline-block" style={{ width: `${zoom}%`, maxWidth: '100%', transition: 'width .2s' }}>
-                  <img src={activeCase.imageUrl} alt={activeCase.patientName} className="w-full h-auto rounded-xl shadow-2xl object-contain block" />
+                  <img src={finalImageUrl} alt={activeCase.patientName} className="w-full h-auto rounded-xl shadow-2xl object-contain block" />
                   {activeCase.aiAnalysis && activeCase.aiAnalysis.anatomicalLandmarks.filter(l => l.detected && l.coordinates).map((l, i) => (
                     <div key={i} className="absolute z-20" style={{ top: `${l.coordinates?.y ?? 0}%`, left: `${l.coordinates?.x ?? 0}%`, transform: 'translate(-50%, -50%)' }}>
                       <div className="w-3 h-3 bg-emerald-400 rounded-full border-2 border-white shadow-lg ring-2 ring-emerald-400/50"></div>

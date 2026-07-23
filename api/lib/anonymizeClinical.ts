@@ -12,6 +12,7 @@ const CPF = /\d{3}\.?\d{3}\.?\d{3}-?\d{2}/g;
 
 // Padrões corrigidos
 const PACIENTE_LINE = /^Paciente:\s*([^,\n]+)/gim;
+const TUTOR_LINE = /^(?:Tutor\(a\)|Tutora|Tutor|Responsável)\s*:\s*([^,\n]+)/gim;
 const CASO_PREFIX = /Caso:\s*[^\n,]+/gi;
 
 // Novos padrões LGPD (adicionados)
@@ -19,7 +20,8 @@ const NAME_FULL = /\b(?:Dr\.|Dra\.|Sr\.|Sra\.|Prof\.|Profa\.)\s+[A-ZÁÉÍÓÚÀ
 const PHONE_VARIANT = /(?:\+?55\s?)?(?:\(?\d{2}\)?[\s.-]?)?\d{4,5}[\s.-]?\d{4}/g;
 const PHONE_FULL = /\+?55\s?\(?\d{2}\)?\s?\d{4,5}[\s.-]?\d{4}/g;
 const CPF_RAW = /\b\d{11}\b/g;
-const MEDICAL_ID = /\b(?:PRM|ID|Prontuário|Número|Nº)[\s:#-]*\d{3,10}\b/gi;
+const MEDICAL_ID_PRESERVE_PREFIX = /(\b(?:ID|Prontuário|Número|Nº)[\s:#-]+)\d{3,10}\b/gi;
+const MEDICAL_ID = /\b(?:PRM)[\s:#-]*\d{3,10}\b/gi;
 const DATE_BR = /\b(nascido\s+em|nascida\s+em|nascimento\s+em|DOB:?\s*|Data de Nascimento:?\s*)\s*\d{2}\/\d{2}\/\d{4}\b/gi;
 const DATE_ISO = /\b(nascido\s+em|nascida\s+em|nascimento\s+em|DOB:?\s*|Data de Nascimento:?\s*)\s*\d{4}-\d{2}-\d{2}\b/gi;
 const DATE_STANDALONE = /\b\d{2}\/\d{2}\/\d{4}\b/g;
@@ -34,18 +36,24 @@ const CLINICAL_TERMS = [
   'Fêmur', 'Tibia', 'Fibula', 'Umero', 'Radio', 'Ulna', 'Patela',
   'Pelve', 'Coluna', 'Vertebral', 'Cervical', 'Lombar', 'Torácica',
   'Direito', 'Esquerdo', 'Superior', 'Inferior', 'Anterior', 'Posterior',
-  'Medial', 'Lateral', 'Distal', 'Proximal', 'Segunda', 'Terça',
-  'Quarta', 'Quinta', 'exta', 'Sábado', 'Domingo', 'Janeiro',
+  'Distal', 'Proximal', 'Segunda', 'Terça',
+  'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo', 'Janeiro',
   'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho',
-  'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
-  'São', 'Paulo', 'Rio', 'Belo', 'Horizonte'
-];
+  'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  ];
+
+  // Frases completas que não devem ser redigidas (comparação exata, não por palavra)
+  const CLINICAL_PHRASES = ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte'];
 
 /**
  * Verifica se um match de nome deve ser redactado (não é termo clínico).
  */
 function shouldRedactName(match: string): boolean {
-  const words = match.split(/\s+/);
+  const trimmed = match.trim();
+  if (CLINICAL_PHRASES.some(phrase => phrase.toLowerCase() === trimmed.toLowerCase())) {
+    return false;
+  }
+  const words = trimmed.split(/\s+/);
   return !words.some(word => 
     CLINICAL_TERMS.some(term => 
       word.toLowerCase() === term.toLowerCase()
@@ -70,19 +78,22 @@ export function anonymizeClinicalText(text: string): string {
     if (name.includes('[')) return match;
     return 'Paciente: [PACIENTE]';
   });
+  result = result.replace(TUTOR_LINE, (match, name) => {
+    if (name.includes('[')) return match;
+    return 'Tutor: [TUTOR]';
+  });
   result = result.replace(CASO_PREFIX, 'Caso: [CASO]');
   
   // 2. Datas de nascimento (ANTES de standalone para evitar conflito)
   result = result.replace(DATE_BR, (match, context) => {
-    const cleanContext = context.replace(/[\s:]+$/, '');
-    return `${cleanContext}[DATA_NASC]`;
+    return `${context.trim()} [DATA_NASC]`;
   });
   result = result.replace(DATE_ISO, (match, context) => {
-    const cleanContext = context.replace(/[\s:]+$/, '');
-    return `${cleanContext}[DATA_NASC]`;
+    return `${context.trim()} [DATA_NASC]`;
   });
   
-  // 3. Números de prontuário/ID médico (remove completamente)
+  // 3. Números de prontuário/ID médico (com e sem preservação de prefixo)
+  result = result.replace(MEDICAL_ID_PRESERVE_PREFIX, '$1[PRONTUARIO]');
   result = result.replace(MEDICAL_ID, '[PRONTUARIO]');
   
   // 4. CPF (formatado e não formatado)
@@ -117,7 +128,7 @@ export function anonymizeClinicalText(text: string): string {
  */
 export function isAnonymized(text: string): boolean {
   const markers = ['[NOME]', '[EMAIL]', '[TELEFONE]', '[CPF]', 
-                   '[PACIENTE]', '[CASO]', '[DATA_NASC]', '[PRONTUARIO]', '[DATA]'];
+                   '[PACIENTE]', '[TUTOR]', '[CASO]', '[DATA_NASC]', '[PRONTUARIO]', '[DATA]'];
   return markers.some(marker => text.includes(marker));
 }
 

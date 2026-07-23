@@ -1,8 +1,6 @@
 // src/services/feedbackService.ts
 import { supabase } from '@/services/supabase';
 import { getSupabaseAccessToken } from '@/services/supabase';
-import { anonymizeClinicalText } from '@/lib/anonymizeClinical';
-
 
 /** Cache curto para evitar re-indexação duplicada na mesma sessão. */
 const indexedCases = new Set<string>();
@@ -47,8 +45,7 @@ export async function salvarFeedback(
   const key = indexKey(casoId, diagnostico);
   if (indexedCases.has(key)) return;
 
-  const descricaoAnon = anonymizeClinicalText(casoClinico);
-  if (await casoJaIndexado(descricaoAnon, diagnostico)) {
+  if (await casoJaIndexado(casoClinico, diagnostico)) {
     indexedCases.add(key);
     return;
   }
@@ -66,7 +63,7 @@ export async function salvarFeedback(
       method: 'POST',
       headers,
       body: JSON.stringify({
-        text: `${descricaoAnon} -> ${diagnostico}`,
+        text: `${casoClinico} -> ${diagnostico}`,
       }),
     });
 
@@ -77,7 +74,7 @@ export async function salvarFeedback(
 
     const { embedding } = await embeddingRes.json();
     const { error: insertError } = await supabase.from('casos_reais_validados').insert({
-      descricao_caso: descricaoAnon,
+      descricao_caso: casoClinico,
       diagnostico_final: diagnostico,
       tratamento_aplicado: respostaIA.tratamento_inicial_sugerido,
       embedding,

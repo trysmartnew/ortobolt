@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Bot, Send, Copy, Check, RefreshCw } from 'lucide-react';
 import { useAnalysis, type ImageAnalysis } from '@/contexts/AnalysisContext';
 import { sendChatMessage, PRIMARY_MODEL } from '@/services/aiService';
-import { anonymizeCaseContext } from '@/lib/anonymizeClinical';
+
 import { Card, Button, Spinner } from '@/components/ui';
 
 interface CopilotClinicalProps {
@@ -52,7 +52,8 @@ export default function CopilotClinical({
       } else if (mode === 'comparative' && originalAnalysis && followUpAnalysis) {
         context = `Comparação entre análise original e follow-up:\n\nIMAGEM ORIGINAL:\n${originalAnalysis.analysisResult}\n\nIMAGEM FOLLOW-UP:\n${followUpAnalysis.analysisResult}`;
       } else if (mode === 'case' && caseData) {
-        context = `Caso clínico: ${caseData.title || 'Sem título'}\n${anonymizeCaseContext(caseData)}\n\n${originalAnalysis ? `Análise de imagem:\n${originalAnalysis.analysisResult}` : ''}`;
+        const caseContext = `Paciente: ${caseData.patientName}, Espécie: ${caseData.species}, Raça: ${caseData.breed}, Idade: ${caseData.ageYears}a, Peso: ${caseData.weightKg}kg. Procedimento: ${caseData.procedure}.`;
+        context = `Caso clínico: ${caseData.title || 'Sem título'}\n${caseContext}\n\n${originalAnalysis ? `Análise de imagem:\n${originalAnalysis.analysisResult}` : ''}`;
       }
 
       const history = messages.map(m => ({ role: m.role, content: m.content }));

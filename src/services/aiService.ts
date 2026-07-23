@@ -17,11 +17,6 @@ import {
   AiConsentDeniedError,
 } from '@/services/aiConsent';
 import {
-  anonymizeCaseContext,
-  sanitizeProxyMessages,
-  anonymizeClinicalText,
-} from '@/lib/anonymizeClinical';
-import {
   validarRespostaMedica,
   VANGUARD_STRUCTURED_PROMPT,
   buscarContextoRAG,
@@ -300,6 +295,17 @@ Responda APENAS no seguinte formato Markdown, sem texto introdutório ou conclus
 | Classificação do padrão | XX% | [Justifique - mencione limitações] |
 | Avaliação articular | XX% | [Justifique] |
 
+7. **BLOCO JSON DE MARCAÇÕES OBRIGATÓRIO**: SEMPRE anexe um bloco de código JSON ao final de sua resposta, contendo as coordenadas das marcações geométricas identificadas. O formato DEVE ser exatamente \`\`\`json
+{
+  "markings": {
+    "circles": [],
+    "angles": [],
+    "markers": [],
+    "rois": []
+  }
+}
+\`\`\`. Se nenhum achado for identificado, retorne o bloco com os arrays vazios.
+
 === NOTAS TÉCNICAS ===
 - Seja conciso mas completo. Evite redundâncias.
 - Use terminologia veterinária técnica precisa.
@@ -324,8 +330,8 @@ export async function proxyRequest(body: {
 }): Promise<string> {
   assertAiConsentGranted();
 
-  const sanitizedMessages = sanitizeProxyMessages(body.messages);
-  const cacheKey = await getCacheKey(body.model, sanitizedMessages);
+  const messages = body.messages;
+  const cacheKey = await getCacheKey(body.model, messages);
   const cached = getCachedResponse(cacheKey);
   if (cached) {
     if (import.meta.env.DEV) console.log('📦 Cache hit:', cacheKey.slice(0, 40));
@@ -342,7 +348,7 @@ export async function proxyRequest(body: {
       headers: await buildAiProxyHeaders(),
       body: JSON.stringify({
         model: body.model,
-        messages: sanitizedMessages,
+        messages: messages,
         max_tokens: body.max_tokens,
         ...(body.json_mode && { json_mode: true }),
       }),
@@ -415,14 +421,14 @@ export async function sendChatMessageStream(
 ): Promise<string> {
   assertAiConsentGranted();
 
-  const messages: ProxyMessage[] = sanitizeProxyMessages([
+  const messages: ProxyMessage[] = [
     { role: 'system', content: SYSTEM_PROMPT },
     ...history.map((m) => ({
       role: m.role as 'user' | 'assistant',
       content: m.content,
     })),
     { role: 'user', content: userMessage },
-  ]);
+  ];
 
   try {
     const res = await fetch(AI_PROXY, {
@@ -535,6 +541,20 @@ function extractMarkingsFromAnalysis(analysisText: string): MarkingsData {
   return validated.data;
 }
 
+const buildCaseContextString = (ctx: Partial<ClinicalCase>): string => {
+    const parts = [
+    ctx.title ? `Caso: ${ctx.title}` : null,
+    `Paciente: ${ctx.patientName}`,
+    ctx.species,
+    ctx.breed,
+    ctx.ageYears != null ? `${ctx.ageYears}a` : null,
+    ctx.weightKg != null ? `${ctx.weightKg}kg` : null,
+    ctx.procedure ? `Procedimento: ${ctx.procedure}` : null,
+    ctx.status ? `Status: ${ctx.status}` : null,
+  ].filter(Boolean);
+  return parts.join(', ');
+}
+
 // ── analyzeImage — ✅ COM COMPRESSÃO DE IMAGEM + MARKINGS ────────────────────
 export async function analyzeImage(
   imageBase64: string,
@@ -544,7 +564,7 @@ export async function analyzeImage(
   // ✅ Comprimir imagem antes de enviar (reduz payload em ~70%)
   const compressed = await compressImageBase64(imageBase64);
 
-  const ctx = caseInfo ? anonymizeCaseContext(caseInfo) : '';
+  const ctx = caseInfo ? buildCaseContextString(caseInfo) : '';
 
   const patientContext = caseInfo
     ? `PACIENTE: ${caseInfo.species} | ${caseInfo.breed} | ${caseInfo.ageYears} anos | ${caseInfo.weightKg} kg
@@ -555,9 +575,7 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
     ? caseInfo.status === 'completed'
       ? `\n\n${patientContext}\n\n${ctx}\n\nAnalise a evolução radiográfica pós-operatória. Máx. 120 palavras: achados pós-cirúrgicos, comparação com baseline e prognóstico.`
       : `\n\n${patientContext}\n\n${ctx}\n\nAnalise esta imagem médica veterinária. Primeiro, identifique o tipo de exame (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Depois, descreva os achados relevantes e sugira condutas. Máx. 150 palavras.`
-    : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.`)
-    // C5: Reforço do prompt local em Português
-    + `\n\nIMPORTANTE: Ao final de sua análise, anexe as marcações geométricas em um bloco de código JSON. O formato \`\`\`json\n{...}\n\`\`\` é obrigatório.`;
+    : `\n\nAnalise esta imagem veterinária. Determine o tipo de imagem (radiografia, ultrassom, foto clínica, etc.) e a região anatômica visível. Descreva objetivamente os achados, sugira diagnósticos diferenciais e condutas. Máx. 150 palavras. Seja direto e objetivo.`);
 
   const fullResponseText = await proxyRequest({
     model: PRIMARY_MODEL,
@@ -612,7 +630,7 @@ export async function analyzeImagesComparison(
     const compressedBefore = await compressImageBase64(beforeBase64);
     const compressedAfter = await compressImageBase64(afterBase64);
 
-    const ctx = caseInfo ? anonymizeCaseContext(caseInfo) : '';
+    const ctx = caseInfo ? buildCaseContextString(caseInfo) : '';
 
     const promptText = `Você é um especialista em ortopedia veterinária analisando uma comparação pré e pós-operatória.
 
@@ -746,7 +764,7 @@ Seja objetivo e técnico. NUNCA alucine dados não visíveis.`;
 
   const userText = `[Radiografia anexada]\n\nPergunta do veterinário:\n${payload.userMessage}`;
 
-  const messages: ProxyMessage[] = sanitizeProxyMessages([
+  const messages: ProxyMessage[] = [
     { role: 'system', content: systemContent },
     ...payload.history.map((m) => ({
       role: m.role as 'user' | 'assistant',
@@ -756,7 +774,7 @@ Seja objetivo e técnico. NUNCA alucine dados não visíveis.`;
       role: 'user',
       content: buildMultimodalUserContent(userText, imageDataUrl),
     },
-  ]);
+  ];
 
   try {
     const res = await fetch(AI_PROXY, {
@@ -864,8 +882,7 @@ export async function getStructuredOrthopedicAnalysis(
   caseDescription: string
 ): Promise<RespostaOrtopedica> {
   try {
-    const descAnon = anonymizeClinicalText(caseDescription);
-    const contextoRAG = await buscarContextoRAG(descAnon);
+    const contextoRAG = await buscarContextoRAG(caseDescription);
     const promptFinal =
       contextoRAG && contextoRAG.trim().length > 0
         ? `${VANGUARD_STRUCTURED_PROMPT}\n\nCONTEXTO DE LITERATURA/CASOS SIMILARES (Use estritamente se aplicável):\n${contextoRAG}`
@@ -875,7 +892,7 @@ export async function getStructuredOrthopedicAnalysis(
       model: PRIMARY_MODEL,
       messages: [
         { role: 'system', content: promptFinal },
-        { role: 'user', content: descAnon },
+        { role: 'user', content: caseDescription },
       ],
       max_tokens: 1000,
       json_mode: true,
