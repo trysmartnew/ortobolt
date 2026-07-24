@@ -298,14 +298,15 @@ Responda APENAS no seguinte formato Markdown, sem texto introdutório ou conclus
 7. **BLOCO JSON DE MARCAÇÕES OBRIGATÓRIO**: SEMPRE anexe um bloco de código JSON ao final de sua resposta, contendo as coordenadas das marcações geométricas identificadas. O formato DEVE ser exatamente \`\`\`json
 {
   "markings": {
-    "circles": [],
-    "angles": [],
-    "markers": [],
-    "rois": []
+    "circles": [ { "id": "c1", "cx": 0.50, "cy": 0.40, "radius": 0.05, "label": "Cabeça femoral", "stage": "abnormal" } ],
+    "angles": [ { "id": "a1", "points": [ { "x": 0.30, "y": 0.20 }, { "x": 0.50, "y": 0.40 }, { "x": 0.70, "y": 0.30 } ], "value": 128.5, "type": "Norberg" } ],
+    "markers": [ { "id": "m1", "x": 0.50, "y": 0.45, "label": "Foco de fratura", "type": "cominutiva" } ],
+    "rois": [ { "id": "r1", "x": 0.40, "y": 0.35, "width": 0.20, "height": 0.20, "label": "Região de interesse", "severity": "high" } ]
   }
 }
 \`\`\`. Se nenhum achado for identificado, retorne o bloco com os arrays vazios.
 
+REGRAS DO JSON DE MARCACOES: todas as coordenadas (cx, cy, x, y, width, height, radius e cada ponto de angles) DEVEM ser numeros NORMALIZADOS entre 0.0 e 1.0, onde (0,0) e o canto superior esquerdo da imagem. Use EXATAMENTE estes nomes de campo: circles = id, cx, cy, radius, label, stage; angles = id, points (array com exatamente 3 objetos {x,y}), value (numero em graus), type (apenas "TPA" ou "Norberg"); markers = id, x, y, label, type; rois = id, x, y, width, height, label, severity. NAO use o campo "center". O campo id pode ser qualquer texto curto. Marque ao menos o foco da lesao principal com um marker e, ao medir angulos, use angles com type valido.
 === NOTAS TÉCNICAS ===
 - Seja conciso mas completo. Evite redundâncias.
 - Use terminologia veterinária técnica precisa.
@@ -531,7 +532,22 @@ function extractMarkingsFromAnalysis(analysisText: string): MarkingsData {
   }
   
   const markingsData = parsedJson.markings || parsedJson;
-  const validated = MarkingsDataSchema.safeParse(markingsData);
+  const ensureId = (it: unknown): Record<string, unknown> => {
+    const o: Record<string, unknown> = (it && typeof it === 'object') ? { ...(it as Record<string, unknown>) } : {};
+    const id = o.id;
+    if (typeof id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+      o.id = crypto.randomUUID();
+    }
+    return o;
+  };
+  const normArr = (a: unknown): Record<string, unknown>[] => Array.isArray(a) ? a.map(ensureId) : [];
+  const normalizedMarkings = {
+    circles: normArr(markingsData.circles),
+    angles: normArr(markingsData.angles),
+    markers: normArr(markingsData.markers),
+    rois: normArr(markingsData.rois),
+  };
+  const validated = MarkingsDataSchema.safeParse(normalizedMarkings);
 
   if (!validated.success) {
     console.debug('[OrthoAI] Validação Zod das marcações falhou.', { error: validated.error.format() });
