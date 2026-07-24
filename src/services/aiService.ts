@@ -605,7 +605,7 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
         ),
       },
     ],
-    max_tokens: 1000,
+    max_tokens: 2500,
   });
 
   const markings = extractMarkingsFromAnalysis(fullResponseText);
