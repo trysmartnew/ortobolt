@@ -126,6 +126,18 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
   }
 }
 
+function stripMarkdownForPdf(text: string): string {
+  return text
+    .replace(/^##\s+/gm, '\n')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/^\|[-\s|]+\|$/gm, '')
+    .replace(/\|/g, '  ')
+    .replace(/^---+$/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 export async function generateMonthlyReport(
   user: User, metrics: KPIMetric[], chartData: ChartDataPoint[], cases: ClinicalCase[]
 ): Promise<void> {
@@ -236,7 +248,7 @@ export async function generateLaudoReport(
     doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
     doc.text('Análise Técnica', 14, y, { charSpace: 0 }); y += 7;
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
-    y = addWrappedText(doc, analysisText, 14, y, 182, 5);
+    y = addWrappedText(doc, stripMarkdownForPdf(analysisText), 14, y, 182, 5);
     y += 5;
   }
   if (imageDataUrl) {
