@@ -4,7 +4,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { useAnalysis } from '@/contexts/AnalysisContext';
-import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles, Images, FileText } from 'lucide-react';
+import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles, Images, FileText, Maximize2, X } from 'lucide-react';
 import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings, ApiError } from '@/services/aiService';
 import { uploadRadiografia } from '@/services/supabase';
 import { generateLaudoReport } from '@/services/pdfService';
@@ -69,6 +69,7 @@ export default function AnalysisPage() {
 
   const [approving, setApproving] = useState(false);
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [zoomOpen, setZoomOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -411,6 +412,9 @@ export default function AnalysisPage() {
                         {aiGeneratedMarkings.circles.length + aiGeneratedMarkings.angles.length} marcações IA
                       </span>
                     )}
+                  <button type="button" onClick={() => setZoomOpen(true)} aria-label="Ampliar radiografia" title="Ampliar radiografia" className="flex h-8 w-8 items-center justify-center rounded-md border border-white/15 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white">
+                    <Maximize2 className="h-4 w-4" />
+                  </button>
                 </div>
                 <div className="bg-[#050607] border-[2px] border-[#2c3136] rounded-[12px] shadow-[0_20px_40px_rgba(0,0,0,0.6)] overflow-hidden p-2">
                   {imageData && imageDimensions && (
@@ -489,6 +493,19 @@ export default function AnalysisPage() {
         </>
       )}
       {/* C3: O painel antigo que ficava aqui foi movido para dentro do layout de resultado */}
+      {zoomOpen && imageData && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 backdrop-blur-sm" role="dialog" aria-modal="true" onClick={() => setZoomOpen(false)}>
+          <button type="button" onClick={() => setZoomOpen(false)} aria-label="Fechar zoom" className="absolute top-4 right-4 z-[121] flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20"><X className="h-5 w-5" /></button>
+          <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+            <img src={imageData} alt="Radiografia em zoom" className="block max-h-[90vh] max-w-[90vw] object-contain" />
+            {aiGeneratedMarkings && imageDimensions && (
+              <div className="pointer-events-none absolute inset-0">
+                <AiMarkingsOverlay imageUrl={imageData} markings={aiGeneratedMarkings} naturalWidth={imageDimensions.width} naturalHeight={imageDimensions.height} />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
