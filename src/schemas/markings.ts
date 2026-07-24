@@ -11,7 +11,7 @@ const AlignmentCircleSchema = z.object({
   cy: z.number(),
   radius: z.number().positive(),
   label: z.string().optional(),
-  stage: z.enum(['pre', 'post']).optional(),
+  stage: z.enum(['pre', 'post', 'normal', 'abnormal', 'reference']).optional(),
 });
 
 const AngleMeasurementSchema = z.object({
@@ -26,7 +26,7 @@ const FractureMarkerSchema = z.object({
   x: z.number(),
   y: z.number(),
   label: z.string().optional(),
-  type: z.string().optional(),
+  type: z.string(),
 });
 
 const ROISchema = z.object({

@@ -2,8 +2,6 @@
 // Sistema central de prompts do OrthoAI Copiloto
 // Usado por: ChatPage, AIAssistant, ClinicalCopilotPanel
 
-import { anonymizePatientRef } from '@/lib/anonymizeClinical';
-
 export const VET_SYSTEM_PROMPT = `Você é o OrthoAI, um copiloto de inteligência artificial especializado em medicina veterinária ortopédica.
 
 PAPEL E OBJETIVO:
@@ -62,7 +60,7 @@ export function buildVetMessage(
   context?: { caseId?: string; patientName?: string; procedure?: string }
 ): string {
   if (context?.patientName) {
-    const ref = anonymizePatientRef(context.patientName, context.caseId);
+    const ref = `Paciente: ${context.patientName}`;
     return `Caso: ${ref}${context.procedure ? ` (${context.procedure})` : ''}\n\nPergunta do veterinário: ${userMessage}`;
   }
   return userMessage;
@@ -91,7 +89,7 @@ export function formatClinicalContextBlock(ctx: {
 }): string {
   const lines: string[] = ['=== CONTEXTO CLÍNICO ==='];
   if (ctx.patientName) {
-    lines.push(`Paciente: ${anonymizePatientRef(ctx.patientName, ctx.linkedCaseId)}`);
+    lines.push(`Paciente: ${ctx.patientName}`);
   }
   if (ctx.species) lines.push(`Espécie: ${ctx.species}`);
   if (ctx.breed) lines.push(`Raça: ${ctx.breed}`);

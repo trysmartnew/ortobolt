@@ -31,9 +31,11 @@ describe('clinicalCaseIntegrationService', () => {
   });
 
   it('buildIntegratedClinicalCase monta caso com tags de pipeline', () => {
+    const imageStorageUrl = 'https://iatncfufdldzppmjwmvt.supabase.co/storage/v1/object/sign/radiografias/vet-1/exam.jpg?token=abc123';
     const c = buildIntegratedClinicalCase({
-      veterinarianId: 'vet-1',
+      veterinarianId: '00000000-0000-0000-0000-000000000000',
       imageDataUrl: 'data:image/png;base64,abc',
+      imageStorageUrl,
       analysisText: 'Análise ortopédica sem urgência.',
       clinicalContext: {
         patientName: 'Thor',
@@ -49,7 +51,7 @@ describe('clinicalCaseIntegrationService', () => {
     expect(c.tags).toContain('integrado');
     expect(c.tags).toContain('analise-ia');
     expect(c.aiAnalysis).toBeDefined();
-    expect(c.exams?.[0]?.imageUrls).toEqual([]);
+    expect(c.exams?.[0]?.imageUrls).toEqual([imageStorageUrl]);
   });
 
   it('buildCaseTitle usa paciente e procedimento', () => {

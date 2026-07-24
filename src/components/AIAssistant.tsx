@@ -5,7 +5,7 @@ import DOMPurify from 'dompurify';
 import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
 import { sendChatMessageStream } from '@/services/aiService';
 import { buildVetMessage } from '@/services/veterinaryPrompts';
-import { anonymizeCaseContext } from '@/lib/anonymizeClinical';
+
 import { useApp } from '@/contexts/AppContext';
 import OrthoDeepAnalysis from './OrthoDeepAnalysis';
 import { getStructuredOrthopedicAnalysis } from '@/services/aiService';
@@ -37,8 +37,8 @@ export default function AIAssistant() {
     if (!activeCase) { alert('Selecione um caso clínico primeiro.'); return; }
     setIsAnalyzing(true);
     try {
-      const ctx = anonymizeCaseContext(activeCase);
-      const result = await getStructuredOrthopedicAnalysis(ctx);
+      const caseDescription = `Paciente: ${activeCase.patientName}, Espécie: ${activeCase.species}, Raça: ${activeCase.breed}, Idade: ${activeCase.ageYears}a, Peso: ${activeCase.weightKg}kg. Procedimento: ${activeCase.procedure}.`;
+      const result = await getStructuredOrthopedicAnalysis(caseDescription);
       setDeepAnalysis(result);
     } catch (err) {
       console.error('Erro análise profunda:', err);

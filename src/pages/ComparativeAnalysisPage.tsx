@@ -1,10 +1,11 @@
-﻿// src/pages/ComparativeAnalysisPage.tsx
+// src/pages/ComparativeAnalysisPage.tsx
 import React, { Suspense, lazy } from 'react';
 import { SectionHeader, Card, EmptyState } from '@/components/ui';
 import { useApp } from '@/contexts/AppContext';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { buildCaseTitle } from '@/services/clinicalCaseIntegrationService';
 import { PRIMARY_MODEL } from '@/services/aiService';
+import { uploadRadiografia } from '@/services/supabase';
 import type { ClinicalCase, CaseExam } from '@/types';
 
 const PrePostComparison = lazy(() => import('@/components/analysis/PrePostComparison'));
@@ -54,9 +55,14 @@ export default function ComparativeAnalysisPage() {
         createdAt: new Date().toISOString(),
       };
 
+      const primaryImage = afterImage || beforeImage || '';
+      const storagePath = `${user.id}/comparative/${Date.now()}`;
+      const imageStorageUrl = await uploadRadiografia(primaryImage, storagePath);
+
       const clinicalCase = approveAndIntegrateCase({
         veterinarianId: user.id,
-        imageDataUrl: afterImage || beforeImage || '',
+        imageDataUrl: primaryImage,
+        imageStorageUrl: imageStorageUrl ?? undefined,
         analysisText: `[Mesa de Luz - Comparativo Antes/Depois]\n\n${reportText}`,
         clinicalContext: {
           patientName: activeCase.patientName,

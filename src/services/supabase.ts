@@ -190,12 +190,12 @@ export async function uploadRadiografia(
 
   if (error) {
     logger.error('Erro no upload de radiografia', error.message);
-    throw new Error(`Falha no upload da imagem: ${error.message}`);
+    return null;
   }
 
-  // Gerar URL assinada com expiração de 24h (segurança LGPD)
-  const signedUrl = await getSignedImageUrl(filePath);
-  return signedUrl;
+  // Retorna o path do objeto no storage, não a URL.
+  // A URL assinada será gerada sob demanda pela API.
+  return filePath;
 }
 
 /** Upload genérico de imagem de caso para o bucket 'radiografias' */
@@ -233,9 +233,9 @@ export async function uploadCaseImage(
     return null;
   }
 
-  // Gerar URL assinada com expiração de 24h (segurança LGPD)
-  const signedUrl = await getSignedImageUrl(filePath);
-  return signedUrl;
+  // Retorna o path do objeto no storage, não a URL.
+  // A URL assinada será gerada sob demanda pela API.
+  return filePath;
 }
 
 /**

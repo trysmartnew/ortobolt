@@ -3,12 +3,13 @@
 // Comprime + upload para Storage + retorna URL pública (nunca base64)
 
 import { compressImageBase64 } from './aiService';
-import { uploadRadiografia, uploadCaseImage } from './supabase';
+import { uploadRadiografia, uploadCaseImage, getSignedImageUrl } from './supabase';
 import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('imageService');
 
 export interface ImageUploadResult {
+  path: string | null;
   url: string | null;
   error?: string;
 }
@@ -189,13 +190,14 @@ export async function uploadImageToStorage(
     const file = dataUrlToFile(dataUrl);
     const isValidImage = await validateImageMagicBytes(file);
     if (!isValidImage) {
-      return { url: null, error: 'Formato de imagem inválido. Apenas JPG, PNG e WEBP são permitidos.' };
+      return { path: null, url: null, error: 'Formato de imagem inválido. Apenas JPG, PNG e WEBP são permitidos.' };
     }
 
     // 0.1 Validar dimensões mínimas (segurança contra imagens inadequadas)
     const dimensions = await validateImageDimensions(file);
     if (!dimensions.valid) {
       return {
+        path: null,
         url: null,
         error: `Imagem muito pequena ou distorcida. Mínimo: ${MIN_IMAGE_WIDTH}x${MIN_IMAGE_HEIGHT}px`
       };
@@ -210,27 +212,34 @@ export async function uploadImageToStorage(
     const compressedDataUrl = `data:image/jpeg;base64,${compressed}`;
 
     // 2. Fazer upload para o Storage
-    let url: string | null = null;
+    let path: string | null = null;
 
     if (options.type === 'avatar' || options.type === 'xray') {
       // Para avatar/xray, precisa de caseId
       if (!options.caseId) {
-        return { url: null, error: 'caseId obrigatório para avatar/xray' };
+        return { path: null, url: null, error: 'caseId obrigatório para avatar/xray' };
       }
-      url = await uploadCaseImage(compressedDataUrl, options.caseId, options.type);
+      path = await uploadCaseImage(compressedDataUrl, options.caseId, options.type);
     } else {
       // Para radiografias genéricas
-      url = await uploadRadiografia(compressedDataUrl, options.storagePath);
+      path = await uploadRadiografia(compressedDataUrl, options.storagePath);
     }
 
+    if (!path) {
+      return { path: null, url: null, error: 'Falha no upload para Storage' };
+    }
+
+    // 3. Gerar URL assinada para o path retornado
+    const url = await getSignedImageUrl(path);
     if (!url) {
-      return { url: null, error: 'Falha no upload para Storage' };
+        return { path, url: null, error: 'Falha ao gerar URL assinada para a imagem.' };
     }
 
-    return { url };
+    return { path, url };
   } catch (err) {
     logger.error('Erro ao processar imagem', err);
     return {
+      path: null,
       url: null,
       error: err instanceof Error ? err.message : 'Erro desconhecido'
     };
@@ -243,7 +252,7 @@ export async function uploadImageToStorage(
  * 
  * @param dataUrls - Array de imagens em base64
  * @param options - Configurações compartilhadas
- * @returns Promise com array de URLs (null para falhas)
+ * @returns Promise com array de paths (null para falhas)
  */
 export async function uploadMultipleImages(
   dataUrls: string[],
@@ -254,9 +263,9 @@ export async function uploadMultipleImages(
     type?: 'avatar' | 'xray' | 'radiograph';
     caseId?: string;
   }
-): Promise<(string | null)[]> {
+): Promise<ImageUploadResult[]> {
   const results = await Promise.all(
     dataUrls.map(url => uploadImageToStorage(url, options))
   );
-  return results.map(r => r.url);
+  return results;
 }
