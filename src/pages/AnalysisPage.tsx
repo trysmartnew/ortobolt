@@ -4,7 +4,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { useAnalysis } from '@/contexts/AnalysisContext';
-import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
+import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles, Images } from 'lucide-react';
 import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings, ApiError } from '@/services/aiService';
 import { uploadRadiografia } from '@/services/supabase';
 
@@ -426,6 +426,24 @@ export default function AnalysisPage() {
                     />
                   </div>
                 </Card>
+              </div>
+              <div className="lg:col-span-12 flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => handleApprove(defaultCaseTitle, 'case')}
+                  disabled={approving}
+                  className="flex-1 h-[42px] rounded-[8px] flex items-center justify-center gap-2 border border-[rgba(41,163,153,0.3)] bg-gradient-to-r from-[#29a399]/15 to-[#29a399]/05 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(41,163,153,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <CheckCircle className="w-4 h-4 text-[#29a399]" />
+                  <span className="text-sm">Aprovar e Abrir Caso</span>
+                </button>
+                <button
+                  onClick={() => handleApprove(defaultCaseTitle, 'gallery')}
+                  disabled={approving}
+                  className="flex-1 h-[42px] rounded-[8px] flex items-center justify-center gap-2 border border-[rgba(41,163,153,0.3)] bg-gradient-to-r from-[#29a399]/15 to-[#29a399]/05 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(41,163,153,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Images className="w-4 h-4 text-[#29a399]" />
+                  <span className="text-sm">Aprovar e ir à Galeria</span>
+                </button>
               </div>
             </div>
           )}
