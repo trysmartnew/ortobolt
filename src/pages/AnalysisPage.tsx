@@ -4,9 +4,10 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { useAnalysis } from '@/contexts/AnalysisContext';
-import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles, Images } from 'lucide-react';
+import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles, Images, FileText } from 'lucide-react';
 import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings, ApiError } from '@/services/aiService';
 import { uploadRadiografia } from '@/services/supabase';
+import { generateLaudoReport } from '@/services/pdfService';
 
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
 import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
@@ -67,6 +68,7 @@ export default function AnalysisPage() {
   } = useClinicalCopilot(imageBase64);
 
   const [approving, setApproving] = useState(false);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,6 +157,34 @@ export default function AnalysisPage() {
   const handleRefine = async () => {
     const refined = await refineAnalysis();
     if (refined) setResult(refined);
+  };
+
+  const handleGeneratePdf = async () => {
+    if (!analysisText.trim()) {
+      addToast('Conclua a análise antes de gerar o laudo em PDF.', 'warning');
+      return;
+    }
+    setGeneratingPdf(true);
+    try {
+      await generateLaudoReport(
+        analysisText,
+        {
+          patientName: ctx.patientName,
+          species: ctx.species,
+          breed: ctx.breed,
+          ageYears: ctx.ageYears,
+          weightKg: ctx.weightKg,
+          procedure: ctx.procedure,
+        },
+        imageData
+      );
+      addToast('Laudo em PDF gerado com sucesso.', 'success');
+    } catch (e) {
+      console.error('Falha ao gerar PDF do laudo:', e);
+      addToast('Não foi possível gerar o PDF do laudo. Tente novamente.', 'error');
+    } finally {
+      setGeneratingPdf(false);
+    }
   };
 
   const analysisText = displayAnalysis ?? result ?? '';
@@ -443,6 +473,14 @@ export default function AnalysisPage() {
                 >
                   <Images className="w-4 h-4 text-[#29a399]" />
                   <span className="text-sm">Aprovar e ir à Galeria</span>
+                </button>
+                <button
+                  onClick={handleGeneratePdf}
+                  disabled={generatingPdf}
+                  className="flex-1 h-[42px] rounded-[8px] flex items-center justify-center gap-2 border border-[rgba(41,163,153,0.3)] bg-gradient-to-r from-[#29a399]/15 to-[#29a399]/05 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(41,163,153,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FileText className="w-4 h-4 text-[#29a399]" />
+                  <span className="text-sm">{generatingPdf ? 'Gerando PDF...' : 'Gerar Laudo em PDF'}</span>
                 </button>
               </div>
             </div>

@@ -1,4 +1,4 @@
-﻿// src/services/pdfService.ts
+// src/services/pdfService.ts
 // ✅ A-03: addWrappedText helper — elimina overflow silencioso
 // ✅ A-03: safe() — sanitiza conteúdo da IA antes de inserir no PDF
 
@@ -202,6 +202,57 @@ export async function generateMonthlyReport(
 
   addFooter(doc);
   doc.save(`vanguard-veterinary-relatorio-${new Date().toISOString().slice(0, 7)}.pdf`);
+}
+
+export async function generateLaudoReport(
+  analysisText: string,
+  patientContext: { patientName?: string; species?: string; breed?: string; ageYears?: number; weightKg?: number; procedure?: string },
+  imageDataUrl?: string | null,
+  options?: { logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string }
+): Promise<void> {
+  const JsPDF = await getJsPDF();
+  const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  await addHeader(doc, 'Laudo Radiográfico', `${safe(patientContext.patientName) || 'Paciente'} — ${new Date().toLocaleDateString('pt-BR')}`, options);
+  let y = 54;
+  doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
+  doc.text('Dados do Paciente', 14, y, { charSpace: 0 }); y += 7;
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
+  const patientFields: [string, string][] = [
+    ['Nome', safe(patientContext.patientName)],
+    ['Espécie', safe(patientContext.species)],
+    ['Raça', safe(patientContext.breed)],
+    ['Idade', patientContext.ageYears != null ? `${patientContext.ageYears} anos` : ''],
+    ['Peso', patientContext.weightKg != null ? `${patientContext.weightKg} kg` : ''],
+    ['Procedimento', safe(patientContext.procedure)],
+  ];
+  for (const [label, value] of patientFields) {
+    if (!value) continue;
+    if (y > 270) { doc.addPage(); y = 30; }
+    doc.text(`${label}: ${value}`, 14, y, { charSpace: 0 }); y += 5;
+  }
+  y += 5;
+  if (analysisText.trim()) {
+    if (y > 250) { doc.addPage(); y = 30; }
+    doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
+    doc.text('Análise Técnica', 14, y, { charSpace: 0 }); y += 7;
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
+    y = addWrappedText(doc, analysisText, 14, y, 182, 5);
+    y += 5;
+  }
+  if (imageDataUrl) {
+    const imageWidth = 180;
+    const imageHeight = 120;
+    if (y + imageHeight > 270) { doc.addPage(); y = 30; }
+    try {
+      const format = imageDataUrl.includes('image/png') ? 'PNG' : 'JPEG';
+      doc.addImage(imageDataUrl, format, 15, y, imageWidth, imageHeight);
+      y += imageHeight + 5;
+    } catch (e) {
+      console.warn('Erro ao adicionar imagem ao PDF do laudo:', e);
+    }
+  }
+  addFooter(doc);
+  doc.save(`laudo_${safe(patientContext.patientName).replace(/\s/g, '_') || 'radiografico'}_${new Date().toISOString().split('T')[0]}.pdf`);
 }
 
 export async function generateCaseReport(
