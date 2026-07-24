@@ -12,7 +12,7 @@ import { generateLaudoReport } from '@/services/pdfService';
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
 import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
 import ApproveCompleteCaseBar from '@/components/analysis/ApproveCompleteCaseBar';
-import AiMarkingsOverlay from '@/components/analysis/AiMarkingsOverlay';
+import ZoomableImage from '@/components/analysis/ZoomableImage';
 import { lazy, Suspense } from 'react';
 // Code-split: html2canvas (~202 kB) + jspdf (~391 kB) so na Mesa de Luz
 // PrePostComparison removed - feature disabled
@@ -418,11 +418,12 @@ export default function AnalysisPage() {
                 </div>
                 <div className="bg-[#050607] border-[2px] border-[#2c3136] rounded-[12px] shadow-[0_20px_40px_rgba(0,0,0,0.6)] overflow-hidden p-2">
                   {imageData && imageDimensions && (
-                    <AiMarkingsOverlay
+                    <ZoomableImage
                       imageUrl={imageData}
-                      markings={aiGeneratedMarkings ?? { circles: [], angles: [], markers: [], rois: [] }}
                       naturalWidth={imageDimensions.width}
                       naturalHeight={imageDimensions.height}
+                      markings={aiGeneratedMarkings ?? { circles: [], angles: [], markers: [], rois: [] }}
+                      viewportClassName="w-full rounded-[6px]"
                     />
                   )}
                 </div>
@@ -493,16 +494,18 @@ export default function AnalysisPage() {
         </>
       )}
       {/* C3: O painel antigo que ficava aqui foi movido para dentro do layout de resultado */}
-      {zoomOpen && imageData && (
+      {zoomOpen && imageData && imageDimensions && (
         <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 backdrop-blur-sm" role="dialog" aria-modal="true" onClick={() => setZoomOpen(false)}>
           <button type="button" onClick={() => setZoomOpen(false)} aria-label="Fechar zoom" className="absolute top-4 right-4 z-[121] flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20"><X className="h-5 w-5" /></button>
           <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
-            <img src={imageData} alt="Radiografia em zoom" className="block max-h-[90vh] max-w-[90vw] object-contain" />
-            {aiGeneratedMarkings && imageDimensions && (
-              <div className="pointer-events-none absolute inset-0">
-                <AiMarkingsOverlay imageUrl={imageData} markings={aiGeneratedMarkings} naturalWidth={imageDimensions.width} naturalHeight={imageDimensions.height} />
-              </div>
-            )}
+            <ZoomableImage
+              imageUrl={imageData}
+              naturalWidth={imageDimensions.width}
+              naturalHeight={imageDimensions.height}
+              markings={aiGeneratedMarkings}
+              viewportClassName="inline-block max-h-[90vh] max-w-[90vw] rounded-[6px]"
+              imgClassName="block max-h-[90vh] max-w-[90vw] w-auto select-none"
+            />
           </div>
         </div>
       )}
