@@ -93,7 +93,11 @@ export default function AnalysisPage() {
     setStreamError('');
     const reader = new FileReader();
     reader.onload = (ev) => {
-      setImageData(ev.target?.result as string);
+      const dataUrl = ev.target?.result as string;
+      setImageData(dataUrl);
+      const probe = new Image();
+      probe.onload = () => setImageDimensions({ width: probe.naturalWidth, height: probe.naturalHeight });
+      probe.src = dataUrl;
       setMode('preview');
     };
     reader.readAsDataURL(f);
