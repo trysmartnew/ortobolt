@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Bot, Send, User, Sparkles, RefreshCw, Copy, Check } from 'lucide-react';
 import type { ChatMessage } from '@/types/index';
 import type { ClinicalContextDraft } from '@/types/clinicalCopilot';
@@ -72,6 +72,7 @@ export interface ClinicalCopilotPanelProps {
   onSend: (text: string) => void;
   onRefineAnalysis: () => void;
   onRetry: () => void;
+  autoScroll?: boolean;
 }
 
 export default function ClinicalCopilotPanel({
@@ -85,13 +86,16 @@ export default function ClinicalCopilotPanel({
   onSend,
   onRefineAnalysis,
   onRetry,
+  autoScroll = true,
 }: ClinicalCopilotPanelProps) {
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, streaming]);
+    if (autoScroll) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, streaming, autoScroll]);
 
   const handleSend = () => {
     const t = input.trim();

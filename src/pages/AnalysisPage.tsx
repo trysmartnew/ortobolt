@@ -70,12 +70,6 @@ export default function AnalysisPage() {
   const [approving, setApproving] = useState(false);
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const pageTopRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (mode === 'result') {
-      pageTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [mode]);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -310,7 +304,7 @@ export default function AnalysisPage() {
     });
 
   return (
-    <div ref={pageTopRef} className="p-4 w-full space-y-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011] text-white">
+    <div className="p-4 w-full space-y-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011] text-white">
       <SectionHeader
         title="Análise Visual"
         subtitle="Análise Avançada · Sistema de Suporte"
@@ -447,6 +441,7 @@ export default function AnalysisPage() {
                   <div className="p-4 h-full">
                     <ClinicalCopilotPanel
                       enabled={mode === 'result'}
+                      autoScroll={false}
                       messages={session?.messages ?? []}
                       streaming={streaming}
                       refining={refining}
