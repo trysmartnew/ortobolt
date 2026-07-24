@@ -135,11 +135,11 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
           {gridLines}
 
           {markings.circles.map((c: AlignmentCircle) => {
-            const cx = c.cx * scaleX;
-            const cy = c.cy * scaleY;
-            const radius = Math.max(6, (c.radius || 30) * Math.min(scaleX, scaleY));
+            const cx = c.cx * stageSize.width;
+            const cy = c.cy * stageSize.height;
+            const radius = Math.max(6, (c.radius || 0.03) * Math.min(stageSize.width, stageSize.height));
             const labelX = cx + radius + 4;
-            const labelY = cy - 14 * scaleY;
+            const labelY = cy - 14;
 
             return (
               <Group key={c.id}>
@@ -152,52 +152,52 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
                   fill={c.stage === 'abnormal' ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)'}
                 />
                 <GuideLine x1={cx + radius} y1={cy} x2={labelX} y2={labelY} />
-                <Badge x={labelX} y={labelY} text={c.label || 'Círculo'} fontSize={Math.round(10 * scaleX)} />
+                <Badge x={labelX} y={labelY} text={c.label || 'Círculo'} fontSize={10} />
               </Group>
             );
           })}
 
           {markings.angles.map((a: AngleMeasurement) => {
             const [p1, p2, p3] = a.points;
-            const vertexX = p2.x * scaleX;
-            const vertexY = p2.y * scaleY;
+            const vertexX = p2.x * stageSize.width;
+            const vertexY = p2.y * stageSize.height;
             const labelX = vertexX;
-            const labelY = vertexY - 18 * scaleY;
+            const labelY = vertexY - 18;
 
             return (
               <Group key={a.id}>
                 <Line
                   points={[
-                    p1.x * scaleX, p1.y * scaleY,
+                    p1.x * stageSize.width, p1.y * stageSize.height,
                     vertexX, vertexY,
-                    p3.x * scaleX, p3.y * scaleY
+                    p3.x * stageSize.width, p3.y * stageSize.height
                   ]}
                   stroke="#3b82f6"
                   strokeWidth={2}
                 />
                 <GuideLine x1={vertexX} y1={vertexY} x2={labelX} y2={labelY} />
-                <Badge x={labelX} y={labelY} text={`${a.type || 'Ângulo'}: ${a.value.toFixed(1)}°`} fontSize={Math.round(10 * scaleX)} />
+                <Badge x={labelX} y={labelY} text={`${a.type || 'Ângulo'}: ${a.value.toFixed(1)}°`} fontSize={10} />
               </Group>
             );
           })}
 
           {markings.markers.map((m: FractureMarker) => (
             <Group key={m.id}>
-              <Circle x={m.x * scaleX} y={m.y * scaleY} radius={Math.max(4, 6 * scaleX)} fill="var(--color-error)" stroke="#ffffff" strokeWidth={2} />
+              <Circle x={m.x * stageSize.width} y={m.y * stageSize.height} radius={6} fill="var(--color-error)" stroke="#ffffff" strokeWidth={2} />
               {m.label && (
                 <>
-                  <GuideLine x1={m.x * scaleX} y1={m.y * scaleY} x2={(m.x * scaleX) + 8 * scaleX} y2={(m.y * scaleY) - 6 * scaleY} />
-                  <Badge x={(m.x * scaleX) + 8 * scaleX} y={(m.y * scaleY) - 6 * scaleY} text={m.label} fontSize={Math.round(10 * scaleX)} />
+                  <GuideLine x1={m.x * stageSize.width} y1={m.y * stageSize.height} x2={(m.x * stageSize.width) + 8} y2={(m.y * stageSize.height) - 6} />
+                  <Badge x={(m.x * stageSize.width) + 8} y={(m.y * stageSize.height) - 6} text={m.label} fontSize={10} />
                 </>
               )}
             </Group>
           ))}
 
           {markings.rois.map((roi: ROI) => {
-            const x = roi.x * scaleX;
-            const y = roi.y * scaleY;
-            const w = (roi.width || 40) * scaleX;
-            const h = (roi.height || 40) * scaleY;
+            const x = roi.x * stageSize.width;
+            const y = roi.y * stageSize.height;
+            const w = (roi.width || 0.2) * stageSize.width;
+            const h = (roi.height || 0.2) * stageSize.height;
             const cornerSize = Math.min(w, h, 20) * 0.25;
 
             return (
@@ -209,7 +209,7 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
                 {roi.label && (
                   <>
                     <GuideLine x1={x} y1={y} x2={x} y2={y - 16} />
-                    <Badge x={x} y={y - 16} text={roi.label} fontSize={Math.round(10 * scaleX)} />
+                    <Badge x={x} y={y - 16} text={roi.label} fontSize={10} />
                   </>
                 )}
               </Group>
