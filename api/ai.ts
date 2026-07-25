@@ -48,6 +48,7 @@ async function callGemini(
           model,
           messages,
           max_tokens: maxTokens,
+          reasoning_effort: 'none',
           ...(options.stream && { stream: true }),
           ...(options.jsonMode && { response_format: { type: 'json_object' } }),
         }),
