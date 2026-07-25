@@ -685,7 +685,7 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
   const markings = extractMarkingsFromAnalysis(fullResponseText);
   
   // Remove o bloco JSON do texto para não poluir o laudo
-  const reportTextOnly = fullResponseText.replace(/```json\s*([\s\S]*?)\s*```/, '').trim();
+  const reportTextOnly = fullResponseText.replace(/```json[\s\S]*?(?:```|$)/, '').trim();
 
   return {
     analysisText: postProcessLaudo(reportTextOnly).text,

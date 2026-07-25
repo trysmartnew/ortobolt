@@ -128,6 +128,7 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
 
 function stripMarkdownForPdf(text: string): string {
   return text
+    .replace(/```json[\s\S]*?(?:```|$)/g, '')
     .replace(/^##\s+/gm, '\n')
     .replace(/\*\*(.+?)\*\*/g, '$1')
     .replace(/\*(.+?)\*/g, '$1')
