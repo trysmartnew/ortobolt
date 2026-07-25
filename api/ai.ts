@@ -209,7 +209,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const finalMessages = [structuredOutputInstruction, ...sanitizedMessages];
 
-    const maxTokens = Math.min(body.max_tokens ?? 1000, 1000);
+    const maxTokens = Math.min(body.max_tokens ?? 4096, 8192);
     const isStream = body.stream === true;
     const jsonMode = body.json_mode === true;
 
