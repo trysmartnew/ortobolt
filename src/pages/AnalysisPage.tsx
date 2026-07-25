@@ -416,6 +416,19 @@ export default function AnalysisPage() {
                     <Maximize2 className="h-4 w-4" />
                   </button>
                 </div>
+                {aiGeneratedMarkings &&
+                  aiGeneratedMarkings.circles.length === 0 &&
+                  aiGeneratedMarkings.angles.length === 0 &&
+                  aiGeneratedMarkings.markers.length === 0 &&
+                  aiGeneratedMarkings.rois.length === 0 && (
+                    <div role="status" aria-live="polite" className="mx-4 mb-4 p-3 rounded-lg bg-yellow-500/10 border-l-4 border-yellow-400/50 flex items-start gap-3">
+                      <AlertCircle className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-yellow-200">Marcações não geradas nesta análise</p>
+                        <p className="text-xs text-yellow-200/70 mt-1">O modelo não identificou estruturas para marcação automática.</p>
+                      </div>
+                    </div>
+                )}
                 <div className="bg-[#050607] border-[2px] border-[#2c3136] rounded-[12px] shadow-[0_20px_40px_rgba(0,0,0,0.6)] overflow-hidden p-2">
                   {imageData && imageDimensions && (
                     <ZoomableImage
