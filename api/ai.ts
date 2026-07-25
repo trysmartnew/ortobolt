@@ -15,11 +15,24 @@ const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/openai/cha
 const OPENROUTER_BASE = 'https://openrouter.ai/api/v1/chat/completions';
 const GROQ_BASE = 'https://api.groq.com/openai/v1/chat/completions';
 
-// Fallback Model Chain
-const PRIMARY_MODEL = 'gemini-2.5-flash-lite';
-const GEMINI_FALLBACK_MODEL = 'gemini-2.5-flash';
-const OPENROUTER_MODEL = 'openai/gpt-4o'; // Standard model name for OpenRouter
-const GROQ_MODEL = 'llama3-70b-8192'; // Standard model name for Groq
+// Fallback Model Chains (consolidated 8-briefing, Jul 2026)
+interface ChainStep {
+  provider: 'google' | 'groq' | 'openrouter';
+  model: string;
+}
+
+const MULTIMODAL_CHAIN: ChainStep[] = [
+  { provider: 'google', model: 'gemini-2.5-flash-lite' },
+  { provider: 'google', model: 'gemini-3.1-flash-lite' },
+  { provider: 'groq', model: 'qwen/qwen3.6-27b' },
+  { provider: 'openrouter', model: 'google/gemma-4-31b-it:free' },
+];
+
+const TEXT_ONLY_CHAIN: ChainStep[] = [
+  { provider: 'google', model: 'gemini-2.5-flash-lite' },
+  { provider: 'groq', model: 'openai/gpt-oss-20b' },
+  { provider: 'openrouter', model: 'nvidia/nemotron-nano-9b-v2:free' },
+];
 
 const OPENROUTER_REFERRER = 'https://ortobolt.vercel.app';
 
@@ -72,6 +85,7 @@ async function callGemini(
 }
 
 async function callOpenRouter(
+  model: string,
   messages: Array<{ role: string; content: unknown }>,
   maxTokens: number,
   key: string,
@@ -91,7 +105,7 @@ async function callOpenRouter(
           'HTTP-Referer': OPENROUTER_REFERRER,
         },
         body: JSON.stringify({
-          model: OPENROUTER_MODEL,
+          model,
           messages,
           max_tokens: maxTokens,
           ...(options.stream && { stream: true }),
@@ -117,6 +131,7 @@ async function callOpenRouter(
 }
 
 async function callGroq(
+  model: string,
   messages: Array<{ role: string; content: unknown }>,
   maxTokens: number,
   key: string,
@@ -135,7 +150,7 @@ async function callGroq(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: GROQ_MODEL,
+          model,
           messages,
           max_tokens: maxTokens,
           ...(options.stream && { stream: true }),
@@ -202,13 +217,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const sanitizedMessages = sanitizeAiMessages(body.messages);
 
-    // S1: Add system message to enforce structured JSON output for markings
-    const structuredOutputInstruction = {
-      role: 'system',
-      content: `In addition to the clinical analysis text, append a structured JSON object with all identified geometric markings. The JSON object must follow this schema: { "markings": { "circles": [], "angles": [] } }. Enclose this JSON object in a markdown code block like this: \`\`\`json\n{...json...}\n\`\`\``
-    };
+    // S1: Detect multimodal request
+    const isMultimodal = sanitizedMessages.some(
+      (msg) => Array.isArray(msg.content) && msg.content.some((p: any) => p.type === 'image_url')
+    );
 
-    const finalMessages = [structuredOutputInstruction, ...sanitizedMessages];
+    // S2: Structured JSON output (multimodal only)
+    const finalMessages = isMultimodal
+      ? [{
+          role: 'system',
+          content: `In addition to the clinical analysis text, append a structured JSON object with all identified geometric markings. The JSON object must follow this schema: { "markings": { "circles": [], "angles": [] } }. Enclose this JSON object in a markdown code block like this: \`\`\`json\n{...json...}\n\`\`\``
+        }, ...sanitizedMessages]
+      : sanitizedMessages;
 
     const maxTokens = Math.min(body.max_tokens ?? 4096, 8192);
     const isStream = body.stream === true;
@@ -217,55 +237,51 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let response: Response | null = null;
     const options = { stream: isStream, jsonMode };
 
-    // --- Fallback Chain ---
-    
-    // 1. Gemini Primary
-    if (GEMINI_API_KEY) {
-      console.log('[AI Proxy] Trying provider: Gemini Primary');
-      response = await callGemini(PRIMARY_MODEL, finalMessages, maxTokens, GEMINI_API_KEY, options)
-        .catch(err => {
-          console.warn(`[AI Proxy] Gemini Primary failed (network error: ${err.message})`);
-          return null;
-        });
-    }
+    // --- Fallback Chain (consolidated 8-briefing + FASE 3) ---
+    const chain = isMultimodal ? MULTIMODAL_CHAIN : TEXT_ONLY_CHAIN;
 
-    // 2. Gemini Fallback
-    if (GEMINI_API_KEY && (!response || !response.ok)) {
-      if(response) console.warn(`[AI Proxy] Gemini Primary failed (status: ${response.status})`);
-      console.log('[AI Proxy] Falling back to: Gemini Fallback');
-      response = await callGemini(GEMINI_FALLBACK_MODEL, finalMessages, maxTokens, GEMINI_API_KEY, options)
-        .catch(err => {
-          console.warn(`[AI Proxy] Gemini Fallback failed (network error: ${err.message})`);
-          return null;
-        });
-    }
+    for (const step of chain) {
+      const apiKey = step.provider === 'google' ? GEMINI_API_KEY
+        : step.provider === 'groq' ? GROQ_API_KEY : OPENROUTER_API_KEY;
+      if (!apiKey) { console.log(`[AI Proxy] Skip ${step.model}: no key`); continue; }
+      if (response) console.warn(`[AI Proxy] Prev failed (${response.status})`);
+      console.log(`[AI Proxy] Trying: ${step.model} (${step.provider})`);
+      response = await (step.provider === 'google'
+        ? callGemini(step.model, finalMessages, maxTokens, apiKey, options)
+        : step.provider === 'groq'
+        ? callGroq(step.model, finalMessages, maxTokens, apiKey, options)
+        : callOpenRouter(step.model, finalMessages, maxTokens, apiKey, options)
+      ).catch(err => {
+        console.warn(`[AI Proxy] ${step.model} net-err: ${err.message}`);
+        return null;
+      });
 
-    // 3. OpenRouter
-    if (OPENROUTER_API_KEY && (!response || !response.ok)) {
-      if(response) console.warn(`[AI Proxy] Gemini Fallback failed (status: ${response.status})`);
-      console.log('[AI Proxy] Falling back to: OpenRouter');
-      response = await callOpenRouter(finalMessages, maxTokens, OPENROUTER_API_KEY, options)
-        .catch(err => {
-          console.warn(`[AI Proxy] OpenRouter failed (network error: ${err.message})`);
-          return null;
-        });
-    }
+      if (!response || !response.ok) continue;
 
-    // 4. Groq
-    if (GROQ_API_KEY && (!response || !response.ok)) {
-       if(response) console.warn(`[AI Proxy] OpenRouter failed (status: ${response.status})`);
-       console.log('[AI Proxy] Falling back to: Groq');
-       response = await callGroq(finalMessages, maxTokens, GROQ_API_KEY, options)
-        .catch(err => {
-          console.warn(`[AI Proxy] Groq failed (network error: ${err.message})`);
-          return null;
-        });
+      // FASE 3: Truncation + JSON validation (non-streaming only)
+      if (!isStream) {
+        try {
+          const data = await response.clone().json();
+          const fr = data.choices?.[0]?.finish_reason || data.candidates?.[0]?.finishReason || '';
+          if (fr === 'length' || fr === 'MAX_TOKENS' || fr === 'max_tokens') {
+            console.warn(`[AI Proxy] ${step.model} truncated (${fr}), trying next`);
+            continue;
+          }
+          if (isMultimodal) {
+            const txt = data.choices?.[0]?.message?.content || data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            if (!txt.includes('```json')) {
+              console.warn(`[AI Proxy] ${step.model}: no JSON block, trying next`);
+              continue;
+            }
+          }
+        } catch { /* parse error - accept response */ }
+      }
+      break;
     }
-
     // --- End of Fallback Chain ---
 
     if (!response || !response.ok) {
-      if(response) console.warn(`[AI Proxy] Groq failed (status: ${response.status})`);
+      if(response) console.warn(`[AI Proxy] Last provider failed (status: ${response.status})`);
       console.error('[AI Proxy] All providers failed');
       return res.status(503).json({ error: 'All AI providers unavailable. Please try again in a few moments.' });
     }
