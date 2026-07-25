@@ -306,6 +306,34 @@ Responda APENAS no seguinte formato Markdown, sem texto introdutório ou conclus
 }
 \`\`\`. Se nenhum achado for identificado, retorne o bloco com os arrays vazios.
 
+=== GUARDRAILS P3 (SEGURANÇA E CONSISTÊNCIA — OBRIGATÓRIO) ===
+
+LATERALIDADE:
+- Se houver marcador radiográfico "E" ou "D" visível, use-o como verdade absoluta para o lado.
+- Sem marcador em projeção FRONTAL (VD/DV): infira pela convenção (esquerda da imagem = direito do paciente em VD) e declare "lateralidade inferida pela convenção, sem marcador — confirmar", com confiança ≤ 70%.
+- Sem marcador em projeção LATERAL: NÃO afirme o lado; declare "lateralidade não determinável na incidência" e confiança 0%.
+
+PROJEÇÃO E EIXOS:
+- Declare a projeção (frontal: VD/DV; lateral: mediolateral/craniocaudal).
+- Eixos coerentes: frontal → medial/lateral; lateral → cranial/caudal.
+- PROIBIDO "ventral/dorsal" para deslocamento em ossos de apêndice.
+
+ESPÉCIE E IDADE ÓSSEA:
+- Declare a espécie (com cautela se incerta).
+- Se houver fises abertas, declare "paciente imaturo/filhote com fises abertas" e implicações no tratamento.
+
+MEDIDAS (SEGURANÇA):
+- PROIBIDO medidas lineares em mm/cm como valor absoluto, EXCETO com marcador de escala visível.
+- Sem escala: descreva deslocamento/sobreposição/encurtamento/gap de forma QUALITATIVA (ausente/leve/moderado/grave) ou RELATIVA (% do diâmetro da diáfise).
+- Ângulos em graus (°) SÃO permitidos.
+- NUNCA use "estimativa por landmarks" para converter pixels em mm.
+
+ESTRUTURA:
+- Use EXATAMENTE os 8 cabeçalhos definidos acima. NÃO use "## Resumo dos Achados Radiográficos" nem "## Detalhes da Fratura".
+
+CONFIANÇA:
+- "## Grau de Confiança" DEVE ser tabela com uma linha por item (fratura, localização, padrão, lateralidade, espécie, idade óssea, articulação), cada uma com % e justificativa. NÃO use score agregado único.
+
 REGRAS DO JSON DE MARCACOES: todas as coordenadas (cx, cy, x, y, width, height, radius e cada ponto de angles) DEVEM ser numeros NORMALIZADOS entre 0.0 e 1.0, onde (0,0) e o canto superior esquerdo da imagem. Use EXATAMENTE estes nomes de campo: circles = id, cx, cy, radius, label, stage; angles = id, points (array com exatamente 3 objetos {x,y}), value (numero em graus), type (apenas "TPA" ou "Norberg"); markers = id, x, y, label, type; rois = id, x, y, width, height, label, severity. NAO use o campo "center". O campo id pode ser qualquer texto curto. Marque ao menos o foco da lesao principal com um marker e, ao medir angulos, use angles com type valido.
 === NOTAS TÉCNICAS ===
 - Seja conciso mas completo. Evite redundâncias.
@@ -554,7 +582,53 @@ function extractMarkingsFromAnalysis(analysisText: string): MarkingsData {
     return emptyMarkings;
   }
 
-  return validated.data;
+  return clampMarkingsCoords(validated.data);
+}
+
+const clamp01 = (n: number): number => Math.min(1, Math.max(0, n));
+const clampPos = (n: number): number => Math.min(1, Math.max(0.001, n));
+
+function clampMarkingsCoords(data: MarkingsData): MarkingsData {
+  return {
+    circles: data.circles.map((c) => ({ ...c, cx: clamp01(c.cx), cy: clamp01(c.cy), radius: clampPos(c.radius) })),
+    angles: data.angles.map((a) => ({ ...a, points: a.points.map((p) => ({ x: clamp01(p.x), y: clamp01(p.y) })) as typeof a.points })),
+    markers: data.markers.map((m) => ({ ...m, x: clamp01(m.x), y: clamp01(m.y) })),
+    rois: data.rois.map((r) => ({ ...r, x: clamp01(r.x), y: clamp01(r.y), width: clampPos(r.width), height: clampPos(r.height) })),
+  };
+}
+
+const SECTION_SYNONYMS: [RegExp, string][] = [
+  [/^##\s*Resumo dos Achados Radiográficos\s*$/gim, '## Impressão Diagnóstica'],
+  [/^##\s*Detalhes da Fratura\s*$/gim, '## Classificação Morfológica'],
+  [/^##\s*Resumo\s*$/gim, '## Impressão Diagnóstica'],
+];
+
+function sanitizeAbsoluteMeasures(text: string): string {
+  return text.replace(/(\d+[.,]?\d*)\s*(?:mil[íi]metros?|mil[íi]metro|mm|cent[íi]metros?|cm)\b/gi, (_m, num) => {
+    console.debug('[OrthoAI] P3-R7: medida absoluta removida (sem escala):', String(num));
+    return '[medida qualitativa — sem escala radiográfica]';
+  });
+}
+
+function detectGuardrails(text: string): void {
+  const hasLateral = /(esquerdo|direito|lateralidade)/i.test(text);
+  const hasProjecao = /(proje[çc][ãa]o|ventrodorsal|VD|DV|mediolateral|craniocaudal)/i.test(text);
+  const hasEspecie = /(esp[ée]cie|canino|felino|c[ãa]o|gato)/i.test(text);
+  const hasIdade = /(fise|filhote|imaturo|jovem|placa de crescimento)/i.test(text);
+  const hasTabela = /\|\s*Item\s*\|\s*Confian[çc]a/i.test(text);
+  if (!hasLateral) console.debug('[OrthoAI] P3-R1: laudo sem lateralidade.');
+  if (!hasProjecao) console.debug('[OrthoAI] P3-R2: laudo sem projeção.');
+  if (!hasEspecie) console.debug('[OrthoAI] P3-R5: laudo sem espécie.');
+  if (!hasIdade) console.debug('[OrthoAI] P3-R5: laudo sem idade óssea.');
+  if (!hasTabela) console.debug('[OrthoAI] P3-R8: laudo sem tabela de confiança.');
+}
+
+function postProcessLaudo(text: string): { text: string } {
+  let out = text;
+  for (const [re, canon] of SECTION_SYNONYMS) out = out.replace(re, canon);
+  out = sanitizeAbsoluteMeasures(out);
+  detectGuardrails(out);
+  return { text: out };
 }
 
 const buildCaseContextString = (ctx: Partial<ClinicalCase>): string => {
@@ -614,8 +688,8 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
   const reportTextOnly = fullResponseText.replace(/```json\s*([\s\S]*?)\s*```/, '').trim();
 
   return {
-    analysisText: reportTextOnly,
-    markings,
+    analysisText: postProcessLaudo(reportTextOnly).text,
+    markings: clampMarkingsCoords(markings),
     metrics: {
       // Could be populated from extracted IA data in future
     },
