@@ -13,7 +13,6 @@ export interface TourStep {
 export const TOUR_STEPS: Record<string, TourStep[]> = {
   dashboard: [
     { target: '__welcome__', title: '👋 Bem-vindo ao Vanguard Veterinary', content: 'Este guia rápido mostra como usar a plataforma no seu dia a dia clínico. Leva menos de 1 minuto.', placement: 'center' },
-    { target: 'tour-dashboard-hero', title: '☀️ Resumo do Dia', content: 'Acompanhe aqui suas cirurgias agendadas e os casos críticos pendentes de hoje.', placement: 'bottom', highlight: true },
     { target: 'tour-dashboard-surgeries', title: '🏥 Cirurgias de Hoje', content: 'Lista de procedimentos do dia. Clique em qualquer cirurgia para abrir o caso e o protocolo.', placement: 'bottom', highlight: true },
     { target: 'tour-dashboard-triage', title: '⚡ Fila de Triagem', content: 'Casos ordenados por prioridade clínica. Críticos no topo. Clique para iniciar o atendimento.', placement: 'left', highlight: true },
     { target: 'tour-dashboard-metrics', title: '📊 Métricas do Dia', content: 'Acompanhe o volume de casos novos e em análise. Para o histórico mensal, acesse Relatórios.', placement: 'top', highlight: true }, { target: 'tour-ai-widget', title: '🤖 Assistente Rápido', content: 'Tire dúvidas clínicas rápidas sem sair da tela atual.', placement: 'left', highlight: true },
@@ -26,11 +25,11 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   ],
   analysis: [
     { target: '__welcome__', title: '🔬 Análise Diagnóstica', content: 'Envie radiografias para a IA analisar. O laudo e os landmarks serão integrados ao caso.', placement: 'center' },
-    { target: 'tour-upload', title: '📁 Upload da Imagem', content: 'Selecione o arquivo (JPG, PNG, WEBP). Após o envio, clique em Iniciar Análise.', placement: 'bottom', highlight: true },
     { target: 'tour-analysis-preview', title: '🖼️ Preview e Landmarks', content: 'Visualize a radiografia carregada. Os landmarks anatômicos detectados pela IA serão plotados em verde sobre a imagem.', placement: 'right', highlight: true },
-    { target: 'tour-analysis-result', title: '🧠 Resultado da IA', content: 'Leia o laudo e os diagnósticos diferenciais sugeridos pela inteligência artificial.', placement: 'top', highlight: true },
     { target: 'tour-clinical-copilot', title: '💬 Copiloto', content: 'Refine o laudo da IA cruzando com o contexto clínico do paciente.', placement: 'left', highlight: true },
-    { target: 'tour-approve-case', title: '✅ Integrar ao Caso', content: 'Salve o laudo na Galeria de Casos ou abra diretamente o Protocolo Pós-Operatório.', placement: 'top', highlight: true },
+  ],
+  comparative: [
+    { target: '__welcome__', title: '🔁 Análise Comparativa', content: 'Compare duas radiografias do mesmo paciente (pré e pós-operatório) para avaliar a evolução lado a lado ou em superposição.', placement: 'center' },
     { target: 'tour-compare-upload', title: '🖼️ Mesa de Luz Digital', content: 'Carregue duas radiografias do mesmo paciente para comparar a evolução do caso, lado a lado ou em superposição.', placement: 'top' },
     { target: 'tour-compare-ai-analysis', title: '🧠 Análise de IA Comparativa', content: 'Rode a análise de IA para avaliar alinhamento, densidade óssea e recomendações entre os dois exames.', placement: 'bottom' },
     { target: 'tour-compare-save', title: '💾 Salvar Comparação', content: 'Salve o estudo comparativo como novo caso ou anexe a um caso clínico existente.', placement: 'top' },
@@ -46,15 +45,10 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-case-patient', title: '🩺 Dados do Paciente', content: 'Informações do paciente e status atual do atendimento.', placement: 'bottom', highlight: true },
     { target: 'tour-case-image', title: '📷 Imagem Analisada', content: 'A radiografia do caso. Os landmarks anatômicos detectados pela IA estão marcados em verde sobre a imagem.', placement: 'bottom', highlight: true },
     { target: 'tour-case-ai-result', title: '🤖 Laudo da IA', content: 'Diagnóstico sugerido, fatores de risco e recomendações da inteligência artificial.', placement: 'bottom', highlight: true },
-    { target: 'tour-case-notes', title: '📝 Notas Clínicas', content: 'Registre a evolução do paciente e observações da equipe.', placement: 'top', highlight: true },
-    { target: 'tour-case-checklist', title: '✅ Checklist Pós-Op', content: 'Marque as etapas do protocolo conforme o paciente evolui.', placement: 'bottom', highlight: true },
     { target: 'tour-case-actions', title: '⚡ Ações', content: 'Editar caso, gerar laudo em PDF para o tutor ou imprimir.', placement: 'left', highlight: true },
   ],
   reports: [
     { target: '__welcome__', title: '📄 Relatórios', content: 'Gere laudos em PDF para tutores ou relatórios gerenciais da sua clínica.', placement: 'center' },
-    { target: 'tour-monthly-report', title: '📅 Relatório Mensal', content: 'Gere o PDF com métricas, volume de casos e comparativos do período.', placement: 'bottom', highlight: true },
-    { target: 'tour-case-report', title: '🔖 Laudo Clínico', content: 'Selecione um caso e gere o PDF completo (Guia para o Tutor) com a logo da sua clínica.', placement: 'bottom', highlight: true },
-    { target: 'tour-report-customize', title: '🎨 Personalização de Marca', content: 'Configure a identidade visual da sua clínica (logo, cores, cabeçalho) para que todos os PDFs saiam profissionais e padronizados.', placement: 'right', highlight: true },
     { target: 'tour-report-history', title: '📂 Histórico', content: 'Baixe novamente qualquer PDF gerado anteriormente.', placement: 'top', highlight: true },
   ],
   notifications: [
@@ -63,7 +57,6 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   ],
   settings: [
     { target: '__welcome__', title: '⚙️ Configurações', content: 'Ajuste as preferências da plataforma.', placement: 'center' },
-    { target: 'tour-settings-toggles', title: '🔧 Preferências', content: 'Ative ou desative notificações, análise automática e idioma.', placement: 'bottom', highlight: true },
   ],
 };
 
