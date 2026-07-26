@@ -201,7 +201,7 @@ export default function PatientDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <Card className="p-6">
+          <Card data-tour="tour-patient-header" className="p-6">
             <div className="flex items-start gap-4">
               <div className="w-16 h-16 rounded-full bg-[var(--color-surface-muted)] border border-[var(--color-border)] flex items-center justify-center overflow-hidden flex-shrink-0">
                 {currentPatient.avatarUrl ? (
@@ -232,7 +232,7 @@ export default function PatientDetailPage() {
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card data-tour="tour-patient-timeline" className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="text-[var(--color-accent)]" size={18} />
               <h3 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
@@ -293,7 +293,7 @@ export default function PatientDetailPage() {
         </div>
 
         <div className="space-y-6">
-          <Card className="p-4">
+          <Card data-tour="tour-patient-tools" className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <Activity className="text-[var(--color-accent)]" size={18} />
               <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
@@ -346,7 +346,7 @@ export default function PatientDetailPage() {
             </div>
           </Card>
 
-          <Card className="p-4">
+          <Card data-tour="tour-patient-labs" className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <FlaskConical className="text-[var(--color-accent)]" size={18} />
               <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
@@ -367,7 +367,7 @@ export default function PatientDetailPage() {
             )}
           </Card>
 
-          <Card className="p-4">
+          <Card data-tour="tour-patient-gallery" className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 mb-3">
                 <Image className="text-[var(--color-accent)]" size={18} />

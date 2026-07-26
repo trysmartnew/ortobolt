@@ -72,6 +72,14 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-patients-table', title: '📋 Lista de Pacientes', content: 'Visualize foto, nome, espécie/raça, idade, proprietário, último caso e status clínico de cada paciente.', placement: 'top', highlight: true },
     { target: 'tour-patients-actions', title: '⚡ Ações', content: 'Por paciente: visualizar prontuário, abrir o Assistente Clínico IA, editar ou excluir o registro.', placement: 'left', highlight: true },
   ],
+  patientDetail: [
+    { target: '__welcome__', title: '🩺 Prontuário do Paciente', content: 'Visão completa do paciente: dados, histórico clínico, ferramentas de análise, exames e imagens.', placement: 'center' },
+    { target: 'tour-patient-header', title: '🐾 Dados do Paciente', content: 'Nome, espécie, raça, idade, peso e profissional responsável pelo caso.', placement: 'bottom', highlight: true },
+    { target: 'tour-patient-timeline', title: '📅 Timeline de Evoluções', content: 'Histórico cronológico das evoluções clínicas, com status e notas de cada atendimento. Abra qualquer caso para revisá-lo.', placement: 'right', highlight: true },
+    { target: 'tour-patient-tools', title: '🧰 Ferramentas Clínicas', content: 'Acesse a Análise de Imagens, a Análise Evolutiva e a Análise de Alinhamento diretamente do prontuário.', placement: 'left', highlight: true },
+    { target: 'tour-patient-labs', title: '🧪 Exames Laboratoriais', content: 'Resultados de exames do paciente, com data e indicação de laudo disponível.', placement: 'left', highlight: true },
+    { target: 'tour-patient-gallery', title: '🖼️ Galeria de Imagens', content: 'Radiografias e fotos clínicas do paciente. Clique em Ver Galeria para navegar por todas.', placement: 'left', highlight: true },
+  ],
 };
 
 interface Rect {
