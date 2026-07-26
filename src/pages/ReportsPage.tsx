@@ -464,7 +464,7 @@ export default function ReportsPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       {/* Report Customization */}
-      <Card className="p-5">
+      <Card data-tour="tour-report-customization" className="p-5">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex-1 min-w-0 self-start">
             <div className="flex items-center gap-2">
@@ -540,7 +540,7 @@ export default function ReportsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Coluna ESQUERDA: Relatório Mensal */}
         <div className="lg:col-span-5 space-y-4">
-          <Card className="p-5">
+          <Card data-tour="tour-report-monthly" className="p-5">
             <div className="flex items-center gap-2 mb-4">
               <FileText className="text-[var(--color-accent)]" size={18} />
               <div>
@@ -549,7 +549,7 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div data-tour="tour-report-metrics" className="grid grid-cols-3 gap-3 mb-4">
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
                 <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Métricas de Precisão</p>
                 <p className="text-lg font-bold text-slate-900">{precisionMetric.toFixed(1)}%</p>
@@ -565,7 +565,7 @@ export default function ReportsPage() {
             </div>
 
             <div className="mb-4">
-              <p className="text-xs font-semibold text-white/70 mb-2">Evolução Temporal dos últimos 7 meses</p>
+              <p data-tour="tour-report-chart" className="text-xs font-semibold text-white/70 mb-2">Evolução Temporal dos últimos 7 meses</p>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={monthlyData}>
                   <XAxis dataKey="name" stroke="var(--color-text-secondary)" fontSize={12} />
@@ -577,7 +577,7 @@ export default function ReportsPage() {
             </div>
 
             <RequireRole>
-              <Button
+              <Button data-tour="tour-report-generate"
                 onClick={handleGenerateMonthlyReport}
                 className="w-full mt-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
                 disabled={generating === 'monthly' || metricsLoading}
@@ -590,7 +590,7 @@ export default function ReportsPage() {
 
         {/* Coluna DIREITA: Clinical Reports & Tutor Guides */}
         <div className="lg:col-span-7 space-y-4">
-          <Card className="p-5">
+          <Card data-tour="tour-report-clinical" className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>Laudos Clínicos e Guias para o Tutor</h3>

@@ -48,8 +48,14 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-case-actions', title: '⚡ Ações', content: 'Editar caso, gerar laudo em PDF para o tutor ou imprimir.', placement: 'left', highlight: true },
   ],
   reports: [
-    { target: '__welcome__', title: '📄 Relatórios', content: 'Gere laudos em PDF para tutores ou relatórios gerenciais da sua clínica.', placement: 'center' },
-    { target: 'tour-report-history', title: '📂 Histórico', content: 'Baixe novamente qualquer PDF gerado anteriormente.', placement: 'top', highlight: true },
+    { target: '__welcome__', title: '📄 Central de Relatórios', content: 'Gere relatórios gerenciais e laudos clínicos em PDF. Personalize com a identidade da clínica, acompanhe indicadores e exporte documentos para tutores e gestão.', placement: 'center' },
+    { target: 'tour-report-customization', title: '🏥 Identidade da Clínica', content: 'Configure nome, subtítulo e logo da clínica. Essas informações aparecem no cabeçalho de todos os PDFs. Clique em Salvar Preferências para aplicar.', placement: 'bottom', highlight: true },
+    { target: 'tour-report-monthly', title: '📊 Relatório Mensal', content: 'Visão gerencial do período: indicadores de precisão, volume de casos e taxa de sucesso, com gráfico de evolução dos últimos 7 meses.', placement: 'right', highlight: true },
+    { target: 'tour-report-metrics', title: '🎯 Indicadores do Período', content: 'Métricas de Precisão (casos com análise de IA), Volume de Casos (últimos 30 dias) e Taxa de Sucesso (casos concluídos). Use-as para avaliar a performance da clínica.', placement: 'bottom', highlight: true },
+    { target: 'tour-report-chart', title: '📈 Evolução Temporal', content: 'Gráfico com o volume de casos dos últimos 7 meses. Identifique tendências de crescimento ou sazonalidade da demanda.', placement: 'bottom', highlight: true },
+    { target: 'tour-report-generate', title: '⬇️ Gerar e Exportar PDF', content: 'Clique para gerar e baixar o relatório mensal em PDF, pronto para impressão ou envio à gestão.', placement: 'top', highlight: true },
+    { target: 'tour-report-clinical', title: '🩺 Laudos Clínicos e Guias', content: 'Gere o Laudo Técnico (com métricas de IA, landmarks anatômicos e fatores de risco) ou o Guia do Tutor (linguagem simplificada pós-operatória). Ao clicar em Selecionar Caso, você escolhe o caso clínico com busca por paciente ou procedimento.', placement: 'left', highlight: true },
+    { target: 'tour-report-history', title: '📂 Histórico', content: 'Re-baixe qualquer relatório ou laudo gerado anteriormente, com data, tipo e tamanho do arquivo.', placement: 'top', highlight: true },
   ],
   notifications: [
     { target: '__welcome__', title: '🔔 Notificações', content: 'Alertas de casos críticos e atualizações do sistema.', placement: 'center' },
