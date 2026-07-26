@@ -100,9 +100,9 @@ export default function HelpPage() {
             <p className="text-sm text-slate-400 mt-1">Suporte especializado em ortopedia veterinária e análise de imagem.</p>
             <a href="https://github.com/trysmartnew/ortobolt/issues" target="_blank" rel="noopener noreferrer" aria-label="Abrir suporte da Vanguard Veterinary" title="Abrir central de suporte no GitHub" className="text-sm text-primary mt-2 font-mono hover:underline">Suporte Vanguard Veterinary</a>
           </div>
-          <Button variant="primary" size="sm" className="flex items-center gap-2">
+          <Button variant="primary" size="sm" className="flex items-center gap-2" onClick={() => window.open('https://github.com/trysmartnew/ortobolt/issues', '_blank', 'noopener,noreferrer')}>
             <Mail size={14} />
-            Abrir Chamado
+            Suporte
           </Button>
         </div>
       </Card>
