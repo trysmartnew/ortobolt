@@ -233,13 +233,23 @@ export default function AnalysisPage() {
     try {
       // Etapa 1: Fazer o upload da imagem. A função agora lança erro em caso de falha.
       const storagePath = `${user.id}/${new Date().toISOString()}`;
-      const imageStorageUrl = await uploadRadiografia(imageData, storagePath);
+      const uploadResult = await uploadRadiografia(imageData, storagePath);
 
-      // Etapa 2: Somente se o upload for bem-sucedido, integrar o caso.
-      const clinicalCase = approveAndIntegrateCase({
+      let validImageStorageUrl: string | undefined;
+
+      if (uploadResult && typeof uploadResult === 'string' && uploadResult.trim() !== '') {
+        validImageStorageUrl = uploadResult;
+      } else {
+        addToast('Falha ao fazer upload da radiografia. O caso não foi criado.', 'error');
+        setApproving(false);
+        return;
+      }
+
+      // Now that we have a valid URL, proceed with creating the case.
+      const clinicalCase = approveAndIntegrateCase({ // Declaration inside this scope
         veterinarianId: user.id,
         imageDataUrl: imageData, // Mantém a versão local para visualização imediata
-        imageStorageUrl: imageStorageUrl ?? undefined, // URL do Supabase Storage
+        imageStorageUrl: validImageStorageUrl, // Use the validated URL
         analysisText,
         clinicalContext: ctx,
         copilotMessages: session?.messages,
@@ -428,7 +438,7 @@ export default function AnalysisPage() {
                         <p className="text-xs text-yellow-200/70 mt-1">O modelo não identificou estruturas para marcação automática.</p>
                       </div>
                     </div>
-                )}
+                  )}
                 <div className="bg-[#050607] border-[2px] border-[#2c3136] rounded-[12px] shadow-[0_20px_40px_rgba(0,0,0,0.6)] overflow-hidden p-2">
                   {imageData && imageDimensions && (
                     <ZoomableImage
@@ -525,4 +535,3 @@ export default function AnalysisPage() {
     </div>
   );
 }
-
