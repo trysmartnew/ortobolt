@@ -58,6 +58,12 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   settings: [
     { target: '__welcome__', title: '⚙️ Configurações', content: 'Ajuste as preferências da plataforma.', placement: 'center' },
   ],
+  help: [
+    { target: '__welcome__', title: '❓ Central de Ajuda', content: 'Documentação, guias rápidos e suporte para usar a plataforma no dia a dia.', placement: 'center' },
+    { target: 'tour-help-faq', title: '💬 Perguntas Frequentes', content: 'Clique em uma pergunta para expandir a resposta: pacientes, laudos, análise de IA, exportação de dados e prontuário.', placement: 'bottom', highlight: true },
+    { target: 'tour-help-docs', title: '📚 Documentação Rápida', content: 'Seis guias objetivos: ficha cadastral, prontuário, mesa de luz digital, análise diagnóstica, relatórios e configurações.', placement: 'bottom', highlight: true },
+    { target: 'tour-help-support', title: '📧 Contato e Suporte', content: 'Fale com a equipe Vanguard Veterinary e abra um chamado de suporte especializado.', placement: 'top', highlight: true },
+  ],
 };
 
 interface Rect {

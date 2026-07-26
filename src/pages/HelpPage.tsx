@@ -46,7 +46,7 @@ export default function HelpPage() {
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <SectionHeader title="Central de Ajuda" subtitle="Documentação, guias rápidos e suporte" />
 
-      <Card className="p-5">
+      <Card data-tour="tour-help-faq" className="p-5">
         <div className="flex items-center gap-2 mb-4">
           <BookOpen size={18} className="text-[var(--color-accent)]" />
           <h3 className="text-sm font-bold text-[var(--color-text-primary)]" style={{ fontFamily: 'Montserrat, sans-serif' }}>Perguntas Frequentes</h3>
@@ -71,7 +71,7 @@ export default function HelpPage() {
         </div>
       </Card>
 
-      <Card className="p-5">
+      <Card data-tour="tour-help-docs" className="p-5">
         <div className="flex items-center gap-2 mb-4">
           <Monitor size={18} className="text-[var(--color-accent)]" />
           <h3 className="text-sm font-bold text-[var(--color-text-primary)]" style={{ fontFamily: 'Montserrat, sans-serif' }}>Documentação Rápida</h3>
@@ -89,7 +89,7 @@ export default function HelpPage() {
         </div>
       </Card>
 
-      <Card className="p-5">
+      <Card data-tour="tour-help-support" className="p-5">
         <div className="flex items-center gap-2 mb-4">
           <Mail size={18} className="text-[var(--color-accent)]" />
           <h3 className="text-sm font-bold text-[var(--color-text-primary)]" style={{ fontFamily: 'Montserrat, sans-serif' }}>Contato e Suporte</h3>
