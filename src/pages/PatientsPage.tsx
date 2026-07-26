@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { Search, Plus, Edit3, Eye, Trash2, Calendar, Activity, Bot } from 'lucide-react';
@@ -178,7 +178,7 @@ export default function PatientsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input
               type="text"
-              placeholder="Search Patients (Pesquisa Pacientes)"
+              placeholder="Pesquisar Pacientes"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
@@ -201,9 +201,9 @@ export default function PatientsPage() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] cursor-pointer"
           >
-            <option value="">By Status</option>
+            <option value="">Por Status</option>
             {uniqueStatuses.map(status => (
-              <option key={status} value={status}>{status}</option>
+              <option key={status} value={status}>{getPatientStatusLabel(status as CaseStatus)}</option>
             ))}
           </select>
 
@@ -219,7 +219,7 @@ export default function PatientsPage() {
 
           <Button variant="primary" onClick={handleAddPatient} className="ml-auto">
             <Plus size={16} />
-            <span className="hidden sm:inline">Add Patient</span>
+            <span className="hidden sm:inline">Adicionar Paciente</span>
           </Button>
         </div>
       </Card>

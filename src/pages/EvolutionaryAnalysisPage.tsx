@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, Badge, EmptyState, Spinner, SectionHeader } from '@/components/ui';
 import { ArrowLeft, User, PawPrint, Ruler, Weight, Activity, Calendar, FileText } from 'lucide-react';
@@ -76,6 +76,18 @@ function generateProgressAnalysis(boneTrend: string, jointTrend: string, values:
   const pct = first !== 0 ? ((change / Math.abs(first)) * 100).toFixed(1) : '0.0';
   const direction = boneTrend === 'improving' ? 'melhora' : boneTrend === 'worsening' ? 'piora' : 'estabilidade';
   return `Paciente apresentou ${direction} de ${pct}% na densidade óssea ao longo de ${values.length} exames.`;
+}
+
+import type { CaseStatus } from '@/types/index';
+
+function getStatusLabel(status: CaseStatus): string {
+  const map: Record<CaseStatus, string> = {
+    completed: 'Concluído',
+    in_analysis: 'Em Análise',
+    pending: 'Pendente',
+    critical: 'CRÍTICO',
+  };
+  return map[status] ?? status;
 }
 
 export default function EvolutionaryAnalysisPage() {
@@ -220,7 +232,7 @@ export default function EvolutionaryAnalysisPage() {
         <div className="flex items-center gap-3 text-xs text-slate-600">
           <span className="flex items-center gap-1"><Ruler size={14} /> {currentPatient.ageYears ?? '—'} anos</span>
           <span className="flex items-center gap-1"><Weight size={14} /> {currentPatient.weightKg ?? '—'} kg</span>
-          <span className="flex items-center gap-1"><Activity size={14} /> {currentPatient.status}</span>
+          <span className="flex items-center gap-1"><Activity size={14} /> {getStatusLabel(currentPatient.status)}</span>
         </div>
       </div>
 

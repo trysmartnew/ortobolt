@@ -74,6 +74,18 @@ function generateAlignmentPrediction(metrics: any): string {
 
 const isValidNumber = (val: unknown): val is number => typeof val === 'number' && !isNaN(val);
 
+import type { CaseStatus } from '@/types/index';
+
+function getStatusLabel(status: CaseStatus): string {
+  const map: Record<CaseStatus, string> = {
+    completed: 'Concluído',
+    in_analysis: 'Em Análise',
+    pending: 'Pendente',
+    critical: 'CRÍTICO',
+  };
+  return map[status] ?? status;
+}
+
 export default function AlignmentAnalysisPage() {
   const { cases, activeCase, user, authLoading, addToast, setCurrentPage } = useApp();
   const [loading, setLoading] = useState(false);
@@ -243,7 +255,7 @@ export default function AlignmentAnalysisPage() {
         <div className="flex items-center gap-3 text-xs text-slate-600">
           <span className="flex items-center gap-1"><Ruler size={14} /> {currentPatient.ageYears ?? '—'} anos</span>
           <span className="flex items-center gap-1"><Weight size={14} /> {currentPatient.weightKg ?? '—'} kg</span>
-          <span className="flex items-center gap-1"><Activity size={14} /> {currentPatient.status}</span>
+          <span className="flex items-center gap-1"><Activity size={14} /> {getStatusLabel(currentPatient.status)}</span>
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-﻿import { ClinicalEvidenceView } from '@/components/ClinicalEvidenceView';
+import { ClinicalEvidenceView } from '@/components/ClinicalEvidenceView';
 import { useCaseRealtime } from '@/hooks/useCaseRealtime';
 import { RadiographViewer } from '@/components/radiographs/RadiographViewer';
 // src/pages/CasePage.tsx
@@ -11,7 +11,7 @@ import { useApp } from '@/contexts/AppContext';
 import { getSupabaseAccessToken, uploadCaseImage } from '@/services/supabase';
 import { uploadImageToStorage } from '@/services/imageService';
 import { Card, Button, StatusBadge, RiskTag, EmptyState } from '@/components/ui';
-import type { ClinicalCase, ProcedureType } from '@/types/index';
+import type { ClinicalCase, ProcedureType, CaseStatus } from '@/types/index';
 import type { MarkingsData } from '@/types/markings';
 
 // ── PROTOCOLOS PÓS-OPERATÓRIOS POR PROCEDIMENTO ─────────────────────────────
@@ -287,6 +287,16 @@ const TutorGuideModal = memo(function TutorGuideModal({ caseData, protocol, onCl
 });
 
 // ── COMPONENTE PRINCIPAL ────────────────────────────────────────────────────
+function getStatusLabel(status: CaseStatus): string {
+  const map: Record<CaseStatus, string> = {
+    completed: 'Concluído',
+    in_analysis: 'Em Análise',
+    pending: 'Pendente',
+    critical: 'CRÍTICO',
+  };
+  return map[status] ?? status;
+}
+
 export default function CasePage() {
   const { activeCase, closeCase, deleteCase, updateCase, addToast, setCurrentPage, user } = useApp();
   const [aiMarkingsFromSession, setAiMarkingsFromSession] = useState<MarkingsData | null>(null);
@@ -674,7 +684,7 @@ export default function CasePage() {
             <div className="flex items-center gap-3 text-xs text-slate-400">
               <span className="flex items-center gap-1"><Ruler size={14} /> {activeCase.ageYears} anos</span>
               <span className="flex items-center gap-1"><Weight size={14} /> {activeCase.weightKg} kg</span>
-              <span className="flex items-center gap-1"><Activity size={14} /> {activeCase.status}</span>
+            <span className="flex items-center gap-1"><Activity size={14} /> {getStatusLabel(activeCase.status)}</span>
             </div>
           </div>
 
@@ -727,7 +737,7 @@ export default function CasePage() {
             <div className="flex items-center gap-3 text-xs text-slate-400">
               <span className="flex items-center gap-1"><Ruler size={14} /> {activeCase.ageYears} anos</span>
               <span className="flex items-center gap-1"><Weight size={14} /> {activeCase.weightKg} kg</span>
-              <span className="flex items-center gap-1"><Activity size={14} /> {activeCase.status}</span>
+            <span className="flex items-center gap-1"><Activity size={14} /> {getStatusLabel(activeCase.status)}</span>
             </div>
           </div>
 
@@ -947,7 +957,7 @@ export default function CasePage() {
                 <button onClick={() => setZoom(z => Math.max(50, z - 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:premium-header-bg bg-slate-200 text-sm font-bold">−</button>
                 <span className="text-xs font-mono text-menu-muted w-10 text-center">{zoom}%</span>
                 <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:premium-header-bg bg-slate-200 text-sm font-bold">+</button>
-                <button onClick={() => setZoom(100)} className="text-xs text-menu-muted hover:text-primary px-2">Reset</button>
+                <button onClick={() => setZoom(100)} className="text-xs text-menu-muted hover:text-primary px-2">Redefinir</button>
                 <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
                   {uploading ? <span className="animate-spin inline-block h-3 w-3 border border-current border-t-transparent rounded-full" /> : <Upload size={14} />}
                   {uploading ? 'Enviando...' : 'Upload'}

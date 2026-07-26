@@ -466,12 +466,11 @@ export default function ReportsPage() {
       {/* Report Customization */}
       <Card className="p-5">
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
+          <div className="flex-1 min-w-0 self-start">
+            <div className="flex items-center gap-2">
               <Settings size={18} className="text-[var(--color-accent)]" />
-              <h3 className="font-bold text-white text-sm">Report Customization</h3>
+              <p className="text-sm text-slate-400">Personalização de Laudos e Relatórios</p>
             </div>
-            <p className="text-sm text-slate-400">Personalização de Laudos e Relatórios</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-4">
@@ -594,7 +593,7 @@ export default function ReportsPage() {
           <Card className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>Clinical Reports & Tutor Guides</h3>
+                <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>Laudos Clínicos e Guias para o Tutor</h3>
                 <p className="text-sm text-slate-400 mt-0.5">Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco.</p>
               </div>
               <Badge variant="info" className="border-0">{availableCasesCount} casos disponíveis</Badge>
