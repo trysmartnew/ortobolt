@@ -80,6 +80,14 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-patient-labs', title: '🧪 Exames Laboratoriais', content: 'Resultados de exames do paciente, com data e indicação de laudo disponível.', placement: 'left', highlight: true },
     { target: 'tour-patient-gallery', title: '🖼️ Galeria de Imagens', content: 'Radiografias e fotos clínicas do paciente. Clique em Ver Galeria para navegar por todas.', placement: 'left', highlight: true },
   ],
+  evolutionaryAnalysis: [
+    { target: '__welcome__', title: '📈 Dashboard de Evolução', content: 'Acompanhe a evolução temporal do paciente com métricas de densidade óssea e espaço articular.', placement: 'center' },
+    { target: 'tour-evolution-metrics', title: '🐾 Paciente em Análise', content: 'Identificação do paciente com idade, peso e status clínico do caso.', placement: 'bottom', highlight: true },
+    { target: 'tour-evolution-bone-density', title: '🦴 Densidade Óssea', content: 'Gráfico de barras com a variação da densidade óssea ao longo dos exames.', placement: 'right', highlight: true },
+    { target: 'tour-evolution-joint-space', title: '📉 Espaço Articular', content: 'Gráfico de linha com a evolução do espaço articular entre os exames.', placement: 'right', highlight: true },
+    { target: 'tour-evolution-progress', title: '🧠 Análise de Progresso', content: 'Texto com a análise do progresso e a previsão evolutiva gerada a partir das tendências.', placement: 'top', highlight: true },
+    { target: 'tour-evolution-report', title: '📄 Gerar Relatório', content: 'Gere o relatório de evolução e envie para a página de Relatórios.', placement: 'top', highlight: true },
+  ],
 };
 
 interface Rect {

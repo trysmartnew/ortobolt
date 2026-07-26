@@ -213,7 +213,7 @@ export default function EvolutionaryAnalysisPage() {
       />
 
       {/* Header do Paciente */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div data-tour="tour-evolution-metrics" className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[var(--color-surface-muted)] border border-[var(--color-border)] flex items-center justify-center overflow-hidden">
@@ -286,7 +286,7 @@ export default function EvolutionaryAnalysisPage() {
             </div>
 
             {/* Gráfico de barras real */}
-            <div className="mb-6">
+            <div data-tour="tour-evolution-bone-density" className="mb-6">
               <p className="text-xs font-semibold text-white/70 mb-2">Variação de Densidade Óssea</p>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={boneDensityData}>
@@ -311,7 +311,7 @@ export default function EvolutionaryAnalysisPage() {
             </div>
 
             {/* Gráfico de linha real */}
-            <div className="mb-6">
+            <div data-tour="tour-evolution-joint-space" className="mb-6">
               <p className="text-xs font-semibold text-white/70 mb-2">Evolução do Espaço Articular</p>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={jointSpaceData}>
@@ -333,7 +333,7 @@ export default function EvolutionaryAnalysisPage() {
 
             {/* Textos descritivos */}
             <div className="space-y-2">
-              <p className="text-xs text-slate-600">{progressText}</p>
+              <p data-tour="tour-evolution-progress" className="text-xs text-slate-600">{progressText}</p>
               <p className="text-xs text-slate-500">{predictionText}</p>
             </div>
           </Card>
@@ -379,7 +379,7 @@ export default function EvolutionaryAnalysisPage() {
 
       {/* Botão inferior */}
       <div className="flex justify-center">
-        <Button variant="primary" onClick={handleGenerateReport} loading={loading} disabled={loading}>
+        <Button data-tour="tour-evolution-report" variant="primary" onClick={handleGenerateReport} loading={loading} disabled={loading}>
           <FileText size={16} /> Gerar Relatório de Evolução
         </Button>
       </div>
