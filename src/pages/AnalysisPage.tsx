@@ -6,7 +6,7 @@ import DOMPurify from 'dompurify';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles, Images, FileText, Maximize2, X } from 'lucide-react';
 import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings, ApiError } from '@/services/aiService';
-import { uploadRadiografia } from '@/services/supabase';
+import { uploadRadiografia, getSignedImageUrl } from '@/services/supabase';
 import { generateLaudoReport } from '@/services/pdfService';
 
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
@@ -234,10 +234,16 @@ export default function AnalysisPage() {
       const storagePath = `${user.id}/${new Date().toISOString()}`;
       const uploadResult = await uploadRadiografia(imageData, storagePath);
 
+      // uploadRadiografia retorna o path no storage, nao a URL final;
+      // e necessario gerar a URL assinada antes de validar/persistir.
+      const signedUrlResult = uploadResult
+        ? await getSignedImageUrl(uploadResult)
+        : null;
+
       let validImageStorageUrl: string | undefined;
 
-      if (uploadResult && typeof uploadResult === 'string' && uploadResult.trim() !== '') {
-        validImageStorageUrl = uploadResult;
+      if (signedUrlResult && typeof signedUrlResult === 'string' && signedUrlResult.trim() !== '') {
+        validImageStorageUrl = signedUrlResult;
       } else {
         addToast('Falha ao fazer upload da radiografia. O caso não foi criado.', 'error');
         setApproving(false);
