@@ -15,7 +15,6 @@ import ApproveCompleteCaseBar from '@/components/analysis/ApproveCompleteCaseBar
 import ZoomableImage from '@/components/analysis/ZoomableImage';
 import { lazy, Suspense } from 'react';
 // Code-split: html2canvas (~202 kB) + jspdf (~391 kB) so na Mesa de Luz
-// PrePostComparison removed - feature disabled
 import { useMarkings } from '@/hooks/useMarkings';
 import type { MarkingTool, MarkingsData } from '@/types/markings';
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';

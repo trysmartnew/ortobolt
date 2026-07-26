@@ -1,5 +1,6 @@
 // src/pages/ComparativeAnalysisPage.tsx
 import React, { Suspense, lazy } from 'react';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SectionHeader, Card, EmptyState } from '@/components/ui';
 import { useApp } from '@/contexts/AppContext';
 import { useAnalysis } from '@/contexts/AnalysisContext';
@@ -103,6 +104,17 @@ export default function ComparativeAnalysisPage() {
       />
 
       <Card className="p-6">
+        <ErrorBoundary fallback={
+          <div className="flex flex-col items-center justify-center p-12 text-center gap-3">
+            <p className="text-sm text-white/70">Não foi possível carregar a Mesa de Luz.</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-primary hover:bg-primary-dark transition-colors"
+            >
+              Recarregar
+            </button>
+          </div>
+        }>
         <Suspense fallback={
           <div className="flex items-center justify-center p-12">
             <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
@@ -110,6 +122,7 @@ export default function ComparativeAnalysisPage() {
         }>
           <PrePostComparison onSaveCase={handleSaveComparisonCase} />
         </Suspense>
+        </ErrorBoundary>
       </Card>
       {/* Navegação de Saída */}
       <div className="flex justify-start pt-2">

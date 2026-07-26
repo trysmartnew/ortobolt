@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { ArrowLeft, User, PawPrint, Ruler, Weight, Activity, Calendar, FileText } from 'lucide-react';
@@ -154,9 +154,6 @@ export default function AlignmentAnalysisPage() {
     });
   }, [patientCases]);
 
-  console.log('[DEBUG] gaugeData:', JSON.stringify(gaugeData));
-  console.log('[DEBUG] symmetryData:', JSON.stringify(symmetryData));
-  console.log('[DEBUG] cobbAngleData:', JSON.stringify(cobbAngleData));
 
   const analysisText = useMemo(() => generateAlignmentAnalysis(femoralAngle, limbLength, cobbAngle), [femoralAngle, limbLength, cobbAngle]);
   const predictionText = useMemo(() => generateAlignmentPrediction({ femoralAngle, limbLength, cobbAngle }), [femoralAngle, limbLength, cobbAngle]);
