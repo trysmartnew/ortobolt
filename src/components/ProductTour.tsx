@@ -64,6 +64,14 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-help-docs', title: '📚 Documentação Rápida', content: 'Seis guias objetivos: ficha cadastral, prontuário, mesa de luz digital, análise diagnóstica, relatórios e configurações.', placement: 'bottom', highlight: true },
     { target: 'tour-help-support', title: '📧 Contato e Suporte', content: 'Fale com a equipe Vanguard Veterinary e abra um chamado de suporte especializado.', placement: 'top', highlight: true },
   ],
+  patients: [
+    { target: '__welcome__', title: '🐾 Página de Pacientes', content: 'Gerencie seus pacientes e acompanhe o histórico clínico. Vamos conhecer as principais ferramentas.', placement: 'center' },
+    { target: 'tour-patients-search', title: '🔍 Busca', content: 'Pesquise pacientes pelo nome ou pela raça para encontrar rapidamente um registro.', placement: 'bottom', highlight: true },
+    { target: 'tour-patients-filters', title: '⚙️ Filtros', content: 'Filtre a lista por raça, status clínico e data do último caso para focar no que importa.', placement: 'bottom', highlight: true },
+    { target: 'tour-patients-add', title: '➕ Adicionar Paciente', content: 'Cadastre um novo paciente e tutor manualmente, com upload de exames.', placement: 'left', highlight: true },
+    { target: 'tour-patients-table', title: '📋 Lista de Pacientes', content: 'Visualize foto, nome, espécie/raça, idade, proprietário, último caso e status clínico de cada paciente.', placement: 'top', highlight: true },
+    { target: 'tour-patients-actions', title: '⚡ Ações', content: 'Por paciente: visualizar prontuário, abrir o Assistente Clínico IA, editar ou excluir o registro.', placement: 'left', highlight: true },
+  ],
 };
 
 interface Rect {

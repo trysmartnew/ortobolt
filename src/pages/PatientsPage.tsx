@@ -174,7 +174,7 @@ export default function PatientsPage() {
 
       <Card className="glass-panel-premium !text-[var(--color-text-primary)] p-4">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[240px]">
+          <div data-tour="tour-patients-search" className="relative flex-1 min-w-[240px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input
               type="text"
@@ -185,7 +185,7 @@ export default function PatientsPage() {
             />
           </div>
 
-          <select
+          <select data-tour="tour-patients-filters"
             value={breedFilter}
             onChange={(e) => setBreedFilter(e.target.value)}
             className="px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] cursor-pointer"
@@ -217,14 +217,14 @@ export default function PatientsPage() {
             />
           </div>
 
-          <Button variant="primary" onClick={handleAddPatient} className="ml-auto">
+          <Button data-tour="tour-patients-add" variant="primary" onClick={handleAddPatient} className="ml-auto">
             <Plus size={16} />
             <span className="hidden sm:inline">Adicionar Paciente</span>
           </Button>
         </div>
       </Card>
 
-      <Card className="glass-panel-premium !text-[var(--color-text-primary)] overflow-hidden">
+      <Card data-tour="tour-patients-table" className="glass-panel-premium !text-[var(--color-text-primary)] overflow-hidden">
         {filtered.length === 0 ? (
           <EmptyState
             icon={<Activity size={48} className="text-white/40" />}
@@ -243,7 +243,7 @@ export default function PatientsPage() {
                   <th className="text-left py-3 px-4 text-slate-400 font-semibold">Proprietário</th>
                   <th className="text-left py-3 px-4 text-slate-400 font-semibold">Último Caso</th>
                   <th className="text-left py-3 px-4 text-slate-400 font-semibold">Status Clínico</th>
-                  <th className="text-left py-3 px-4 text-slate-400 font-semibold">Ações</th>
+                  <th data-tour="tour-patients-actions" className="text-left py-3 px-4 text-slate-400 font-semibold">Ações</th>
                 </tr>
               </thead>
               <tbody>
