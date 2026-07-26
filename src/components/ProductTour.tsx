@@ -62,7 +62,13 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-unread-notifications', title: '🔴 Alertas não lidos', content: 'Clique para visualizar ou limpar seus alertas pendentes.', placement: 'bottom', highlight: true },
   ],
   settings: [
-    { target: '__welcome__', title: '⚙️ Configurações', content: 'Ajuste as preferências da plataforma.', placement: 'center' },
+    { target: '__welcome__', title: '⚙️ Configurações', content: 'Ajuste as preferências da plataforma. Vamos percorrer cada seção.', placement: 'center' },
+    { target: 'tour-settings-notifications', title: '🔔 Notificações e Interface', content: 'Configure alertas de casos críticos, análises concluídas e preferências visuais da interface.', placement: 'bottom', highlight: true },
+    { target: 'tour-settings-language', title: '🌐 Idioma', content: 'Defina a língua da interface e dos relatórios gerados pela plataforma.', placement: 'bottom', highlight: true },
+    { target: 'tour-settings-ai', title: '🧠 IA e Análise', content: 'Gerencie a análise automática de IA para melhorar a qualidade dos seus laudos.', placement: 'bottom', highlight: true },
+    { target: 'tour-settings-report-format', title: '📄 Formato de Relatório', content: 'Escolha o formato padrão para exportação de relatórios clínicos.', placement: 'bottom', highlight: true },
+    { target: 'tour-settings-upgrade', title: '👑 Upgrade de Plano', content: 'Visualize os recursos disponíveis no seu plano e opções de upgrade.', placement: 'bottom', highlight: true },
+    { target: 'tour-settings-data', title: '💾 Meus Dados', content: 'Baixe todos os seus casos e dados pessoais em formato JSON para backup ou portabilidade.', placement: 'top', highlight: true },
   ],
   help: [
     { target: '__welcome__', title: '❓ Central de Ajuda', content: 'Documentação, guias rápidos e suporte para usar a plataforma no dia a dia.', placement: 'center' },

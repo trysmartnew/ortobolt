@@ -14,9 +14,9 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
   );
 }
 
-function SettingCard({ icon: Icon, title, description, children, accent }: { icon: React.ElementType; title: string; description?: string; children: React.ReactNode; accent?: boolean }) {
+function SettingCard({ icon: Icon, title, description, children, accent, tourId }: { icon: React.ElementType; title: string; description?: string; children: React.ReactNode; accent?: boolean; tourId?: string }) {
   return (
-    <Card className={`p-5 ${accent ? 'border-l-4 border-l-[var(--color-accent)]' : ''}`}>
+    <Card className={`p-5 ${accent ? 'border-l-4 border-l-[var(--color-accent)]' : ''}`} data-tour={tourId}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3 min-w-0">
           <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)]/10 flex items-center justify-center flex-shrink-0">
@@ -153,29 +153,29 @@ export default function SettingsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          <SettingCard icon={Bell} title="Notificações e Interface" description="Alertas de casos críticos e análises concluídas" accent>
+          <SettingCard icon={Bell} title="Notificações e Interface" description="Alertas de casos críticos e análises concluídas" accent tourId="tour-settings-notifications">
             <Toggle checked={!!prefs.notifications} onChange={v => set('notifications', v)} />
           </SettingCard>
 
-          <SettingCard icon={Globe} title="Idioma" description="Língua da interface e relatórios">
+          <SettingCard icon={Globe} title="Idioma" description="Língua da interface e relatórios" tourId="tour-settings-language">
             <select value={prefs.language as string} onChange={e => set('language', e.target.value)} className="border border-[var(--color-border)] bg-[var(--color-surface)] text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]">
               <option value="pt">Português (BR)</option>
               <option value="en">English</option>
             </select>
           </SettingCard>
 
-          <SettingCard icon={Brain} title="IA e Análise" description="Análise automática de IA adicionadas. Melhore seus laudos">
+          <SettingCard icon={Brain} title="IA e Análise" description="Análise automática de IA adicionadas. Melhore seus laudos" tourId="tour-settings-ai">
             <Toggle checked={!!prefs.autoAnalysis} onChange={v => set('autoAnalysis', v)} />
           </SettingCard>
 
-          <SettingCard icon={FileText} title="Formato de Relatório" description="Formato padrão para exportação">
+          <SettingCard icon={FileText} title="Formato de Relatório" description="Formato padrão para exportação" tourId="tour-settings-report-format">
             <select value={prefs.reportFormat as string} onChange={e => set('reportFormat', e.target.value)} className="border border-[var(--color-border)] bg-[var(--color-surface)] text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]">
               <option value="pdf">PDF</option>
               <option value="docx">DOCX</option>
             </select>
           </SettingCard>
 
-          <SettingCard icon={Crown} title="Upgrade de Plano" description="Recursos disponíveis e opções de upgrade">
+          <SettingCard icon={Crown} title="Upgrade de Plano" description="Recursos disponíveis e opções de upgrade" tourId="tour-settings-upgrade">
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-white bg-[var(--color-surface-muted)] px-2 py-1 rounded-lg capitalize border border-[var(--color-border)]">
                 {currentPlan === 'free' ? 'Gratuito' : currentPlan === 'professional' ? 'Professional' : 'Enterprise'}
@@ -186,7 +186,7 @@ export default function SettingsPage() {
             </div>
           </SettingCard>
 
-          <SettingCard icon={Download} title="Meus Dados" description="Baixar todos os seus casos e dados em formato JSON (dados pessoais, e configurações de conta)">
+          <SettingCard icon={Download} title="Meus Dados" description="Baixar todos os seus casos e dados em formato JSON (dados pessoais, e configurações de conta)" tourId="tour-settings-data">
             <Button variant="secondary" size="sm" onClick={handleExportData}>
               <Download size={14} />
               Exportar (.json)
