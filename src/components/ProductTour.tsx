@@ -88,6 +88,15 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-evolution-progress', title: '🧠 Análise de Progresso', content: 'Texto com a análise do progresso e a previsão evolutiva gerada a partir das tendências.', placement: 'top', highlight: true },
     { target: 'tour-evolution-report', title: '📄 Gerar Relatório', content: 'Gere o relatório de evolução e envie para a página de Relatórios.', placement: 'top', highlight: true },
   ],
+  alignmentAnalysis: [
+    { target: '__welcome__', title: '📐 Análise de Alinhamento', content: 'Avaliação biomecânica completa: ângulo femoral, simetria de membros, ângulo de Cobb e pontos de referência.', placement: 'center' },
+    { target: 'tour-alignment-header', title: '🐾 Paciente em Análise', content: 'Identificação do paciente com idade, peso e status clínico do caso.', placement: 'bottom', highlight: true },
+    { target: 'tour-alignment-images', title: '🩻 Exames e Pontos de Referência', content: 'Radiografias com pontos anatômicos e eixos de referência detectados pela IA (ângulos femoral, TPA, Norberg e Cobb).', placement: 'right', highlight: true },
+    { target: 'tour-alignment-gauge', title: '🧭 Ângulo de Inclinação Femoral', content: 'Gráfico gauge com a inclinação femoral esquerda e direita, classificado por severidade.', placement: 'left', highlight: true },
+    { target: 'tour-alignment-symmetry', title: '⚖️ Simetria de Membros', content: 'Gráfico de barras comparando o comprimento de fêmur e tíbia entre os membros esquerdo e direito.', placement: 'left', highlight: true },
+    { target: 'tour-alignment-cobb', title: '📉 Ângulo de Cobb', content: 'Gráfico de linha com a evolução do ângulo de Cobb ao longo dos exames.', placement: 'left', highlight: true },
+    { target: 'tour-alignment-report', title: '📄 Gerar Relatório', content: 'Gere o relatório de alinhamento e biometria e envie para a página de Relatórios.', placement: 'top', highlight: true },
+  ],
 };
 
 interface Rect {

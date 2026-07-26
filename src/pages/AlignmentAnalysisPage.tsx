@@ -233,7 +233,7 @@ export default function AlignmentAnalysisPage() {
       </div>
 
       {/* Header do Paciente */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div data-tour="tour-alignment-header" className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <button type="button" onClick={handleBack} className="px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-white/70 hover:text-[var(--color-accent)] transition-colors">
             <ArrowLeft size={14} className="inline mr-1" /> Voltar ao Prontuário
@@ -263,7 +263,7 @@ export default function AlignmentAnalysisPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Coluna ESQUERDA: Exames e Pontos de Referência */}
         <div className="lg:col-span-5 space-y-4">
-          <Card className="p-4">
+          <Card data-tour="tour-alignment-images" className="p-4">
             <h3 className="text-xs font-bold text-white/70 uppercase tracking-wider mb-3">Exames e Pontos de Referência</h3>
             <div className="space-y-3">
               {selectedImages.length === 0 ? (
@@ -325,7 +325,7 @@ export default function AlignmentAnalysisPage() {
             </div>
 
             {/* Gauge chart real */}
-            <div className="mb-6">
+            <div data-tour="tour-alignment-gauge" className="mb-6">
               <p className="text-xs font-semibold text-white/70 mb-2">Variação de Ângulo de Inclinação</p>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
@@ -352,7 +352,7 @@ export default function AlignmentAnalysisPage() {
             </div>
 
             {/* Bar chart real */}
-            <div className="mb-6">
+            <div data-tour="tour-alignment-symmetry" className="mb-6">
               <p className="text-xs font-semibold text-white/70 mb-2">Simetria de Comprimento de Membros</p>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={symmetryData}>
@@ -374,7 +374,7 @@ export default function AlignmentAnalysisPage() {
             </div>
 
             {/* Line chart real */}
-            <div className="mb-6">
+            <div data-tour="tour-alignment-cobb" className="mb-6">
               <p className="text-xs font-semibold text-white/70 mb-2">Variação de Ângulo de Cobb</p>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={cobbAngleData}>
@@ -397,7 +397,7 @@ export default function AlignmentAnalysisPage() {
 
       {/* Botão inferior */}
       <div className="flex justify-center">
-        <Button variant="primary" onClick={handleGenerateReport} loading={loading} disabled={loading}>
+        <Button data-tour="tour-alignment-report" variant="primary" onClick={handleGenerateReport} loading={loading} disabled={loading}>
           <FileText size={16} /> Gerar Relatório de Alinhamento
         </Button>
       </div>
