@@ -155,7 +155,6 @@ export default function SettingsPage() {
         <div className="space-y-4">
           <SettingCard icon={Bell} title="Notificações e Interface" description="Alertas de casos críticos e análises concluídas" accent>
             <Toggle checked={!!prefs.notifications} onChange={v => set('notifications', v)} />
-            <Button variant="secondary" size="sm">Tour Online</Button>
           </SettingCard>
 
           <SettingCard icon={Globe} title="Idioma" description="Língua da interface e relatórios">
