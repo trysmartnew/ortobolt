@@ -1,4 +1,4 @@
-﻿// src/pages/ReportsPage.tsx
+// src/pages/ReportsPage.tsx
 // ✅ Produção Real — Dados do Supabase (SEM MOCKS)
 // ✅ RESTAURADO: Personalização de Laudos + Modal de Seleção de Caso
 import { useState, useEffect, useMemo } from 'react';
@@ -469,7 +469,7 @@ export default function ReportsPage() {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <Settings size={18} className="text-[var(--color-accent)]" />
-              <h3 className="font-bold text-slate-900 text-sm">Report Customization</h3>
+              <h3 className="font-bold text-white text-sm">Report Customization</h3>
             </div>
             <p className="text-sm text-slate-400">Personalização de Laudos e Relatórios</p>
           </div>
