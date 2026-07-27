@@ -22,6 +22,8 @@ const HelpPage = lazy(() => import('@/pages/HelpPage'));
 const EvolutionaryAnalysisPage = lazy(() => import('@/pages/EvolutionaryAnalysisPage'));
 const AlignmentAnalysisPage = lazy(() => import('@/pages/AlignmentAnalysisPage'));
 const ComparativeAnalysisPage = lazy(() => import('@/pages/ComparativeAnalysisPage'));
+
+const COPILOT_PAGES: Page[] = ['dashboard', 'gallery', 'case', 'patients', 'patientDetail', 'evolutionaryAnalysis', 'alignmentAnalysis', 'comparative'];
 import AppLayout from '@/components/AppLayout';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
@@ -208,7 +210,7 @@ function AppInner() {
       </Suspense>
       <ToastContainer toasts={toasts} onRemove={removeToast} />
       <Suspense fallback={null}>
-        {currentPage !== 'chat' && <AIAssistant />}
+        {COPILOT_PAGES.includes(currentPage) && <AIAssistant />}
       </Suspense>
     </>
   );
