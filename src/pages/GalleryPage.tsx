@@ -313,7 +313,6 @@ export default function GalleryPage() {
   return (
     <div className="p-6 max-w-7xl space-y-6">
       <SectionHeader
-        title="Galeria de Casos Clínicos"
         subtitle={`${cases.length} casos no sistema`}
         action={
           <Button size="sm" data-tour="tour-add-case" onClick={() => setShowAdd(true)}>
