@@ -139,7 +139,7 @@ export default function RadiographGallery({
             <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
               Galeria - Evolução Clínica e Visual de {patientName}
             </h1>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-slate-400">
               {SPECIES_LABELS[species] ?? species} / {breed || '—'}
             </p>
           </div>
@@ -154,7 +154,7 @@ export default function RadiographGallery({
           </div>
           <div className="text-right">
             <p className="text-sm font-semibold text-white">{patientName}</p>
-            <p className="text-xs text-slate-500">{ageYears ?? '—'} anos · {weightKg ?? '—'} kg</p>
+            <p className="text-xs text-slate-400">{ageYears ?? '—'} anos · {weightKg ?? '—'} kg</p>
           </div>
         </div>
       </div>
@@ -178,8 +178,8 @@ export default function RadiographGallery({
                 </div>
                 <div className="p-3">
                   <p className="text-xs font-semibold text-white">{card.title}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">{formatShortDate(card.date)}</p>
-                  <p className="text-[10px] text-slate-600 mt-1 line-clamp-2">{card.description}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">{formatShortDate(card.date)}</p>
+                  <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">{card.description}</p>
                 </div>
               </div>
             ))}
@@ -195,7 +195,7 @@ export default function RadiographGallery({
         <div>
           <h3 className="text-sm font-semibold text-white/70 mb-3">Radiografias (RX)</h3>
           {radiographs.length === 0 ? (
-            <p className="text-xs text-slate-500">Sem radiografias registradas.</p>
+            <p className="text-xs text-slate-400">Sem radiografias registradas.</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {radiographs.map((item) => (
@@ -205,9 +205,9 @@ export default function RadiographGallery({
                   </div>
                   <div className="p-2">
                     <p className="text-[10px] font-semibold text-white">{formatShortDate(item.date)}</p>
-                    <p className="text-[10px] text-slate-500">{item.modality}</p>
+                    <p className="text-[10px] text-slate-400">{item.modality}</p>
                     {item.analysisText && (
-                      <p className="text-[10px] text-slate-600 mt-1 line-clamp-2">{item.analysisText}</p>
+                      <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">{item.analysisText}</p>
                     )}
                   </div>
                 </div>
@@ -219,7 +219,7 @@ export default function RadiographGallery({
         <div>
           <h3 className="text-sm font-semibold text-white/70 mb-3">Tomografia Computadorizada (TC)</h3>
           {ctScans.length === 0 ? (
-            <p className="text-xs text-slate-500">Sem tomografias registradas.</p>
+            <p className="text-xs text-slate-400">Sem tomografias registradas.</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {ctScans.map((item) => (
@@ -229,9 +229,9 @@ export default function RadiographGallery({
                   </div>
                   <div className="p-2">
                     <p className="text-[10px] font-semibold text-white">{formatShortDate(item.date)}</p>
-                    <p className="text-[10px] text-slate-500">{item.modality}</p>
+                    <p className="text-[10px] text-slate-400">{item.modality}</p>
                     {item.analysisText && (
-                      <p className="text-[10px] text-slate-600 mt-1 line-clamp-2">{item.analysisText}</p>
+                      <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">{item.analysisText}</p>
                     )}
                   </div>
                 </div>
@@ -266,9 +266,9 @@ export default function RadiographGallery({
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-white truncate">{c.title || c.patientName}</p>
-                  <p className="text-xs text-slate-500">{formatShortDate(c.createdAt)} · {getStatusLabel(c.status)}</p>
+                  <p className="text-xs text-slate-400">{formatShortDate(c.createdAt)} · {getStatusLabel(c.status)}</p>
                   {c.notes && (
-                    <p className="text-xs text-slate-600 mt-1 line-clamp-2">{c.notes}</p>
+                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">{c.notes}</p>
                   )}
                 </div>
                 <Badge variant={c.status === 'completed' ? 'success' : c.status === 'critical' ? 'danger' : 'info'}>

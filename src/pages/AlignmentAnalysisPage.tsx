@@ -204,7 +204,7 @@ export default function AlignmentAnalysisPage() {
     return (
       <div className="p-6 flex items-center justify-center">
         <Spinner />
-        <p className="ml-3 text-sm text-slate-500">Carregando análise de alinhamento...</p>
+        <p className="ml-3 text-sm text-slate-400">Carregando análise de alinhamento...</p>
       </div>
     );
   }
@@ -226,7 +226,7 @@ export default function AlignmentAnalysisPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+      <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
         <button type="button" onClick={handleBack} className="hover:text-[var(--color-accent)]">Análise de Alinhamento</button>
         <span>/</span>
         <span className="text-white">Relatório de Análise de Alinhamento e Biometria de {patientName}</span>
@@ -248,11 +248,11 @@ export default function AlignmentAnalysisPage() {
             </div>
             <div>
               <p className="text-sm font-bold text-white">{currentPatient.patientName}</p>
-              <p className="text-xs text-slate-600 capitalize">{SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}</p>
+              <p className="text-xs text-slate-400 capitalize">{SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}</p>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs text-slate-600">
+        <div className="flex items-center gap-3 text-xs text-slate-400">
           <span className="flex items-center gap-1"><Ruler size={14} /> {currentPatient.ageYears ?? '—'} anos</span>
           <span className="flex items-center gap-1"><Weight size={14} /> {currentPatient.weightKg ?? '—'} kg</span>
           <span className="flex items-center gap-1"><Activity size={14} /> {getStatusLabel(currentPatient.status)}</span>
@@ -299,7 +299,7 @@ export default function AlignmentAnalysisPage() {
                     </div>
                     <div className="p-3 space-y-1">
                       <p className="text-[10px] font-semibold text-white">{formatDate(img.label === 'Principal' ? currentPatient.createdAt : (currentPatient.updatedAt || currentPatient.createdAt))}</p>
-                      <p className="text-[10px] text-slate-600">{img.label === 'Principal' ? 'Radiografia Principal' : img.label}</p>
+                      <p className="text-[10px] text-slate-400">{img.label === 'Principal' ? 'Radiografia Principal' : img.label}</p>
                       <Badge variant={currentPatient.status === 'completed' ? 'success' : currentPatient.status === 'critical' ? 'danger' : 'info'} className="border-0">
                         {currentPatient.status === 'completed' ? 'Concluído' : currentPatient.status === 'in_analysis' ? 'Em Análise' : currentPatient.status === 'pending' ? 'Pendente' : 'Crítico'}
                       </Badge>
@@ -309,7 +309,7 @@ export default function AlignmentAnalysisPage() {
               )}
             </div>
             {selectedImages.length > 0 && (
-              <p className="text-[10px] text-slate-600 mt-2">Pontos Anatômicos e Eixos de Referência Detectados por IA</p>
+              <p className="text-[10px] text-slate-400 mt-2">Pontos Anatômicos e Eixos de Referência Detectados por IA</p>
             )}
           </Card>
         </div>
@@ -388,8 +388,8 @@ export default function AlignmentAnalysisPage() {
 
             {/* Textos descritivos */}
             <div className="space-y-2">
-              <p className="text-sm leading-relaxed text-slate-600">{analysisText}</p>
-              <p className="text-sm leading-relaxed text-slate-500">{predictionText}</p>
+              <p className="text-sm leading-relaxed text-slate-400">{analysisText}</p>
+              <p className="text-sm leading-relaxed text-slate-400">{predictionText}</p>
             </div>
           </Card>
         </div>

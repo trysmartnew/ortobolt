@@ -190,7 +190,7 @@ export default function PatientForm({ caseData, onClose }: PatientFormProps) {
           <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             Ficha Cadastral: {patientName || 'Novo Paciente'}
           </h1>
-          <p className="text-sm text-slate-600 mt-1">
+          <p className="text-sm text-slate-400 mt-1">
             {SPECIES_LABELS[species] ?? species} / {breed || '—'}
           </p>
         </div>
@@ -204,7 +204,7 @@ export default function PatientForm({ caseData, onClose }: PatientFormProps) {
           </div>
           <div className="text-right">
             <p className="text-sm font-semibold text-white">{patientName || 'Sem nome'}</p>
-            <p className="text-xs text-slate-500">{SPECIES_LABELS[species] ?? species} / {breed || '—'}</p>
+            <p className="text-xs text-slate-400">{SPECIES_LABELS[species] ?? species} / {breed || '—'}</p>
             <div className="flex gap-2 mt-1">
               <Button variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
                 <Upload size={14} /> Alterar Foto

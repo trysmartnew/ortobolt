@@ -1110,7 +1110,7 @@ export default function CasePage() {
                       {done && <Check size={12} />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-xs font-semibold ${done ? 'line-through text-slate-500' : 'text-white'}`}>
+                      <p className={`text-xs font-semibold ${done ? 'line-through text-slate-400' : 'text-white'}`}>
                         <span className="mr-1">{icon}</span> {step.text}
                         {step.mgPerKg && (
                           <span className="ml-1 font-mono text-primary font-bold">

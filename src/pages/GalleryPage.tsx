@@ -334,7 +334,7 @@ export default function GalleryPage() {
           />
           {search && (
             <button onClick={() => setSearch('')} title="Limpar busca">
-              <X size={13} className="text-slate-400 hover:text-slate-600" />
+              <X size={13} className="text-slate-400 hover:text-white" />
             </button>
           )}
         </div>
@@ -345,7 +345,7 @@ export default function GalleryPage() {
               onClick={() => setStatusFilter(f.value)}
               className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition-colors ${statusFilter === f.value
                 ? 'bg-primary text-white'
-                : 'glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium'
+                : 'glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium'
                 }`}
             >
               {f.label}
@@ -355,7 +355,7 @@ export default function GalleryPage() {
             <select
               value={filterProcedure}
               onChange={e => setFilterProcedure(e.target.value as ProcedureType | 'all')}
-              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
+              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="all">Todos os Procedimentos</option>
               {Object.entries(PROCEDURE_LABELS).map(([k, v]) => (
@@ -365,7 +365,7 @@ export default function GalleryPage() {
             <select
               value={filterSpecies}
               onChange={e => setFilterSpecies(e.target.value as AnimalSpecies | 'all')}
-              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
+              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="all">Todas as Espécies</option>
               {Object.entries(SPECIES_LABELS).map(([k, v]) => (
@@ -375,7 +375,7 @@ export default function GalleryPage() {
             <select
               value={filterPeriod}
               onChange={e => setFilterPeriod(e.target.value as 'all' | '7days' | '30days' | '90days')}
-              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-600 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
+              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="all">Todo o Período</option>
               <option value="7days">Últimos 7 dias</option>
@@ -477,7 +477,7 @@ export default function GalleryPage() {
                       avatarInputRef.current?.click();
                     }}
                     title="Upload Avatar"
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-success hover:bg-emerald-50 transition-colors"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-success hover:bg-emerald-50 transition-colors"
                   >
                     <Upload size={13} />
                   </button>
@@ -489,7 +489,7 @@ export default function GalleryPage() {
                       }
                     }}
                     title="Excluir caso"
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-error hover:bg-red-50 transition-colors"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-error hover:bg-red-50 transition-colors"
                   >
                     <Trash2 size={13} />
                   </button>

@@ -151,7 +151,7 @@ export default function PatientDetailPage() {
     return (
       <div className="p-6 flex items-center justify-center">
         <Spinner />
-        <p className="ml-3 text-sm text-slate-500">Carregando prontuário...</p>
+        <p className="ml-3 text-sm text-slate-400">Carregando prontuário...</p>
       </div>
     );
   }
@@ -217,7 +217,7 @@ export default function PatientDetailPage() {
                 <p className="text-sm text-white/70">
                   {SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}
                 </p>
-                <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-600">
+                <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-400">
                   <span className="flex items-center gap-1">
                     <UserRound size={14} /> {user?.name || 'Profissional'}
                   </span>
@@ -262,7 +262,7 @@ export default function PatientDetailPage() {
                           <p className="text-sm font-semibold text-white">
                             {formatDate(c.createdAt)} — {c.title || 'Sem título'}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-400">
                             {user?.name || 'Profissional'} · {getStatusLabel(c.status)}
                           </p>
                         </div>
@@ -272,7 +272,7 @@ export default function PatientDetailPage() {
                       </div>
                       {(c.notes || c.aiAnalysis?.recommendations?.length) && (
                         <div className="mt-2 p-3 rounded-lg bg-[var(--color-surface-muted)] border border-[var(--color-border)]">
-                          <p className="text-xs text-slate-600 whitespace-pre-line">
+                          <p className="text-xs text-slate-400 whitespace-pre-line">
                             {c.notes
                               ? c.notes
                               : c.aiAnalysis?.recommendations?.slice(0, 3).join('\n')}
@@ -311,7 +311,7 @@ export default function PatientDetailPage() {
                   </div>
                   <div className="flex-1 text-left">
                     <p className="text-sm font-semibold text-white group-hover:text-[var(--color-accent)]">Análise de Imagens</p>
-                    <p className="text-xs text-slate-500">Upload e análise radiográfica</p>
+                    <p className="text-xs text-slate-400">Upload e análise radiográfica</p>
                   </div>
                 </div>
               </button>
@@ -325,7 +325,7 @@ export default function PatientDetailPage() {
                   </div>
                   <div className="flex-1 text-left">
                     <p className="text-sm font-semibold text-white group-hover:text-[var(--color-accent)]">Análise Evolutiva</p>
-                    <p className="text-xs text-slate-500">Timeline clínica e evolutiva</p>
+                    <p className="text-xs text-slate-400">Timeline clínica e evolutiva</p>
                   </div>
                 </div>
               </button>
@@ -339,7 +339,7 @@ export default function PatientDetailPage() {
                   </div>
                   <div className="flex-1 text-left">
                     <p className="text-sm font-semibold text-white group-hover:text-[var(--color-accent)]">Análise de Alinhamento</p>
-                    <p className="text-xs text-slate-500">Avaliação pós-cirúrgica</p>
+                    <p className="text-xs text-slate-400">Avaliação pós-cirúrgica</p>
                   </div>
                 </div>
               </button>
@@ -354,13 +354,13 @@ export default function PatientDetailPage() {
               </h3>
             </div>
             {labs.length === 0 ? (
-              <p className="text-xs text-slate-500">Sem exames laboratoriais registrados.</p>
+              <p className="text-xs text-slate-400">Sem exames laboratoriais registrados.</p>
             ) : (
               <div className="space-y-2">
                 {labs.slice(0, 5).map((lab) => (
                   <div key={lab.id} className="text-xs">
                     <p className="font-semibold text-white/70">{lab.name}</p>
-                    <p className="text-slate-600">{formatShortDate(lab.date)} · {lab.result}</p>
+                    <p className="text-slate-400">{formatShortDate(lab.date)} · {lab.result}</p>
                   </div>
                 ))}
               </div>
@@ -380,7 +380,7 @@ export default function PatientDetailPage() {
               </Button>
             </div>
             {images.length === 0 ? (
-              <p className="text-xs text-slate-500">Sem imagens registradas.</p>
+              <p className="text-xs text-slate-400">Sem imagens registradas.</p>
             ) : (
               <div className="grid grid-cols-3 gap-2">
                 {images.slice(0, 6).map((img) => (

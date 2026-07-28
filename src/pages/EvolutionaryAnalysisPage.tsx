@@ -186,7 +186,7 @@ export default function EvolutionaryAnalysisPage() {
     return (
       <div className="p-6 flex items-center justify-center">
         <Spinner />
-        <p className="ml-3 text-sm text-slate-500">Carregando análise evolutiva...</p>
+        <p className="ml-3 text-sm text-slate-400">Carregando análise evolutiva...</p>
       </div>
     );
   }
@@ -225,11 +225,11 @@ export default function EvolutionaryAnalysisPage() {
             </div>
             <div>
               <p className="text-sm font-bold text-white">{currentPatient.patientName}</p>
-              <p className="text-xs text-slate-600 capitalize">{SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}</p>
+              <p className="text-xs text-slate-400 capitalize">{SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}</p>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs text-slate-600">
+        <div className="flex items-center gap-3 text-xs text-slate-400">
           <span className="flex items-center gap-1"><Ruler size={14} /> {currentPatient.ageYears ?? '—'} anos</span>
           <span className="flex items-center gap-1"><Weight size={14} /> {currentPatient.weightKg ?? '—'} kg</span>
           <span className="flex items-center gap-1"><Activity size={14} /> {getStatusLabel(currentPatient.status)}</span>
@@ -263,7 +263,7 @@ export default function EvolutionaryAnalysisPage() {
                     </div>
                     <div className="p-3 space-y-1">
                       <p className="text-[10px] font-semibold text-white">{formatDate(c.createdAt)}</p>
-                      <p className="text-[10px] text-slate-500">{c.title || 'Sem título'}</p>
+                      <p className="text-[10px] text-slate-400">{c.title || 'Sem título'}</p>
                       <Badge variant={c.status === 'completed' ? 'success' : c.status === 'critical' ? 'danger' : 'info'} className="border-0">
                         {c.status === 'completed' ? 'Concluído' : c.status === 'in_analysis' ? 'Em Análise' : c.status === 'pending' ? 'Pendente' : 'Crítico'}
                       </Badge>
@@ -333,8 +333,8 @@ export default function EvolutionaryAnalysisPage() {
 
             {/* Textos descritivos */}
             <div className="space-y-2">
-              <p data-tour="tour-evolution-progress" className="text-xs text-slate-600">{progressText}</p>
-              <p className="text-xs text-slate-500">{predictionText}</p>
+              <p data-tour="tour-evolution-progress" className="text-xs text-slate-400">{progressText}</p>
+              <p className="text-xs text-slate-400">{predictionText}</p>
             </div>
           </Card>
         </div>
@@ -364,7 +364,7 @@ export default function EvolutionaryAnalysisPage() {
                     </div>
                     <div className="p-3 space-y-1">
                       <p className="text-[10px] font-semibold text-white">{formatDate(c.createdAt)}</p>
-                      <p className="text-[10px] text-slate-500">{c.title || 'Sem título'}</p>
+                      <p className="text-[10px] text-slate-400">{c.title || 'Sem título'}</p>
                       <Badge variant={c.status === 'completed' ? 'success' : c.status === 'critical' ? 'danger' : 'info'} className="border-0">
                         {c.status === 'completed' ? 'Concluído' : c.status === 'in_analysis' ? 'Em Análise' : c.status === 'pending' ? 'Pendente' : 'Crítico'}
                       </Badge>

@@ -145,7 +145,7 @@ export default function PatientsPage() {
     return (
       <div className="p-6 flex items-center justify-center">
         <Spinner />
-        <p className="ml-3 text-sm text-slate-500">Carregando pacientes...</p>
+        <p className="ml-3 text-sm text-slate-400">Carregando pacientes...</p>
       </div>
     );
   }

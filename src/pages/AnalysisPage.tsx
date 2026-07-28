@@ -366,7 +366,7 @@ export default function AnalysisPage() {
           {(mode === 'preview' || mode === 'analyzing') && imageData && (
             <div data-tour="tour-analysis-preview" className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Card className="p-4">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
                   Imagem Capturada
                 </p>
                 <img
@@ -377,7 +377,7 @@ export default function AnalysisPage() {
               </Card>
               <Card className="p-5 flex flex-col justify-between">
                 <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">
                     Pipeline
                   </p>
                   <div className="space-y-3 text-sm">

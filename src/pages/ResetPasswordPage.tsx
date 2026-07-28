@@ -83,7 +83,7 @@ export default function ResetPasswordPage() {
             <CheckCircle size={32} className="text-success" />
           </div>
           <h2 className="font-bold text-white text-xl mb-2">Senha redefinida!</h2>
-          <p className="text-sm text-slate-500 mb-6">Faça login com sua nova senha.</p>
+          <p className="text-sm text-slate-400 mb-6">Faça login com sua nova senha.</p>
           <button onClick={() => setCurrentView('login')}
             className="w-full py-3 rounded-xl text-sm font-bold text-white bg-primary">
             Ir para o login
@@ -102,7 +102,7 @@ export default function ResetPasswordPage() {
             <Shield size={24} className="text-error" />
           </div>
           <h2 className="font-bold text-white text-lg mb-2">Link inválido ou expirado</h2>
-          <p className="text-sm text-slate-500 mb-6">Solicite um novo link de recuperação de senha.</p>
+          <p className="text-sm text-slate-400 mb-6">Solicite um novo link de recuperação de senha.</p>
           <button onClick={() => setCurrentView('login')}
             className="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-primary">
             Voltar ao login
@@ -124,7 +124,7 @@ export default function ResetPasswordPage() {
           <p className="text-xs text-slate-400 mb-6">Crie uma nova senha segura para sua conta.</p>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Nova senha</label>
+              <label className="block text-xs font-semibold text-slate-400 mb-1.5">Nova senha</label>
               <div className="relative">
                 <Input
                   type={showPass ? 'text' : 'password'}
@@ -136,7 +136,7 @@ export default function ResetPasswordPage() {
                   className="pr-10"
                 />
                 <button type="button" onClick={() => setShowPass(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
                   {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
