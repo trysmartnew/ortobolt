@@ -954,9 +954,9 @@ export default function CasePage() {
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <h2 className="text-sm font-bold text-white flex items-center gap-2"><Activity size={16} /> Imagem Radiográfica</h2>
               <div className="flex items-center gap-2">
-                <button onClick={() => setZoom(z => Math.max(50, z - 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:premium-header-bg bg-slate-200 text-sm font-bold">−</button>
+                <button onClick={() => setZoom(z => Math.max(50, z - 25))} className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-bold">−</button>
                 <span className="text-xs font-mono text-menu-muted w-10 text-center">{zoom}%</span>
-                <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:premium-header-bg bg-slate-200 text-sm font-bold">+</button>
+                <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-bold">+</button>
                 <button onClick={() => setZoom(100)} className="text-xs text-menu-muted hover:text-primary px-2">Redefinir</button>
                 <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
                   {uploading ? <span className="animate-spin inline-block h-3 w-3 border border-current border-t-transparent rounded-full" /> : <Upload size={14} />}

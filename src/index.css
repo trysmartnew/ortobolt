@@ -190,7 +190,7 @@ pre {
 .text-menu-muted {
   font-size: 14px;
   font-weight: 500;
-  color: #4B5563;
+  color: var(--color-text-secondary);
 }
 
 .text-label {
