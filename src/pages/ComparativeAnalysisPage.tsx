@@ -130,7 +130,7 @@ export default function ComparativeAnalysisPage() {
           onClick={() => setCurrentPage('gallery')}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 text-xs font-semibold transition-all border border-white/10"
         >
-          <ArrowLeft size={14} /> Voltar à Galeria
+          <ArrowLeft size={14} /> Voltar à Central de Casos
         </button>
       </div>
     </div>

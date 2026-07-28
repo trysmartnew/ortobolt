@@ -10,7 +10,7 @@ const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   patients: { title: 'Pacientes', subtitle: 'Gerencie seus pacientes com acompanhamento clínico centralizado e suporte inteligente à decisão clínica.' },
   chat: { title: 'Consultor IA', subtitle: 'Assistente para dúvidas clínicas' },
   analysis: { title: 'Análise Diagnóstica', subtitle: 'Análise → Assistente → Caso completo integrado' },
-  gallery: { title: 'Galeria de Casos', subtitle: 'Casos clínicos e histórico' },
+  gallery: { title: 'Central de Casos', subtitle: 'Casos clínicos e histórico' },
   reports: { title: 'Relatórios', subtitle: 'Exportação e análise de dados' },
   profile: { title: 'Perfil Profissional', subtitle: 'Dados e certificações' },
   comparative: { title: 'ANÁLISE COMPARATIVA', subtitle: 'Análise Comparativa - Pré e Pós Operatório' },

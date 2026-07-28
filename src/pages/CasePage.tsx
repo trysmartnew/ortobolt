@@ -590,7 +590,7 @@ export default function CasePage() {
         <div className="text-center">
           <AlertCircle size={40} className="mx-auto mb-3 text-white/40" />
           <EmptyState icon={<AlertCircle size={40} />} title="Sem Casos" description="Nenhum caso selecionado." />
-          <Button onClick={() => setCurrentPage('gallery')} className="mt-4">Ir para Galeria</Button>
+          <Button onClick={() => setCurrentPage('gallery')} className="mt-4">Ir para Central de Casos</Button>
         </div>
       </div>
     );
@@ -929,7 +929,7 @@ export default function CasePage() {
               onClick={() => setCurrentPage('gallery')}
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 text-xs font-semibold transition-all border border-white/10"
             >
-              <Images size={14} /> Ver Galeria
+              <Images size={14} /> Ver Central de Casos
             </button>
             <button
               onClick={() => setCurrentPage('dashboard')}

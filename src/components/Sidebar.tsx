@@ -32,7 +32,7 @@ const MENU_SECTIONS: MenuSection[] = [
   {
     title: 'ARQUIVOS',
     items: [
-      { label: 'Galeria', icon: Images, page: 'gallery' },
+      { label: 'Central de Casos', icon: Images, page: 'gallery' },
     ]
   },
   {

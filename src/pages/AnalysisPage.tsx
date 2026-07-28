@@ -384,7 +384,7 @@ export default function AnalysisPage() {
                     {[
                       ['1', 'Análise visual'],
                       ['2', 'Suporte Clínico Contextual'],
-                      ['3', 'Aprovar → Galeria / Caso / Visão da Clínica / PDF'],
+                      ['3', 'Aprovar → Central de Casos / Caso / Visão da Clínica / PDF'],
                     ].map(([step, label]) => (
                       <div key={step} className="flex gap-2">
                         <span className="font-mono text-primary font-bold">{step}</span>
@@ -506,7 +506,7 @@ export default function AnalysisPage() {
                   className="flex-1 h-[42px] rounded-[8px] flex items-center justify-center gap-2 border border-[rgba(41,163,153,0.3)] bg-gradient-to-r from-[#29a399]/15 to-[#29a399]/05 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(41,163,153,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Images className="w-4 h-4 text-[#29a399]" />
-                  <span className="text-sm">Aprovar e ir à Galeria</span>
+                  <span className="text-sm">Aprovar e ir à Central de Casos</span>
                 </button>
                 <button
                   onClick={handleGeneratePdf}

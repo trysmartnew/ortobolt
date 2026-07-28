@@ -29,7 +29,7 @@ export default function ApproveCompleteCaseBar({
         <div>
           <p className="text-sm font-bold text-white">Aprovar Caso Completo</p>
           <p className="text-xs text-white/70 mt-0.5">
-            Propaga automaticamente para Galeria, Caso, Visão da Clínica e Relatórios — sem retrabalho.
+            Propaga automaticamente para Central de Casos, Caso, Visão da Clínica e Relatórios — sem retrabalho.
           </p>
         </div>
       </div>
@@ -54,7 +54,7 @@ export default function ApproveCompleteCaseBar({
           disabled={disabled || !title.trim()}
           onClick={() => onApprove(title.trim(), 'gallery')}
         >
-          <FolderOpen size={14} /> Aprovar e ir à Galeria
+          <FolderOpen size={14} /> Aprovar e ir à Central de Casos
         </Button>
       </div>
     </div>
