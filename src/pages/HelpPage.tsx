@@ -10,7 +10,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Como gerar um laudo?',
-    a: 'Na página Relatórios, utilize os cards "Selecionar Caso" para gerar o Laudo Técnico ou a Guia para o Tutor. O sistema inclui automaticamente as métricas de IA, landmarks e fatores de risco calculados.',
+    a: 'Na página Laudos e Relatórios, utilize os cards "Selecionar Caso" para gerar o Laudo Técnico ou a Guia para o Tutor. O sistema inclui automaticamente as métricas de IA, landmarks e fatores de risco calculados.',
   },
   {
     q: 'Como funciona a análise de IA?',
@@ -31,7 +31,7 @@ const QUICK_DOCS = [
   { icon: Stethoscope, title: 'Prontuário', description: 'Evolução clínica, histórico e anotações profissionais.' },
   { icon: Monitor, title: 'Mesa de Luz Digital', description: 'Análise de radiografias com ferramentas de marcação e apoio da IA.' },
   { icon: Brain, title: 'Análise Diagnóstica', description: 'Processamento de imagens, detecção de landmarks e score de precisão.' },
-  { icon: BarChart3, title: 'Relatórios', description: 'Laudos técnicos, guias para tutores e relatórios mensais.' },
+  { icon: BarChart3, title: 'Laudos e Relatórios', description: 'Laudos técnicos, guias para tutores e relatórios mensais.' },
   { icon: Settings, title: 'Configurações', description: 'Preferências de notificações, idioma, IA e exportação de dados.' },
 ];
 

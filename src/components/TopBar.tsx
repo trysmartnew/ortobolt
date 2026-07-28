@@ -11,7 +11,7 @@ const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   chat: { title: 'Consultor IA', subtitle: 'Assistente para dúvidas clínicas' },
   analysis: { title: 'Análise Diagnóstica', subtitle: 'Análise → Assistente → Caso completo integrado' },
   gallery: { title: 'Central de Casos', subtitle: 'Casos clínicos e histórico' },
-  reports: { title: 'Relatórios', subtitle: 'Exportação e análise de dados' },
+  reports: { title: 'Laudos e Relatórios', subtitle: 'Exportação e análise de dados' },
   profile: { title: 'Perfil Profissional', subtitle: 'Dados e certificações' },
   comparative: { title: 'ANÁLISE COMPARATIVA', subtitle: 'Análise Comparativa - Pré e Pós Operatório' },
   evolutionaryAnalysis: { title: 'Análise Evolutiva', subtitle: 'Acompanhamento de métricas e exames ao longo do tempo' },

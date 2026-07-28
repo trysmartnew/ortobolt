@@ -634,7 +634,7 @@ export default function ReportsPage() {
       <Card data-tour="tour-report-history" className="overflow-hidden">
         <div className="p-5 border-b border-slate-50">
           <SectionHeader
-            title="Histórico de Relatórios"
+            title="Histórico de Laudos e Relatórios"
             subtitle={`${reports.length} relatórios gerados`}
           />
         </div>

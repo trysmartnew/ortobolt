@@ -48,7 +48,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-case-actions', title: '⚡ Ações', content: 'Editar caso, gerar laudo em PDF para o tutor ou imprimir.', placement: 'left', highlight: true },
   ],
   reports: [
-    { target: '__welcome__', title: '📄 Central de Relatórios', content: 'Gere relatórios gerenciais e laudos clínicos em PDF. Personalize com a identidade da clínica, acompanhe indicadores e exporte documentos para tutores e gestão.', placement: 'center' },
+    { target: '__welcome__', title: '📄 Central de Laudos e Relatórios', content: 'Gere relatórios gerenciais e laudos clínicos em PDF. Personalize com a identidade da clínica, acompanhe indicadores e exporte documentos para tutores e gestão.', placement: 'center' },
     { target: 'tour-report-customization', title: '🏥 Identidade da Clínica', content: 'Configure nome, subtítulo e logo da clínica. Essas informações aparecem no cabeçalho de todos os PDFs. Clique em Salvar Preferências para aplicar.', placement: 'bottom', highlight: true },
     { target: 'tour-report-monthly', title: '📊 Relatório Mensal', content: 'Visão gerencial do período: indicadores de precisão, volume de casos e taxa de sucesso, com gráfico de evolução dos últimos 7 meses.', placement: 'right', highlight: true },
     { target: 'tour-report-metrics', title: '🎯 Indicadores do Período', content: 'Métricas de Precisão (casos com análise de IA), Volume de Casos (últimos 30 dias) e Taxa de Sucesso (casos concluídos). Use-as para avaliar a performance da clínica.', placement: 'bottom', highlight: true },
@@ -98,7 +98,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-evolution-bone-density', title: '🦴 Densidade Óssea', content: 'Gráfico de barras com a variação da densidade óssea ao longo dos exames.', placement: 'right', highlight: true },
     { target: 'tour-evolution-joint-space', title: '📉 Espaço Articular', content: 'Gráfico de linha com a evolução do espaço articular entre os exames.', placement: 'right', highlight: true },
     { target: 'tour-evolution-progress', title: '🧠 Análise de Progresso', content: 'Texto com a análise do progresso e a previsão evolutiva gerada a partir das tendências.', placement: 'top', highlight: true },
-    { target: 'tour-evolution-report', title: '📄 Gerar Relatório', content: 'Gere o relatório de evolução e envie para a página de Relatórios.', placement: 'top', highlight: true },
+    { target: 'tour-evolution-report', title: '📄 Gerar Relatório', content: 'Gere o relatório de evolução e envie para a página de Laudos e Relatórios.', placement: 'top', highlight: true },
   ],
   alignmentAnalysis: [
     { target: '__welcome__', title: '📐 Análise de Alinhamento', content: 'Avaliação biomecânica completa: ângulo femoral, simetria de membros, ângulo de Cobb e pontos de referência.', placement: 'center' },
@@ -107,7 +107,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     { target: 'tour-alignment-gauge', title: '🧭 Ângulo de Inclinação Femoral', content: 'Gráfico gauge com a inclinação femoral esquerda e direita, classificado por severidade.', placement: 'left', highlight: true },
     { target: 'tour-alignment-symmetry', title: '⚖️ Simetria de Membros', content: 'Gráfico de barras comparando o comprimento de fêmur e tíbia entre os membros esquerdo e direito.', placement: 'left', highlight: true },
     { target: 'tour-alignment-cobb', title: '📉 Ângulo de Cobb', content: 'Gráfico de linha com a evolução do ângulo de Cobb ao longo dos exames.', placement: 'left', highlight: true },
-    { target: 'tour-alignment-report', title: '📄 Gerar Relatório', content: 'Gere o relatório de alinhamento e biometria e envie para a página de Relatórios.', placement: 'top', highlight: true },
+    { target: 'tour-alignment-report', title: '📄 Gerar Relatório', content: 'Gere o relatório de alinhamento e biometria e envie para a página de Laudos e Relatórios.', placement: 'top', highlight: true },
   ],
 };
 

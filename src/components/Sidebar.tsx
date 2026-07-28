@@ -39,7 +39,7 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'FERRAMENTAS',
     items: [
       { label: 'Assistente Clínico', icon: Bot, page: 'chat' },
-      { label: 'Relatórios', icon: BarChart3, page: 'reports' },
+      { label: 'Laudos e Relatórios', icon: BarChart3, page: 'reports' },
     ]
   },
   {

@@ -643,7 +643,7 @@ export default function CasePage() {
     setCurrentPage('reports');
     addToast(
       activeCase.aiAnalysis
-        ? 'Relatórios: o PDF usará este caso integrado.'
+        ? 'Laudos e Relatórios: o PDF usará este caso integrado.'
         : 'Aprove um caso na Análise para gerar PDF com laudo IA.',
       'info'
     );
