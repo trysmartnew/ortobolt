@@ -6,9 +6,9 @@ import type { CaseStatus, NotificationType } from '@/types/index';
 // ── Badge ────────────────────────────────────────────────────────────────────
 export function Badge({ children, variant = 'default', className = '' }: { children: React.ReactNode; variant?: 'default'|'success'|'warning'|'danger'|'info'|'blue'; className?: string }) {
   const styles: Record<string, string> = {
-    default: 'bg-white/10 text-menu', success: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-    warning: 'bg-amber-50 text-amber-700 border border-amber-200', danger: 'bg-red-50 text-red-700 border border-red-200 animate-pulse',
-    info: 'bg-sky-50 text-sky-700 border border-sky-200', blue: 'bg-blue-50 text-blue-700 border border-blue-200',
+    default: 'bg-white/10 text-menu', success: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
+    warning: 'bg-amber-500/10 text-amber-400 border border-amber-500/20', danger: 'bg-red-500/10 text-red-400 border border-red-500/20 animate-pulse',
+    info: 'bg-sky-500/10 text-sky-400 border border-sky-500/20', blue: 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
   };
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold font-mono ${styles[variant]} ${className}`}>{children}</span>;
 }
@@ -123,7 +123,7 @@ export function PrecisionGauge({ value, size = 80 }: { value: number; size?: num
 
 // ── Risk Tag ─────────────────────────────────────────────────────────────────
 export function RiskTag({ level }: { level: 'low'|'medium'|'high' }) {
-  const map = { low: { label:'Baixo', cls:'bg-emerald-50 text-emerald-700' }, medium: { label:'Médio', cls:'bg-amber-50 text-amber-700' }, high: { label:'Alto', cls:'bg-red-50 text-red-700' } };
+  const map = { low: { label:'Baixo', cls:'bg-emerald-500/10 text-emerald-400' }, medium: { label:'Médio', cls:'bg-amber-500/10 text-amber-400' }, high: { label:'Alto', cls:'bg-red-500/10 text-red-400' } };
   return <span className={`text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded ${map[level].cls}`}>{map[level].label}</span>;
 }
 
@@ -155,9 +155,9 @@ export function EmptyState({ icon, title, description }: { icon: React.ReactNode
 // ── Toast (inline) ────────────────────────────────────────────────────────────
 export function InlineToast({ message, type = 'success' }: { message: string; type?: 'success'|'error'|'info' }) {
   const styles = {
-    success: 'bg-emerald-50 border-emerald-200 text-emerald-700',
-    error:   'bg-red-50 border-red-200 text-red-700',
-    info:    'bg-blue-50 border-blue-200 text-blue-700',
+    success: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
+    error:   'bg-red-500/10 border-red-500/20 text-red-400',
+    info:    'bg-blue-500/10 border-blue-500/20 text-blue-400',
   };
   return (
     <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-semibold ${styles[type]}`}>

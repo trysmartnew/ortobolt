@@ -17,10 +17,10 @@ const ICONS = {
 };
 
 const STYLES = {
-  success: 'bg-surface border-emerald-500/30 shadow-sm',
-  error: 'bg-surface border-red-500/30 shadow-sm',
-  info: 'bg-surface border-blue-500/30 shadow-sm',
-  warning: 'bg-surface border-amber-500/30 shadow-sm',
+  success: 'bg-slate-800 border-emerald-500/30 shadow-sm',
+  error: 'bg-slate-800 border-red-500/30 shadow-sm',
+  info: 'bg-slate-800 border-blue-500/30 shadow-sm',
+  warning: 'bg-slate-800 border-amber-500/30 shadow-sm',
 };
 
 export default function ToastContainer({ toasts, onRemove }: Props) {
