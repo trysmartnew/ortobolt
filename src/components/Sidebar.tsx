@@ -26,7 +26,7 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'CLÍNICO',
     items: [
       { label: 'Pacientes', icon: Users, page: 'patients' },
-      { label: 'Painel Clínico', icon: Activity, page: 'dashboard' },
+      { label: 'Visão da Clínica', icon: Activity, page: 'dashboard' },
     ]
   },
   {
@@ -77,7 +77,7 @@ export default function Sidebar() {
     if (item.dynamicBadge === 'activeCases') {
       return activeCasesCount > 0 ? activeCasesCount : null;
     }
-    if (item.label === 'Notificações') {
+    if (item.page === 'notifications') {
       return unreadCount > 0 ? unreadCount : null;
     }
     return item.badge ?? null;

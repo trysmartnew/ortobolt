@@ -38,7 +38,7 @@ const FEATURES = [
   },
   {
     icon: TrendingUp,
-    title: 'Painel Clínico de Métricas',
+    title: 'Visão da Clínica',
     desc: 'Acompanhe evolução clínica, precisão média e evolução dos seus casos com gráficos interativos.',
     color: 'var(--color-warning)',
     bg: '#FFFBEB',
