@@ -552,15 +552,15 @@ export default function ReportsPage() {
             <div data-tour="tour-report-metrics" className="grid grid-cols-3 gap-3 mb-4">
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
                 <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Métricas de Precisão</p>
-                <p className="text-lg font-bold text-slate-900">{precisionMetric.toFixed(1)}%</p>
+                <p className="text-lg font-bold text-white">{precisionMetric.toFixed(1)}%</p>
               </div>
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
                 <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Volume de Casos</p>
-                <p className="text-lg font-bold text-slate-900">{caseVolume}</p>
+                <p className="text-lg font-bold text-white">{caseVolume}</p>
               </div>
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
                 <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Taxa de Sucesso</p>
-                <p className="text-lg font-bold text-slate-900">{successRate.toFixed(1)}%</p>
+                <p className="text-lg font-bold text-white">{successRate.toFixed(1)}%</p>
               </div>
             </div>
 
@@ -646,7 +646,7 @@ export default function ReportsPage() {
             >
               <StatusIcon status={r.status} />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-slate-900 truncate">{r.title}</p>
+                <p className="text-sm font-semibold text-white truncate">{r.title}</p>
                 <div className="flex items-center gap-2 mt-0.5 text-[13px] text-menu-muted font-mono leading-relaxed">
                   <Clock size={10} />
                   <span>

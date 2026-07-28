@@ -187,7 +187,7 @@ export default function PatientForm({ caseData, onClose }: PatientFormProps) {
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             Ficha Cadastral: {patientName || 'Novo Paciente'}
           </h1>
           <p className="text-sm text-slate-600 mt-1">
@@ -203,7 +203,7 @@ export default function PatientForm({ caseData, onClose }: PatientFormProps) {
             )}
           </div>
           <div className="text-right">
-            <p className="text-sm font-semibold text-slate-900">{patientName || 'Sem nome'}</p>
+            <p className="text-sm font-semibold text-white">{patientName || 'Sem nome'}</p>
             <p className="text-xs text-slate-500">{SPECIES_LABELS[species] ?? species} / {breed || '—'}</p>
             <div className="flex gap-2 mt-1">
               <Button variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
@@ -458,7 +458,7 @@ function Field({ label, children, className = '' }: { label: string; children: R
 function SectionHeaderWithBorder({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-3">
-      <h2 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{title}</h2>
+      <h2 className="text-base font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>{title}</h2>
       <div className="h-px flex-1 bg-[var(--color-border)]" />
     </div>
   );

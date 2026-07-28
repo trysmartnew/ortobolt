@@ -136,7 +136,7 @@ export default function RadiographGallery({
             </Button>
           )}
           <div>
-            <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
               Galeria - Evolução Clínica e Visual de {patientName}
             </h1>
             <p className="text-sm text-slate-600">
@@ -153,14 +153,14 @@ export default function RadiographGallery({
             )}
           </div>
           <div className="text-right">
-            <p className="text-sm font-semibold text-slate-900">{patientName}</p>
+            <p className="text-sm font-semibold text-white">{patientName}</p>
             <p className="text-xs text-slate-500">{ageYears ?? '—'} anos · {weightKg ?? '—'} kg</p>
           </div>
         </div>
       </div>
 
       <Card className="p-6">
-        <h2 className="text-base font-bold text-slate-900 mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+        <h2 className="text-base font-bold text-white mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>
           Linha do Tempo Visual de Evolução
         </h2>
         {timelineCards.length === 0 ? (
@@ -177,7 +177,7 @@ export default function RadiographGallery({
                   <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-3">
-                  <p className="text-xs font-semibold text-slate-900">{card.title}</p>
+                  <p className="text-xs font-semibold text-white">{card.title}</p>
                   <p className="text-[10px] text-slate-500 mt-0.5">{formatShortDate(card.date)}</p>
                   <p className="text-[10px] text-slate-600 mt-1 line-clamp-2">{card.description}</p>
                 </div>
@@ -188,7 +188,7 @@ export default function RadiographGallery({
       </Card>
 
       <Card className="p-6 space-y-6">
-        <h2 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+        <h2 className="text-base font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
           Arquivo de Exames de Imagem
         </h2>
 
@@ -204,7 +204,7 @@ export default function RadiographGallery({
                     <img src={item.url} alt={item.modality} className="w-full h-full object-cover" />
                   </div>
                   <div className="p-2">
-                    <p className="text-[10px] font-semibold text-slate-900">{formatShortDate(item.date)}</p>
+                    <p className="text-[10px] font-semibold text-white">{formatShortDate(item.date)}</p>
                     <p className="text-[10px] text-slate-500">{item.modality}</p>
                     {item.analysisText && (
                       <p className="text-[10px] text-slate-600 mt-1 line-clamp-2">{item.analysisText}</p>
@@ -228,7 +228,7 @@ export default function RadiographGallery({
                     <img src={item.url} alt={item.modality} className="w-full h-full object-cover" />
                   </div>
                   <div className="p-2">
-                    <p className="text-[10px] font-semibold text-slate-900">{formatShortDate(item.date)}</p>
+                    <p className="text-[10px] font-semibold text-white">{formatShortDate(item.date)}</p>
                     <p className="text-[10px] text-slate-500">{item.modality}</p>
                     {item.analysisText && (
                       <p className="text-[10px] text-slate-600 mt-1 line-clamp-2">{item.analysisText}</p>
@@ -242,7 +242,7 @@ export default function RadiographGallery({
       </Card>
 
       <Card className="p-6 space-y-4">
-        <h2 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+        <h2 className="text-base font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
           Histórico Visual
         </h2>
         {historyItems.length === 0 ? (
@@ -265,7 +265,7 @@ export default function RadiographGallery({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-900 truncate">{c.title || c.patientName}</p>
+                  <p className="text-sm font-semibold text-white truncate">{c.title || c.patientName}</p>
                   <p className="text-xs text-slate-500">{formatShortDate(c.createdAt)} · {getStatusLabel(c.status)}</p>
                   {c.notes && (
                     <p className="text-xs text-slate-600 mt-1 line-clamp-2">{c.notes}</p>

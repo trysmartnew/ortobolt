@@ -190,7 +190,7 @@ export default function PatientDetailPage() {
           <ArrowLeft size={16} /> Voltar
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             Prontuário: {currentPatient.patientName}
           </h1>
           <p className="text-sm text-white/70">
@@ -211,7 +211,7 @@ export default function PatientDetailPage() {
                 )}
               </div>
               <div className="flex-1">
-                <h2 className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                <h2 className="text-lg font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                   {currentPatient.patientName}
                 </h2>
                 <p className="text-sm text-white/70">
@@ -235,7 +235,7 @@ export default function PatientDetailPage() {
           <Card data-tour="tour-patient-timeline" className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="text-[var(--color-accent)]" size={18} />
-              <h3 className="text-base font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              <h3 className="text-base font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                 Timeline de Evoluções Clínicas
               </h3>
             </div>
@@ -259,7 +259,7 @@ export default function PatientDetailPage() {
                     <div className="flex-1 pb-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">
+                          <p className="text-sm font-semibold text-white">
                             {formatDate(c.createdAt)} — {c.title || 'Sem título'}
                           </p>
                           <p className="text-xs text-slate-500">
@@ -296,7 +296,7 @@ export default function PatientDetailPage() {
           <Card data-tour="tour-patient-tools" className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <Activity className="text-[var(--color-accent)]" size={18} />
-              <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                 Ferramentas Clínicas
               </h3>
             </div>
@@ -310,7 +310,7 @@ export default function PatientDetailPage() {
                     <Image className="text-[var(--color-accent)]" size={20} />
                   </div>
                   <div className="flex-1 text-left">
-                    <p className="text-sm font-semibold text-slate-900 group-hover:text-[var(--color-accent)]">Análise de Imagens</p>
+                    <p className="text-sm font-semibold text-white group-hover:text-[var(--color-accent)]">Análise de Imagens</p>
                     <p className="text-xs text-slate-500">Upload e análise radiográfica</p>
                   </div>
                 </div>
@@ -324,7 +324,7 @@ export default function PatientDetailPage() {
                     <TrendingUp className="text-[var(--color-accent)]" size={20} />
                   </div>
                   <div className="flex-1 text-left">
-                    <p className="text-sm font-semibold text-slate-900 group-hover:text-[var(--color-accent)]">Análise Evolutiva</p>
+                    <p className="text-sm font-semibold text-white group-hover:text-[var(--color-accent)]">Análise Evolutiva</p>
                     <p className="text-xs text-slate-500">Timeline clínica e evolutiva</p>
                   </div>
                 </div>
@@ -338,7 +338,7 @@ export default function PatientDetailPage() {
                     <Ruler className="text-[var(--color-accent)]" size={20} />
                   </div>
                   <div className="flex-1 text-left">
-                    <p className="text-sm font-semibold text-slate-900 group-hover:text-[var(--color-accent)]">Análise de Alinhamento</p>
+                    <p className="text-sm font-semibold text-white group-hover:text-[var(--color-accent)]">Análise de Alinhamento</p>
                     <p className="text-xs text-slate-500">Avaliação pós-cirúrgica</p>
                   </div>
                 </div>
@@ -349,7 +349,7 @@ export default function PatientDetailPage() {
           <Card data-tour="tour-patient-labs" className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <FlaskConical className="text-[var(--color-accent)]" size={18} />
-              <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                 Laboratory Results
               </h3>
             </div>
@@ -371,7 +371,7 @@ export default function PatientDetailPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 mb-3">
                 <Image className="text-[var(--color-accent)]" size={18} />
-                <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                   Imaging Gallery
                 </h3>
               </div>

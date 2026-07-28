@@ -224,7 +224,7 @@ export default function EvolutionaryAnalysisPage() {
               )}
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-900">{currentPatient.patientName}</p>
+              <p className="text-sm font-bold text-white">{currentPatient.patientName}</p>
               <p className="text-xs text-slate-600 capitalize">{SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}</p>
             </div>
           </div>
@@ -262,7 +262,7 @@ export default function EvolutionaryAnalysisPage() {
                       )}
                     </div>
                     <div className="p-3 space-y-1">
-                      <p className="text-[10px] font-semibold text-slate-900">{formatDate(c.createdAt)}</p>
+                      <p className="text-[10px] font-semibold text-white">{formatDate(c.createdAt)}</p>
                       <p className="text-[10px] text-slate-500">{c.title || 'Sem título'}</p>
                       <Badge variant={c.status === 'completed' ? 'success' : c.status === 'critical' ? 'danger' : 'info'} className="border-0">
                         {c.status === 'completed' ? 'Concluído' : c.status === 'in_analysis' ? 'Em Análise' : c.status === 'pending' ? 'Pendente' : 'Crítico'}
@@ -280,7 +280,7 @@ export default function EvolutionaryAnalysisPage() {
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-4">
               <Activity className="text-[var(--color-accent)]" size={18} />
-              <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                 Análise de Progresso de Tratamento
               </h3>
             </div>
@@ -363,7 +363,7 @@ export default function EvolutionaryAnalysisPage() {
                       )}
                     </div>
                     <div className="p-3 space-y-1">
-                      <p className="text-[10px] font-semibold text-slate-900">{formatDate(c.createdAt)}</p>
+                      <p className="text-[10px] font-semibold text-white">{formatDate(c.createdAt)}</p>
                       <p className="text-[10px] text-slate-500">{c.title || 'Sem título'}</p>
                       <Badge variant={c.status === 'completed' ? 'success' : c.status === 'critical' ? 'danger' : 'info'} className="border-0">
                         {c.status === 'completed' ? 'Concluído' : c.status === 'in_analysis' ? 'Em Análise' : c.status === 'pending' ? 'Pendente' : 'Crítico'}

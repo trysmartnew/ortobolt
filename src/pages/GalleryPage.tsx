@@ -116,7 +116,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
                       {sim.patientName.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-slate-900 truncate">{sim.patientName}</p>
+                      <p className="text-xs font-bold text-white truncate">{sim.patientName}</p>
                       <p className="text-[10px] text-menu-muted truncate">{sim.species === 'canine' ? 'Cão' : sim.species === 'feline' ? 'Gato' : sim.species} · {sim.procedure}</p>
                     </div>
                   </div>
@@ -440,7 +440,7 @@ export default function GalleryPage() {
               </div>
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <h3 className="text-sm font-bold text-slate-900 leading-tight line-clamp-2">{c.title}</h3>
+                  <h3 className="text-sm font-bold text-white leading-tight line-clamp-2">{c.title}</h3>
                   <StatusBadge status={c.status} />
                 </div>
                 <div className="flex items-center gap-3 text-xs text-menu-muted font-mono mb-3">
@@ -461,7 +461,7 @@ export default function GalleryPage() {
                 <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
                   <button
                     onClick={() => setSelected(c)}
-                    className="flex-1 text-xs text-white/70 hover:text-slate-900 py-1.5 rounded-lg hover:glass-panel-premium transition-colors font-medium"
+                    className="flex-1 text-xs text-white/70 hover:text-white py-1.5 rounded-lg hover:glass-panel-premium transition-colors font-medium"
                   >
                     Ver detalhes
                   </button>

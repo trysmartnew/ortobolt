@@ -229,7 +229,7 @@ export default function AlignmentAnalysisPage() {
       <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
         <button type="button" onClick={handleBack} className="hover:text-[var(--color-accent)]">Análise de Alinhamento</button>
         <span>/</span>
-        <span className="text-slate-900">Relatório de Análise de Alinhamento e Biometria de {patientName}</span>
+        <span className="text-white">Relatório de Análise de Alinhamento e Biometria de {patientName}</span>
       </div>
 
       {/* Header do Paciente */}
@@ -247,7 +247,7 @@ export default function AlignmentAnalysisPage() {
               )}
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-900">{currentPatient.patientName}</p>
+              <p className="text-sm font-bold text-white">{currentPatient.patientName}</p>
               <p className="text-xs text-slate-600 capitalize">{SPECIES_LABELS[currentPatient.species] ?? currentPatient.species} / {currentPatient.breed || '—'}</p>
             </div>
           </div>
@@ -298,7 +298,7 @@ export default function AlignmentAnalysisPage() {
                       )}
                     </div>
                     <div className="p-3 space-y-1">
-                      <p className="text-[10px] font-semibold text-slate-900">{formatDate(img.label === 'Principal' ? currentPatient.createdAt : (currentPatient.updatedAt || currentPatient.createdAt))}</p>
+                      <p className="text-[10px] font-semibold text-white">{formatDate(img.label === 'Principal' ? currentPatient.createdAt : (currentPatient.updatedAt || currentPatient.createdAt))}</p>
                       <p className="text-[10px] text-slate-600">{img.label === 'Principal' ? 'Radiografia Principal' : img.label}</p>
                       <Badge variant={currentPatient.status === 'completed' ? 'success' : currentPatient.status === 'critical' ? 'danger' : 'info'} className="border-0">
                         {currentPatient.status === 'completed' ? 'Concluído' : currentPatient.status === 'in_analysis' ? 'Em Análise' : currentPatient.status === 'pending' ? 'Pendente' : 'Crítico'}
@@ -319,7 +319,7 @@ export default function AlignmentAnalysisPage() {
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-4">
               <Activity className="text-[var(--color-accent)]" size={18} />
-              <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                 Métricas de Alinhamento Pélvico e Femoral
               </h3>
             </div>
@@ -368,7 +368,7 @@ export default function AlignmentAnalysisPage() {
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-4">
               <Activity className="text-[var(--color-accent)]" size={18} />
-              <h3 className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                 Alinhamento Espinhal e Biometria
               </h3>
             </div>

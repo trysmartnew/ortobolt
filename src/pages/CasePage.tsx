@@ -662,7 +662,7 @@ export default function CasePage() {
           <div className="flex items-center gap-2 text-xs font-semibold text-menu-muted">
             <button type="button" onClick={() => { closeCase(); setCurrentPage('gallery'); }} className="hover:text-[var(--color-accent)]">Prontuário</button>
             <span>/</span>
-            <span className="text-slate-900">Mesa de Luz Digital</span>
+            <span className="text-white">Mesa de Luz Digital</span>
           </div>
 
           {/* Header do Paciente */}
@@ -676,7 +676,7 @@ export default function CasePage() {
                   {finalAvatarUrl ? <img src={finalAvatarUrl} alt={activeCase.patientName} className="w-full h-full object-cover" /> : <UserIcon size={18} className="text-slate-400" />}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">{activeCase.patientName}</p>
+                  <p className="text-sm font-bold text-white">{activeCase.patientName}</p>
                   <p className="text-xs text-slate-400 capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
                 </div>
               </div>
@@ -692,17 +692,17 @@ export default function CasePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button type="button" onClick={() => handleSelectAnalysis('comparativa')} className="flex flex-col gap-2 p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] transition-colors text-left">
               <GitCompare className="text-[var(--color-accent)]" size={24} />
-              <p className="text-sm font-bold text-slate-900">Iniciar Análise Comparativa por IA</p>
+              <p className="text-sm font-bold text-white">Iniciar Análise Comparativa por IA</p>
               <p className="text-xs text-menu-muted">Comparação visual e métrica de múltiplos exames</p>
             </button>
             <button type="button" onClick={() => handleSelectAnalysis('evolutiva')} className="flex flex-col gap-2 p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] transition-colors text-left">
               <LineChart className="text-[var(--color-accent)]" size={24} />
-              <p className="text-sm font-bold text-slate-900">Iniciar Análise Evolutiva por IA</p>
+              <p className="text-sm font-bold text-white">Iniciar Análise Evolutiva por IA</p>
               <p className="text-xs text-menu-muted">Acompanhamento do progresso e tendências ao longo do tempo</p>
             </button>
             <button type="button" onClick={() => handleSelectAnalysis('alinhamento')} className="flex flex-col gap-2 p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] transition-colors text-left">
               <RulerIcon className="text-[var(--color-accent)]" size={24} />
-              <p className="text-sm font-bold text-slate-900">Iniciar Análise de Alinhamento e Medição por IA</p>
+              <p className="text-sm font-bold text-white">Iniciar Análise de Alinhamento e Medição por IA</p>
               <p className="text-xs text-menu-muted">Medições automáticas e detecção de desvios articulares</p>
             </button>
           </div>
@@ -715,7 +715,7 @@ export default function CasePage() {
           <div className="flex items-center gap-2 text-xs font-semibold text-menu-muted">
             <button type="button" onClick={handleBackToPatient} className="hover:text-[var(--color-accent)]">Mesa de Luz Digital</button>
             <span>/</span>
-            <span className="text-slate-900">Análise Comparativa por IA</span>
+            <span className="text-white">Análise Comparativa por IA</span>
           </div>
 
           {/* Header do Paciente */}
@@ -729,7 +729,7 @@ export default function CasePage() {
                   {finalAvatarUrl ? <img src={finalAvatarUrl} alt={activeCase.patientName} className="w-full h-full object-cover" /> : <UserIcon size={18} className="text-slate-400" />}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">{activeCase.patientName}</p>
+                  <p className="text-sm font-bold text-white">{activeCase.patientName}</p>
                   <p className="text-xs text-slate-400 capitalize">{activeCase.species} / {activeCase.breed || '—'}</p>
                 </div>
               </div>
@@ -952,7 +952,7 @@ export default function CasePage() {
           {/* Imagem */}
           <Card data-tour="tour-case-image" className="overflow-hidden">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2"><Activity size={16} /> Imagem Radiográfica</h2>
+              <h2 className="text-sm font-bold text-white flex items-center gap-2"><Activity size={16} /> Imagem Radiográfica</h2>
               <div className="flex items-center gap-2">
                 <button onClick={() => setZoom(z => Math.max(50, z - 25))} className="w-7 h-7 rounded-lg bg-slate-100 hover:premium-header-bg bg-slate-200 text-sm font-bold">−</button>
                 <span className="text-xs font-mono text-menu-muted w-10 text-center">{zoom}%</span>
@@ -1004,48 +1004,48 @@ export default function CasePage() {
 
           {/* Dados Clínicos */}
           <Card className="p-5">
-            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-4"><Stethoscope size={16} /> Dados Clínicos</h2>
+            <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-4"><Stethoscope size={16} /> Dados Clínicos</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div className="flex items-start gap-2">
                 <PawPrint size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Paciente</p>
-                  <p className="text-sm font-semibold text-slate-900">{activeCase.patientName}</p>
+                  <p className="text-sm font-semibold text-white">{activeCase.patientName}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <UserIcon size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Espécie</p>
-                  <p className="text-sm font-semibold text-slate-900 capitalize">{activeCase.species}</p>
+                  <p className="text-sm font-semibold text-white capitalize">{activeCase.species}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <Activity size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Raça</p>
-                  <p className="text-sm font-semibold text-slate-900">{activeCase.breed || '—'}</p>
+                  <p className="text-sm font-semibold text-white">{activeCase.breed || '—'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <Calendar size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Idade</p>
-                  <p className="text-sm font-semibold text-slate-900">{activeCase.ageYears} anos</p>
+                  <p className="text-sm font-semibold text-white">{activeCase.ageYears} anos</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <Weight size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Peso</p>
-                  <p className="text-sm font-semibold text-slate-900">{activeCase.weightKg} kg</p>
+                  <p className="text-sm font-semibold text-white">{activeCase.weightKg} kg</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <Ruler size={14} className="text-primary mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Procedimento</p>
-                  <p className="text-sm font-semibold text-slate-900 uppercase">{activeCase.procedure}</p>
+                  <p className="text-sm font-semibold text-white uppercase">{activeCase.procedure}</p>
                 </div>
               </div>
             </div>
@@ -1059,7 +1059,7 @@ export default function CasePage() {
 
           {activeCase.aiAnalysis && (
             <Card data-tour="tour-case-ai-result" className="p-5">
-              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-3">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
                 <Activity size={16} /> Análise IA Integrada
               </h2>
               <p className="text-xs text-menu-muted mb-3 font-mono">
@@ -1090,14 +1090,14 @@ export default function CasePage() {
 
           {/* Galeria de Radiografias */}
           <Card className="p-5">
-            <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <h2 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
               <Activity size={16} /> Galeria de Radiografias
             </h2>
             <RadiographViewer caseId={activeCase.id} markings={aiMarkingsToViewer ?? undefined} />
           </Card>
 
           <Card className="p-5">
-            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-3">
+            <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
               📋 Protocolo Sugerido: {protocol?.name}
             </h2>
             <div className="space-y-2">
@@ -1110,7 +1110,7 @@ export default function CasePage() {
                       {done && <Check size={12} />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-xs font-semibold ${done ? 'line-through text-slate-500' : 'text-slate-900'}`}>
+                      <p className={`text-xs font-semibold ${done ? 'line-through text-slate-500' : 'text-white'}`}>
                         <span className="mr-1">{icon}</span> {step.text}
                         {step.mgPerKg && (
                           <span className="ml-1 font-mono text-primary font-bold">
@@ -1130,7 +1130,7 @@ export default function CasePage() {
 
           {/* Ações Rápidas */}
           <Card data-tour="tour-case-actions" className="p-5">
-            <h2 className="text-sm font-bold text-slate-900 mb-3">Ações Rápidas</h2>
+            <h2 className="text-sm font-bold text-white mb-3">Ações Rápidas</h2>
             <div className="space-y-2">
               <Button onClick={() => setShowEdit(true)} variant="secondary" className="w-full justify-start"><Edit3 size={14} /> Editar dados do caso</Button>
               <Button onClick={() => setShowNoteInput(true)} variant="secondary" className="w-full justify-start"><Plus size={14} /> Adicionar nota clínica</Button>
