@@ -7,6 +7,7 @@ import { TOUR_STEPS } from '@/components/ProductTour';
 
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   dashboard: { title: 'Painel Clínico', subtitle: 'Visão geral em tempo real' },
+  patients: { title: 'Pacientes', subtitle: 'Gerencie seus pacientes com acompanhamento clínico centralizado e suporte inteligente à decisão clínica.' },
   chat: { title: 'Consultor IA', subtitle: 'Assistente para dúvidas clínicas' },
   analysis: { title: 'Análise Diagnóstica', subtitle: 'Análise → Assistente → Caso completo integrado' },
   gallery: { title: 'Galeria de Casos', subtitle: 'Casos clínicos e histórico' },
