@@ -29,12 +29,12 @@ const SurgeryCard = memo(({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className={`text-xs font-mono font-bold ${isDefaultDark ? 'text-slate-400' : 'text-white/70'}`}>{formatDate(c.createdAt)}</span>
-            {isDone && <CheckCircle2 size={14} className="text-success" />}
-            {isNext && !isDone && <Clock size={14} className="text-primary animate-pulse" />}
+            {isDone && <CheckCircle2 size={14} className="text-emerald-500" />}
+            {isNext && !isDone && <Clock size={14} className="text-[#29a399] animate-pulse" />}
           </div>
           <p className={`text-sm font-semibold truncate ${isDefaultDark ? 'text-white' : 'text-slate-900'}`}>{c.patientName}</p>
           <p className={`text-xs capitalize ${isDefaultDark ? 'text-white/40' : 'text-slate-800'}`}>{c.species} · {c.breed} · {c.weightKg}kg</p>
-          <p className="text-xs font-mono text-primary mt-1 uppercase">{c.procedure}</p>
+          <p className="text-xs font-mono text-[#29a399] mt-1 uppercase">{c.procedure}</p>
         </div>
         <div className="flex flex-col items-end gap-2 flex-shrink-0">
           <StatusBadge status={c.status} />
@@ -49,7 +49,7 @@ SurgeryCard.displayName = 'SurgeryCard';
 function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
   const urgencyIcon = c.status === 'critical' ? '🔴' : c.status === 'in_analysis' ? '🟡' : '🟢';
   return (
-    <button onClick={onOpen} className="w-full text-left p-3 rounded-lg border border-slate-100 hover:border-primary/30 hover:bg-blue-50/30 transition-all">
+    <button onClick={onOpen} className="w-full text-left p-3 rounded-lg border border-slate-100 hover:border-[#29a399]/30 hover:bg-blue-50/30 transition-all">
       <div className="flex items-start gap-3">
         <span className="text-lg">{urgencyIcon}</span>
         <div className="flex-1 min-w-0">
@@ -57,7 +57,7 @@ function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
           <p className="text-xs text-white/40 capitalize">{c.species} · {c.procedure}</p>
           <p className="text-[10px] text-slate-400 mt-0.5">Risco: {c.riskLevel}</p>
         </div>
-        <span className="text-xs font-semibold text-primary">Ver →</span>
+        <span className="text-xs font-semibold text-[#29a399]">Ver →</span>
       </div>
     </button>
   );
@@ -148,7 +148,7 @@ export default function DashboardPage() {
                 const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
                 return (
                   <div key={i} className="glass-panel-premium rounded-xl p-4 text-center">
-                    <m.icon size={18} className="mx-auto mb-2 text-primary" />
+                    <m.icon size={18} className="mx-auto mb-2 text-[#29a399]" />
                     <p className="text-3xl font-bold text-white">{m.today}</p>
                     <p className="text-xs text-white/40">{m.label}</p>
                     {typeof m.yesterday === 'number' && (
@@ -194,9 +194,9 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+          <Card className="p-6 bg-gradient-to-br from-[#29a399]/5 to-[#00B3A6]/5 border-[#29a399]/20">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[#29a399] flex items-center justify-center flex-shrink-0">
                 <Pill size={16} className="text-white" />
               </div>
               <div className="flex-1">
@@ -206,7 +206,7 @@ export default function DashboardPage() {
                     ? `Caso crítico: ${triageList[0]?.patientName}. Recomendo revisão imediata do protocolo.`
                     : 'Nenhum caso crítico no momento. Revise os casos em análise para otimizar o fluxo.'}
                 </p>
-                <button onClick={() => openCase(triageList[0])} className="text-xs font-semibold text-primary hover:underline mt-2">Ver detalhes →</button>
+                <button onClick={() => openCase(triageList[0])} className="text-xs font-semibold text-[#29a399] hover:underline mt-2">Ver detalhes →</button>
               </div>
             </div>
           </Card>

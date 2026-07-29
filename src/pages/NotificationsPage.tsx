@@ -50,13 +50,13 @@ function NotifRow({ n, onRead, cases, onViewCase, onIgnore, onViewReport, onDown
   onConfirmReminder: (id: string) => void;
 }) {
   const Icon = NOTIF_ICONS[n.type] || Info;
-  const colorCls = NOTIF_COLORS[n.type] || 'text-[var(--color-text-tertiary)] bg-surface';
+  const colorCls = NOTIF_COLORS[n.type] || 'text-[var(--color-text-tertiary)] bg-slate-800';
 
   const actions: React.ReactNode[] = [];
 
   if (n.type === 'alert' && n.caseId) {
     actions.push(
-      <button key="view" onClick={() => onViewCase(n.caseId!)} className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1">
+      <button key="view" onClick={() => onViewCase(n.caseId!)} className="text-[10px] text-[#29a399] font-semibold hover:underline flex items-center gap-1">
         <Eye size={9} /> Ver Caso
       </button>
     );
@@ -67,36 +67,36 @@ function NotifRow({ n, onRead, cases, onViewCase, onIgnore, onViewReport, onDown
     );
   } else if (n.type === 'success') {
     actions.push(
-      <button key="view" onClick={onViewReport} className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1">
+      <button key="view" onClick={onViewReport} className="text-[10px] text-[#29a399] font-semibold hover:underline flex items-center gap-1">
         <Eye size={9} /> Ver Laudo
       </button>
     );
     actions.push(
-      <button key="download" onClick={onDownloadPDF} className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1">
+      <button key="download" onClick={onDownloadPDF} className="text-[10px] text-[#29a399] font-semibold hover:underline flex items-center gap-1">
         <Download size={9} /> Download PDF
       </button>
     );
   } else if (n.type === 'info' && n.caseId) {
     actions.push(
-      <button key="view" onClick={() => onViewCase(n.caseId!)} className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1">
+      <button key="view" onClick={() => onViewCase(n.caseId!)} className="text-[10px] text-[#29a399] font-semibold hover:underline flex items-center gap-1">
         <Eye size={9} /> Ver Caso
       </button>
     );
     actions.push(
-      <button key="accept" onClick={() => onAcceptCase(n.caseId!)} className="text-[10px] text-success font-semibold hover:underline flex items-center gap-1">
+      <button key="accept" onClick={() => onAcceptCase(n.caseId!)} className="text-[10px] text-emerald-500 font-semibold hover:underline flex items-center gap-1">
         <Check size={9} /> Aceitar
       </button>
     );
   } else if (n.type === 'warning') {
     actions.push(
-      <button key="confirm" onClick={() => onConfirmReminder(n.id)} className="text-[10px] text-success font-semibold hover:underline flex items-center gap-1">
+      <button key="confirm" onClick={() => onConfirmReminder(n.id)} className="text-[10px] text-emerald-500 font-semibold hover:underline flex items-center gap-1">
         <Check size={9} /> Confirmar
       </button>
     );
   }
 
   return (
-    <div className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${n.read ? 'bg-surface border-white/10 opacity-75' : 'bg-primary-light border-[rgba(41,163,153,0.3)] border-l-4 border-l-[var(--color-accent)]'}`}>
+    <div className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${n.read ? 'bg-slate-800 border-white/10 opacity-75' : 'bg-[#29a399]/10 border-[rgba(41,163,153,0.3)] border-l-4 border-l-[var(--color-accent)]'}`}>
       <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${colorCls}`}>
         <Icon size={17} />
       </div>
@@ -112,7 +112,7 @@ function NotifRow({ n, onRead, cases, onViewCase, onIgnore, onViewReport, onDown
           <span className="text-[10px] text-white/70 font-mono">{formatRelativeTime(n.timestamp)}</span>
           <div className="flex items-center gap-3">
             {actions}
-            {!n.read && <button onClick={() => onRead(n.id)} className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1"><Check size={9} />Marcar como lida</button>}
+            {!n.read && <button onClick={() => onRead(n.id)} className="text-[10px] text-[#29a399] font-semibold hover:underline flex items-center gap-1"><Check size={9} />Marcar como lida</button>}
           </div>
         </div>
       </div>
