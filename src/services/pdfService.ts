@@ -120,7 +120,7 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.setFont('helvetica', 'normal');
-    const clinicNameF = localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary';
+    const clinicNameF = (localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary').replace(/((?:[A-Za-z\u00c0-\u00ff] ){3,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/ /g, '')).replace(/ {2,}/g, ' ');
     doc.text(safe(clinicNameF) + ' — Ortopedia Veterinária', 14, 290, { charSpace: 0 });
     doc.text(`Página ${i} de ${pageCount}`, 185, 290, { align: 'right', charSpace: 0 });
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 290, { align: 'center', charSpace: 0 });
@@ -331,7 +331,7 @@ export async function generateCaseReport(
       doc.setFont('helvetica', 'bold'); doc.text('Cuidados Importantes:', 14, y, { charSpace: 0 }); y += 6;
       doc.setFont('helvetica', 'normal');
       c.aiAnalysis.recommendations.forEach(r => {
-        y = addWrappedText(doc, `• ${safe(r)}`, 14, y, 182, 5);
+        y = addWrappedText(doc, `• ${safe(stripMarkdownForPdf(r))}`, 14, y, 182, 5);
       });
 
       // Risk factors (simplified)
@@ -341,7 +341,7 @@ export async function generateCaseReport(
         doc.setFont('helvetica', 'bold'); doc.text('Pontos de Atenção:', 14, y, { charSpace: 0 }); y += 6;
         doc.setFont('helvetica', 'normal');
         c.aiAnalysis.riskFactors.forEach(rf => {
-          y = addWrappedText(doc, `• ${safe(rf.description)}`, 14, y, 182, 5);
+          y = addWrappedText(doc, `• ${safe(stripMarkdownForPdf(rf.description))}`, 14, y, 182, 5);
         });
       }
     } else {
@@ -356,7 +356,7 @@ export async function generateCaseReport(
       c.aiAnalysis.anatomicalLandmarks.forEach(l => {
         if (y > 270) { doc.addPage(); y = 30; }
         const status = l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗ Não detectado';
-        doc.text(`• ${safe(l.name)}: ${status}`, 14, y, { charSpace: 0 }); y += 5;
+        doc.text(`• ${safe(stripMarkdownForPdf(l.name))}: ${status}`, 14, y, { charSpace: 0 }); y += 5;
       });
       y += 5;
 
@@ -365,7 +365,7 @@ export async function generateCaseReport(
       doc.setFont('helvetica', 'bold'); doc.text('Recomendações:', 14, y, { charSpace: 0 }); y += 6;
       doc.setFont('helvetica', 'normal');
       c.aiAnalysis.recommendations.forEach(r => {
-        y = addWrappedText(doc, `• ${safe(r)}`, 14, y, 182, 5);
+        y = addWrappedText(doc, `• ${safe(stripMarkdownForPdf(r))}`, 14, y, 182, 5);
       });
 
       // Risk factors
@@ -375,7 +375,7 @@ export async function generateCaseReport(
         doc.setFont('helvetica', 'bold'); doc.text('Fatores de Risco:', 14, y, { charSpace: 0 }); y += 6;
         doc.setFont('helvetica', 'normal');
         c.aiAnalysis.riskFactors.forEach(rf => {
-          y = addWrappedText(doc, `• [${safe(rf.severity).toUpperCase()}] ${safe(rf.category)}: ${safe(rf.description)}`, 14, y, 182, 5);
+          y = addWrappedText(doc, `• [${safe(stripMarkdownForPdf(rf.severity)).toUpperCase()}] ${safe(stripMarkdownForPdf(rf.category))}: ${safe(stripMarkdownForPdf(rf.description))}`, 14, y, 182, 5);
         });
       }
     }

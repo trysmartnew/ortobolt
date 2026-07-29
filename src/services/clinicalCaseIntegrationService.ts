@@ -177,14 +177,26 @@ export function sanitizeClinicalNotes(raw: string): string {
   text = text.replace(/^---\s*An[aá]lise\s*IA.*?---\s*$/gim, '');
   // Remove [Copiloto] / [Veterinario] prefixed lines
   text = text.replace(/^\[(?:Copiloto|Veterin[aá]rio)\].*$/gm, '');
-  // Remove [[OrthoAI/...]] and [[Recomendacao de OrthoAI]] markers
-  text = text.replace(/\[\[.*?\]\]+/g, '');
+  // Remove [[...]] markers (multiline-safe)
+  text = text.replace(/\[\[[\s\S]*?\]\]+/g, '');
+  // Remove orphaned AI-marker fragments (e.g. "c OrthoAI]")
+  text = text.replace(/[A-Za-z\u00c0-\u00ff\s]*OrthoAI\]*/gi, '');
+  // Strip single-bracket line headers -> keep inner text
+  text = text.replace(/^\[([^\]]+)\]\s*$/gm, '$1');
   // Remove fenced code blocks (closed)
   text = text.replace(/```[\s\S]*?```/g, '');
   // Remove unclosed fenced code blocks
   text = text.replace(/```[\s\S]*$/g, '');
   // Remove corrupted segments
   text = text.replace(/\[\u00d8=\u00dcI[^\]]*\]?/g, '');
+  // Strip markdown headers (## ...)
+  text = text.replace(/^#{1,6}\s+/gm, '');
+  // Strip markdown table separators
+  text = text.replace(/^\|[-\s|:]+\|$/gm, '');
+  // Replace remaining pipes with spaces
+  text = text.replace(/\|/g, '  ');
+  // Remove escaped asterisks
+  text = text.replace(/\\\*/g, '');
   // Strip markdown bold/italic
   text = text.replace(/\*\*(.+?)\*\*/g, '$1');
   text = text.replace(/\*(.+?)\*/g, '$1');
