@@ -80,12 +80,12 @@ export default function ResetPasswordPage() {
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <div className="glass-panel-premium rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-emerald-50">
-            <CheckCircle size={32} className="text-success" />
+            <CheckCircle size={32} className="text-emerald-500" />
           </div>
           <h2 className="font-bold text-white text-xl mb-2">Senha redefinida!</h2>
           <p className="text-sm text-slate-400 mb-6">Faça login com sua nova senha.</p>
           <button onClick={() => setCurrentView('login')}
-            className="w-full py-3 rounded-xl text-sm font-bold text-white bg-primary">
+            className="w-full py-3 rounded-xl text-sm font-bold text-white bg-[#29a399]">
             Ir para o login
           </button>
         </div>
@@ -99,12 +99,12 @@ export default function ResetPasswordPage() {
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <div className="glass-panel-premium rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 bg-red-50">
-            <Shield size={24} className="text-error" />
+            <Shield size={24} className="text-red-500" />
           </div>
           <h2 className="font-bold text-white text-lg mb-2">Link inválido ou expirado</h2>
           <p className="text-sm text-slate-400 mb-6">Solicite um novo link de recuperação de senha.</p>
           <button onClick={() => setCurrentView('login')}
-            className="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-primary">
+            className="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-[#29a399]">
             Voltar ao login
           </button>
         </div>
@@ -157,7 +157,7 @@ export default function ResetPasswordPage() {
               </div>
             )}
             <button onClick={handleSubmit} disabled={loading}
-              className="w-full py-3 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary-dark disabled:opacity-60 transition-all">
+              className="w-full py-3 rounded-xl text-sm font-bold text-white bg-[#29a399] hover:bg-[#1c6b62] disabled:opacity-60 transition-all">
               {loading ? 'Salvando...' : 'Salvar nova senha'}
             </button>
           </div>

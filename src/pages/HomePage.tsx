@@ -416,7 +416,7 @@ export default function HomePage() {
           © 2025 Vanguard Veterinary · Medicina Veterinária com IA · LGPD Compliant
         </p>
           <div className="flex items-center gap-2 text-xs" style={{ color: '#64748B' }}>
-            <Shield size={12} className="text-success" />
+            <Shield size={12} className="text-emerald-500" />
             SSL/TLS · Dados protegidos
           </div>
         </div>

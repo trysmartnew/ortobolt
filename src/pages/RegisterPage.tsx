@@ -170,7 +170,7 @@ export default function RegisterPage() {
         style={{ background: 'linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-gradient) 100%)' }}>
         <div className="glass-panel-premium rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-success-bg)' }}>
-            <CheckCircle size={32} className="text-success" />
+            <CheckCircle size={32} className="text-emerald-500" />
           </div>
           <h2 className="font-bold text-white text-xl mb-2">Cadastro realizado!</h2>
           <p className="text-sm text-white/60 mb-6">
@@ -391,7 +391,7 @@ export default function RegisterPage() {
 
           <div className="mt-5 pt-5 border-t border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-white/70">
-              <Shield size={12} className="text-success" /> SSL/TLS · LGPD
+              <Shield size={12} className="text-emerald-500" /> SSL/TLS · LGPD
             </div>
             <button onClick={() => setCurrentView('home')}
               className="text-xs text-white/70 hover:text-white flex items-center gap-1">

@@ -106,7 +106,7 @@ export default function LoginPage() {
             {forgotSent ? (
               <div className="text-center py-4">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--color-success-bg)' }}>
-                  <Shield size={24} className="text-success" />
+                  <Shield size={24} className="text-emerald-500" />
                 </div>
                 <h2 className="font-bold text-white mb-2">E-mail enviado!</h2>
                 <p className="text-sm text-white/60 mb-6">Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.</p>
@@ -191,10 +191,10 @@ export default function LoginPage() {
           {/* ✅ C-02: Banner de bloqueio */}
           {loginLocked && (
             <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-5">
-              <Lock size={16} className="text-error flex-shrink-0" />
+              <Lock size={16} className="text-red-500 flex-shrink-0" />
               <div>
                 <p className="text-xs font-bold text-red-700">Acesso temporariamente bloqueado</p>
-                <p className="text-xs text-error">Muitas tentativas incorretas. Aguarde {loginLockSecondsLeft}s.</p>
+                <p className="text-xs text-red-500">Muitas tentativas incorretas. Aguarde {loginLockSecondsLeft}s.</p>
               </div>
             </div>
           )}
@@ -287,7 +287,7 @@ export default function LoginPage() {
 
           <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-white/70">
-              <Shield size={12} className="text-success" /> SSL/TLS · LGPD
+              <Shield size={12} className="text-emerald-500" /> SSL/TLS · LGPD
             </div>
             <button onClick={() => setCurrentView('home')}
               className="text-xs text-white/70 hover:text-white transition-colors flex items-center gap-1">
