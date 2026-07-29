@@ -212,29 +212,29 @@ const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave, s
         <div className="p-6 space-y-5">
           <div>
             <label className="block text-xs font-semibold text-label mb-1">Título do Caso</label>
-            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-label mb-1">Nome do Paciente</label>
-            <input value={form.patientName} onChange={e => setForm({ ...form, patientName: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+            <input value={form.patientName} onChange={e => setForm({ ...form, patientName: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-label mb-1">Raça</label>
-            <input value={form.breed} onChange={e => setForm({ ...form, breed: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+            <input value={form.breed} onChange={e => setForm({ ...form, breed: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-label mb-1">Idade (anos)</label>
-              <input type="number" value={form.ageYears} onChange={e => setForm({ ...form, ageYears: Number(e.target.value) })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+              <input type="number" value={form.ageYears} onChange={e => setForm({ ...form, ageYears: Number(e.target.value) })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-label mb-1">Peso (kg)</label>
-              <input type="number" step="0.1" value={form.weightKg} onChange={e => setForm({ ...form, weightKg: Number(e.target.value) })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+              <input type="number" step="0.1" value={form.weightKg} onChange={e => setForm({ ...form, weightKg: Number(e.target.value) })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]" />
             </div>
           </div>
           <div>
             <label className="block text-xs font-semibold text-label mb-1">Status</label>
-            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as ClinicalCase['status'] })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as ClinicalCase['status'] })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]">
               <option value="pending">Pendente</option>
               <option value="analyzing">Em Análise</option>
               <option value="analyzed">Analisado</option>
@@ -912,16 +912,16 @@ export default function CasePage() {
 
       {/* Painel Pós-Aprovação */}
       {activeCase.status === 'completed' && (
-        <div className="glass-panel-premium rounded-2xl p-5 border border-primary/30 flex flex-col gap-3">
+        <div className="glass-panel-premium rounded-2xl p-5 border border-[#29a399]/30 flex flex-col gap-3">
           <div className="flex items-center gap-2 mb-1">
-            <Check size={18} className="text-primary" />
+            <Check size={18} className="text-[#29a399]" />
             <span className="text-sm font-bold text-white">Caso Concluído</span>
           </div>
           <p className="text-xs text-white/60 mb-2">O caso foi aprovado. Selecione a próxima ação:</p>
           <div className="flex flex-wrap gap-3">
             <button
               onClick={handleGoToReports}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/20 hover:bg-primary/30 text-primary text-xs font-semibold transition-all border border-primary/30"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#29a399]/20 hover:bg-[#29a399]/30 text-[#29a399] text-xs font-semibold transition-all border border-[#29a399]/30"
             >
               <FileText size={14} /> Gerar Laudo
             </button>
@@ -957,8 +957,8 @@ export default function CasePage() {
                 <button onClick={() => setZoom(z => Math.max(50, z - 25))} className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-bold">−</button>
                 <span className="text-xs font-mono text-menu-muted w-10 text-center">{zoom}%</span>
                 <button onClick={() => setZoom(z => Math.min(200, z + 25))} className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-bold">+</button>
-                <button onClick={() => setZoom(100)} className="text-xs text-menu-muted hover:text-primary px-2">Redefinir</button>
-                <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="text-xs text-primary hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
+                <button onClick={() => setZoom(100)} className="text-xs text-menu-muted hover:text-[#29a399] px-2">Redefinir</button>
+                <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="text-xs text-[#29a399] hover:text-[var(--color-primary)] px-2 flex items-center gap-1 font-medium">
                   {uploading ? <span className="animate-spin inline-block h-3 w-3 border border-current border-t-transparent rounded-full" /> : <Upload size={14} />}
                   {uploading ? 'Enviando...' : 'Upload'}
                 </button>
@@ -1007,42 +1007,42 @@ export default function CasePage() {
             <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-4"><Stethoscope size={16} /> Dados Clínicos</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div className="flex items-start gap-2">
-                <PawPrint size={14} className="text-primary mt-1" />
+                <PawPrint size={14} className="text-[#29a399] mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Paciente</p>
                   <p className="text-sm font-semibold text-white">{activeCase.patientName}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <UserIcon size={14} className="text-primary mt-1" />
+                <UserIcon size={14} className="text-[#29a399] mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Espécie</p>
                   <p className="text-sm font-semibold text-white capitalize">{activeCase.species}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Activity size={14} className="text-primary mt-1" />
+                <Activity size={14} className="text-[#29a399] mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Raça</p>
                   <p className="text-sm font-semibold text-white">{activeCase.breed || '—'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Calendar size={14} className="text-primary mt-1" />
+                <Calendar size={14} className="text-[#29a399] mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Idade</p>
                   <p className="text-sm font-semibold text-white">{activeCase.ageYears} anos</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Weight size={14} className="text-primary mt-1" />
+                <Weight size={14} className="text-[#29a399] mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Peso</p>
                   <p className="text-sm font-semibold text-white">{activeCase.weightKg} kg</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Ruler size={14} className="text-primary mt-1" />
+                <Ruler size={14} className="text-[#29a399] mt-1" />
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Procedimento</p>
                   <p className="text-sm font-semibold text-white uppercase">{activeCase.procedure}</p>
@@ -1052,7 +1052,7 @@ export default function CasePage() {
             {activeCase.precisionScore !== undefined && (
               <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
                 <span className="text-xs text-menu-muted">Score de Precisão IA</span>
-                <span className="text-lg font-extrabold text-primary font-mono">{activeCase.precisionScore}%</span>
+                <span className="text-lg font-extrabold text-[#29a399] font-mono">{activeCase.precisionScore}%</span>
               </div>
             )}
           </Card>
@@ -1069,7 +1069,7 @@ export default function CasePage() {
               <ul className="space-y-1 mb-3">
                 {activeCase.aiAnalysis.recommendations.slice(0, 5).map((r, i) => (
                   <li key={i} className="text-xs text-menu flex gap-2">
-                    <span className="text-primary">›</span> {r}
+                    <span className="text-[#29a399]">›</span> {r}
                   </li>
                 ))}
               </ul>
@@ -1105,7 +1105,7 @@ export default function CasePage() {
                 const done = completedSteps.includes(step.text);
                 const icon = { medicacao: '💊', restricao: '🛌', retorno: '📅', cuidado: '🩹' }[step.category];
                 return (
-                  <button key={i} onClick={() => toggleStep(step.text)} className={`w-full text-left p-3 rounded-lg border transition-all flex items-start gap-3 ${done ? 'bg-emerald-50 border-emerald-200' : 'glass-panel-premium border-slate-100 hover:border-primary/30 hover:bg-blue-50/30'}`}>
+                  <button key={i} onClick={() => toggleStep(step.text)} className={`w-full text-left p-3 rounded-lg border transition-all flex items-start gap-3 ${done ? 'bg-emerald-50 border-emerald-200' : 'glass-panel-premium border-slate-100 hover:border-[#29a399]/30 hover:bg-blue-50/30'}`}>
                     <div className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 ${done ? 'bg-emerald-500 text-white' : 'border-2 border-white/15'}`}>
                       {done && <Check size={12} />}
                     </div>
@@ -1113,7 +1113,7 @@ export default function CasePage() {
                       <p className={`text-xs font-semibold ${done ? 'line-through text-slate-400' : 'text-white'}`}>
                         <span className="mr-1">{icon}</span> {step.text}
                         {step.mgPerKg && (
-                          <span className="ml-1 font-mono text-primary font-bold">
+                          <span className="ml-1 font-mono text-[#29a399] font-bold">
                             ({calculateDose(step.mgPerKg, activeCase.weightKg)})
                           </span>
                         )}
