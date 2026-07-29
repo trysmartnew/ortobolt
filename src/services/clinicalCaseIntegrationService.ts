@@ -178,13 +178,19 @@ export function sanitizeClinicalNotes(raw: string): string {
   // Remove [Copiloto] / [Veterinario] prefixed lines
   text = text.replace(/^\[(?:Copiloto|Veterin[aá]rio)\].*$/gm, '');
   // Remove [[OrthoAI/...]] and [[Recomendacao de OrthoAI]] markers
-  text = text.replace(/\[\[(?:OrthoAI\/[^\]]*|Recomenda[cç][aã]o de OrthoAI)\]\]\s*/g, '');
+  text = text.replace(/\[\[.*?\]\]+/g, '');
   // Remove fenced code blocks (closed)
   text = text.replace(/```[\s\S]*?```/g, '');
   // Remove unclosed fenced code blocks
   text = text.replace(/```[\s\S]*$/g, '');
   // Remove corrupted segments
   text = text.replace(/\[\u00d8=\u00dcI[^\]]*\]?/g, '');
+  // Strip markdown bold/italic
+  text = text.replace(/\*\*(.+?)\*\*/g, '$1');
+  text = text.replace(/\*(.+?)\*/g, '$1');
+  // Collapse spaced-out characters (corruption artifact)
+  text = text.replace(/((?:[A-Za-z\u00c0-\u00ff] ){3,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/ /g, ''));
+  text = text.replace(/ {2,}/g, ' ');
   // Collapse excessive newlines
   text = text.replace(/\n{3,}/g, '\n\n');
   return text.trim();

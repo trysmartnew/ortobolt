@@ -136,6 +136,9 @@ function stripMarkdownForPdf(text: string): string {
     .replace(/^\|[-\s|]+\|$/gm, '')
     .replace(/\|/g, '  ')
     .replace(/^---+$/gm, '')
+    .replace(/\[\[.*?\]\]+/g, '')
+    .replace(/((?:[A-Za-z\u00c0-\u00ff] ){3,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/ /g, ''))
+    .replace(/ {2,}/g, ' ')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
