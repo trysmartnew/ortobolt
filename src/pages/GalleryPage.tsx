@@ -35,7 +35,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
       </div>
 
       {c.precisionScore && (
-        <div className="mt-3 p-3 bg-primary/10 rounded-xl">
+        <div className="mt-3 p-3 bg-[#29a399]/10 rounded-xl">
           <PrecisionGauge value={c.precisionScore} size={48} />
           <p className="text-xs text-menu-muted mt-1">precisão IA</p>
         </div>
@@ -47,7 +47,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
           {c.aiAnalysis.anatomicalLandmarks.map(l => (
             <div key={l.name} className="flex items-center justify-between text-xs">
               <span className="text-white/40">{l.name}</span>
-              <span className={`font-mono font-semibold ${l.detected ? 'text-success' : 'text-error'}`}>
+              <span className={`font-mono font-semibold ${l.detected ? 'text-emerald-500' : 'text-red-500'}`}>
                 {l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗'}
               </span>
             </div>
@@ -59,7 +59,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
               <ul className="space-y-1 mt-1">
                 {c.aiAnalysis.recommendations.map((r, i) => (
                   <li key={i} className="text-xs text-white/40 flex gap-2">
-                    <span className="text-primary">›</span> {r}
+                    <span className="text-[#29a399]">›</span> {r}
                   </li>
                 ))}
               </ul>
@@ -109,7 +109,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
                 <button
                   key={sim.id}
                   onClick={() => { onClose(); setTimeout(() => window.location.hash = `#/case/${sim.id}`, 100); }}
-                  className="text-left glass-panel-premium hover:bg-blue-50 border border-white/10 hover:border-primary rounded-xl p-3 transition-all group"
+                  className="text-left glass-panel-premium hover:bg-blue-50 border border-white/10 hover:border-[#29a399] rounded-xl p-3 transition-all group"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
@@ -127,7 +127,7 @@ function CaseDetailModal({ c, onClose, allCases }: { c: ClinicalCase; onClose: (
                       }`}>
                       {sim.status === 'completed' ? 'Concluído' : sim.status === 'critical' ? 'Crítico' : 'Em Análise'}
                     </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-primary transition-colors"><path d="m9 18 6-6-6-6" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-[#29a399] transition-colors"><path d="m9 18 6-6-6-6" /></svg>
                   </div>
                 </button>
               ))}
@@ -343,7 +343,7 @@ export default function GalleryPage() {
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
               className={`px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition-colors ${statusFilter === f.value
-                ? 'bg-primary text-white'
+                ? 'bg-[#29a399] text-white'
                 : 'glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium'
                 }`}
             >
@@ -354,7 +354,7 @@ export default function GalleryPage() {
             <select
               value={filterProcedure}
               onChange={e => setFilterProcedure(e.target.value as ProcedureType | 'all')}
-              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
+              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-[#29a399]"
             >
               <option value="all">Todos os Procedimentos</option>
               {Object.entries(PROCEDURE_LABELS).map(([k, v]) => (
@@ -364,7 +364,7 @@ export default function GalleryPage() {
             <select
               value={filterSpecies}
               onChange={e => setFilterSpecies(e.target.value as AnimalSpecies | 'all')}
-              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
+              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-[#29a399]"
             >
               <option value="all">Todas as Espécies</option>
               {Object.entries(SPECIES_LABELS).map(([k, v]) => (
@@ -374,7 +374,7 @@ export default function GalleryPage() {
             <select
               value={filterPeriod}
               onChange={e => setFilterPeriod(e.target.value as 'all' | '7days' | '30days' | '90days')}
-              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-primary"
+              className="px-3 py-1.5 rounded-xl text-[13px] font-semibold glass-panel-premium border border-white/10 text-slate-400 hover:glass-panel-premium focus:outline-none focus:ring-2 focus:ring-[#29a399]"
             >
               <option value="all">Todo o Período</option>
               <option value="7days">Últimos 7 dias</option>
@@ -466,7 +466,7 @@ export default function GalleryPage() {
                   </button>
                   <button
                     onClick={() => openCase(c)}
-                    className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-primary hover:bg-primary-dark py-1.5 rounded-lg transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-[#29a399] hover:bg-[#1c6b62] py-1.5 rounded-lg transition-colors"
                   >
                     <Users size={12} /> Colaborar <ChevronRight size={11} />
                   </button>
@@ -476,7 +476,7 @@ export default function GalleryPage() {
                       avatarInputRef.current?.click();
                     }}
                     title="Upload Avatar"
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-success hover:bg-emerald-50 transition-colors"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 transition-colors"
                   >
                     <Upload size={13} />
                   </button>
@@ -488,7 +488,7 @@ export default function GalleryPage() {
                       }
                     }}
                     title="Excluir caso"
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-error hover:bg-red-50 transition-colors"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
                   >
                     <Trash2 size={13} />
                   </button>
@@ -525,7 +525,7 @@ export default function GalleryPage() {
                   setFormErrors([]);
                 }}
                 placeholder={placeholder}
-                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono ${!form[key] && formErrors.length > 0 ? 'border-red-300 bg-red-50 placeholder:text-red-700' : 'border-white/10'
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399] font-mono ${!form[key] && formErrors.length > 0 ? 'border-red-300 bg-red-50 placeholder:text-red-700' : 'border-white/10'
                   }`}
               />
             </div>
@@ -536,7 +536,7 @@ export default function GalleryPage() {
               <select
                 value={form.species}
                 onChange={e => setForm(f => ({ ...f, species: e.target.value as AnimalSpecies }))}
-                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]"
               >
                 {Object.entries(SPECIES_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>{v}</option>
@@ -548,7 +548,7 @@ export default function GalleryPage() {
               <select
                 value={form.procedure}
                 onChange={e => setForm(f => ({ ...f, procedure: e.target.value as ProcedureType }))}
-                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]"
               >
                 {Object.entries(PROCEDURE_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>{v}</option>
@@ -568,7 +568,7 @@ export default function GalleryPage() {
                   setFormErrors([]);
                 }}
                 placeholder="Ex: 4"
-                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399] font-mono"
               />
             </div>
             <div>
@@ -584,7 +584,7 @@ export default function GalleryPage() {
                   setFormErrors([]);
                 }}
                 placeholder="Ex: 32.5"
-                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399] font-mono"
               />
             </div>
           </div>
@@ -595,7 +595,7 @@ export default function GalleryPage() {
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
               placeholder="Notas clínicas, achados, intercorrências..."
               rows={3}
-              className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono resize-none"
+              className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399] font-mono resize-none"
             />
           </div>
 
@@ -608,7 +608,7 @@ export default function GalleryPage() {
                 const file = e.target.files?.[0] || null;
                 setForm(f => ({ ...f, imageFile: file }));
               }}
-              className="w-full text-sm text-menu-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[var(--color-primary)] cursor-pointer"
+              className="w-full text-sm text-menu-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#29a399] file:text-white hover:file:bg-[var(--color-primary)] cursor-pointer"
             />
             {form.imageFile && (
               <p className="text-xs text-emerald-700 mt-1">Imagem selecionada: {form.imageFile.name}</p>

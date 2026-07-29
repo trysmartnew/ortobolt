@@ -447,15 +447,15 @@ export default function ReportsPage() {
   };
 
   const StatusIcon = ({ status }: { status: string }) => {
-    if (status === 'ready') return <CheckCircle className="h-4 w-4 text-success" />;
+    if (status === 'ready') return <CheckCircle className="h-4 w-4 text-emerald-500" />;
     if (status === 'generating') return <Spinner size="sm" />;
-    return <AlertCircle className="h-4 w-4 text-error" />;
+    return <AlertCircle className="h-4 w-4 text-red-500" />;
   };
 
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#29a399]" />
         <p className="ml-3 text-sm text-menu-muted">Carregando relatórios...</p>
       </div>
     );
@@ -675,7 +675,7 @@ export default function ReportsPage() {
                     onClick={() => handleRegenerateAndDownloadReport(r)}
                     disabled={downloadingId === r.id}
                     title="Regenerar e Baixar Relatório"
-                    className="text-primary hover:text-primary-dark transition-colors p-1.5 rounded-lg hover:bg-blue-50 disabled:opacity-50"
+                    className="text-[#29a399] hover:text-[#1c6b62] transition-colors p-1.5 rounded-lg hover:bg-blue-50 disabled:opacity-50"
                   >
                     {downloadingId === r.id ? (
                       <Spinner size="sm" />
@@ -712,19 +712,19 @@ export default function ReportsPage() {
                   placeholder="Buscar por nome do paciente ou procedimento..."
                   value={caseSearch}
                   onChange={(e) => setCaseSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-white/10 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-white/10 rounded-lg focus:ring-2 focus:ring-[#29a399]/20 focus:border-[#29a399] outline-none transition"
                 />
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setCaseSortBy('date')}
-                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'date' ? 'bg-primary text-white border-primary' : 'glass-panel-premium text-label border-white/10 hover:glass-panel-premium'}`}
+                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'date' ? 'bg-[#29a399] text-white border-[#29a399]' : 'glass-panel-premium text-label border-white/10 hover:glass-panel-premium'}`}
                 >
                   <Calendar size={14} /> Mais Recente
                 </button>
                 <button
                   onClick={() => setCaseSortBy('name')}
-                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'name' ? 'bg-primary text-white border-primary' : 'glass-panel-premium text-label border-white/10 hover:glass-panel-premium'}`}
+                  className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg border transition ${caseSortBy === 'name' ? 'bg-[#29a399] text-white border-[#29a399]' : 'glass-panel-premium text-label border-white/10 hover:glass-panel-premium'}`}
                 >
                   <User size={14} /> Nome (A-Z)
                 </button>
@@ -740,7 +740,7 @@ export default function ReportsPage() {
                     <button
                       key={c.id}
                       onClick={() => handleCaseSelect(c.id)}
-                      className="w-full flex items-center gap-4 p-3 rounded-xl border border-white/10 hover:border-primary hover:bg-primary/10 transition text-left group"
+                      className="w-full flex items-center gap-4 p-3 rounded-xl border border-white/10 hover:border-[#29a399] hover:bg-[#29a399]/10 transition text-left group"
                     >
                       <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-menu-muted font-bold text-xs overflow-hidden shrink-0">
                         {(c as any).patientAvatar ? (
