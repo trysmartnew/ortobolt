@@ -146,7 +146,7 @@ export default function ChatPage() {
       {chatHistory.length <= 1 && (
         <div data-tour="tour-chat-suggestions" className="px-6 pb-3 flex flex-wrap gap-2 bg-transparent">
           {SUGGESTED.map((s, i) => (
-            <button key={i} onClick={() => send(s)} className="text-xs text-teal-700 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-full hover:bg-teal-100 transition-colors text-left">
+            <button key={i} onClick={() => send(s)} className="text-xs text-[#29a399] bg-white/5 border border-white/10 px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors text-left">
               {s}
             </button>
           ))}

@@ -143,7 +143,7 @@ export default function CopilotClinical({
                 <button
                   key={i}
                   onClick={() => setInput(s)}
-                  className="text-[10px] text-[#29a399] bg-blue-50 border border-blue-100 px-2 py-1 rounded-full hover:bg-blue-100 transition-colors"
+                  className="text-[10px] text-[#29a399] bg-white/5 border border-white/10 px-2 py-1 rounded-full hover:bg-white/10 transition-colors"
                 >
                   {s}
                 </button>
