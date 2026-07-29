@@ -9,6 +9,7 @@ import { useApp } from '@/contexts/AppContext';
 import { Button, Card, Badge, SectionHeader, Spinner, InlineToast, EmptyState } from '@/components/ui';
 import { RequireRole } from '@/components/auth/RequireRole';
 import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
+import { sanitizeClinicalNotes } from '@/services/clinicalCaseIntegrationService';
 import {
   ResponsiveContainer,
   LineChart,
@@ -346,12 +347,7 @@ export default function ReportsPage() {
       return;
     }
 
-    // Filtragem de conteúdo para remover histórico do Copilot
-    const copilotMessages = (selectedCase as any).copilotHistory || [];
-    const finalAnalysis = copilotMessages
-      .filter((msg: any) => msg.role === 'copilot' && msg.content?.includes('[[BILLY'))
-      .pop();
-    const filteredNotes = finalAnalysis?.content || selectedCase.notes || '';
+    const filteredNotes = sanitizeClinicalNotes(selectedCase.notes || '');
 
     setGenerating('case');
     try {
@@ -401,12 +397,7 @@ export default function ReportsPage() {
       return;
     }
 
-    // Filtragem de conteúdo para remover histórico do Copilot
-    const copilotMessages = (selectedCase as any).copilotHistory || [];
-    const finalAnalysis = copilotMessages
-      .filter((msg: any) => msg.role === 'copilot' && msg.content?.includes('[[BILLY'))
-      .pop();
-    const filteredNotes = finalAnalysis?.content || selectedCase.notes || '';
+    const filteredNotes = sanitizeClinicalNotes(selectedCase.notes || '');
 
     setGenerating('case');
     try {

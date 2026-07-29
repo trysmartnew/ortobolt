@@ -169,6 +169,27 @@ export function formatIntegratedNotes(
   return parts.join('\n\n');
 }
 
+export function sanitizeClinicalNotes(raw: string): string {
+  let text = raw;
+  // Remove "--- Historico Copiloto ---" and everything after
+  text = text.replace(/---\s*Hist[oó]rico\s+Copiloto\s*---[\s\S]*$/i, '');
+  // Remove "--- Analise IA ... ---" header lines
+  text = text.replace(/^---\s*An[aá]lise\s*IA.*?---\s*$/gim, '');
+  // Remove [Copiloto] / [Veterinario] prefixed lines
+  text = text.replace(/^\[(?:Copiloto|Veterin[aá]rio)\].*$/gm, '');
+  // Remove [[OrthoAI/...]] and [[Recomendacao de OrthoAI]] markers
+  text = text.replace(/\[\[(?:OrthoAI\/[^\]]*|Recomenda[cç][aã]o de OrthoAI)\]\]\s*/g, '');
+  // Remove fenced code blocks (closed)
+  text = text.replace(/```[\s\S]*?```/g, '');
+  // Remove unclosed fenced code blocks
+  text = text.replace(/```[\s\S]*$/g, '');
+  // Remove corrupted segments
+  text = text.replace(/\[\u00d8=\u00dcI[^\]]*\]?/g, '');
+  // Collapse excessive newlines
+  text = text.replace(/\n{3,}/g, '\n\n');
+  return text.trim();
+}
+
 export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): ClinicalCase {
     // B2: Defesa em profundidade — garante que um caso nunca seja criado sem URL de imagem.
     if (!input.imageStorageUrl) {

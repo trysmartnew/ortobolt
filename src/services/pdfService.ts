@@ -3,6 +3,7 @@
 // ✅ A-03: safe() — sanitiza conteúdo da IA antes de inserir no PDF
 
 import type { User, ClinicalCase, KPIMetric, ChartDataPoint } from '@/types/index';
+import { sanitizeClinicalNotes } from './clinicalCaseIntegrationService';
 
 async function getJsPDF() {
   const { jsPDF } = await import('jspdf');
@@ -300,7 +301,7 @@ export async function generateCaseReport(
   y += 5;
 
   // Notes — ✅ A-03: wrapping para notas longas
-  const cleanNotes = (options?.notes || c.notes || '').replace(/---\s*Análise\s*IA.*?---/gi, '').trim();
+  const cleanNotes = sanitizeClinicalNotes(options?.notes || c.notes || '');
   if (cleanNotes) {
     if (y > 250) { doc.addPage(); y = 30; }
     doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
