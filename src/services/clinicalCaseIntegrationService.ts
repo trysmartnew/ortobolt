@@ -179,6 +179,8 @@ export function sanitizeClinicalNotes(raw: string): string {
   text = text.replace(/^\[(?:Copiloto|Veterin[aá]rio)\].*$/gm, '');
   // Remove [[...]] markers (multiline-safe)
   text = text.replace(/\[\[[\s\S]*?\]\]+/g, '');
+  // Remove AI-marker header lines entirely (single-bracket, whole-line)
+  text = text.replace(/^\s*\[[^\]]*OrthoAI[^\]]*\]\s*$/gm, '');
   // Remove orphaned AI-marker fragments (e.g. "c OrthoAI]")
   text = text.replace(/[A-Za-z\u00c0-\u00ff\s]*OrthoAI\]*/gi, '');
   // Strip single-bracket line headers -> keep inner text
