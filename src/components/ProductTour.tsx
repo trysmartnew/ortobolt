@@ -311,7 +311,7 @@ const TooltipBox = memo(function TooltipBox({ step, rect, stepIndex, total, onNe
           {Array.from({ length: total }).map((_, i) => (
             <div
               key={i}
-              className={`rounded-full transition-all duration-300 ${i === stepIndex ? 'h-2 w-5 bg-primary' : 'size-2 bg-slate-200 dark:bg-slate-400'}`}
+              className={`rounded-full transition-all duration-300 ${i === stepIndex ? 'h-2 w-5 bg-[#29a399]' : 'size-2 bg-slate-200 dark:bg-slate-400'}`}
               aria-label={`Passo ${i + 1} de ${total}`}
             />
           ))}
@@ -330,7 +330,7 @@ const TooltipBox = memo(function TooltipBox({ step, rect, stepIndex, total, onNe
             <button
               onClick={onNext}
               aria-label="Próximo passo"
-              className="flex items-center gap-1 rounded-xl bg-primary px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#1c6b62]"
+              className="flex items-center gap-1 rounded-xl bg-[#29a399] px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#1c6b62]"
             >
               Próximo <ChevronRight size={14} />
             </button>
@@ -338,7 +338,7 @@ const TooltipBox = memo(function TooltipBox({ step, rect, stepIndex, total, onNe
             <button
               onClick={onClose}
               aria-label="Concluir tour"
-              className="flex items-center gap-1 rounded-xl bg-accent px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#009a8f]"
+              className="flex items-center gap-1 rounded-xl bg-[#00B3A6] px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#009a8f]"
             >
               Concluir ✓
             </button>
@@ -522,7 +522,7 @@ export default memo(function ProductTour({ page, active, onClose, forceShow = fa
         <Spotlight rect={rect} visible={spotlightVisible} />
       )}
       {targetMissing && currentStep?.target !== '__welcome__' && (
-        <div className="fixed right-4 top-4 z-[10000] rounded-xl bg-warning px-4 py-2 text-slate-900 shadow-lg" role="alert">
+        <div className="fixed right-4 top-4 z-[10000] rounded-xl bg-amber-500 px-4 py-2 text-slate-900 shadow-lg" role="alert">
           ⚠️ Elemento do tour não encontrado: <code>{currentStep.target}</code>
         </div>
       )}

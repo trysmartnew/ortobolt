@@ -17,12 +17,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <input
           ref={ref}
-          className={`w-full px-3 py-3 h-[42px] rounded-xl border border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all ${error ? 'border-error focus:ring-error' : 'focus:ring-primary'
+          className={`w-full px-3 py-3 h-[42px] rounded-xl border border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399] transition-all ${error ? 'border-red-500 focus:ring-red-500' : 'focus:ring-[#29a399]'
             } ${className || ''}`}
           {...props}
         />
         {error && (
-          <span className="text-xs text-error">{error}</span>
+          <span className="text-xs text-red-500">{error}</span>
         )}
         {helperText && !error && (
           <span className="text-xs text-slate-400">{helperText}</span>

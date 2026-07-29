@@ -74,14 +74,14 @@ export default React.memo(function TopBar() {
           <button
             onClick={startTour}
             title="Tour desta página"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors group"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#29a399]/10 text-[#29a399] text-xs font-semibold hover:bg-[#29a399]/20 transition-colors group"
             style={{ fontFamily: 'Montserrat' }}
           >
             <MapPin size={12} className="group-hover:animate-bounce" />
             Tour
           </button>
         )}
-        <div className={`flex items-center gap-1.5 text-xs font-mono px-2 py-1 rounded-md ${online ? 'text-success bg-success-bg' : 'text-error bg-error-bg'}`}>
+        <div className={`flex items-center gap-1.5 text-xs font-mono px-2 py-1 rounded-md ${online ? 'text-emerald-500 bg-emerald-500/10' : 'text-red-500 bg-red-500/10'}`}>
           {online ? <Wifi size={11} /> : <WifiOff size={11} />}
           {online ? 'Online' : 'Offline'}
         </div>
