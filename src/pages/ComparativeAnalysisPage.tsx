@@ -109,7 +109,7 @@ export default function ComparativeAnalysisPage() {
             <p className="text-sm text-white/70">Não foi possível carregar a Mesa de Luz.</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-primary hover:bg-primary-dark transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#29a399] hover:bg-[#1c6b62] transition-colors"
             >
               Recarregar
             </button>
@@ -117,7 +117,7 @@ export default function ComparativeAnalysisPage() {
         }>
         <Suspense fallback={
           <div className="flex items-center justify-center p-12">
-            <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-[#29a399]/20 border-t-[#29a399] rounded-full animate-spin" />
           </div>
         }>
           <PrePostComparison onSaveCase={handleSaveComparisonCase} />

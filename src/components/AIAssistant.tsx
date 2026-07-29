@@ -80,7 +80,7 @@ export default function AIAssistant() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-gradient-to-br from-primary to-accent text-white rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group"
+          className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-gradient-to-br from-[#29a399] to-[#00B3A6] text-white rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group"
           aria-label="Abrir Chat Clínico"
           data-tour="tour-ai-widget"
         >
@@ -94,7 +94,7 @@ export default function AIAssistant() {
 
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)] glass-panel-premium rounded-2xl shadow-2xl border border-white/10 flex flex-col overflow-hidden">
-          <div className="bg-gradient-to-r from-primary to-accent text-white p-4 flex items-center justify-between flex-shrink-0">
+          <div className="bg-gradient-to-r from-[#29a399] to-[#00B3A6] text-white p-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
               <Sparkles size={20} />
               <div>
@@ -129,7 +129,7 @@ export default function AIAssistant() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-3 border-t border-white/10 bg-surface flex-shrink-0">
+          <div className="p-3 border-t border-white/10 bg-slate-800 flex-shrink-0">
             <div className="flex items-end gap-2 bg-[#111315] rounded-xl border border-white/10 p-2">
               <textarea
                 ref={textareaRef}

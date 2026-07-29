@@ -286,7 +286,7 @@ const TooltipBox = memo(function TooltipBox({ step, rect, stepIndex, total, onNe
       style={{ ...style, width: TW }}
       className="bg-[#16191b] border border-slate-800 overflow-hidden rounded-2xl duration-300 animate-in fade-in zoom-in-95"
     >
-      <div className="flex items-center justify-between bg-gradient-to-r from-primary to-accent px-5 py-4">
+      <div className="flex items-center justify-between bg-gradient-to-r from-[#29a399] to-[#00B3A6] px-5 py-4">
         <span id="tour-title" className="text-white font-bold text-base">{step.title}</span>
         <button
           onClick={onClose}

@@ -55,11 +55,11 @@ export const RadiographUploader: React.FC<RadiographUploaderProps> = ({ caseId, 
       <button 
         onClick={() => fileInputRef.current?.click()} 
         disabled={isUploading}
-        className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark disabled:bg-gray-400"
+        className="px-4 py-2 bg-[#29a399] text-white rounded hover:bg-[#1c6b62] disabled:bg-gray-400"
       >
         {isUploading ? 'Enviando...' : 'Adicionar Radiografia'}
       </button>
-      {error && <p className="text-error text-sm">{error}</p>}
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };

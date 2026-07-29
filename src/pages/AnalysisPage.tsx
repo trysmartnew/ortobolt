@@ -311,7 +311,7 @@ export default function AnalysisPage() {
         );
       if (line.startsWith('#'))
         return (
-          <h3 key={i} className="font-bold text-primary text-base mt-4 mb-2">
+          <h3 key={i} className="font-bold text-[#29a399] text-base mt-4 mb-2">
             {line.replace(/^#+\s/, '')}
           </h3>
         );
@@ -387,7 +387,7 @@ export default function AnalysisPage() {
                       ['3', 'Aprovar → Central de Casos / Caso / Visão da Clínica / PDF'],
                     ].map(([step, label]) => (
                       <div key={step} className="flex gap-2">
-                        <span className="font-mono text-primary font-bold">{step}</span>
+                        <span className="font-mono text-[#29a399] font-bold">{step}</span>
                         <span className="text-white/70">{label}</span>
                       </div>
                     ))}
@@ -423,7 +423,7 @@ export default function AnalysisPage() {
                     aiGeneratedMarkings.angles.length > 0 ||
                     aiGeneratedMarkings.markers.length > 0) && (
                       <span className="text-[10px] font-mono glass-panel-premium/10 text-white border border-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Sparkles size={12} className="text-primary" />
+                        <Sparkles size={12} className="text-[#29a399]" />
                         {aiGeneratedMarkings.circles.length + aiGeneratedMarkings.angles.length} marcações IA
                       </span>
                     )}

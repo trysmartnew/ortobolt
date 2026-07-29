@@ -281,7 +281,7 @@ export default function PatientsPage() {
                         </button>
                         <button
                           onClick={() => setActiveAssistantCase(cases.find(c => c.id === p.id) as any)}
-                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-slate-400 hover:text-primary transition-colors"
+                          className="p-1.5 rounded-md hover:bg-[var(--color-surface)] text-slate-400 hover:text-[#29a399] transition-colors"
                           title="Assistente Clínico"
                         >
                           <Bot size={16} />

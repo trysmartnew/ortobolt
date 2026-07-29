@@ -29,7 +29,7 @@ export default memo(function CaseAnalysisTab() {
     <div className="p-4 space-y-4 max-w-4xl mx-auto">
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Scan size={16} className="text-primary" />
+          <Scan size={16} className="text-[#29a399]" />
           <h3 className="font-bold text-white text-sm">Análise de Imagem Vinculada</h3>
         </div>
         <img 
@@ -44,7 +44,7 @@ export default memo(function CaseAnalysisTab() {
           <span className="text-[10px] text-slate-400 font-mono">
             Gerado em: {new Date(analysis.createdAt).toLocaleString('pt-BR')}
           </span>
-          <span className="text-[10px] px-2 py-1 bg-blue-50 text-primary rounded-full font-medium">
+          <span className="text-[10px] px-2 py-1 bg-blue-50 text-[#29a399] rounded-full font-medium">
             {analysis.model.split('/')[1] || 'OrthoVision'}
           </span>
         </div>
