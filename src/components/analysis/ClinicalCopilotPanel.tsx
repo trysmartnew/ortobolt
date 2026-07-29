@@ -25,7 +25,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
   return (
     <div className={`flex gap-2 ${isUser ? 'flex-row-reverse' : ''}`}>
       <div
-        className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center ${isUser ? 'bg-primary text-white' : 'bg-white/10 text-slate-200'
+        className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center ${isUser ? 'bg-[#29a399] text-white' : 'bg-white/10 text-slate-200'
           }`}
       >
         {isUser ? <User size={12} /> : <Bot size={12} />}
@@ -33,7 +33,7 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
       <div className={`max-w-[85%] flex flex-col gap-0.5 ${isUser ? 'items-end' : 'items-start'}`}>
         <div
           className={`rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap ${isUser
-            ? 'bg-primary text-white rounded-tr-sm'
+            ? 'bg-[#29a399] text-white rounded-tr-sm'
             : 'bg-[#0B0F19]/60 border border-white/10 text-slate-200 rounded-tl-sm'
             }`}
         >
@@ -50,9 +50,9 @@ function CopilotBubble({ msg }: { msg: ChatMessage }) {
           <button
             type="button"
             onClick={copy}
-            className="text-[10px] text-white/40 hover:text-primary flex items-center gap-1"
+            className="text-[10px] text-white/40 hover:text-[#29a399] flex items-center gap-1"
           >
-            {copied ? <Check size={10} className="text-success" /> : <Copy size={10} />}
+            {copied ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
             Copiar
           </button>
         )}
@@ -119,7 +119,7 @@ export default function ClinicalCopilotPanel({
     >
       <div className="px-4 py-3 border-b border-white/10 bg-[rgba(26,29,31,0.65)] flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Sparkles size={16} className="text-primary" />
+          <Sparkles size={16} className="text-[#29a399]" />
           <div>
             <p className="text-sm font-bold text-white/40">Assistente Clínico</p>
             <p className="text-[10px] text-white/40 font-mono">
@@ -137,7 +137,7 @@ export default function ClinicalCopilotPanel({
           className="relative overflow-hidden"
         >
           {!refining && !streaming && messages.length > 0 && (
-            <span className="absolute inset-0 rounded-md bg-primary opacity-10 animate-pulse" />
+            <span className="absolute inset-0 rounded-md bg-[#29a399] opacity-10 animate-pulse" />
           )}
           <RefreshCw size={13} className="relative z-10" />
           <span className="relative z-10 ml-1.5">Refinar análise</span>
@@ -216,7 +216,7 @@ export default function ClinicalCopilotPanel({
           <span>{error}</span>
           <button
             onClick={onRetry}
-            className="text-white hover:text-primary font-bold underline"
+            className="text-white hover:text-[#29a399] font-bold underline"
           >
             Tentar novamente
           </button>

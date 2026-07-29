@@ -33,11 +33,11 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
 
   return (
     <div className={`flex gap-3 group ${isUser ? 'flex-row-reverse' : ''}`}>
-      <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold ${isUser ? 'bg-primary text-white' : 'bg-slate-100 text-white/70'}`}>
+      <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold ${isUser ? 'bg-[#29a399] text-white' : 'bg-slate-100 text-white/70'}`}>
         {isUser ? <User size={14} /> : <Bot size={14} />}
       </div>
       <div className={`max-w-[78%] ${isUser ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
-        <div className={`rounded-2xl px-5 py-4 text-[16px] leading-relaxed ${isUser ? 'bg-primary text-white rounded-tr-sm' : 'bg-surface text-white border border-white/10 rounded-tl-sm'}`}>
+        <div className={`rounded-2xl px-5 py-4 text-[16px] leading-relaxed ${isUser ? 'bg-[#29a399] text-white rounded-tr-sm' : 'bg-slate-800 text-white border border-white/10 rounded-tl-sm'}`}>
           {msg.isLoading ? (
             <div className="flex items-center gap-2 py-0.5">
               <Spinner size="sm" />
@@ -51,8 +51,8 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
         </div>
         <div className="flex items-center gap-2">
           {!isUser && !msg.isLoading && (
-            <button onClick={copy} className="text-[10px] text-slate-400 hover:text-primary transition-colors">
-              {copied ? <Check size={10} className="text-success" /> : <Copy size={10} />}
+            <button onClick={copy} className="text-[10px] text-slate-400 hover:text-[#29a399] transition-colors">
+              {copied ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
             </button>
           )}
           <span className="text-[10px] text-slate-400 font-mono">
@@ -132,7 +132,7 @@ export default function ChatPage() {
         </div>
         <button
           onClick={() => setChatHistory(h => h.length > 0 ? [h[0]] : h)}
-          className="flex items-center gap-1.5 text-xs text-white/70 hover:text-error transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
+          className="flex items-center gap-1.5 text-xs text-white/70 hover:text-red-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
         >
           <Trash2 size={13} /> Limpar conversa
         </button>
@@ -153,8 +153,8 @@ export default function ChatPage() {
         </div>
       )}
 
-      <div data-tour="tour-chat-input" className="flex-shrink-0 px-6 py-4 border-t border-white/10 bg-surface">
-        <div className="flex items-end gap-3 bg-[#111315] rounded-2xl border border-white/10 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all px-4 py-3">
+      <div data-tour="tour-chat-input" className="flex-shrink-0 px-6 py-4 border-t border-white/10 bg-slate-800">
+        <div className="flex items-end gap-3 bg-[#111315] rounded-2xl border border-white/10 shadow-sm focus-within:border-[#29a399] focus-within:ring-2 focus-within:ring-[#29a399]/20 transition-all px-4 py-3">
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}
