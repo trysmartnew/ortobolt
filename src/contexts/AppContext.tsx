@@ -319,12 +319,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
           return;
         }
         if (data) {
-          setCases(
-            data
-              .map((row) => mapCaseFromDB(row as Record<string, unknown>))
-              .map(enrichCaseWithPersistedAi)
-          );
-        console.log(`✓ Casos carregados: ${data.length}`);
+          const mapped = data
+            .map((row) => mapCaseFromDB(row as Record<string, unknown>))
+            .map(enrichCaseWithPersistedAi);
+          setCases(mapped);
+          console.log(`✓ Casos carregados: ${data.length}`);
+          // P0-d: Restaura activeCase apos F5
+          const savedCaseId = sessionStorage.getItem('vanguard-veterinary_active_case_id');
+          if (savedCaseId) {
+            const restored = mapped.find((c) => c.id === savedCaseId);
+            if (restored) setActiveCase(restored);
+          }
         }
       });
   }, [user]);
