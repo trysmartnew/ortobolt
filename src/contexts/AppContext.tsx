@@ -324,6 +324,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
               .map((row) => mapCaseFromDB(row as Record<string, unknown>))
               .map(enrichCaseWithPersistedAi)
           );
+        console.log(`✓ Casos carregados: ${data.length}`);
         }
       });
   }, [user]);
