@@ -1,4 +1,5 @@
-import { useRef, useEffect, useState, type ReactNode } from 'react';
+import { useRef, useEffect, useState, type ReactNode, type RefObject } from 'react';
+import type Konva from 'konva';
 import { Stage, Layer, Image as KonvaImage, Circle, Line, Text, Group, Rect } from 'react-konva';
 import type { MarkingsData, AlignmentCircle, AngleMeasurement, FractureMarker, ROI } from '@/types/markings';
 
@@ -7,6 +8,7 @@ interface AiMarkingsOverlayProps {
   markings: MarkingsData;
   naturalWidth: number;
   naturalHeight: number;
+  stageRef?: RefObject<Konva.Stage | null>;
 }
 
 const GRID_SPACING = 60;
@@ -60,7 +62,7 @@ function GuideLine({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2:
   );
 }
 
-export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, naturalHeight }: AiMarkingsOverlayProps) {
+export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, naturalHeight, stageRef }: AiMarkingsOverlayProps) {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [stageSize, setStageSize] = useState({ width: naturalWidth || 800, height: naturalHeight || 600 });
@@ -121,7 +123,7 @@ export default function AiMarkingsOverlay({ imageUrl, markings, naturalWidth, na
 
   return (
     <div ref={containerRef} className="w-full">
-      <Stage width={stageSize.width} height={stageSize.height}>
+      <Stage ref={stageRef} width={stageSize.width} height={stageSize.height}>
         <Layer>
           {image && (
             <KonvaImage

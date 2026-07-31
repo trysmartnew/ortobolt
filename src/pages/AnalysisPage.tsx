@@ -8,6 +8,7 @@ import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkle
 import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings, ApiError } from '@/services/aiService';
 import { uploadRadiografia, getSignedImageUrl } from '@/services/supabase';
 import { generateLaudoReport } from '@/services/pdfService';
+import type Konva from 'konva';
 
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
 import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
@@ -40,6 +41,7 @@ export default function AnalysisPage() {
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [aiGeneratedMarkings, setAiGeneratedMarkings] = useState<MarkingsData | null>(null);
+  const konvaStageRef = useRef<Konva.Stage | null>(null);
   const {
     markings, activeTool, setActiveTool,
     addCircle, addAngle, addMarker, addROI,
@@ -176,7 +178,9 @@ export default function AnalysisPage() {
           weightKg: ctx.weightKg,
           procedure: ctx.procedure,
         },
-        imageData
+        konvaStageRef.current && aiGeneratedMarkings
+          ? konvaStageRef.current.toDataURL({ pixelRatio: 2, mimeType: 'image/jpeg' })
+          : imageData
       );
       addToast('Laudo em PDF gerado com sucesso.', 'success');
     } catch (e) {
@@ -452,6 +456,7 @@ export default function AnalysisPage() {
                       naturalHeight={imageDimensions.height}
                       markings={aiGeneratedMarkings ?? { circles: [], angles: [], markers: [], rois: [] }}
                       viewportClassName="w-full rounded-[6px]"
+                      stageRef={konvaStageRef}
                     />
                   )}
                 </div>

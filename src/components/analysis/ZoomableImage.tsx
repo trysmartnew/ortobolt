@@ -1,4 +1,5 @@
-import { type CSSProperties, type MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, type MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+import type Konva from 'konva';
 import { Plus, Minus, RotateCcw } from 'lucide-react';
 import AiMarkingsOverlay from '@/components/analysis/AiMarkingsOverlay';
 import type { MarkingsData } from '@/types/markings';
@@ -11,11 +12,12 @@ interface ZoomableImageProps {
   viewportClassName?: string;
   imgClassName?: string;
   maxZoom?: number;
+  stageRef?: RefObject<Konva.Stage | null>;
 }
 
 const MIN_ZOOM = 1;
 
-export default function ZoomableImage({ imageUrl, naturalWidth, naturalHeight, markings = null, viewportClassName = 'w-full', imgClassName = 'block w-full h-auto select-none', maxZoom = 8 }: ZoomableImageProps) {
+export default function ZoomableImage({ imageUrl, naturalWidth, naturalHeight, markings = null, viewportClassName = 'w-full', imgClassName = 'block w-full h-auto select-none', maxZoom = 8, stageRef }: ZoomableImageProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [zoom, setZoom] = useState(1);
@@ -85,7 +87,7 @@ export default function ZoomableImage({ imageUrl, naturalWidth, naturalHeight, m
       <img ref={imgRef} src={imageUrl} alt="Radiografia" draggable={false} className={imgClassName} style={tf} />
       {markings && (
         <div className="pointer-events-none absolute inset-0" style={tf}>
-          <AiMarkingsOverlay imageUrl={imageUrl} markings={markings} naturalWidth={naturalWidth} naturalHeight={naturalHeight} />
+          <AiMarkingsOverlay imageUrl={imageUrl} markings={markings} naturalWidth={naturalWidth} naturalHeight={naturalHeight} stageRef={stageRef} />
         </div>
       )}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end p-3">
