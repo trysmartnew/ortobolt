@@ -19,7 +19,7 @@ import { useMarkings } from '@/hooks/useMarkings';
 import type { MarkingTool, MarkingsData } from '@/types/markings';
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import { useApp } from '@/contexts/AppContext';
-import { buildCaseTitle } from '@/services/clinicalCaseIntegrationService';
+import { buildCaseTitle , stripAiArtifacts} from '@/services/clinicalCaseIntegrationService';
 
 import type { ClinicalCase, CaseExam } from '@/types';
 
@@ -464,7 +464,7 @@ export default function AnalysisPage() {
                     </h3>
                   </div>
                   <div className="p-4 max-h-[50vh] overflow-y-auto space-y-1">
-                    {renderResult(analysisText)}
+                    {renderResult(stripAiArtifacts(analysisText))}
                   </div>
                 </Card>
                 <Card className="glass-panel-premium h-full">

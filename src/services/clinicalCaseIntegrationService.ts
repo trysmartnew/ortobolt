@@ -153,6 +153,27 @@ export function buildCaseTitle(
   return `${procedure} — ${patient}`;
 }
 
+
+/**
+ * Remove artefatos de IA para exibicao on-page (preserva markdown).
+ * Diferente de sanitizeClinicalNotes: NAO stripa ##, **, tabelas.
+ */
+export function stripAiArtifacts(text: string): string {
+  let t = text;
+  // Fenced code blocks (fechado + nao-fechado)
+  t = t.replace(/```[\s\S]*?```/g, '');
+  t = t.replace(/```[\s\S]*$/g, '');
+  // Linhas-marker de IA (single-bracket, linha inteira, com ou sem trailing)
+  t = t.replace(/^\s*\[[^\]]*(?:OrthoAI|OrtoAI)[^\]]*\].*$/gim, '');
+  // Fragmentos orfaos (com bracket inicial opcional)
+  t = t.replace(/\[?[A-Za-z\u00c0-\u00ff\s/]*(?:OrthoAI|OrtoAI)\]?[^\n]*/gi, '');
+  // Segmentos corrompidos
+  t = t.replace(/[\u00d8=\u00dcI][^\]\n]*\]?/g, '');
+  // Colapso de linhas vazias residuais
+  t = t.replace(/\n{3,}/g, '\n\n');
+  return t.trim();
+}
+
 export function formatIntegratedNotes(
   analysisText: string,
   copilotMessages?: ChatMessage[]
