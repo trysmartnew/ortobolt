@@ -120,7 +120,7 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.setFont('helvetica', 'normal');
-    const clinicNameF = (localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary').replace(/((?:[A-Za-z\u00c0-\u00ff] ){3,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/ /g, '')).replace(/ {2,}/g, ' ');
+    const clinicNameF = (localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary').replace(/((?:[A-Za-z\u00c0-\u00ff] ){1,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/ /g, '')).replace(/ {2,}/g, ' ');
     doc.text(safe(clinicNameF) + ' — Ortopedia Veterinária', 14, 290, { charSpace: 0 });
     doc.text(`Página ${i} de ${pageCount}`, 185, 290, { align: 'right', charSpace: 0 });
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 290, { align: 'center', charSpace: 0 });
@@ -330,7 +330,7 @@ export async function generateCaseReport(
       if (y > 240) { doc.addPage(); y = 30; }
       doc.setFont('helvetica', 'bold'); doc.text('Cuidados Importantes:', 14, y, { charSpace: 0 }); y += 6;
       doc.setFont('helvetica', 'normal');
-      c.aiAnalysis.recommendations.forEach(r => {
+      c.aiAnalysis.recommendations.filter(r => r && String(r).trim()).forEach(r => {
         y = addWrappedText(doc, `• ${safe(stripMarkdownForPdf(r))}`, 14, y, 182, 5);
       });
 
@@ -353,7 +353,7 @@ export async function generateCaseReport(
       // Landmarks
       doc.setFont('helvetica', 'bold'); doc.text('Landmarks Anatômicos Detectados:', 14, y, { charSpace: 0 }); y += 6;
       doc.setFont('helvetica', 'normal');
-      c.aiAnalysis.anatomicalLandmarks.forEach(l => {
+      c.aiAnalysis.anatomicalLandmarks.filter(l => l && l.name && l.name.trim()).forEach(l => {
         if (y > 270) { doc.addPage(); y = 30; }
         const status = l.detected ? `✓ ${(l.confidence * 100).toFixed(0)}%` : '✗ Não detectado';
         doc.text(`• ${safe(stripMarkdownForPdf(l.name))}: ${status}`, 14, y, { charSpace: 0 }); y += 5;
@@ -364,7 +364,7 @@ export async function generateCaseReport(
       if (y > 240) { doc.addPage(); y = 30; }
       doc.setFont('helvetica', 'bold'); doc.text('Recomendações:', 14, y, { charSpace: 0 }); y += 6;
       doc.setFont('helvetica', 'normal');
-      c.aiAnalysis.recommendations.forEach(r => {
+      c.aiAnalysis.recommendations.filter(r => r && String(r).trim()).forEach(r => {
         y = addWrappedText(doc, `• ${safe(stripMarkdownForPdf(r))}`, 14, y, 182, 5);
       });
 

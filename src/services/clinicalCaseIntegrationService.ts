@@ -168,7 +168,7 @@ export function stripAiArtifacts(text: string): string {
   // Fragmentos orfaos (com bracket inicial opcional)
   t = t.replace(/\[?[A-Za-z\u00c0-\u00ff\s/]*(?:OrthoAI|OrtoAI)\]?[^\n]*/gi, '');
   // Segmentos corrompidos
-  t = t.replace(/[\u00d8=\u00dcI][^\]\n]*\]?/g, '');
+  t = t.replace(/\u00d8=\u00dcI[^\n]*/g, '');
   // Colapso de linhas vazias residuais
   t = t.replace(/\n{3,}/g, '\n\n');
   return t.trim();
@@ -215,7 +215,7 @@ export function sanitizeClinicalNotes(raw: string): string {
   // Remove unclosed fenced code blocks
   text = text.replace(/```[\s\S]*$/g, '');
   // Remove corrupted segments
-  text = text.replace(/\[\u00d8=\u00dcI[^\]]*\]?/g, '');
+  text = text.replace(/\[?\u00d8=\u00dcI[^\]\n]*/g, '');
   // Strip markdown headers (## ...)
   text = text.replace(/^#{1,6}\s+/gm, '');
   // Strip markdown table separators
