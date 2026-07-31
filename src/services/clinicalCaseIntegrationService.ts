@@ -290,6 +290,7 @@ export function buildIntegratedClinicalCase(input: ApproveCompleteCaseInput): Cl
     veterinarianId: input.veterinarianId,
     clinicalEvidence,
     aiAnalysis,
+    markings: input.markings ?? undefined,
     exams: [primaryExam, ...(input.additionalExams ?? [])],
   };
 }

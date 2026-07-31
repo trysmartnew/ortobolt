@@ -422,7 +422,7 @@ export default function CasePage() {
     return exam?.markings;
   }, [activeCase]);
 
-  const aiMarkingsToViewer = aiMarkingsFromSession ?? persistedAiMarkings;
+  const aiMarkingsToViewer = activeCase?.markings ?? aiMarkingsFromSession ?? persistedAiMarkings;
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);

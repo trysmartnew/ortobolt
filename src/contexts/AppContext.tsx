@@ -528,6 +528,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       image_url: enriched.imageUrl ?? null,
       ai_analysis: enriched.aiAnalysis ?? null,
       exams: enriched.exams ?? null,
+      markings: enriched.markings ?? null,
       veterinarian_id: enriched.veterinarianId,
       created_at: enriched.createdAt,
       updated_at: enriched.updatedAt,
