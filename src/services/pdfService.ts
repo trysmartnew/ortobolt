@@ -120,7 +120,7 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.setFont('helvetica', 'normal');
-    const clinicNameF = (localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary').replace(/((?:[A-Za-z\u00c0-\u00ff] ){1,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/ /g, '')).replace(/ {2,}/g, ' ');
+    const clinicNameF = (localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary').replace(/((?:[A-Za-z\u00c0-\u00ff] ){3,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/ /g, '')).replace(/ {2,}/g, ' ');
     doc.text(safe(clinicNameF) + ' — Ortopedia Veterinária', 14, 290, { charSpace: 0 });
     doc.text(`Página ${i} de ${pageCount}`, 185, 290, { align: 'right', charSpace: 0 });
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 290, { align: 'center', charSpace: 0 });
@@ -137,7 +137,7 @@ function stripMarkdownForPdf(text: string): string {
     .replace(/\|/g, '  ')
     .replace(/^---+$/gm, '')
     .replace(/\[\[.*?\]\]+/g, '')
-    .replace(/((?:[A-Za-z\u00c0-\u00ff] ){3,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/ /g, ''))
+    .replace(/((?:[A-Za-z\u00c0-\u00ff][ \u00A0]){3,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/[ \u00A0]/g, ''))
     .replace(/ {2,}/g, ' ')
     .replace(/\n{3,}/g, '\n\n')
     .trim();

@@ -228,7 +228,7 @@ export function sanitizeClinicalNotes(raw: string): string {
   text = text.replace(/\*\*(.+?)\*\*/g, '$1');
   text = text.replace(/\*(.+?)\*/g, '$1');
   // Collapse spaced-out characters (corruption artifact)
-  text = text.replace(/((?:[A-Za-z\u00c0-\u00ff] ){3,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/ /g, ''));
+  text = text.replace(/((?:[A-Za-z\u00c0-\u00ff][ \u00A0]){3,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/[ \u00A0]/g, ''));
   text = text.replace(/ {2,}/g, ' ');
   // Collapse excessive newlines
   text = text.replace(/\n{3,}/g, '\n\n');
