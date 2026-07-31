@@ -227,59 +227,40 @@ export async function generateLaudoReport(
   imageDataUrl?: string | null,
   options?: { logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string }
 ): Promise<void> {
-  const JsPDF = await getJsPDF();
-  const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  await addHeader(doc, 'Laudo Radiográfico', `${safe(patientContext.patientName) || 'Paciente'} — ${new Date().toLocaleDateString('pt-BR')}`, options);
-  let y = 54;
-  doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-  doc.text('Dados do Paciente', 14, y, { charSpace: 0 }); y += 7;
-  doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
-  const patientFields: [string, string][] = [
-    ['Nome', safe(patientContext.patientName)],
-    ['Espécie', safe(patientContext.species)],
-    ['Raça', safe(patientContext.breed)],
-    ['Idade', patientContext.ageYears != null ? `${patientContext.ageYears} anos` : ''],
-    ['Peso', patientContext.weightKg != null ? `${patientContext.weightKg} kg` : ''],
-    ['Procedimento', safe(patientContext.procedure)],
-  ];
-  for (const [label, value] of patientFields) {
-    if (!value) continue;
-    if (y > 270) { doc.addPage(); y = 30; }
-    doc.text(`${label}: ${value}`, 14, y, { charSpace: 0 }); y += 5;
-  }
-  y += 5;
-  if (analysisText.trim()) {
-    if (y > 250) { doc.addPage(); y = 30; }
-    doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-    doc.text('Análise Técnica', 14, y, { charSpace: 0 }); y += 7;
-    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
-    y = addWrappedText(doc, stripMarkdownForPdf(analysisText), 14, y, 182, 5);
-    y += 5;
-  }
-  if (imageDataUrl) {
-    const imageWidth = 180;
-    const imageHeight = 120;
-    if (y + imageHeight > 270) { doc.addPage(); y = 30; }
-    try {
-      const format = imageDataUrl.includes('image/png') ? 'PNG' : 'JPEG';
-      doc.addImage(imageDataUrl, format, 15, y, imageWidth, imageHeight);
-      y += imageHeight + 5;
-    } catch (e) {
-      console.warn('Erro ao adicionar imagem ao PDF do laudo:', e);
-    }
-  }
-  addFooter(doc);
-  doc.save(`laudo_${safe(patientContext.patientName).replace(/\s/g, '_') || 'radiografico'}_${new Date().toISOString().split('T')[0]}.pdf`);
+  // P1-a: Thin wrapper — delega ao pipeline unificado generateCaseReport
+  const partialCase = {
+    id: `laudo-${Date.now()}`,
+    title: `Laudo - ${patientContext.patientName || 'Paciente'}`,
+    patientName: patientContext.patientName || 'Paciente',
+    species: (patientContext.species || 'canine'),
+    breed: patientContext.breed || '',
+    ageYears: patientContext.ageYears ?? 0,
+    weightKg: patientContext.weightKg ?? 0,
+    procedure: (patientContext.procedure || 'other'),
+    status: 'completed',
+    riskLevel: 'low',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    tags: [] as string[],
+    veterinarianId: '',
+    notes: analysisText,
+  } as ClinicalCase;
+
+  await generateCaseReport(partialCase, {
+    ...options,
+    reportTitle: 'Laudo Radiogr\u00e1fico',
+    imageDataUrl: imageDataUrl ?? undefined,
+  });
 }
 
 export async function generateCaseReport(
   c: ClinicalCase,
-  options?: { isTutorGuide?: boolean; logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string; notes?: string }
+  options?: { isTutorGuide?: boolean; logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string; notes?: string; reportTitle?: string; imageDataUrl?: string | null }
 ): Promise<void> {
   const tutorMode = options?.isTutorGuide ?? false;
   const JsPDF = await getJsPDF();
   const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const reportTitle = tutorMode ? 'Guia para o Tutor' : 'Relatório de Caso Clínico';
+  const reportTitle = options?.reportTitle ?? (tutorMode ? 'Guia para o Tutor' : 'Relatório de Caso Clínico');
   await addHeader(doc, reportTitle, `${safe(c.patientName)} — ${new Date(c.createdAt).toLocaleDateString('pt-BR')}`, options);
 
   let y = 54;
@@ -378,6 +359,27 @@ export async function generateCaseReport(
           y = addWrappedText(doc, `• [${safe(stripMarkdownForPdf(rf.severity)).toUpperCase()}] ${safe(stripMarkdownForPdf(rf.category))}: ${safe(stripMarkdownForPdf(rf.description))}`, 14, y, 182, 5);
         });
       }
+    }
+  }
+
+  // P1-a: Imagem da radiografia (base64 direto ou URL assinada)
+  const imageSource = options?.imageDataUrl || c.imageUrl;
+  if (imageSource) {
+    const imageWidth = 180;
+    const imageHeight = 120;
+    if (y + imageHeight > 270) { doc.addPage(); y = 30; }
+    try {
+      let imgData = imageSource;
+      if (imageSource.startsWith('http')) {
+        imgData = await getUrlAsBase64(imageSource);
+      }
+      if (imgData) {
+        const format = imgData.includes('image/png') ? 'PNG' : 'JPEG';
+        doc.addImage(imgData, format, 15, y, imageWidth, imageHeight);
+        y += imageHeight + 5;
+      }
+    } catch (e) {
+      console.warn('Erro ao adicionar imagem ao PDF:', e);
     }
   }
 
