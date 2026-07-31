@@ -256,7 +256,7 @@ export async function generateLaudoReport(
 export async function generateCaseReport(
   c: ClinicalCase,
   options?: { isTutorGuide?: boolean; logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string; notes?: string; reportTitle?: string; imageDataUrl?: string | null }
-): Promise<void> {
+): Promise<Blob | null> {
   const tutorMode = options?.isTutorGuide ?? false;
   const JsPDF = await getJsPDF();
   const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -384,5 +384,10 @@ export async function generateCaseReport(
   }
 
   addFooter(doc);
-  doc.save(`vanguard-veterinary-caso-${safe(c.id)}-${safe(c.patientName).toLowerCase().replace(/\s+/g, '-')}.pdf`);
+  try {
+    return doc.output('blob');
+  } catch (err) {
+    console.error('Erro ao gerar PDF blob:', err);
+    return null;
+  }
 }
