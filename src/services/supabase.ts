@@ -1,4 +1,4 @@
-﻿// src/services/supabase.ts
+// src/services/supabase.ts
 // ✅ C-03: select('*') substituído por lista explícita de campos
 // ✅ C-03: Tipagem (c: any) em certifications substituída por interface explícita
 // ✅ Segurança: URLs assinadas com expiração de 24h para imagens médicas
@@ -198,6 +198,60 @@ export async function uploadRadiografia(
   return filePath;
 }
 
+
+/** Upload de PDF de caso para storage e persistência em BD */
+export async function uploadAndPersistPdf(
+  blob: Blob,
+  caseId: string
+): Promise<string | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !user.id) {
+    throw new Error('Usuário não autenticado');
+  }
+
+  try {
+    // Converter blob para base64 para upload
+    const arrayBuffer = await blob.arrayBuffer();
+    const uint8 = new Uint8Array(arrayBuffer);
+    const binary = String.fromCharCode(...uint8);
+    const b64 = btoa(binary);
+    const filePath = `${user.id}/${caseId}/report.pdf`;
+
+    // Upload para storage
+    const { error: uploadError } = await supabase.storage
+      .from('case-images')
+      .upload(filePath, blob, { contentType: 'application/pdf', upsert: true });
+
+    if (uploadError) {
+      logger.error('Erro ao fazer upload de PDF:', uploadError.message);
+      return null;
+    }
+
+    // Gerar URL assinada
+    const signedUrl = await getSignedImageUrl(filePath);
+    if (!signedUrl) {
+      logger.error('Erro ao gerar URL assinada para PDF');
+      return null;
+    }
+
+    // Persistir pdf_url em clinical_cases
+    const { error: updateError } = await supabase
+      .from('clinical_cases')
+      .update({ pdf_url: signedUrl })
+      .eq('id', caseId);
+
+    if (updateError) {
+      logger.error('Erro ao persistir pdf_url:', updateError.message);
+      return null;
+    }
+
+    logger.info(`PDF persistido para caso ${caseId}: ${filePath}`);
+    return signedUrl;
+  } catch (err) {
+    logger.error('Erro em uploadAndPersistPdf:', err);
+    return null;
+  }
+}
 /** Upload genérico de imagem de caso para o bucket 'radiografias' */
 export async function uploadCaseImage(
   dataUrl: string,

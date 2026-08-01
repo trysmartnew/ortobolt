@@ -9,6 +9,7 @@ import { useApp } from '@/contexts/AppContext';
 import { Button, Card, Badge, SectionHeader, Spinner, InlineToast, EmptyState } from '@/components/ui';
 import { RequireRole } from '@/components/auth/RequireRole';
 import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
+import { uploadAndPersistPdf } from '@/services/supabase'
 import { sanitizeClinicalNotes } from '@/services/clinicalCaseIntegrationService';
 import {
   ResponsiveContainer,
@@ -326,7 +327,8 @@ export default function ReportsPage() {
         // Correção de Sanetização: Cast seguro para acessar case_id.
         const caseToRegenerate = cases.find(c => c.id === (r as Report & { case_id: string }).case_id);
         if (caseToRegenerate) {
-          await generateCaseReport(caseToRegenerate, { logoUrl: logoPreview, clinicName, clinicSubtitle });
+          const blob = await generateCaseReport(caseToRegenerate, { logoUrl: logoPreview, clinicName, clinicSubtitle });
+          if (blob) { await uploadAndPersistPdf(blob, caseToRegenerate.id); }
         } else {
           addToast(`Caso associado ao relatório não foi encontrado.`, 'error');
         }
@@ -374,12 +376,13 @@ export default function ReportsPage() {
         console.warn('API de laudo técnico não disponível, usando geração client-side.');
         addToast('API não disponível. Gerando laudo localmente...', 'info');
       }
-      await generateCaseReport(selectedCase, {
+      const blob = await generateCaseReport(selectedCase, {
         logoUrl: logoPreview,
         clinicName,
         clinicSubtitle,
         notes: filteredNotes,
       });
+      if (blob) { await uploadAndPersistPdf(blob, selectedCase.id); }
       addToast('Laudo técnico gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
@@ -424,13 +427,14 @@ export default function ReportsPage() {
         console.warn('API de guia para tutor não disponível, usando geração client-side.');
         addToast('API não disponível. Gerando guia localmente...', 'info');
       }
-      await generateCaseReport(selectedCase, {
+      const blob = await generateCaseReport(selectedCase, {
         isTutorGuide: true,
         logoUrl: logoPreview,
         clinicName,
         clinicSubtitle,
         notes: filteredNotes,
       });
+      if (blob) { await uploadAndPersistPdf(blob, selectedCase.id); }
       addToast('Guia para o tutor gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
@@ -763,3 +767,4 @@ export default function ReportsPage() {
     </div>
   );
 }
+

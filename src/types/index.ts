@@ -28,7 +28,7 @@ export type AnimalSpecies = 'canine'|'feline'|'equine'|'bovine'|'other';
 export type ProcedureType = 'TPLO'|'FHO'|'TTA'|'LCP_repair'|'fracture_fixation'|'joint_replacement'|'spinal_surgery'|'other';
 export type ExamModality = 'radiograph'|'clinical_photo'|'comparative_study'|'multimodal';
 export interface CaseExam { id:string; modality:ExamModality; imageUrls:string[]; aiAnalysis?:AIAnalysisResult; analysisText?:string; markings?:import('@/types/markings').MarkingsData; createdAt:string; markedAt?:string; markedBy?:string; }
-export interface ClinicalCase { id:string; title:string; patientName:string; species:AnimalSpecies; breed:string; ageYears:number; weightKg:number; procedure:ProcedureType; status:CaseStatus; precisionScore?:number; riskLevel:'low'|'medium'|'high'; createdAt:string; updatedAt:string; tags:string[]; imageUrl?:string; image_path?: string; aiAnalysis?:AIAnalysisResult; notes?:string; avatarUrl?:string; avatar_path?: string; veterinarianId:string; clinicalEvidence?:import('@/schemas/clinicalEvidence').ClinicalEvidence; markings?:import('@/types/markings').MarkingsData; exams?:CaseExam[]; }
+export interface ClinicalCase { id:string; title:string; patientName:string; species:AnimalSpecies; breed:string; ageYears:number; weightKg:number; procedure:ProcedureType; status:CaseStatus; precisionScore?:number; riskLevel:'low'|'medium'|'high'; createdAt:string; updatedAt:string; tags:string[]; imageUrl?:string; image_path?: string; aiAnalysis?:AIAnalysisResult; notes?:string; avatarUrl?:string; avatar_path?: string; veterinarianId:string; clinicalEvidence?:import('@/schemas/clinicalEvidence').ClinicalEvidence; markings?:import('@/types/markings').MarkingsData; exams?:CaseExam[]; pdf_url?: string; }
 export interface AIAnalysisResult { id:string; timestamp:string; precisionScore:number; riskFactors:RiskFactor[]; recommendations:string[]; anatomicalLandmarks:AnatomicalLandmark[]; confidence:number; processingTimeMs:number; }
 export interface RiskFactor { category:string; description:string; severity:'low'|'medium'|'high'; }
 export interface AnatomicalLandmark { name:string; detected:boolean; confidence:number; coordinates?:{x:number;y:number}; }
@@ -46,5 +46,6 @@ export interface Notification { id:string; type:NotificationType; title:string; 
 
 // ── Reports ───────────────────────────────────────────────────────────────────
 export interface Report { id:string; title:string; type:'monthly'|'case'|'audit'|'performance'; generatedAt:string; period:string; status:'ready'|'generating'|'error'; sizeKb:number; }
+
 
 
