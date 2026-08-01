@@ -439,7 +439,7 @@ export default function CasePage() {
         reader.readAsDataURL(file);
       });
       const uploadResult = await uploadImageToStorage(base64, {
-        storagePath: `xray-${activeCase.id}-${Date.now()}`,
+        storagePath: `${user?.id}/${activeCase.id}/xray-${Date.now()}`,
         type: 'xray',
         caseId: activeCase.id
       });
@@ -466,7 +466,7 @@ export default function CasePage() {
         reader.readAsDataURL(file);
       });
       const uploadResult = await uploadImageToStorage(base64, {
-        storagePath: `avatar-${activeCase.id}-${Date.now()}`,
+        storagePath: `${user?.id}/${activeCase.id}/avatar-${Date.now()}`,
         type: 'avatar',
         caseId: activeCase.id
       });

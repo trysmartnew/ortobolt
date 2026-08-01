@@ -5,12 +5,8 @@ export type VerifyAuthResult =
   | { ok: false; status: 401 | 500; error: string };
 
 function createAuthClient() {
-  const url =
-    process.env.SUPABASE_URL ??
-    process.env.VITE_SUPABASE_URL;
-  const anonKey =
-    process.env.SUPABASE_ANON_KEY ??
-    process.env.VITE_SUPABASE_ANON_KEY;
+  const url = process.env.SUPABASE_URL;
+  const anonKey = process.env.SUPABASE_ANON_KEY;
 
   if (!url || !anonKey) {
     return null;

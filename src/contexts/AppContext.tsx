@@ -159,6 +159,10 @@ function mapCaseFromDB(row: Record<string, unknown>): ClinicalCase {
     veterinarianId: String(row.veterinarian_id ?? row.veterinarianId ?? ''),
     aiAnalysis: loadAiAnalysisFromRow(row),
     exams: Array.isArray(row.exams) ? (row.exams as import('@/types').CaseExam[]) : undefined,
+    markings: row.markings != null ? (row.markings as import('@/types/markings').MarkingsData) : undefined,
+    image_path: row.image_path != null ? String(row.image_path) : undefined,
+    avatar_path: row.avatar_path != null ? String(row.avatar_path) : undefined,
+    pdf_url: row.pdf_url != null ? String(row.pdf_url) : undefined,
   };
 }
 
@@ -589,6 +593,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (updates.exams !== undefined) {
       dbUpdates.exams = updates.exams;
     }
+    if (updates.patientName !== undefined) dbUpdates.patient_name = updates.patientName;
+    if (updates.species !== undefined) dbUpdates.species = updates.species;
+    if (updates.breed !== undefined) dbUpdates.breed = updates.breed;
+    if (updates.ageYears !== undefined) dbUpdates.age_years = updates.ageYears;
+    if (updates.weightKg !== undefined) dbUpdates.weight_kg = updates.weightKg;
+    if (updates.procedure !== undefined) dbUpdates.procedure = updates.procedure;
+    if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
+    if (updates.markings !== undefined) dbUpdates.markings = updates.markings;
+    if (updates.image_path !== undefined) dbUpdates.image_path = updates.image_path;
+    if (updates.avatar_path !== undefined) dbUpdates.avatar_path = updates.avatar_path;
+    if (updates.pdf_url !== undefined) dbUpdates.pdf_url = updates.pdf_url;
     dbUpdates.updated_at = new Date().toISOString();
 
     supabase.from('clinical_cases').update(dbUpdates).eq('id', id)
