@@ -48,7 +48,9 @@ export const useRadiographs = ({ caseId }: UseRadiographsProps) => {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${crypto.randomUUID()}.${fileExt}`;
-      const filePath = `xrays/${caseId}/${fileName}`;
+      const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.id) throw new Error('Usuario nao autenticado');
+    const filePath = `${user.id}/xrays/${caseId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('radiografias')
@@ -62,7 +64,7 @@ export const useRadiographs = ({ caseId }: UseRadiographsProps) => {
         filename: file.name,
         size_bytes: file.size,
         mime: file.type,
-        uploaded_by: (await supabase.auth.getUser()).data.user?.id || '',
+        uploaded_by: user.id,
         uploaded_at: new Date().toISOString(),
       };
 
