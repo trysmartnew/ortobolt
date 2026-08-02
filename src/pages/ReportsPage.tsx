@@ -2,7 +2,7 @@
 // ✅ Produção Real — Dados do Supabase (SEM MOCKS)
 // ✅ RESTAURADO: Personalização de Laudos + Modal de Seleção de Caso
 import { useState, useEffect, useMemo } from 'react';
-import { supabase } from '@/services/supabase';
+import { supabase, getSupabaseAccessToken } from '@/services/supabase';
 import type { Report, KPIMetric, ChartDataPoint, ClinicalCase } from '@/types/index';
 import { Download, FileText, Clock, CheckCircle, AlertCircle, Upload, Settings, Search, Calendar, User, X } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
@@ -354,9 +354,17 @@ export default function ReportsPage() {
     setGenerating('case');
     try {
       try {
+        const token = await getSupabaseAccessToken();
+        if (!token) {
+          addToast('Sessão expirada. Faça login novamente.', 'error');
+          return;
+        }
         const response = await fetch('/api/reports/generate-technical', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({ caseId: selectedCase.id }),
         });
         if (response.ok) {
