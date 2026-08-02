@@ -24,7 +24,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .from('clinical_cases')
       .select('*')
       .eq('id', caseId)
-      .eq('user_id', auth.user.id)
+      .eq('veterinarian_id', auth.user.id)
       .single();
 
     if (error || !caseRow) return res.status(404).json({ error: 'Case not found' });
