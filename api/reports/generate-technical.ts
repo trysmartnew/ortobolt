@@ -7,6 +7,11 @@ function sanitize(s: unknown): string {
   return String(s ?? '').replace(/[\x00-\x1F\x7F]/g, '').trim();
 }
 
+function serializeField(val: unknown): string {
+  if (typeof val === 'string') return val;
+  try { return JSON.stringify(val, null, 2); } catch { return String(val); }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   applyCors(res, (req.headers.origin as string) || '');
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -83,13 +88,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       doc.text('Análise de IA:', 15, y);
       y += 6;
       if (aiObj.recommendations) {
-        const rec = sanitize(String(aiObj.recommendations));
+        const rec = sanitize(serializeField(aiObj.recommendations));
         const split = doc.splitTextToSize(rec, 180);
         doc.text(split, 15, y);
         y += split.length * 6;
       }
       if (aiObj.riskFactors) {
-        const rf = sanitize(String(aiObj.riskFactors));
+        const rf = sanitize(serializeField(aiObj.riskFactors));
         const split = doc.splitTextToSize(rf, 180);
         doc.text(split, 15, y);
         y += split.length * 6;
