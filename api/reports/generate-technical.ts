@@ -12,6 +12,27 @@ function serializeField(val: unknown): string {
   try { return JSON.stringify(val, null, 2); } catch { return String(val); }
 }
 
+function field(val: unknown): string {
+  const s = sanitize(val);
+  return s || '—';
+}
+
+function addLine(doc: any, text: string, x: number, y: number, maxWidth: number, lineHeight: number = 6): number {
+  const split = doc.splitTextToSize(text, maxWidth);
+  for (const line of split) {
+    if (y > 270) {
+      doc.setFontSize(9);
+      doc.text('Vanguard Veterinary — Ortopedia Veterinária', 15, 287);
+      doc.addPage();
+      y = 20;
+      doc.setFontSize(10);
+    }
+    doc.text(line, x, y);
+    y += lineHeight;
+  }
+  return y;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   applyCors(res, (req.headers.origin as string) || '');
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -34,47 +55,86 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (error || !caseRow) return res.status(404).json({ error: 'Case not found' });
 
+    let vetName = '—';
+    let vetCrmv = '—';
+    try {
+      const { data: vetProfile } = await supabaseAdmin
+        .from('auth_user_profiles')
+        .select('full_name, crmv')
+        .eq('id', auth.user.id)
+        .single();
+      if (vetProfile) {
+        vetName = field(vetProfile.full_name);
+        vetCrmv = field(vetProfile.crmv);
+      }
+    } catch { /* fallback: manter '—' */ }
+
     const { jsPDF } = await import('jspdf');
     const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
 
     const now = new Date();
     const dateStr = now.toLocaleString('pt-BR');
 
-    // Header
-    doc.setFontSize(18);
-    doc.text('Laudo Técnico', 15, 20);
+    // ─── Cabeçalho Clínico ───
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('VANGUARD VETERINARY', 15, 20);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Ortopedia Veterinária', 15, 26);
+    doc.setDrawColor(0, 86, 179);
+    doc.line(15, 30, 195, 30);
+
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('LAUDO TÉCNICO', 15, 40);
     doc.setFontSize(10);
-    doc.text(`Paciente: ${sanitize(caseRow.patient_name ?? caseRow.patientName)}`, 15, 28);
-    doc.text(`Data: ${dateStr}`, 15, 34);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Data: ${dateStr}`, 15, 47);
+    doc.text(`Responsável Técnico: ${vetName} — CRMV: ${vetCrmv}`, 15, 53);
 
-    // Body
+    // ─── 1. DADOS DO PACIENTE ───
+    let y = 63;
     doc.setFontSize(11);
-    let y = 44;
-    const lines = [
-      `Nome: ${sanitize(caseRow.patient_name ?? caseRow.patientName)}`,
-      `Espécie: ${sanitize(caseRow.species)}`,
-      `Raça: ${sanitize(caseRow.breed)}`,
-      `Idade (anos): ${sanitize(caseRow.age_years ?? caseRow.ageYears)}`,
-      `Peso (kg): ${sanitize(caseRow.weight_kg ?? caseRow.weightKg)}`,
-      `Procedimento: ${sanitize(caseRow.procedure)}`,
-      `Status: ${sanitize(caseRow.status)}`,
-      '',
-      'Notas Clínicas:',
-      sanitize(caseRow.notes ?? caseRow.notes_text ?? ''),
-    ];
+    doc.setFont('helvetica', 'bold');
+    doc.text('1. DADOS DO PACIENTE', 15, y);
+    y += 7;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
 
-    for (const line of lines) {
-      const split = doc.splitTextToSize(line, 180);
-      doc.text(split, 15, y);
-      y += split.length * 6;
-      if (y > 260) {
-        // footer for page
-        doc.setFontSize(9);
-        doc.text(`Vanguard Veterinary — Ortopedia Veterinária`, 15, 287);
-        doc.addPage();
-        y = 20;
-      }
+    y = addLine(doc, `Nome: ${field(caseRow.patient_name ?? caseRow.patientName)}`, 18, y, 170);
+    y = addLine(doc, `Espécie: ${field(caseRow.species)}`, 18, y, 170);
+    y = addLine(doc, `Raça: ${field(caseRow.breed)}`, 18, y, 170);
+    y = addLine(doc, `Idade: ${field(caseRow.age_years ?? caseRow.ageYears)} anos`, 18, y, 170);
+    y = addLine(doc, `Peso: ${field(caseRow.weight_kg ?? caseRow.weightKg)} kg`, 18, y, 170);
+    y = addLine(doc, `Procedimento: ${field(caseRow.procedure)}`, 18, y, 170);
+    y = addLine(doc, `Status: ${field(caseRow.status)}`, 18, y, 170);
+    y += 4;
+
+    // ─── 2. NOTAS CLÍNICAS ───
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('2. NOTAS CLÍNICAS', 15, y);
+    y += 7;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+
+    const notesContent = sanitize(caseRow.notes ?? caseRow.notes_text ?? '');
+    if (notesContent) {
+      y = addLine(doc, notesContent, 18, y, 170);
+    } else {
+      doc.text('—', 18, y);
+      y += 6;
     }
+    y += 4;
+
+    // ─── 3. ANÁLISE DE IA ───
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('3. ANÁLISE DE IA', 15, y);
+    y += 7;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
 
     // AI analysis (if present)
     const rawAi = caseRow.ai_analysis ?? caseRow.aiAnalysis ?? null;
@@ -83,11 +143,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       try { aiObj = typeof rawAi === 'string' ? JSON.parse(rawAi) : rawAi; } catch { aiObj = rawAi; }
     }
     if (aiObj) {
-      y += 4;
-      doc.setFontSize(11);
-      doc.text('Análise de IA:', 15, y);
-      y += 6;
-
       // Landmarks Anatômicos
       doc.setFontSize(10);
       doc.text('Landmarks Anatômicos:', 15, y);
@@ -155,8 +210,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Footer
-    doc.setFontSize(9);
-    doc.text(`Vanguard Veterinary — Ortopedia Veterinária — ${dateStr}`, 15, 287);
+    const pageCount = (doc as any).internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(148, 163, 184);
+      doc.text('Vanguard Veterinary — Ortopedia Veterinária', 15, 287);
+      doc.text(`Página ${i} de ${pageCount}`, 170, 287);
+      doc.text(`Gerado em: ${dateStr}`, 105, 287, { align: 'center' });
+    }
+    doc.setTextColor(0, 0, 0);
 
     const arrayBuffer = doc.output('arraybuffer');
     res.setHeader('Content-Type', 'application/pdf');
