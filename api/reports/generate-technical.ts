@@ -87,17 +87,70 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       doc.setFontSize(11);
       doc.text('Análise de IA:', 15, y);
       y += 6;
-      if (aiObj.recommendations) {
-        const rec = sanitize(serializeField(aiObj.recommendations));
-        const split = doc.splitTextToSize(rec, 180);
-        doc.text(split, 15, y);
-        y += split.length * 6;
+
+      // Landmarks Anatômicos
+      doc.setFontSize(10);
+      doc.text('Landmarks Anatômicos:', 15, y);
+      y += 5;
+      const landmarks = Array.isArray(aiObj.anatomicalLandmarks) ? aiObj.anatomicalLandmarks : [];
+      if (landmarks.length === 0) {
+        doc.text('—', 18, y);
+        y += 5;
+      } else {
+        for (const lm of landmarks) {
+          const label = lm?.name ? sanitize(lm.name) : '—';
+          const status = lm?.detected ? `✓ ${Math.round((lm.confidence ?? 0) * 100)}%` : '✗ Não detectado';
+          const bullet = `• ${label}: ${status}`;
+          const split = doc.splitTextToSize(bullet, 170);
+          for (const s of split) {
+            if (y > 270) { doc.addPage(); y = 20; }
+            doc.text(s, 18, y);
+            y += 5;
+          }
+        }
       }
-      if (aiObj.riskFactors) {
-        const rf = sanitize(serializeField(aiObj.riskFactors));
-        const split = doc.splitTextToSize(rf, 180);
-        doc.text(split, 15, y);
-        y += split.length * 6;
+      y += 4;
+
+      // Recomendações
+      doc.text('Recomendações:', 15, y);
+      y += 5;
+      const recs = Array.isArray(aiObj.recommendations) ? aiObj.recommendations : [];
+      if (recs.length === 0) {
+        doc.text('—', 18, y);
+        y += 5;
+      } else {
+        for (const r of recs) {
+          const bullet = `• ${sanitize(typeof r === 'string' ? r : JSON.stringify(r))}`;
+          const split = doc.splitTextToSize(bullet, 170);
+          for (const s of split) {
+            if (y > 270) { doc.addPage(); y = 20; }
+            doc.text(s, 18, y);
+            y += 5;
+          }
+        }
+      }
+      y += 4;
+
+      // Fatores de Risco
+      doc.text('Fatores de Risco:', 15, y);
+      y += 5;
+      const risks = Array.isArray(aiObj.riskFactors) ? aiObj.riskFactors : [];
+      if (risks.length === 0) {
+        doc.text('—', 18, y);
+        y += 5;
+      } else {
+        for (const rf of risks) {
+          const sev = rf?.severity ? `[${sanitize(String(rf.severity)).toUpperCase()}] ` : '';
+          const cat = rf?.category ? `${sanitize(rf.category)}: ` : '';
+          const desc = rf?.description ? sanitize(rf.description) : sanitize(serializeField(rf));
+          const bullet = `• ${sev}${cat}${desc}`;
+          const split = doc.splitTextToSize(bullet, 170);
+          for (const s of split) {
+            if (y > 270) { doc.addPage(); y = 20; }
+            doc.text(s, 18, y);
+            y += 5;
+          }
+        }
       }
     }
 
