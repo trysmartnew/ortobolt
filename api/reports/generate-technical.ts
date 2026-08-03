@@ -12,9 +12,41 @@ function serializeField(val: unknown): string {
   try { return JSON.stringify(val, null, 2); } catch { return String(val); }
 }
 
+const SPECIES_MAP: Record<string, string> = {
+  canine: 'Canina',
+  feline: 'Felina',
+  equine: 'Equina',
+  bovine: 'Bovina',
+  avian: 'Aviária',
+  reptile: 'Réptil',
+  other: 'Outra',
+};
+
+const PROCEDURE_MAP: Record<string, string> = {
+  orthopedic: 'Ortopédico',
+  fracture: 'Fratura',
+  radiography: 'Radiografia',
+  surgery: 'Cirurgia',
+  consultation: 'Consulta',
+  other: 'Outro',
+};
+
+const STATUS_MAP: Record<string, string> = {
+  pending: 'Pendente',
+  in_analysis: 'Em Análise',
+  completed: 'Concluído',
+  critical: 'Crítico',
+};
+
+function translateEnum(val: unknown, map: Record<string, string>): string {
+  const s = sanitize(val).toLowerCase();
+  return map[s] || (s ? s.charAt(0).toUpperCase() + s.slice(1) : '—');
+}
+
 function field(val: unknown): string {
   const s = sanitize(val);
-  return s || '—';
+  if (!s || s.toLowerCase() === 'sem nome' || s === '0') return '—';
+  return s;
 }
 
 function addLine(doc: any, text: string, x: number, y: number, maxWidth: number, lineHeight: number = 6): number {
@@ -129,12 +161,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     doc.setFont('helvetica', 'normal');
 
     y = addLine(doc, `Nome: ${field(caseRow.patient_name ?? caseRow.patientName)}`, 18, y, 170);
-    y = addLine(doc, `Espécie: ${field(caseRow.species)}`, 18, y, 170);
+    y = addLine(doc, `Espécie: ${translateEnum(caseRow.species, SPECIES_MAP)}`, 18, y, 170);
     y = addLine(doc, `Raça: ${field(caseRow.breed)}`, 18, y, 170);
-    y = addLine(doc, `Idade: ${field(caseRow.age_years ?? caseRow.ageYears)} anos`, 18, y, 170);
-    y = addLine(doc, `Peso: ${field(caseRow.weight_kg ?? caseRow.weightKg)} kg`, 18, y, 170);
-    y = addLine(doc, `Procedimento: ${field(caseRow.procedure)}`, 18, y, 170);
-    y = addLine(doc, `Status: ${field(caseRow.status)}`, 18, y, 170);
+    const ageVal = caseRow.age_years ?? caseRow.ageYears;
+    y = addLine(doc, `Idade: ${ageVal && Number(ageVal) > 0 ? `${ageVal} anos` : '—'}`, 18, y, 170);
+    const weightVal = caseRow.weight_kg ?? caseRow.weightKg;
+    y = addLine(doc, `Peso: ${weightVal && Number(weightVal) > 0 ? `${weightVal} kg` : '—'}`, 18, y, 170);
+    y = addLine(doc, `Procedimento: ${translateEnum(caseRow.procedure, PROCEDURE_MAP)}`, 18, y, 170);
+    y = addLine(doc, `Status: ${translateEnum(caseRow.status, STATUS_MAP)}`, 18, y, 170);
     y += 4;
 
     // ─── 2. NOTAS CLÍNICAS ───
