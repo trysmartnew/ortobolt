@@ -33,6 +33,31 @@ function addLine(doc: any, text: string, x: number, y: number, maxWidth: number,
   return y;
 }
 
+function stripPdfNotes(text: string): string {
+  if (!text) return '';
+  let cleaned = text;
+
+  const copilotIdx = cleaned.indexOf('--- Histórico Copiloto---');
+  if (copilotIdx !== -1) {
+    cleaned = cleaned.substring(0, copilotIdx);
+  }
+
+  cleaned = cleaned.replace(/---\s*Análise IA.*?---/g, '');
+  cleaned = cleaned.replace(/```[\s\S]*?(?:```|$)/g, '');
+  cleaned = cleaned.replace(/^#{1,4}\s+/gm, '');
+  cleaned = cleaned.replace(/\*\*(.+?)\*\*/g, '$1');
+  cleaned = cleaned.replace(/\*(.+?)\*/g, '$1');
+  cleaned = cleaned.replace(/^\|[-\s|:]+\|$/gm, '');
+  cleaned = cleaned.replace(/\|/g, ' — ');
+  cleaned = cleaned.replace(/^---+$/gm, '');
+  cleaned = cleaned.replace(/\[\[.*?\]\]/g, '');
+  cleaned = cleaned.replace(/\[(.*?)\]\(.*?\)/g, '$1');
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+  cleaned = cleaned.replace(/[ \t]{2,}/g, ' ');
+
+  return cleaned.trim();
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   applyCors(res, (req.headers.origin as string) || '');
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -120,7 +145,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
 
-    const notesContent = sanitize(caseRow.notes ?? caseRow.notes_text ?? '');
+    const notesContent = stripPdfNotes(sanitize(caseRow.notes ?? caseRow.notes_text ?? ''));
     if (notesContent) {
       y = addLine(doc, notesContent, 18, y, 170);
     } else {
