@@ -59,12 +59,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let vetCrmv = '—';
     try {
       const { data: vetProfile } = await supabaseAdmin
-        .from('auth_user_profiles')
-        .select('full_name, crmv')
+        .from('profiles')
+        .select('name, crmv')
         .eq('id', auth.user.id)
         .single();
       if (vetProfile) {
-        vetName = field(vetProfile.full_name);
+        vetName = field(vetProfile.name);
         vetCrmv = field(vetProfile.crmv);
       }
     } catch { /* fallback: manter '—' */ }
