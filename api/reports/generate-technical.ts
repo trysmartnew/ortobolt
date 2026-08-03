@@ -209,6 +209,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    // ─── 4. ASSINATURA E VALIDAÇÃO ───
+    y += 10;
+    if (y > 190) {
+      doc.addPage();
+      y = 30;
+    }
+
+    // Linha de assinatura
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.3);
+    doc.line(60, y + 25, 150, y + 25);
+
+    // Nome do responsável (abaixo da linha)
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text(vetName, 105, y + 31, { align: 'center' });
+
+    // CRMV
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`CRMV: ${vetCrmv}`, 105, y + 36, { align: 'center' });
+
+    // Data e hora de emissão
+    doc.text(`Emitido em: ${dateStr}`, 105, y + 41, { align: 'center' });
+
+    // Campo de carimbo (à esquerda)
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Carimbo:', 20, y + 25);
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.2);
+    doc.rect(20, y + 28, 35, 20);
+
+    // Reset
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.2);
+
     // Footer
     const pageCount = (doc as any).internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
