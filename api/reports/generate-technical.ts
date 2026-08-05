@@ -76,6 +76,7 @@ function stripPdfNotes(text: string): string {
 
   cleaned = cleaned.replace(/---\s*Análise IA.*?---/g, '');
   cleaned = cleaned.replace(/```[\s\S]*?(?:```|$)/g, '');
+  cleaned = cleaned.replace(/([A-Za-zÀ-ÿ])\s+([A-Za-zÀ-ÿ])/g, '$1$2');
   cleaned = cleaned.replace(/#{1,4}\s+/g, '');
   cleaned = cleaned.replace(/\*\*(.+?)\*\*/g, '$1');
   cleaned = cleaned.replace(/\*(.+?)\*/g, '$1');
