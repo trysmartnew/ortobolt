@@ -69,14 +69,15 @@ function stripPdfNotes(text: string): string {
   if (!text) return '';
   let cleaned = text;
 
-  const copilotIdx = cleaned.indexOf('--- Histórico Copiloto---');
-  if (copilotIdx !== -1) {
-    cleaned = cleaned.substring(0, copilotIdx);
+  const copilotMatch = cleaned.match(/---\s*Hist[óo]rico\s+Copiloto[\s\S]*$/i);
+  if (copilotMatch) {
+    cleaned = cleaned.substring(0, copilotMatch.index);
+  }
   }
 
   cleaned = cleaned.replace(/---\s*Análise IA.*?---/g, '');
   cleaned = cleaned.replace(/```[\s\S]*?(?:```|$)/g, '');
-  cleaned = cleaned.replace(/^#{1,4}\s+/gm, '');
+  cleaned = cleaned.replace(/#{1,4}\s+/g, '');
   cleaned = cleaned.replace(/\*\*(.+?)\*\*/g, '$1');
   cleaned = cleaned.replace(/\*(.+?)\*/g, '$1');
   cleaned = cleaned.replace(/^\|[-\s|:]+\|$/gm, '');
