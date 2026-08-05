@@ -73,7 +73,6 @@ function stripPdfNotes(text: string): string {
   if (copilotMatch) {
     cleaned = cleaned.substring(0, copilotMatch.index);
   }
-  }
 
   cleaned = cleaned.replace(/---\s*Análise IA.*?---/g, '');
   cleaned = cleaned.replace(/```[\s\S]*?(?:```|$)/g, '');
