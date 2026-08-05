@@ -12,6 +12,29 @@ function serializeField(val: unknown): string {
   try { return JSON.stringify(val, null, 2); } catch { return String(val); }
 }
 
+function parseConfidence(val: unknown): number {
+  if (typeof val === 'number' && Number.isFinite(val)) {
+    if (val > 1) return val / 100;
+    return Math.max(0, val);
+  }
+  if (typeof val === 'string') {
+    const text = val.trim().replace(',', '.');
+    if (!text) return 0;
+    const normalized = text.replace(/%$/, '');
+    const parsed = Number(normalized);
+    if (!Number.isFinite(parsed) || parsed < 0) return 0;
+    return text.endsWith('%') || parsed > 1 ? parsed / 100 : parsed;
+  }
+  return 0;
+}
+
+function removeAiDuplicateSections(text: string): string {
+  return text
+    .replace(/(?:^|\n)(Landmarks Anat[oô]micos:|Recomenda[cç][oõ]es:|Fatores de Risco:)[\s\S]*?(?=\n(?:Landmarks Anat[oô]micos:|Recomenda[cç][oõ]es:|Fatores de Risco:)|$)/gi, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 const SPECIES_MAP: Record<string, string> = {
   canine: 'Canina',
   feline: 'Felina',
@@ -76,7 +99,9 @@ function stripPdfNotes(text: string): string {
 
   cleaned = cleaned.replace(/---\s*Análise IA.*?---/g, '');
   cleaned = cleaned.replace(/```[\s\S]*?(?:```|$)/g, '');
-  cleaned = cleaned.replace(/([A-Za-zÀ-ÿ])\s+([A-Za-zÀ-ÿ])/g, '$1$2');
+  cleaned = cleaned.replace(/((?:[A-Za-zÀ-ÿ\u00C0-\u00FF]\s+){2,}[A-Za-zÀ-ÿ\u00C0-\u00FF])/g, (m) => m.replace(/\s+/g, ''));
+  cleaned = cleaned.replace(/^\s*\|.*\|\s*$/gm, '');
+  cleaned = cleaned.replace(/^\s*\|[-:\s|]+\|\s*$/gm, '');
   cleaned = cleaned.replace(/#{1,4}\s+/g, '');
   cleaned = cleaned.replace(/\*\*(.+?)\*\*/g, '$1');
   cleaned = cleaned.replace(/\*(.+?)\*/g, '$1');
@@ -180,7 +205,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
 
-    const notesContent = stripPdfNotes(sanitize(caseRow.notes ?? caseRow.notes_text ?? ''));
+    const rawAi = caseRow.ai_analysis ?? caseRow.aiAnalysis ?? null;
+    let aiObj: any = null;
+    if (rawAi) {
+      try { aiObj = typeof rawAi === 'string' ? JSON.parse(rawAi) : rawAi; } catch { aiObj = rawAi; }
+    }
+
+    let notesContent = stripPdfNotes(sanitize(caseRow.notes ?? caseRow.notes_text ?? ''));
+    if (aiObj) {
+      notesContent = removeAiDuplicateSections(notesContent);
+    }
     if (notesContent) {
       y = addLine(doc, notesContent, 18, y, 170);
     } else {
@@ -198,11 +232,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     doc.setFont('helvetica', 'normal');
 
     // AI analysis (if present)
-    const rawAi = caseRow.ai_analysis ?? caseRow.aiAnalysis ?? null;
-    let aiObj: any = null;
-    if (rawAi) {
-      try { aiObj = typeof rawAi === 'string' ? JSON.parse(rawAi) : rawAi; } catch { aiObj = rawAi; }
-    }
     if (aiObj) {
       // Landmarks Anatômicos
       doc.setFontSize(10);
@@ -215,7 +244,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       } else {
         for (const lm of landmarks) {
           const label = lm?.name ? sanitize(lm.name) : '—';
-          const status = lm?.detected ? `✓ ${Math.round((lm.confidence ?? 0) * 100)}%` : '✗ Não detectado';
+          const status = lm?.detected ? `✓ ${Math.round(parseConfidence(lm.confidence) * 100)}%` : '✗ Não detectado';
           const bullet = `• ${label}: ${status}`;
           const split = doc.splitTextToSize(bullet, 170);
           for (const s of split) {
