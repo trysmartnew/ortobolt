@@ -54,12 +54,12 @@ function addLine(doc: any, text: string, x: number, y: number, maxWidth: number,
   for (const line of split) {
     if (y > 270) {
       doc.setFontSize(9);
-      doc.text('Vanguard Veterinary — Ortopedia Veterinária', 15, 287);
+      doc.text('Vanguard Veterinary — Ortopedia Veterinária', 15, 287, { charSpace: 0 });
       doc.addPage();
       y = 20;
       doc.setFontSize(10);
     }
-    doc.text(line, x, y);
+    doc.text(line, x, y, { charSpace: 0 });
     y += lineHeight;
   }
   return y;
@@ -128,7 +128,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const { jsPDF } = await import('jspdf');
     const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-    doc.setCharSpace(0);
+    
 
     const now = new Date();
     const dateStr = now.toLocaleString('pt-BR');
@@ -136,26 +136,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ─── Cabeçalho Clínico ───
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('VANGUARD VETERINARY', 15, 20);
+    doc.text('VANGUARD VETERINARY', 15, 20, { charSpace: 0 });
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('Ortopedia Veterinária', 15, 26);
+    doc.text('Ortopedia Veterinária', 15, 26, { charSpace: 0 });
     doc.setDrawColor(0, 86, 179);
     doc.line(15, 30, 195, 30);
 
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.text('LAUDO TÉCNICO', 15, 40);
+    doc.text('LAUDO TÉCNICO', 15, 40, { charSpace: 0 });
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Data: ${dateStr}`, 15, 47);
-    doc.text(`Responsável Técnico: ${vetName} — CRMV: ${vetCrmv}`, 15, 53);
+    doc.text(`Data: ${dateStr}`, 15, 47, { charSpace: 0 });
+    doc.text(`Responsável Técnico: ${vetName} — CRMV: ${vetCrmv}`, 15, 53, { charSpace: 0 });
 
     // ─── 1. DADOS DO PACIENTE ───
     let y = 63;
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
-    doc.text('1. DADOS DO PACIENTE', 15, y);
+    doc.text('1. DADOS DO PACIENTE', 15, y, { charSpace: 0 });
     y += 7;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
@@ -174,7 +174,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ─── 2. NOTAS CLÍNICAS ───
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
-    doc.text('2. NOTAS CLÍNICAS', 15, y);
+    doc.text('2. NOTAS CLÍNICAS', 15, y, { charSpace: 0 });
     y += 7;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
@@ -183,7 +183,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (notesContent) {
       y = addLine(doc, notesContent, 18, y, 170);
     } else {
-      doc.text('—', 18, y);
+      doc.text('—', 18, y, { charSpace: 0 });
       y += 6;
     }
     y += 4;
@@ -191,7 +191,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ─── 3. ANÁLISE DE IA ───
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
-    doc.text('3. ANÁLISE DE IA', 15, y);
+    doc.text('3. ANÁLISE DE IA', 15, y, { charSpace: 0 });
     y += 7;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
@@ -205,11 +205,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (aiObj) {
       // Landmarks Anatômicos
       doc.setFontSize(10);
-      doc.text('Landmarks Anatômicos:', 15, y);
+      doc.text('Landmarks Anatômicos:', 15, y, { charSpace: 0 });
       y += 5;
       const landmarks = Array.isArray(aiObj.anatomicalLandmarks) ? aiObj.anatomicalLandmarks : [];
       if (landmarks.length === 0) {
-        doc.text('—', 18, y);
+        doc.text('—', 18, y, { charSpace: 0 });
         y += 5;
       } else {
         for (const lm of landmarks) {
@@ -219,7 +219,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           const split = doc.splitTextToSize(bullet, 170);
           for (const s of split) {
             if (y > 270) { doc.addPage(); y = 20; }
-            doc.text(s, 18, y);
+            doc.text(s, 18, y, { charSpace: 0 });
             y += 5;
           }
         }
@@ -227,11 +227,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       y += 4;
 
       // Recomendações
-      doc.text('Recomendações:', 15, y);
+      doc.text('Recomendações:', 15, y, { charSpace: 0 });
       y += 5;
       const recs = Array.isArray(aiObj.recommendations) ? aiObj.recommendations : [];
       if (recs.length === 0) {
-        doc.text('—', 18, y);
+        doc.text('—', 18, y, { charSpace: 0 });
         y += 5;
       } else {
         for (const r of recs) {
@@ -239,7 +239,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           const split = doc.splitTextToSize(bullet, 170);
           for (const s of split) {
             if (y > 270) { doc.addPage(); y = 20; }
-            doc.text(s, 18, y);
+            doc.text(s, 18, y, { charSpace: 0 });
             y += 5;
           }
         }
@@ -247,11 +247,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       y += 4;
 
       // Fatores de Risco
-      doc.text('Fatores de Risco:', 15, y);
+      doc.text('Fatores de Risco:', 15, y, { charSpace: 0 });
       y += 5;
       const risks = Array.isArray(aiObj.riskFactors) ? aiObj.riskFactors : [];
       if (risks.length === 0) {
-        doc.text('—', 18, y);
+        doc.text('—', 18, y, { charSpace: 0 });
         y += 5;
       } else {
         for (const rf of risks) {
@@ -262,7 +262,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           const split = doc.splitTextToSize(bullet, 170);
           for (const s of split) {
             if (y > 270) { doc.addPage(); y = 20; }
-            doc.text(s, 18, y);
+            doc.text(s, 18, y, { charSpace: 0 });
             y += 5;
           }
         }
@@ -284,20 +284,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Nome do responsável (abaixo da linha)
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    doc.text(vetName, 105, y + 31, { align: 'center' });
+    doc.text(vetName, 105, y + 31, { charSpace: 0,  align: 'center' });
 
     // CRMV
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text(`CRMV: ${vetCrmv}`, 105, y + 36, { align: 'center' });
+    doc.text(`CRMV: ${vetCrmv}`, 105, y + 36, { charSpace: 0,  align: 'center' });
 
     // Data e hora de emissão
-    doc.text(`Emitido em: ${dateStr}`, 105, y + 41, { align: 'center' });
+    doc.text(`Emitido em: ${dateStr}`, 105, y + 41, { charSpace: 0,  align: 'center' });
 
     // Campo de carimbo (à esquerda)
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('Carimbo:', 20, y + 25);
+    doc.text('Carimbo:', 20, y + 25, { charSpace: 0 });
     doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.2);
     doc.rect(20, y + 28, 35, 20);
@@ -312,9 +312,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184);
-      doc.text('Vanguard Veterinary — Ortopedia Veterinária', 15, 287);
-      doc.text(`Página ${i} de ${pageCount}`, 170, 287);
-      doc.text(`Gerado em: ${dateStr}`, 105, 287, { align: 'center' });
+      doc.text('Vanguard Veterinary — Ortopedia Veterinária', 15, 287, { charSpace: 0 });
+      doc.text(`Página ${i} de ${pageCount}`, 170, 287, { charSpace: 0 });
+      doc.text(`Gerado em: ${dateStr}`, 105, 287, { charSpace: 0,  align: 'center' });
     }
     doc.setTextColor(0, 0, 0);
 
