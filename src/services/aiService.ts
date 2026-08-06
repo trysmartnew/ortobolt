@@ -669,7 +669,8 @@ const buildCaseContextString = (ctx: Partial<ClinicalCase>): string => {
 export async function analyzeImage(
   imageBase64: string,
   caseInfo?: Partial<ClinicalCase>,
-  imageDimensions?: { width: number; height: number }
+  imageDimensions?: { width: number; height: number },
+  signal?: AbortSignal
 ): Promise<AnalysisWithMarkings> {
   // ✅ Comprimir imagem antes de enviar (reduz payload em ~70%)
   const compressed = await compressImageBase64(imageBase64);
@@ -700,6 +701,7 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
       },
     ],
     max_tokens: 8192,
+    signal,
   });
 
   const markings = extractMarkingsFromAnalysis(fullResponseText);
@@ -992,6 +994,7 @@ export async function refineClinicalAnalysis(
         },
       ],
       max_tokens: 1000,
+      signal: payload.signal,
     });
   } catch (err) {
     console.error('Refine analysis error:', err);

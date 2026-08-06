@@ -16,6 +16,15 @@ interface Message {
 
 export default function AIAssistant() {
   const { activeCase } = useApp();
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Aborta requisições pendentes ao desmontar
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: 'Olá! Estou pronto para ajudar você na interpretação de exames, diagnósticos diferenciais e condutas terapêuticas. Qual é o caso clínico de hoje?' }
@@ -44,6 +53,10 @@ export default function AIAssistant() {
     setInput('');
     setIsStreaming(true);
 
+    // Aborta requisição anterior se existir
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+
     try {
       const history = messages.map(m => ({ role: m.role, content: m.content }));
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
@@ -57,7 +70,8 @@ export default function AIAssistant() {
             updated[updated.length - 1] = { role: 'assistant', content: accumulated };
             return updated;
           });
-        }
+        },
+        abortControllerRef.current.signal
       );
     } catch (err) {
       setMessages(prev => [...prev, {

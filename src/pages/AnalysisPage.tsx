@@ -40,6 +40,15 @@ export default function AnalysisPage() {
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [aiGeneratedMarkings, setAiGeneratedMarkings] = useState<MarkingsData | null>(null);
   const konvaStageRef = useRef<Konva.Stage | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Aborta requisições pendentes ao desmontar
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
   const {
     markings, activeTool, setActiveTool,
     addCircle, addAngle, addMarker, addROI,
@@ -108,11 +117,17 @@ export default function AnalysisPage() {
   const analyze = async () => {
     if (!imageBase64 || mode === 'analyzing') return;
     setMode('analyzing');
+
+    // Aborta requisição anterior se existir
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+
     try {
       const res = await analyzeImage(
         imageBase64,
         undefined,
-        imageDimensions || undefined
+        imageDimensions || undefined,
+        abortControllerRef.current.signal
       );
       setResult(res.analysisText);
       setAiGeneratedMarkings(res.markings);
@@ -120,6 +135,8 @@ export default function AnalysisPage() {
       setMode('result');
       initSession(res.analysisText);
     } catch (err) {
+      // Ignora erros de abort (usuário mudou de contexto ou desmontou)
+      if (err instanceof Error && err.name === 'AbortError') return;
       if (err instanceof ApiError) {
         switch (err.status) {
           case 401:

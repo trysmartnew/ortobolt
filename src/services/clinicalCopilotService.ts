@@ -59,8 +59,9 @@ export async function sendCopilotMessage(params: {
   imageBase64: string;
   userMessage: string;
   onChunk: (text: string) => void;
+  signal?: AbortSignal;
 }): Promise<{ session: ClinicalCopilotSession; reply: string }> {
-  const { session, imageBase64, userMessage, onChunk } = params;
+  const { session, imageBase64, userMessage, onChunk, signal } = params;
   const now = new Date().toISOString();
 
   const userMsg: ChatMessage = {
@@ -74,7 +75,8 @@ export async function sendCopilotMessage(params: {
 
   const reply = await sendClinicalCopilotStream(
     { imageBase64, visionAnalysis: session.visionAnalysis, refinedAnalysis: session.refinedAnalysis, clinicalContext: session.clinicalContext, userMessage, history },
-    onChunk
+    onChunk,
+    signal
   );
 
   const assistantMsg: ChatMessage = {
@@ -94,8 +96,8 @@ export async function sendCopilotMessage(params: {
   return { session: next, reply };
 }
 
-export async function refineSessionAnalysis(params: { session: ClinicalCopilotSession; imageBase64: string }): Promise<ClinicalCopilotSession> {
-  const { session, imageBase64 } = params;
+export async function refineSessionAnalysis(params: { session: ClinicalCopilotSession; imageBase64: string; signal?: AbortSignal }): Promise<ClinicalCopilotSession> {
+  const { session, imageBase64, signal } = params;
   const history = historyForApi(session.messages);
 
   const refined = await refineClinicalAnalysis({
@@ -105,6 +107,7 @@ export async function refineSessionAnalysis(params: { session: ClinicalCopilotSe
     clinicalContext: session.clinicalContext,
     userMessage: 'Consolidar análise refinada.',
     history,
+    signal,
   });
 
   const next: ClinicalCopilotSession = { ...session, refinedAnalysis: refined, updatedAt: new Date().toISOString() };

@@ -32,4 +32,6 @@ export interface ClinicalCopilotPayload {
   clinicalContext: ClinicalContextDraft;
   userMessage: string;
   history: { role: 'user' | 'assistant'; content: string }[];
+  /** Sinal externo para cancelamento da requisição */
+  signal?: AbortSignal;
 }

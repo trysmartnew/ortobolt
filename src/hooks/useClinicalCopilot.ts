@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   createCopilotSession,
@@ -21,6 +21,14 @@ export function useClinicalCopilot(imageBase64: string | null) {
   const [streaming, setStreaming] = useState(false);
   const [refining, setRefining] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Aborta requisições pendentes ao desmontar
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   const initSession = useCallback(
     async (visionAnalysis: string, initialContext?: ClinicalContextDraft) => {
@@ -53,6 +61,10 @@ export function useClinicalCopilot(imageBase64: string | null) {
       setStreaming(true);
       setError(null);
 
+      // Aborta requisição anterior se existir
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = new AbortController();
+
       const loadingId = 'copilot-loading';
       const userMsg: ChatMessage = {
         id: `u-${Date.now()}`,
@@ -77,6 +89,7 @@ export function useClinicalCopilot(imageBase64: string | null) {
           session,
           imageBase64,
           userMessage: trimmed,
+          signal: abortControllerRef.current?.signal,
           onChunk: (accumulated) => {
             setSession((prev) => {
               if (!prev) return prev;
@@ -94,6 +107,8 @@ export function useClinicalCopilot(imageBase64: string | null) {
 
         setSession(next);
       } catch (err) {
+        // Ignora erros de abort (usuário mudou de contexto ou desmontou)
+        if (err instanceof Error && err.name === 'AbortError') return;
         const msg =
           err instanceof Error ? err.message : 'Erro ao conectar com o copiloto.';
         setError(msg);
@@ -119,7 +134,7 @@ export function useClinicalCopilot(imageBase64: string | null) {
     setRefining(true);
     setError(null);
     try {
-      const next = await refineSessionAnalysis({ session, imageBase64 });
+      const next = await refineSessionAnalysis({ session, imageBase64, signal: abortControllerRef.current?.signal });
       setSession(next);
       
       // Registro local do checkpoint de refinamento

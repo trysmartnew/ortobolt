@@ -17,6 +17,15 @@ interface PrePostComparisonProps {
 }
 
 export default function PrePostComparison({ onSaveCase, existingApprovalStatus = 'draft' }: PrePostComparisonProps) {
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Aborta requisições pendentes ao desmontar
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
   const [imageBefore, setImageBefore] = useState<string | null>(null);
   const [imageAfter, setImageAfter] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -105,11 +114,15 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
     setIsAnalyzing(true);
     setError('');
 
+    // Aborta requisição anterior se existir
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+
     try {
       const beforeBase64 = imageBefore.split(',')[1] || imageBefore;
       const afterBase64 = imageAfter.split(',')[1] || imageAfter;
 
-      const result = await analyzeImagesComparison(beforeBase64, afterBase64);
+      const result = await analyzeImagesComparison(beforeBase64, afterBase64, undefined, abortControllerRef.current.signal);
 
       // Extrair métricas quantitativas se disponíveis
       if (result.metrics) {
@@ -123,6 +136,8 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
         fullAnalysis: result.fullAnalysis,
       });
     } catch (err) {
+      // Ignora erros de abort (usuário mudou de contexto ou desmontou)
+      if (err instanceof Error && err.name === 'AbortError') return;
       setError('Erro na análise comparativa de IA. Verifique sua conexão e tente novamente.');
       console.error('AI comparison error:', err);
     } finally {
