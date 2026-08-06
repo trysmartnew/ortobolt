@@ -1,17 +1,14 @@
-import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity, GitCompare, LineChart, Ruler as RulerIcon, Images, Loader2 } from 'lucide-react';
+import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Stethoscope, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity, GitCompare, LineChart, Ruler as RulerIcon, Images, Loader2 } from 'lucide-react';
 import { useState, useMemo, useRef, useEffect, useCallback, memo } from 'react';
 
 import CaseAnalysisTab from '@/components/CaseAnalysisTab';
-import { ClinicalEvidenceView } from '@/components/ClinicalEvidenceView';
 import { RadiographViewer } from '@/components/radiographs/RadiographViewer';
 import { Card, Button, StatusBadge, RiskTag, EmptyState } from '@/components/ui';
-import { useAnalysis } from '@/contexts/AnalysisContext';
 import { useApp } from '@/contexts/AppContext';
-import { useCaseRealtime } from '@/hooks/useCaseRealtime';
 // src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
 import { uploadImageToStorage } from '@/services/imageService';
-import { getSupabaseAccessToken, uploadCaseImage } from '@/services/supabase';
+import { getSupabaseAccessToken } from '@/services/supabase';
 import type { ClinicalCase, ProcedureType, CaseStatus } from '@/types/index';
 import type { MarkingsData } from '@/types/markings';
 
@@ -486,7 +483,7 @@ export default function CasePage() {
   const [showEdit, setShowEdit] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [newNote, setNewNote] = useState('');
-  const [showNoteInput, setShowNoteInput] = useState(false);
+  const [_showNoteInput, setShowNoteInput] = useState(false);
   const [analysisTool, setAnalysisTool] = useState<string | null>(null);
   const [comparisonImages, setComparisonImages] = useState<{ left: string | null; right: string | null }>({ left: null, right: null });
   const [selectedDropTarget, setSelectedDropTarget] = useState<'left' | 'right' | null>(null);
@@ -630,7 +627,7 @@ export default function CasePage() {
   };
 
 
-  const addClinicalNote = () => {
+  const _addClinicalNote = () => {
     if (!newNote.trim()) return;
     const timestamp = new Date().toLocaleString('pt-BR');
     const noteEntry = `[${timestamp}] ${newNote.trim()}`;
@@ -652,7 +649,7 @@ export default function CasePage() {
     );
   };
 
-  const progress = protocol.steps.length > 0 ? Math.round((completedSteps.length / protocol.steps.length) * 100) : 0;
+  const _progress = protocol.steps.length > 0 ? Math.round((completedSteps.length / protocol.steps.length) * 100) : 0;
 
   const finalAvatarUrl = displayAvatarUrl || activeCase.avatarUrl;
   const finalImageUrl = displayImageUrl || activeCase.imageUrl;
@@ -799,7 +796,7 @@ export default function CasePage() {
                       min="0"
                       max="100"
                       defaultValue="50"
-                      onChange={(e) => { }}
+                      onChange={(_e) => { }}
                       className="w-full h-2 premium-header-bg bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[var(--color-accent)]"
                     />
                   </div>
