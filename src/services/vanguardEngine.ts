@@ -4,6 +4,7 @@
 // ✅ Importar em: AIAssistant.tsx, AnalysisPage.tsx
 
 import { z } from 'zod';
+
 import { supabase, getSupabaseAccessToken } from '@/services/supabase';
 
 // Schema rígido para respostas ortopédicas estruturadas

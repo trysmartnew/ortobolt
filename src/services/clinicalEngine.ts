@@ -3,8 +3,9 @@
 // Transforma AIAnalysisResult em ClinicalEvidence validado
 
 import { z } from 'zod';
+
 import { ClinicalEvidenceSchema, type ClinicalEvidence, type ClinicalFinding } from '@/schemas/clinicalEvidence';
-import type { AIAnalysisResult, AnatomicalLandmark, RiskFactor } from '@/types';
+import type { AIAnalysisResult, RiskFactor } from '@/types';
 
 // Cache memoizado: aiAnalysis.id → ClinicalEvidence
 const evidenceCache = new Map<string, ClinicalEvidence>();

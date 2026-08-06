@@ -1,11 +1,12 @@
 import { lazy, Suspense, useEffect, useRef } from 'react';
+
 import { AppProvider, useApp } from '@/contexts/AppContext';
 import type { Page } from '@/contexts/AppContext';
-import { supabase } from '@/services/supabase';
 import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 import ResetPasswordPage from '@/pages/ResetPasswordPage';
+import { supabase } from '@/services/supabase';
 
 // Code-split: cada pagina gera chunk proprio; carrega so quando navegada
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));

@@ -1,11 +1,13 @@
-import { useMemo, useState, useCallback } from 'react';
 import {
   ClipboardList, Scan, Activity, BarChart3,
   Bot, Bell, User, Settings, LogOut,
   Users, TrendingUp, Ruler, HelpCircle, Sparkles, Images
 } from 'lucide-react';
+import { useMemo, useState, useCallback } from 'react';
+
 import { useApp } from '@/contexts/AppContext';
 import type { Page } from '@/contexts/AppContext';
+
 import { AnalysisQuickSelectModal } from './AnalysisQuickSelectModal';
 
 interface MenuItem {

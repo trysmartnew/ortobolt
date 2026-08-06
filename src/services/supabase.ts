@@ -4,10 +4,11 @@
 // ✅ Segurança: URLs assinadas com expiração de 24h para imagens médicas
 
 import { createClient } from '@supabase/supabase-js';
+
 import type { User } from '@/types/index';
 import type { MarkingsData } from '@/types/markings';
-import { createLogger } from '@/utils/logger';
 import { compressImage } from '@/utils/imageCompression';
+import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('supabase');
 
@@ -69,13 +70,6 @@ interface UserProfileRow {
   preferences: User['preferences'] | null;
 }
 
-interface CertRow {
-  id: string;
-  title: string;
-  issuer: string;
-  year: number;
-  verified: boolean;
-}
 
 export async function fetchUserProfile(userId: string): Promise<User | null> {
   // ✅ C-03: Campos explícitos — nunca select('*')

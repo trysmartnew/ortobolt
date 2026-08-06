@@ -1,5 +1,5 @@
-import { Point } from '../types/markings';
 import { NORBERG_THRESHOLDS, TPA_THRESHOLDS } from '../constants/markingThresholds';
+import { Point } from '../types/markings';
 
 /** 
  * Calcula o ângulo (em graus) entre três pontos, com o vertex como ponto central.

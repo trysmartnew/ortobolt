@@ -1,4 +1,5 @@
 ﻿import { describe, it, expect } from 'vitest';
+
 import { validarRespostaMedica } from '@/services/vanguardEngine';
 
 const baseResposta = {

@@ -2,9 +2,10 @@
 // Serviço centralizado de processamento e upload de imagens
 // Comprime + upload para Storage + retorna URL pública (nunca base64)
 
+import { createLogger } from '@/utils/logger';
+
 import { compressImageBase64 } from './aiService';
 import { uploadRadiografia, uploadCaseImage, getSignedImageUrl } from './supabase';
-import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('imageService');
 

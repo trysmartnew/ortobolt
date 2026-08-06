@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
+
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
-import ClinicalCopilotPanel from './ClinicalCopilotPanel';
 import type { ClinicalCase as Case, AIAnalysisResult } from '@/types/index';
+
+import ClinicalCopilotPanel from './ClinicalCopilotPanel';
 
 interface ClinicalAssistantProps {
   caseData: Case;

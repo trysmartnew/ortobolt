@@ -1,7 +1,7 @@
-import type { ChatMessage } from '@/types/index';
-import type { ClinicalContextDraft, ClinicalCopilotSession } from '@/types/clinicalCopilot';
 import { refineClinicalAnalysis, sendClinicalCopilotStream } from '@/services/aiService';
 import { localAuditService } from '@/services/localAuditService';
+import type { ClinicalContextDraft, ClinicalCopilotSession } from '@/types/clinicalCopilot';
+import type { ChatMessage } from '@/types/index';
 
 export async function createCopilotSession(
   visionAnalysis: string,

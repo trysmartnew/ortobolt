@@ -1,11 +1,12 @@
 // src/pages/ComparativeAnalysisPage.tsx
 import React, { Suspense, lazy } from 'react';
+
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SectionHeader, Card, EmptyState } from '@/components/ui';
-import { useApp } from '@/contexts/AppContext';
 import { useAnalysis } from '@/contexts/AnalysisContext';
-import { buildCaseTitle } from '@/services/clinicalCaseIntegrationService';
+import { useApp } from '@/contexts/AppContext';
 import { PRIMARY_MODEL } from '@/services/aiService';
+import { buildCaseTitle } from '@/services/clinicalCaseIntegrationService';
 import { uploadRadiografia } from '@/services/supabase';
 import type { ClinicalCase, CaseExam } from '@/types';
 

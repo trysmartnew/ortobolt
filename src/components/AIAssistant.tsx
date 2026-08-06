@@ -1,12 +1,13 @@
 ﻿// src/components/AIAssistant.tsx
 // 🤖 Chat Clínico — Widget flutuante com diretrizes veterinárias
-import { useState, useRef, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+
+import { useApp } from '@/contexts/AppContext';
 import { sendChatMessageStream } from '@/services/aiService';
 import { buildVetMessage } from '@/services/veterinaryPrompts';
 
-import { useApp } from '@/contexts/AppContext';
 
 interface Message {
   role: 'user' | 'assistant';

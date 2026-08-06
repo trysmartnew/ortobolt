@@ -1,28 +1,26 @@
 // src/pages/AnalysisPage.tsx
 // Upload → Análise → Copiloto → Aprovar Caso Completo → pipeline integrado
 
-import React, { useState, useRef, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import { useAnalysis } from '@/contexts/AnalysisContext';
-import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles, Images, FileText, Maximize2, X } from 'lucide-react';
-import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings, ApiError } from '@/services/aiService';
-import { uploadRadiografia, getSignedImageUrl } from '@/services/supabase';
-import { generateLaudoReport } from '@/services/pdfService';
 import type Konva from 'konva';
+import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles, Images, FileText, Maximize2, X } from 'lucide-react';
+import React, { useState, useRef, useMemo, useEffect , lazy, Suspense } from 'react';
 
-import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
-import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
 import ApproveCompleteCaseBar from '@/components/analysis/ApproveCompleteCaseBar';
+import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
 import ZoomableImage from '@/components/analysis/ZoomableImage';
-import { lazy, Suspense } from 'react';
+import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
+import { useAnalysis } from '@/contexts/AnalysisContext';
 // Code-split: html2canvas (~202 kB) + jspdf (~391 kB) so na Mesa de Luz
-import { useMarkings } from '@/hooks/useMarkings';
-import type { MarkingTool, MarkingsData } from '@/types/markings';
-import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import { useApp } from '@/contexts/AppContext';
+import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
+import { useMarkings } from '@/hooks/useMarkings';
+import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings, ApiError } from '@/services/aiService';
 import { buildCaseTitle , stripAiArtifacts} from '@/services/clinicalCaseIntegrationService';
-
+import { generateLaudoReport } from '@/services/pdfService';
+import { uploadRadiografia, getSignedImageUrl } from '@/services/supabase';
 import type { ClinicalCase, CaseExam } from '@/types';
+import type { MarkingTool, MarkingsData } from '@/types/markings';
 
 type Mode = 'idle' | 'preview' | 'analyzing' | 'result';
 
@@ -528,9 +526,10 @@ export default function AnalysisPage() {
       )}
       {/* C3: O painel antigo que ficava aqui foi movido para dentro do layout de resultado */}
       {zoomOpen && imageData && imageDimensions && (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions -- intentional modal backdrop close
         <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 backdrop-blur-sm" role="dialog" aria-modal="true" onClick={() => setZoomOpen(false)}>
           <button type="button" onClick={() => setZoomOpen(false)} aria-label="Fechar zoom" className="absolute top-4 right-4 z-[121] flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20"><X className="h-5 w-5" /></button>
-          <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+          <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }} className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
             <ZoomableImage
               imageUrl={imageData}
               naturalWidth={imageDimensions.width}

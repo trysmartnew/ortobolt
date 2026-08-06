@@ -3,26 +3,27 @@
 // Anonimização no cliente + servidor; consentimento via aiConsent
 // Modelo: Modelo de IA Avançada (primário) → Modelo Rápido (fallback)
 
-import type { ClinicalCase } from '@/types/index';
-import type { ClinicalCopilotPayload } from '@/types/clinicalCopilot';
 import { MarkingsDataSchema } from '@/schemas/markings';
-import {
-  buildClinicalCopilotSystemMessage,
-  REFINE_ANALYSIS_PROMPT,
-} from '@/services/veterinaryPrompts';
-import { getSupabaseAccessToken } from '@/services/supabase';
 import {
   assertAiConsentGranted,
   AI_CONSENT_DENIED_MESSAGE,
   AiConsentDeniedError,
 } from '@/services/aiConsent';
+import { getSupabaseAccessToken } from '@/services/supabase';
+import {
+  buildClinicalCopilotSystemMessage,
+  REFINE_ANALYSIS_PROMPT,
+} from '@/services/veterinaryPrompts';
+import type { ClinicalCopilotPayload } from '@/types/clinicalCopilot';
+import type { ClinicalCase } from '@/types/index';
+import type { MarkingsData } from '@/types/markings';
+
 import {
   validarRespostaMedica,
   VANGUARD_STRUCTURED_PROMPT,
   buscarContextoRAG,
   type RespostaOrtopedica,
 } from './vanguardEngine';
-import type { MarkingsData, AlignmentCircle, AngleMeasurement, FractureMarker, ROI } from '@/types/markings';
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
 interface CacheEntry {
@@ -482,6 +483,7 @@ export async function sendChatMessageStream(
     let buffer = '';
 
     try {
+      // eslint-disable-next-line no-constant-condition -- intentional bounded loop / control-char sanitization
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -538,7 +540,7 @@ function extractMarkingsFromAnalysis(analysisText: string): MarkingsData {
     return emptyMarkings;
   }
 
-  let jsonString = jsonBlockMatch[1];
+  const jsonString = jsonBlockMatch[1];
   let parsedJson;
 
   try {
@@ -889,6 +891,7 @@ Seja objetivo e técnico. NUNCA alucine dados não visíveis.`;
     let buffer = '';
 
     try {
+      // eslint-disable-next-line no-constant-condition -- intentional bounded loop / control-char sanitization
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;

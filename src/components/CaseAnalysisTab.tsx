@@ -1,10 +1,12 @@
 ﻿// src/components/CaseAnalysisTab.tsx
 // ✅ Componente isolado para exibir Análise IA e Copiloto dentro do Caso Clínico
+import { Scan } from 'lucide-react';
 import React, { memo } from 'react';
+
+import { Card } from '@/components/ui';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { useApp } from '@/contexts/AppContext';
-import { Card } from '@/components/ui';
-import { Scan } from 'lucide-react';
+
 import ClinicalAssistant from './analysis/ClinicalAssistant';
 
 export default memo(function CaseAnalysisTab() {
@@ -20,7 +22,7 @@ export default memo(function CaseAnalysisTab() {
       <div className="p-8 text-center">
         <Scan className="w-12 h-12 text-white/40 mx-auto mb-3" />
         <p className="text-white/60 text-sm">Nenhuma análise de IA vinculada a este caso.</p>
-        <p className="text-xs text-slate-400 mt-2">Vá para a página "Análise Visual" para realizar o exame.</p>
+        <p className="text-xs text-slate-400 mt-2">Vá para a página &quot;Análise Visual&quot; para realizar o exame.</p>
       </div>
     );
   }

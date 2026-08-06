@@ -1,16 +1,17 @@
+import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity, GitCompare, LineChart, Ruler as RulerIcon, Images, Loader2 } from 'lucide-react';
+import { useState, useMemo, useRef, useEffect, useCallback, memo } from 'react';
+
+import CaseAnalysisTab from '@/components/CaseAnalysisTab';
 import { ClinicalEvidenceView } from '@/components/ClinicalEvidenceView';
-import { useCaseRealtime } from '@/hooks/useCaseRealtime';
 import { RadiographViewer } from '@/components/radiographs/RadiographViewer';
+import { Card, Button, StatusBadge, RiskTag, EmptyState } from '@/components/ui';
+import { useAnalysis } from '@/contexts/AnalysisContext';
+import { useApp } from '@/contexts/AppContext';
+import { useCaseRealtime } from '@/hooks/useCaseRealtime';
 // src/pages/CasePage.tsx
 // Reescrito com foco clínico prático - remoção de colaboração
-import { useState, useMemo, useRef, useEffect, useCallback, memo } from 'react';
-import CaseAnalysisTab from '@/components/CaseAnalysisTab';
-import { useAnalysis } from '@/contexts/AnalysisContext';
-import { ArrowLeft, FileText, Trash2, Edit3, Plus, Check, X, Printer, Pill, Stethoscope, ClipboardList, Calendar, AlertCircle, User as UserIcon, PawPrint, Weight, Ruler, Upload, Activity, GitCompare, LineChart, Ruler as RulerIcon, Images, Loader2 } from 'lucide-react';
-import { useApp } from '@/contexts/AppContext';
-import { getSupabaseAccessToken, uploadCaseImage } from '@/services/supabase';
 import { uploadImageToStorage } from '@/services/imageService';
-import { Card, Button, StatusBadge, RiskTag, EmptyState } from '@/components/ui';
+import { getSupabaseAccessToken, uploadCaseImage } from '@/services/supabase';
 import type { ClinicalCase, ProcedureType, CaseStatus } from '@/types/index';
 import type { MarkingsData } from '@/types/markings';
 
@@ -211,29 +212,29 @@ const EditCaseModal = memo(function EditCaseModal({ caseData, onClose, onSave, s
         </div>
         <div className="p-6 space-y-5">
           <div>
-            <label className="block text-xs font-semibold text-label mb-1">Título do Caso</label>
+            <span className="block text-xs font-semibold text-label mb-1">Título do Caso</span>
             <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-label mb-1">Nome do Paciente</label>
+            <span className="block text-xs font-semibold text-label mb-1">Nome do Paciente</span>
             <input value={form.patientName} onChange={e => setForm({ ...form, patientName: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-label mb-1">Raça</label>
+            <span className="block text-xs font-semibold text-label mb-1">Raça</span>
             <input value={form.breed} onChange={e => setForm({ ...form, breed: e.target.value })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-label mb-1">Idade (anos)</label>
+              <span className="block text-xs font-semibold text-label mb-1">Idade (anos)</span>
               <input type="number" value={form.ageYears} onChange={e => setForm({ ...form, ageYears: Number(e.target.value) })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-label mb-1">Peso (kg)</label>
+              <span className="block text-xs font-semibold text-label mb-1">Peso (kg)</span>
               <input type="number" step="0.1" value={form.weightKg} onChange={e => setForm({ ...form, weightKg: Number(e.target.value) })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]" />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-label mb-1">Status</label>
+            <span className="block text-xs font-semibold text-label mb-1">Status</span>
             <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as ClinicalCase['status'] })} className="w-full border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29a399]">
               <option value="pending">Pendente</option>
               <option value="analyzing">Em Análise</option>
@@ -584,6 +585,17 @@ export default function CasePage() {
     setAnalysisTool(null);
   }, []);
 
+  const handleSaveEdit = useCallback((updates: Partial<ClinicalCase>) => {
+    if (!activeCase) return;
+    setSaving(true);
+    try {
+      updateCase(activeCase.id, { ...updates, updatedAt: new Date().toISOString() });
+      addToast('Dados atualizados com sucesso.', 'success');
+    } finally {
+      setSaving(false);
+    }
+  }, [activeCase, setSaving, addToast, updateCase]);
+
   if (!activeCase) {
     return (
       <div className="p-6 flex items-center justify-center h-full">
@@ -617,15 +629,6 @@ export default function CasePage() {
     }
   };
 
-  const handleSaveEdit = useCallback((updates: Partial<ClinicalCase>) => {
-    setSaving(true);
-    try {
-      updateCase(activeCase.id, { ...updates, updatedAt: new Date().toISOString() });
-      addToast('Dados atualizados com sucesso.', 'success');
-    } finally {
-      setSaving(false);
-    }
-  }, [activeCase, setSaving, addToast, updateCase]);
 
   const addClinicalNote = () => {
     if (!newNote.trim()) return;
@@ -843,7 +846,7 @@ export default function CasePage() {
             <h3 className="text-xs font-bold text-menu uppercase tracking-wider mb-3">Selecionar Exames para Comparação</h3>
             <div className="flex gap-3 overflow-x-auto pb-2">
               {availableImages.map((img) => (
-                <div
+                <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }}
                   key={img.id}
                   draggable
                   onDragStart={(e) => handleDragStart(e, img.id)}

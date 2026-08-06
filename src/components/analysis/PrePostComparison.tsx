@@ -1,10 +1,11 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
-import type { ClinicalCase } from '@/types';
-import { useApp } from '@/contexts/AppContext';
+﻿import jsPDF from 'jspdf';
 import { Upload, X, Columns, Layers, AlertCircle, RefreshCw, Eye, Brain, Save, Download } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+
 import { Button } from '@/components/ui';
-import jsPDF from 'jspdf';
+import { useApp } from '@/contexts/AppContext';
 import { analyzeImagesComparison } from '@/services/aiService';
+import type { ClinicalCase } from '@/types';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_MB = 15;
@@ -418,7 +419,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
         {(!imageBefore || !imageAfter) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Slot Imagem Pré */}
-            <div 
+            <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }} 
               onClick={() => !imageBefore && refBefore.current?.click()}
               className={`relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center border-2 border-dashed transition-all ${
                 imageBefore 
@@ -451,7 +452,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
             </div>
 
             {/* Slot Imagem Pós */}
-            <div 
+            <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }} 
               onClick={() => !imageAfter && refAfter.current?.click()}
               className={`relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center border-2 border-dashed transition-all ${
                 imageAfter 
@@ -485,7 +486,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
           </div>
         ) : (
           /* Renderização das Imagens Carregadas */
-          <div 
+          <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }} 
             ref={containerRef}
             className="relative w-full overflow-hidden rounded-xl bg-slate-900 border border-slate-800 select-none"
             onMouseMove={handleMouseMove}
@@ -566,7 +567,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                   ESTUDO EVOLUTIVO &rarr;
                 </div>
 
-                <div 
+                <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }} 
                   className="absolute top-0 bottom-0 w-1 bg-emerald-500 cursor-ew-resize z-20 flex items-center justify-center touch-none"
                   style={{ left: `${sliderValue}%` }}
                   onMouseDown={(e) => { e.preventDefault(); setIsDragging(true); }}

@@ -1,7 +1,8 @@
 ﻿// src/pages/HelpPage.tsx
-import React, { useState } from 'react';
 import { BookOpen, Mail, ChevronDown, ChevronUp, FileText, Stethoscope, Monitor, Brain, BarChart3, Settings } from 'lucide-react';
-import { Card, Button, SectionHeader, Badge } from '@/components/ui';
+import React, { useState } from 'react';
+
+import { Card, Button, SectionHeader } from '@/components/ui';
 
 const FAQ_ITEMS = [
   {

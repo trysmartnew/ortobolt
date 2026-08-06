@@ -1,9 +1,10 @@
 ﻿// src/pages/SettingsPage.tsx
-import React, { useState, useEffect } from 'react';
 import { Bell, Globe, Brain, FileText, Download, Check, Crown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
+import { Card, Button, SectionHeader } from '@/components/ui';
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/services/supabase';
-import { Card, Button, SectionHeader } from '@/components/ui';
 import type { Plan } from '@/types/index';
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -41,11 +42,11 @@ export default function SettingsPage() {
     try {
       const s = localStorage.getItem('vanguard-veterinary_prefs');
       if (s) return JSON.parse(s);
-    } catch { }
+    } catch { /* noop */ }
     return { notifications: true, language: 'pt', autoAnalysis: true, reportFormat: 'pdf' };
   });
   const [timestamp, setTimestamp] = useState(() => new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', ''));
-  const [currentPlan, setCurrentPlan] = useState<Plan>('free');
+  const [currentPlan, ] = useState<Plan>('free');
 
   useEffect(() => {
     let mounted = true;

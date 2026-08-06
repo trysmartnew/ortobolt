@@ -1,4 +1,3 @@
-import React, { memo, useCallback, useEffect } from 'react';
 import {
     Stethoscope,
     GitCompare,
@@ -7,6 +6,8 @@ import {
     X,
     LucideIcon,
 } from 'lucide-react';
+import React, { memo, useCallback, useEffect } from 'react';
+
 import { useApp } from '@/contexts/AppContext';
 import type { Page } from '@/contexts/AppContext';
 
@@ -221,6 +222,7 @@ export const AnalysisQuickSelectModal = memo<AnalysisQuickSelectModalProps>(
             pointer-events-none
           "
                 >
+                    {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions -- dialog with click-to-select interaction */}
                     <div
                         className="
               pointer-events-auto

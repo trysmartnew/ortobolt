@@ -1,4 +1,5 @@
 ﻿import React from 'react';
+
 import { VanguardSymbol } from './VanguardSymbol';
 
 interface VanguardLogoProps {

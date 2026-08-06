@@ -1,11 +1,11 @@
 ﻿// src/components/CopilotClinical.tsx
 // ✅ Copiloto Clínico reutilizável — integrado em AnalysisPage e CasePage
-import React, { useState, useRef, useEffect } from 'react';
 import { Bot, Send, Copy, Check, RefreshCw } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+
+import { Card, Spinner } from '@/components/ui';
 import { useAnalysis, type ImageAnalysis } from '@/contexts/AnalysisContext';
 import { sendChatMessage, PRIMARY_MODEL } from '@/services/aiService';
-
-import { Card, Button, Spinner } from '@/components/ui';
 
 interface CopilotClinicalProps {
   mode: 'analysis' | 'comparative' | 'case';
@@ -22,7 +22,7 @@ export default function CopilotClinical({
   caseData,
   onRefine,
 }: CopilotClinicalProps) {
-  const { copilotContext, setCopilotContext } = useAnalysis();
+  const {  setCopilotContext } = useAnalysis();
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
   const [loading, setLoading] = useState(false);

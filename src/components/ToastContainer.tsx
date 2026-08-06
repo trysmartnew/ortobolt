@@ -2,6 +2,7 @@
 // ✅ U-02: Sistema de Toast global — feedback consistente para toda a aplicação
 
 import { CheckCircle, XCircle, Info, AlertTriangle, X } from 'lucide-react';
+
 import type { Toast } from '@/contexts/AppContext';
 
 interface Props {

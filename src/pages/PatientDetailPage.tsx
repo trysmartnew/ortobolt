@@ -1,9 +1,11 @@
-﻿import React, { useState, useMemo } from 'react';
-import { useApp } from '@/contexts/AppContext';
+﻿import { ArrowLeft, User, Ruler, Activity, FlaskConical, Image, TrendingUp, Calendar, UserRound } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
-import { ArrowLeft, User, PawPrint, Ruler, Activity, Pill, FlaskConical, Image, TrendingUp, Calendar, UserRound } from 'lucide-react';
-import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';
 import { SPECIES_LABELS } from '@/constants/labels';
+import { useApp } from '@/contexts/AppContext';
+import type { ClinicalCase, CaseStatus } from '@/types/index';
+
 import RadiographGallery from '../components/RadiographGallery';
 
 function formatDate(iso: string): string {
@@ -33,7 +35,7 @@ function getStatusLabel(status: CaseStatus): string {
 }
 
 export default function PatientDetailPage() {
-  const { cases, activeCase, setActiveCase, openCase, setCurrentPage, user, authLoading, addToast } = useApp();
+  const { cases, activeCase, setActiveCase, openCase, setCurrentPage, user, authLoading } = useApp();
   const [loading, setLoading] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
 
@@ -72,37 +74,6 @@ export default function PatientDetailPage() {
     return null;
   }, [activeCase, patientCases]);
 
-  const medications = useMemo(() => {
-    const meds: Array<{ id: string; name: string; dosage: string; frequency: string; caseId: string }> = [];
-    for (const c of patientCases) {
-      const text = c.notes ?? '';
-      const lines = text.split('\n').filter((line) => line.trim().length > 0);
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (trimmed.length > 0) {
-          meds.push({
-            id: `${c.id}-${trimmed}`,
-            name: trimmed,
-            dosage: '—',
-            frequency: '—',
-            caseId: c.id,
-          });
-        }
-      }
-      if (c.aiAnalysis?.recommendations) {
-        for (const rec of c.aiAnalysis.recommendations) {
-          meds.push({
-            id: `${c.id}-rec-${rec}`,
-            name: rec,
-            dosage: '—',
-            frequency: '—',
-            caseId: c.id,
-          });
-        }
-      }
-    }
-    return meds.slice(-10);
-  }, [patientCases]);
 
   const labs = useMemo(() => {
     const list: Array<{ id: string; name: string; date: string; result: string }> = [];

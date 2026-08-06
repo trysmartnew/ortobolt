@@ -1,7 +1,9 @@
-﻿import { LoadingSpinner } from './brand/LoadingSpinner';
+﻿import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import React from 'react';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+
 import type { CaseStatus, NotificationType } from '@/types/index';
+
+import { LoadingSpinner } from './brand/LoadingSpinner';
 
 // ── Badge ────────────────────────────────────────────────────────────────────
 export function Badge({ children, variant = 'default', className = '' }: { children: React.ReactNode; variant?: 'default'|'success'|'warning'|'danger'|'info'|'blue'; className?: string }) {
@@ -131,8 +133,8 @@ export function RiskTag({ level }: { level: 'low'|'medium'|'high' }) {
 export function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-      <div className="glass-panel-premium rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+    <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+      <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }} className="glass-panel-premium rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between p-5 border-b border-white/10">
           <h3 className="font-bold text-white" style={{ fontFamily: 'Montserrat' }}>{title}</h3>
           <button onClick={onClose} className="text-label hover:text-label text-xl leading-none">✕</button>

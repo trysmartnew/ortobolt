@@ -12,12 +12,6 @@ export interface Logger {
   error: (message: string, ...args: unknown[]) => void;
 }
 
-const LOG_LEVELS: Record<LogLevel, number> = {
-  DEBUG: 0,
-  INFO: 1,
-  WARN: 2,
-  ERROR: 3,
-};
 
 const COLORS = {
   DEBUG: '\x1b[36m',    // Cyan

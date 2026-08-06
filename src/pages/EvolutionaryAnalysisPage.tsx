@@ -1,7 +1,5 @@
+import {  User, Ruler, Weight, Activity, Calendar, FileText } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
-import { useApp } from '@/contexts/AppContext';
-import { Card, Button, Badge, EmptyState, Spinner, SectionHeader } from '@/components/ui';
-import { ArrowLeft, User, PawPrint, Ruler, Weight, Activity, Calendar, FileText } from 'lucide-react';
 import {
   ResponsiveContainer,
   BarChart,
@@ -13,8 +11,11 @@ import {
   Tooltip,
   Cell,
 } from 'recharts';
-import type { ClinicalCase } from '@/types/index';
+
+import { Card, Button, Badge, EmptyState, Spinner, SectionHeader } from '@/components/ui';
 import { SPECIES_LABELS } from '@/constants/labels';
+import { useApp } from '@/contexts/AppContext';
+import type { ClinicalCase , CaseStatus } from '@/types/index';
 
 function formatDate(iso: string): string {
   try {
@@ -58,7 +59,7 @@ function calculateTrend(values: number[]): 'improving' | 'worsening' | 'stable' 
   return 'stable';
 }
 
-function generateEvolutionPrediction(trend: string, values: number[], dates: string[]): string {
+function generateEvolutionPrediction(trend: string, values: number[], _dates: string[]): string {
   if (values.length < 2) return 'Dados insuficientes para previsão.';
   const latest = values[values.length - 1];
   const first = values[0];
@@ -78,7 +79,7 @@ function generateProgressAnalysis(boneTrend: string, jointTrend: string, values:
   return `Paciente apresentou ${direction} de ${pct}% na densidade óssea ao longo de ${values.length} exames.`;
 }
 
-import type { CaseStatus } from '@/types/index';
+
 
 function getStatusLabel(status: CaseStatus): string {
   const map: Record<CaseStatus, string> = {
@@ -91,7 +92,7 @@ function getStatusLabel(status: CaseStatus): string {
 }
 
 export default function EvolutionaryAnalysisPage() {
-  const { cases, activeCase, user, authLoading, addToast, setCurrentPage } = useApp();
+  const { cases, activeCase, authLoading, addToast, setCurrentPage } = useApp();
   const [loading, setLoading] = useState(false);
 
   const patientName = activeCase?.patientName ?? 'Paciente';
@@ -152,10 +153,6 @@ export default function EvolutionaryAnalysisPage() {
     return generateEvolutionPrediction(trends.bone, boneDensityData.map(d => d.value), boneDensityData.map(d => d.name));
   }, [trends, boneDensityData]);
 
-  const handleBack = () => {
-    setCurrentPage('patientDetail');
-    addToast('Voltando ao prontuário do paciente.', 'info');
-  };
 
   const handleGenerateReport = () => {
     setLoading(true);

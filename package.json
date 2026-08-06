@@ -7,7 +7,8 @@
     "dev": "vite --port 3000 --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit",
+    "lint": "tsc --noEmit && eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "test": "vitest run"
   },
   "dependencies": {
@@ -30,7 +31,15 @@
     "@types/node": "^22.19.15",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "@vercel/node": "^5.8.4",
+    "eslint": "^8.57.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.9.0",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
     "sharp": "^0.35.2",
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
@@ -38,8 +47,16 @@
   },
   "overrides": {
     "ajv": "^8.17.1",
-    "minimatch": "^9.0.3",
     "path-to-regexp": "^8.0.0",
-    "undici": "^6.21.1"
+    "undici": "^6.21.1",
+    "@eslint/eslintrc": {
+      "ajv": "^6.12.4"
+    },
+    "eslint": {
+      "ajv": "^6.12.4"
+    },
+    "eslint-plugin-import": {
+      "minimatch": "^3.1.2"
+    }
   }
 }

@@ -1,9 +1,10 @@
 // src/components/TopBar.tsx
-import React from 'react';
 import { Bell, Wifi, WifiOff, MapPin } from 'lucide-react';
+import React from 'react';
+
+import { TOUR_STEPS } from '@/components/ProductTour';
 import { useApp } from '@/contexts/AppContext';
 import type { Page } from '@/contexts/AppContext';
-import { TOUR_STEPS } from '@/components/ProductTour';
 
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   dashboard: { title: 'Visão da Clínica', subtitle: 'Visão geral em tempo real' },

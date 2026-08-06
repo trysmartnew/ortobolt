@@ -1,14 +1,16 @@
-﻿import { VanguardLogo } from '../components/brand/VanguardLogo';
-// src/pages/LoginPage.tsx
+﻿// src/pages/LoginPage.tsx
 // ✅ C-02: UI de bloqueio por tentativas excessivas (loginLocked / loginLockSecondsLeft)
 // ✅ U-01: rememberMe passado para login() e respeitado na sessão
 
-import { useState } from 'react';
 import { Eye, EyeOff, Shield, ArrowLeft, Lock } from 'lucide-react';
-import { useApp } from '@/contexts/AppContext';
-import { supabase } from '@/services/supabase';
-import { LoginSchema, type LoginInput } from '@/schemas/auth';
+import { useState } from 'react';
+
 import { Input } from '@/components/forms/Input';
+import { useApp } from '@/contexts/AppContext';
+import { LoginSchema } from '@/schemas/auth';
+import { supabase } from '@/services/supabase';
+
+import { VanguardLogo } from '../components/brand/VanguardLogo';
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 24 24" width="18" height="18">
@@ -234,7 +236,7 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-white/70">Senha</label>
+                <span className="text-xs font-semibold text-white/70">Senha</span>
                 <button onClick={() => setForgotMode(true)} className="text-xs font-medium" style={{ color: 'var(--color-primary)' }}>
                   Esqueci minha senha
                 </button>

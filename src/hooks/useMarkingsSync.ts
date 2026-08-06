@@ -1,7 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+
+import { validateMarkings } from '../schemas/markings';
 import { supabase, updateCaseMarkings } from '../services/supabase';
 import type { MarkingsData } from '../types/markings';
-import { validateMarkings } from '../schemas/markings';
 
 interface UseMarkingsSyncProps { caseId: string; examId?: string; }
 interface UseMarkingsSyncReturn {

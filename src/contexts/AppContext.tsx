@@ -8,6 +8,7 @@
 // ✅ P1: addCase/deleteCase/updateCase com persistência Supabase
 // ✅ P2: markAllRead/markRead com persistência Supabase
 // ✅ setUserFromSession com guarda de ID vazio
+import { isAuthRetryableFetchError } from '@supabase/auth-js';
 import React, {
   createContext,
   useContext,
@@ -18,7 +19,18 @@ import React, {
 
   type ReactNode,
 } from 'react';
+
 import { ONBOARDING_FLOW } from '@/config/onboardingFlow';
+import { setAiConsentFromProfile } from '@/services/aiConsent';
+import {
+  buildIntegratedClinicalCase,
+  enrichCaseWithPersistedAi,
+  loadPersistedAiAnalysis,
+  persistCaseAiAnalysis,
+  setLastIntegratedCaseId,
+} from '@/services/clinicalCaseIntegrationService';
+import { supabase, fetchUserProfile, upsertUserProfile } from '@/services/supabase';
+import type { ApproveCompleteCaseInput } from '@/types/casePipeline';
 import type {
   User,
   ClinicalCase,
@@ -29,17 +41,6 @@ import type {
   CaseStatus,
   NotificationType,
 } from '@/types/index';
-import { supabase, fetchUserProfile, upsertUserProfile } from '@/services/supabase';
-import { isAuthRetryableFetchError } from '@supabase/auth-js';
-import type { ApproveCompleteCaseInput } from '@/types/casePipeline';
-import {
-  buildIntegratedClinicalCase,
-  enrichCaseWithPersistedAi,
-  loadPersistedAiAnalysis,
-  persistCaseAiAnalysis,
-  setLastIntegratedCaseId,
-} from '@/services/clinicalCaseIntegrationService';
-import { setAiConsentFromProfile } from '@/services/aiConsent';
 
 export type Page =
   | 'dashboard' | 'chat' | 'analysis' | 'gallery'

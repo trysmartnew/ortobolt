@@ -1,9 +1,10 @@
 ﻿// src/pages/ChatPage.tsx
-import { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, Trash2, Bot, User, Copy, Check } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+
+import { Button, Spinner } from '@/components/ui';
 import { useApp } from '@/contexts/AppContext';
 import { sendChatMessageStream } from '@/services/aiService';
-import { Button, Spinner } from '@/components/ui';
 import type { ChatMessage } from '@/types/index';
 
 const SUGGESTED = [

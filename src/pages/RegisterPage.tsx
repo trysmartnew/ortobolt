@@ -1,14 +1,16 @@
-﻿import { VanguardLogo } from '../components/brand/VanguardLogo';
-// src/pages/RegisterPage.tsx
+﻿// src/pages/RegisterPage.tsx
 // ✅ U-03: Senha fraca bloqueia envio — score mínimo 2 obrigatório
 // (restante do arquivo mantido igual ao original)
 
-import { useState } from 'react';
 import { Eye, EyeOff, ArrowLeft, Shield, CheckCircle } from 'lucide-react';
-import { useApp } from '@/contexts/AppContext';
-import { supabase } from '@/services/supabase';
-import { RegisterSchema, type RegisterInput } from '@/schemas/auth';
+import { useState } from 'react';
+
 import { Input } from '@/components/forms/Input';
+import { useApp } from '@/contexts/AppContext';
+import { RegisterSchema } from '@/schemas/auth';
+import { supabase } from '@/services/supabase';
+
+import { VanguardLogo } from '../components/brand/VanguardLogo';
 
 // ── Cálculo de força da senha ─────────────────────────────────────────────────
 function calcPasswordStrength(pwd: string): number {
@@ -259,7 +261,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-white/70 mb-1.5">Estado do CRMV</label>
+              <span className="block text-xs font-semibold text-white/70 mb-1.5">Estado do CRMV</span>
               <select value={crmvState} onChange={e => setCrmvState(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl border border-white/10 text-sm focus:outline-none focus:ring-2 transition-all bg-[#111315] text-white">
                 <option value="">Selecione...</option>
@@ -269,7 +271,7 @@ export default function RegisterPage() {
 
             {/* Especialidade */}
             <div>
-              <label className="block text-xs font-semibold text-white/70 mb-1.5">Especialidade</label>
+              <span className="block text-xs font-semibold text-white/70 mb-1.5">Especialidade</span>
               <select value={form.specialty} onChange={e => update('specialty', e.target.value)}
                 className="w-full px-3 py-2 rounded-xl border border-white/10 text-sm focus:outline-none focus:ring-2 transition-all bg-[#111315] text-white">
                 <option value="">Selecione...</option>
@@ -279,7 +281,7 @@ export default function RegisterPage() {
 
             {/* Senha */}
             <div>
-              <label className="block text-xs font-semibold text-white/70 mb-1.5">Senha</label>
+              <span className="block text-xs font-semibold text-white/70 mb-1.5">Senha</span>
               <div className="relative">
                 <Input
                   type={showPass ? 'text' : 'password'}
@@ -313,7 +315,7 @@ export default function RegisterPage() {
 
             {/* Confirmar senha */}
             <div>
-              <label className="block text-xs font-semibold text-white/70 mb-1.5">Confirmar senha</label>
+              <span className="block text-xs font-semibold text-white/70 mb-1.5">Confirmar senha</span>
               <div className="relative">
                 <Input
                   type={showConfirm ? 'text' : 'password'}

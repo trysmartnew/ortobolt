@@ -1,16 +1,8 @@
 // src/pages/ReportsPage.tsx
 // ✅ Produção Real — Dados do Supabase (SEM MOCKS)
 // ✅ RESTAURADO: Personalização de Laudos + Modal de Seleção de Caso
-import { useState, useEffect, useMemo } from 'react';
-import { supabase, getSupabaseAccessToken } from '@/services/supabase';
-import type { Report, KPIMetric, ChartDataPoint, ClinicalCase } from '@/types/index';
 import { Download, FileText, Clock, CheckCircle, AlertCircle, Upload, Settings, Search, Calendar, User, X } from 'lucide-react';
-import { useApp } from '@/contexts/AppContext';
-import { Button, Card, Badge, SectionHeader, Spinner, InlineToast, EmptyState } from '@/components/ui';
-import { RequireRole } from '@/components/auth/RequireRole';
-import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
-import { uploadAndPersistPdf } from '@/services/supabase'
-import { sanitizeClinicalNotes } from '@/services/clinicalCaseIntegrationService';
+import { useState, useEffect, useMemo } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -19,6 +11,16 @@ import {
   YAxis,
   Tooltip,
 } from 'recharts';
+
+import { RequireRole } from '@/components/auth/RequireRole';
+import { Button, Card, Badge, SectionHeader, Spinner, EmptyState } from '@/components/ui';
+import { useApp } from '@/contexts/AppContext';
+import { sanitizeClinicalNotes } from '@/services/clinicalCaseIntegrationService';
+import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
+import { supabase, getSupabaseAccessToken , uploadAndPersistPdf } from '@/services/supabase';
+import type { Report, KPIMetric, ChartDataPoint, ClinicalCase } from '@/types/index';
+
+
 
 const TYPE_LABELS: Record<string, string> = {
   monthly: 'Mensal',
@@ -35,7 +37,7 @@ const TYPE_COLORS: Record<string, 'blue' | 'success' | 'warning' | 'info'> = {
 };
 
 export default function ReportsPage() {
-  const { user, cases, activeCase, addToast } = useApp();
+  const { user, cases, addToast } = useApp();
 
   const precisionMetric = useMemo(() => {
     const completedCases = cases.filter(c => c.status === 'completed');
@@ -77,10 +79,10 @@ export default function ReportsPage() {
   const [clinicName, setClinicName] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary');
   const [clinicSubtitle, setClinicSubtitle] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente');
   const [logoPreview, setLogoPreview] = useState<string | null>(localStorage.getItem('vanguard-veterinary_pdf_logo'));
-  const [tutorMode, setTutorMode] = useState(false);
+  const [, ] = useState(false);
 
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
+  const [, setSelectedCaseId] = useState<string | null>(null);
   const [reportType, setReportType] = useState<'technical' | 'tutor' | null>(null);
 
   const handleOpenTechnicalReport = () => {
@@ -478,7 +480,7 @@ export default function ReportsPage() {
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-4">
               <div>
-                <label className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</label>
+                <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</span>
                 <input
                   type="text"
                   value={clinicName}
@@ -487,7 +489,7 @@ export default function ReportsPage() {
                 />
               </div>
               <div>
-                <label className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</label>
+                <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</span>
                 <input
                   type="text"
                   value={clinicSubtitle}
@@ -519,7 +521,7 @@ export default function ReportsPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 md:hidden">
           <div>
-            <label className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</label>
+            <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</span>
             <input
               type="text"
               value={clinicName}
@@ -528,7 +530,7 @@ export default function ReportsPage() {
             />
           </div>
           <div>
-            <label className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</label>
+            <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</span>
             <input
               type="text"
               value={clinicSubtitle}

@@ -1,9 +1,10 @@
 ﻿// src/pages/DashboardPage.tsx
 // 🏥 Centro de Comando Cirúrgico — Foco em ações operacionais de HOJE
-import { useMemo, memo } from 'react';
-import { useApp } from '@/contexts/AppContext';
-import { Card, StatusBadge, RiskTag, Spinner, EmptyState } from '@/components/ui';
 import { AlertTriangle, Clock, CheckCircle2, Calendar, PawPrint, Stethoscope, Pill, Activity } from 'lucide-react';
+import { useMemo, memo } from 'react';
+
+import { Card, StatusBadge, RiskTag, Spinner, EmptyState } from '@/components/ui';
+import { useApp } from '@/contexts/AppContext';
 import type { CaseStatus, ClinicalCase } from '@/types/index';
 
 function formatDate(iso: string): string {
@@ -64,7 +65,7 @@ function TriageCard({ c, onOpen }: { c: ClinicalCase; onOpen: () => void }) {
 }
 
 export default function DashboardPage() {
-  const { cases, openCase, user, authLoading } = useApp();
+  const { cases, openCase, authLoading } = useApp();
 
   const { surgeriesToday, triageList, metricsToday, metricsYesterday } = useMemo(() => {
     const now = new Date();

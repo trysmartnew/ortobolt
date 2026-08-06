@@ -1,11 +1,12 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
-import { Card, Button, EmptyState, Spinner } from '@/components/ui';
-import { Upload, X, User, UserRound, Phone, Mail, MapPin, FileText, Save, ArrowLeft } from 'lucide-react';
-import { uploadCaseImage } from '@/services/supabase';
-import { useApp } from '@/contexts/AppContext';
-import type { ClinicalCase, AnimalSpecies } from '@/types/index';
-import { SPECIES_LABELS } from '@/constants/labels';
+﻿import { Upload, X, User, UserRound, Phone, Mail, MapPin, FileText, Save, ArrowLeft } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+
+import { Card, Button, EmptyState } from '@/components/ui';
 import { CLINICAL_TERMS } from '@/constants/clinicalTerms';
+import { SPECIES_LABELS } from '@/constants/labels';
+import { useApp } from '@/contexts/AppContext';
+import { uploadCaseImage } from '@/services/supabase';
+import type { ClinicalCase, AnimalSpecies } from '@/types/index';
 
 const SEX_OPTIONS = ['Macho', 'Fêmea', 'Indefinido'] as const;
 const SPECIES_OPTIONS: AnimalSpecies[] = ['canine', 'feline', 'equine', 'bovine', 'other'];
@@ -15,16 +16,7 @@ interface PatientFormProps {
   onClose?: () => void;
 }
 
-function today(): string {
-  return new Date().toISOString().split('T')[0];
-}
 
-function formatDisplayDate(iso: string | undefined): string {
-  if (!iso) return '';
-  const d = new Date(iso + 'T00:00:00');
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('pt-BR');
-}
 
 function validateRequired(value: string, label: string): string | null {
   if (!value.trim()) return `${label} é obrigatório.`;
@@ -75,7 +67,7 @@ export default function PatientForm({ caseData, onClose }: PatientFormProps) {
   const [color, setColor] = useState('');
   const [weightKg, setWeightKg] = useState(existing?.weightKg?.toString() ?? '');
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(existing?.avatarUrl);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [, setAvatarFile] = useState<File | null>(null);
 
   const [ownerName, setOwnerName] = useState('');
   const [ownerDocument, setOwnerDocument] = useState('');

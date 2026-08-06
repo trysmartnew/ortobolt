@@ -1,5 +1,6 @@
 // src/hooks/useRadiographs.ts
 import { useState, useCallback, useEffect } from 'react';
+
 import { supabase, getSignedImageUrl } from '../services/supabase';
 // import { Database } from '../types/supabase'; // Removido temporariamente por erro de path
 

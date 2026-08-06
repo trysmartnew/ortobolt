@@ -1,6 +1,7 @@
-import { type CSSProperties, type MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import type Konva from 'konva';
 import { Plus, Minus, RotateCcw } from 'lucide-react';
+import { type CSSProperties, type MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+
 import AiMarkingsOverlay from '@/components/analysis/AiMarkingsOverlay';
 import type { MarkingsData } from '@/types/markings';
 
@@ -83,6 +84,7 @@ export default function ZoomableImage({ imageUrl, naturalWidth, naturalHeight, m
   const cursor = dragging ? 'grabbing' : zoom > 1 ? 'grab' : 'default';
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions -- intentional modal backdrop close
     <div ref={viewportRef} className={`relative overflow-hidden ${viewportClassName}`} style={{ cursor, touchAction: 'none' }} onMouseDown={onMouseDown} onDoubleClick={onDoubleClick} role="group" aria-label="Radiografia com zoom: roda para ampliar, arraste para mover, duplo-clique alterna">
       <img ref={imgRef} src={imageUrl} alt="Radiografia" draggable={false} className={imgClassName} style={tf} />
       {markings && (

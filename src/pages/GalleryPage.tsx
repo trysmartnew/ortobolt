@@ -1,12 +1,13 @@
 ﻿// ✅ U-02: addToast no handleAdd — feedback visual ao criar caso
 // ✅ D-01: veterinarianId usa user?.id em vez de hardcoded 'vet-001'
-import { useState, useMemo, useRef, useEffect } from 'react';
 import { Search, Plus, Filter, X, AlertTriangle, Users, ChevronRight, Trash2, Upload } from 'lucide-react';
-import { useApp } from '@/contexts/AppContext';
-import { uploadCaseImage } from '@/services/supabase';
-import { uploadImageToStorage } from '@/services/imageService';
+import { useState, useMemo, useRef, useEffect } from 'react';
+
 import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeader, EmptyState, Badge, Spinner } from '@/components/ui';
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/constants/labels';
+import { useApp } from '@/contexts/AppContext';
+import { uploadImageToStorage } from '@/services/imageService';
+import { uploadCaseImage } from '@/services/supabase';
 import type { ClinicalCase, CaseStatus, ProcedureType, AnimalSpecies } from '@/types/index';
 
 const STATUS_FILTERS: { value: CaseStatus | 'all'; label: string }[] = [
@@ -408,7 +409,7 @@ export default function GalleryPage() {
         <div data-tour="tour-gallery-grid" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {filtered.map(c => (
             <Card key={c.id} className="overflow-hidden hover:shadow-premium-card hover:-translate-y-0.5 transition-all duration-300 group rounded-2xl">
-              <div
+              <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }}
                 className="relative cursor-pointer"
                 onClick={() => openCase(c)}
                 title="Abrir Colaboração Clínica"
@@ -532,7 +533,7 @@ export default function GalleryPage() {
           ))}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-800 mb-1">Espécie</label>
+              <span className="block text-xs font-semibold text-slate-800 mb-1">Espécie</span>
               <select
                 value={form.species}
                 onChange={e => setForm(f => ({ ...f, species: e.target.value as AnimalSpecies }))}
@@ -544,7 +545,7 @@ export default function GalleryPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-800 mb-1">Procedimento</label>
+              <span className="block text-xs font-semibold text-slate-800 mb-1">Procedimento</span>
               <select
                 value={form.procedure}
                 onChange={e => setForm(f => ({ ...f, procedure: e.target.value as ProcedureType }))}
@@ -556,7 +557,7 @@ export default function GalleryPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-800 mb-1">Idade (anos)</label>
+              <span className="block text-xs font-semibold text-slate-800 mb-1">Idade (anos)</span>
               <input
                 type="number"
                 min="0"
@@ -572,7 +573,7 @@ export default function GalleryPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-800 mb-1">Peso (kg)</label>
+              <span className="block text-xs font-semibold text-slate-800 mb-1">Peso (kg)</span>
               <input
                 type="number"
                 min="0.1"
@@ -589,7 +590,7 @@ export default function GalleryPage() {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-800 mb-1">Observações</label>
+            <span className="block text-xs font-semibold text-slate-800 mb-1">Observações</span>
             <textarea
               value={form.notes}
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
@@ -600,7 +601,7 @@ export default function GalleryPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-800 mb-1">Radiografia / Imagem</label>
+            <span className="block text-xs font-semibold text-slate-800 mb-1">Radiografia / Imagem</span>
             <input
               type="file"
               accept="image/*"

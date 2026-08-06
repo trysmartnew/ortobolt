@@ -1,11 +1,13 @@
-﻿import { VanguardLogo } from '../components/brand/VanguardLogo';
-import { useState, useEffect } from 'react';
-import {
+﻿import {
   Activity, Brain, FileText, Users, Shield, Zap,
   ChevronRight, Star, ArrowRight, Check, Menu, X,
   Stethoscope, TrendingUp, Clock, Award
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
 import { useApp } from '@/contexts/AppContext';
+
+import { VanguardLogo } from '../components/brand/VanguardLogo';
 
 const FEATURES = [
   {
@@ -392,7 +394,7 @@ export default function HomePage() {
                     <Star key={i} size={14} fill="var(--color-warning)" style={{ color: 'var(--color-warning)' }} />
                   ))}
                 </div>
-                <p className="text-sm leading-relaxed mb-6" style={{ color: '#475569' }}>"{text}"</p>
+                <p className="text-sm leading-relaxed mb-6" style={{ color: '#475569' }}>&quot;{text}&quot;</p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                     style={{ background: color }}>

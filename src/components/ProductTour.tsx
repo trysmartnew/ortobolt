@@ -1,6 +1,6 @@
 // src/components/ProductTour.tsx
-import { useState, useEffect, useCallback, useMemo, memo, useRef } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
+import { useState, useEffect, useCallback, useMemo, memo, useRef } from 'react';
 
 export interface TourStep {
   target: string;

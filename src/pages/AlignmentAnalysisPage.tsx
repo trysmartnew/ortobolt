@@ -1,7 +1,5 @@
+import { ArrowLeft, User, Ruler, Weight, Activity, Calendar, FileText } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
-import { useApp } from '@/contexts/AppContext';
-import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
-import { ArrowLeft, User, PawPrint, Ruler, Weight, Activity, Calendar, FileText } from 'lucide-react';
 import {
   ResponsiveContainer,
   PieChart,
@@ -16,8 +14,11 @@ import {
   Cell,
   PolarAngleAxis,
 } from 'recharts';
-import type { ClinicalCase } from '@/types/index';
+
+import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { SPECIES_LABELS } from '@/constants/labels';
+import { useApp } from '@/contexts/AppContext';
+import type { ClinicalCase , CaseStatus } from '@/types/index';
 
 function formatDate(iso: string): string {
   try {
@@ -68,13 +69,13 @@ function generateAlignmentAnalysis(femoralAngle: { left: number; right: number }
   return `Métricas de alinhamento ${femoralClass.label.toLowerCase()} para o ângulo femoral (${femoralAngle.left}° / ${femoralAngle.right}°) e ${cobbClass.label.toLowerCase()} para o ângulo de Cobb (${cobbAngle}°). Assimetria de comprimento de membros ${symmetry} (${diff.toFixed(1)} mm).`;
 }
 
-function generateAlignmentPrediction(metrics: any): string {
+function generateAlignmentPrediction(_metrics: any): string {
   return 'Projeção de alinhamento com base no plano cirúrgico simulado: correção média estimada de 8° a 12° com estabilização esperada em 6-8 semanas.';
 }
 
 const isValidNumber = (val: unknown): val is number => typeof val === 'number' && !isNaN(val);
 
-import type { CaseStatus } from '@/types/index';
+
 
 function getStatusLabel(status: CaseStatus): string {
   const map: Record<CaseStatus, string> = {
@@ -87,7 +88,7 @@ function getStatusLabel(status: CaseStatus): string {
 }
 
 export default function AlignmentAnalysisPage() {
-  const { cases, activeCase, user, authLoading, addToast, setCurrentPage } = useApp();
+  const { cases, activeCase, authLoading, addToast, setCurrentPage } = useApp();
   const [loading, setLoading] = useState(false);
 
   const patientName = activeCase?.patientName ?? 'Paciente';
@@ -122,12 +123,6 @@ export default function AlignmentAnalysisPage() {
     return firstWithMarkings?.exams?.find(e => e.markings)?.markings;
   }, [patientCases]);
 
-  const alignmentMetrics = useMemo(() => ({
-    pelvicAngle: { left: 12.5, right: 8.3 },
-    limbLength: { left: 145.2, right: 148.7 },
-    cobbAngle: [15, 18, 22, 20],
-    symmetry: 92.4,
-  }), []);
 
   const femoralAngle = useMemo(() => calculateFemoralInclinationAngle(markingsForCalculations), [markingsForCalculations]);
   const limbLength = useMemo(() => calculateLimbLength(markingsForCalculations), [markingsForCalculations]);

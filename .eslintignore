@@ -1,0 +1,21 @@
+node_modules/
+dist/
+build/
+.vite/
+.env
+.env.*
+*.d.ts
+
+# Build, test configs and ai-router subproject (excluded from main lint)
+tailwind.config.js
+vite.config.ts
+vitest.config.ts
+vitest.setup.ts
+ai-router/
+
+# Serverless API and old backups (separate compilation units)
+api/
+src.bkp_20260703_130711/
+
+# Standalone seed script (not part of main build)
+seed-embeddings.js

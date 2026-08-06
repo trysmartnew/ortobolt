@@ -3,6 +3,7 @@
 // ✅ A-03: safe() — sanitiza conteúdo da IA antes de inserir no PDF
 
 import type { User, ClinicalCase, KPIMetric, ChartDataPoint } from '@/types/index';
+
 import { sanitizeClinicalNotes } from './clinicalCaseIntegrationService';
 
 async function getJsPDF() {
@@ -31,6 +32,7 @@ async function getUrlAsBase64(url: string): Promise<string> {
 function safe(s?: string | number): string {
   if (s === undefined || s === null) return '';
   return String(s)
+    // eslint-disable-next-line no-control-regex -- intentional bounded loop / control-char sanitization
     .replace(/[\x00-\x1F\x7F]/g, ' ') // controles ASCII
     .replace(/[\uFFFD]/g, '?')          // replacement character
     .trim();

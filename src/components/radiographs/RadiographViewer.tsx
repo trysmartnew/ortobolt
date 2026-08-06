@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
-import { useRadiographs, RadiographItem } from '../../hooks/useRadiographs';
+
 import { RadiographUploader } from './RadiographUploader';
-import { MarkingToolbar } from '../markings/MarkingToolbar';
-import { MarkingCanvas } from '../markings/MarkingCanvas';
-import type { MarkingTool, MarkingsData, AlignmentCircle, AngleMeasurement, FractureMarker, ROI, Point } from '../../types/markings';
-import { supabase } from '../../services/supabase';
+import { useRadiographs, RadiographItem } from '../../hooks/useRadiographs';
 import { validateMarkings } from '../../schemas/markings';
+import { supabase } from '../../services/supabase';
+import type { MarkingTool, MarkingsData, AlignmentCircle, AngleMeasurement, FractureMarker, ROI } from '../../types/markings';
+import { MarkingCanvas } from '../markings/MarkingCanvas';
+import { MarkingToolbar } from '../markings/MarkingToolbar';
 
 interface RadiographViewerProps {
   caseId: string;
@@ -77,7 +78,7 @@ export const RadiographViewer = memo(({ caseId, markings: externalMarkings }: Ra
     setIsAnnotating(true);
   };
 
-  const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const handleImageLoad = (_event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     // This handler is for the non-annotating mode image display, not the Konva image
     // The imageElement useEffect already handles dimensions for Konva
     // We keep it here in case the direct image tag is ever used for rendering
@@ -212,7 +213,7 @@ export const RadiographViewer = memo(({ caseId, markings: externalMarkings }: Ra
 
       {selectedRadiographItem && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="relative" onClick={(e) => e.stopPropagation()}> {/* Prevent closing when clicking on the image area */}
+          <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }} className="relative" onClick={(e) => e.stopPropagation()}> {/* Prevent closing when clicking on the image area */}
             <button 
               className="absolute top-2 right-2 text-white text-3xl" 
               onClick={() => { setSelectedRadiographItem(null); setIsAnnotating(false); setImageUrl(null); }}
@@ -266,3 +267,5 @@ export const RadiographViewer = memo(({ caseId, markings: externalMarkings }: Ra
     </div>
   );
 });
+
+RadiographViewer.displayName = 'RadiographViewer';

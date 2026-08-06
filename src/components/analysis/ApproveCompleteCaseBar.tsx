@@ -1,5 +1,6 @@
-﻿import { useState, useEffect } from 'react';
-import { CheckCircle2, FolderOpen, FileText } from 'lucide-react';
+﻿import { CheckCircle2, FolderOpen, FileText } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
 import { Button } from '@/components/ui';
 
 export interface ApproveCompleteCaseBarProps {

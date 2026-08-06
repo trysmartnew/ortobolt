@@ -1,6 +1,8 @@
 import { X, Bot } from 'lucide-react';
-import ClinicalAssistant from './ClinicalAssistant';
+
 import type { ClinicalCase, AIAnalysisResult } from '@/types/index';
+
+import ClinicalAssistant from './ClinicalAssistant';
 
 interface PatientAssistantPanelProps {
   isOpen: boolean;

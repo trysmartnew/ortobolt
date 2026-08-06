@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import { supabase } from '@/services/supabase';
 import type { KPIMetric, ChartDataPoint } from '@/types/index';
 

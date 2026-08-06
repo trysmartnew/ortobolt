@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
-import { supabase } from '@/services/supabase';
+
 import type { ClinicalEvidence } from '@/schemas/clinicalEvidence';
+import { supabase } from '@/services/supabase';
 
 /**
  * Hook para sincronização incremental de evidências clínicas (CEP Fase 2)

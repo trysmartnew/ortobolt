@@ -1,9 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { ChatMessage } from '@/types/index';
-import type {
-  ClinicalContextDraft,
-  ClinicalCopilotSession,
-} from '@/types/clinicalCopilot';
+
 import {
   createCopilotSession,
   getDisplayAnalysis,
@@ -14,6 +10,11 @@ import {
   updateSessionContext,
 } from '@/services/clinicalCopilotService';
 import { localAuditService } from '@/services/localAuditService';
+import type {
+  ClinicalContextDraft,
+  ClinicalCopilotSession,
+} from '@/types/clinicalCopilot';
+import type { ChatMessage } from '@/types/index';
 
 export function useClinicalCopilot(imageBase64: string | null) {
   const [session, setSession] = useState<ClinicalCopilotSession | null>(null);

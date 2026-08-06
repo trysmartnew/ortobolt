@@ -1,9 +1,11 @@
-﻿import { VanguardLogo } from '../components/brand/VanguardLogo';
+﻿import { Eye, EyeOff, Shield, CheckCircle, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { Eye, EyeOff, Shield, CheckCircle, Loader2 } from 'lucide-react';
-import { supabase } from '@/services/supabase';
-import { useApp } from '@/contexts/AppContext';
+
 import { Input } from '@/components/forms/Input';
+import { useApp } from '@/contexts/AppContext';
+import { supabase } from '@/services/supabase';
+
+import { VanguardLogo } from '../components/brand/VanguardLogo';
 
 export default function ResetPasswordPage() {
   const { setCurrentView, addToast } = useApp();
@@ -124,7 +126,7 @@ export default function ResetPasswordPage() {
           <p className="text-xs text-slate-400 mb-6">Crie uma nova senha segura para sua conta.</p>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5">Nova senha</label>
+              <span className="block text-xs font-semibold text-slate-400 mb-1.5">Nova senha</span>
               <div className="relative">
                 <Input
                   type={showPass ? 'text' : 'password'}

@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
 import { Bot, Send, User, Sparkles, RefreshCw, Copy, Check } from 'lucide-react';
-import type { ChatMessage } from '@/types/index';
-import type { ClinicalContextDraft } from '@/types/clinicalCopilot';
-import type { AnimalSpecies, ProcedureType } from '@/types/index';
+import { useEffect, useRef, useState } from 'react';
+
 import { Button, Spinner } from '@/components/ui';
 import { SPECIES_LABELS, PROCEDURE_LABELS } from '@/constants/labels';
+import type { ClinicalContextDraft } from '@/types/clinicalCopilot';
+import type { ChatMessage , AnimalSpecies, ProcedureType } from '@/types/index';
 
 const COPILOT_SUGGESTIONS = [
   'Confirme a região anatômica e achados principais.',

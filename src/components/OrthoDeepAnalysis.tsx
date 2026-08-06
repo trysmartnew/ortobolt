@@ -1,6 +1,7 @@
 ﻿// src/components/OrthoDeepAnalysis.tsx
-import { useState } from 'react';
 import { ThumbsUp, ThumbsDown, Edit, AlertTriangle } from 'lucide-react';
+import { useState } from 'react';
+
 import { salvarFeedback } from '@/services/feedbackService';
 import type { RespostaOrtopedica } from '@/services/vanguardEngine';
 

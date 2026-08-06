@@ -1,16 +1,10 @@
-﻿import React, { useMemo } from 'react';
-import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
-import { ArrowLeft, User, PawPrint, Ruler, Activity, Calendar, Image, FileText, ChevronRight, Save } from 'lucide-react';
-import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';
-import { SPECIES_LABELS } from '@/constants/labels';
+﻿import { ArrowLeft, User, Image, FileText, Save } from 'lucide-react';
+import React, { useMemo } from 'react';
 
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-  } catch {
-    return iso;
-  }
-}
+import { Card, Button, Badge, EmptyState } from '@/components/ui';
+import { SPECIES_LABELS } from '@/constants/labels';
+import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';
+
 
 function formatShortDate(iso: string): string {
   try {

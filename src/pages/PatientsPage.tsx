@@ -1,12 +1,14 @@
-import React, { useState, useMemo } from 'react';
-import { useApp } from '@/contexts/AppContext';
-import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { Search, Plus, Edit3, Eye, Trash2, Calendar, Activity, Bot } from 'lucide-react';
-import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';
-import { SPECIES_LABELS } from '@/constants/labels';
+import React, { useState, useMemo } from 'react';
+
+import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { CLINICAL_TERMS } from '@/constants/clinicalTerms';
-import PatientForm from '../components/PatientForm';
+import { SPECIES_LABELS } from '@/constants/labels';
+import { useApp } from '@/contexts/AppContext';
+import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';
+
 import PatientAssistantPanel from '../components/analysis/PatientAssistantPanel';
+import PatientForm from '../components/PatientForm';
 
 interface PatientRecord {
   id: string;
@@ -46,12 +48,12 @@ function formatDate(iso: string): string {
 
 // ...
 export default function PatientsPage() {
-  const { cases, user, authLoading, openCase, deleteCase, addToast, setActiveCase, setCurrentPage } = useApp();
+  const { cases, authLoading, deleteCase, addToast, setActiveCase, setCurrentPage } = useApp();
   const [search, setSearch] = useState('');
   const [breedFilter, setBreedFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
-  const [showGuide, setShowGuide] = useState(false);
+  const [, ] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingPatient, setEditingPatient] = useState<ClinicalCase | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);

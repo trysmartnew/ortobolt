@@ -1,4 +1,7 @@
-﻿import type {
+﻿import { ApproveCompleteCaseInputSchema } from '@/schemas/casePipeline';
+import type { ApproveCompleteCaseInput } from '@/types/casePipeline';
+import { PIPELINE_TAG_ANALYSIS, PIPELINE_TAG_INTEGRATED } from '@/types/casePipeline';
+import type {
   AIAnalysisResult,
   AnatomicalLandmark,
   ClinicalCase,
@@ -6,11 +9,9 @@
   CaseStatus,
   ProcedureType,
   RiskFactor,
-} from '@/types/index';
-import type { ChatMessage } from '@/types/index';
-import type { ApproveCompleteCaseInput } from '@/types/casePipeline';
-import { PIPELINE_TAG_ANALYSIS, PIPELINE_TAG_INTEGRATED } from '@/types/casePipeline';
-import { ApproveCompleteCaseInputSchema } from '@/schemas/casePipeline';
+ ChatMessage } from '@/types/index';
+
+
 import { deriveClinicalEvidence } from './clinicalEngine';
 
 const AI_STORAGE_PREFIX = 'vanguard-veterinary-case-ai-';
@@ -204,7 +205,7 @@ export function sanitizeClinicalNotes(raw: string): string {
     // [v2] Remove linhas-marker de IA inteiras (single-bracket, com trailing)
     text = text.replace(/^\s*\[[^\]]*(?:OrthoAI|OrtoAI)[^\]]*\].*$/gim, '');
     // [v2] Remove fragmentos orfaos com bracket inicial opcional
-    text = text.replace(/\[?[A-Za-z\u00c0-\u00ff\s\/]*(?:OrthoAI|OrtoAI)\]?[^\n]*/gi, '');
+    text = text.replace(/\[?[A-Za-z\u00c0-\u00ff\s/]*(?:OrthoAI|OrtoAI)\]?[^\n]*/gi, '');
   text = text.replace(/^\s*\[[^\]]*OrthoAI[^\]]*\]\s*$/gm, '');
   // Remove orphaned AI-marker fragments (e.g. "c OrthoAI]")
   text = text.replace(/[A-Za-z\u00c0-\u00ff\s]*OrthoAI\]*/gi, '');
