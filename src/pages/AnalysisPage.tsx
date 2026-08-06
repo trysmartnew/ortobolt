@@ -3,10 +3,9 @@
 
 import DOMPurify from 'dompurify';
 import type Konva from 'konva';
-import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, ShieldCheck, Sparkles, Images, FileText, Maximize2, X } from 'lucide-react';
-import React, { useState, useRef, useMemo, useEffect , lazy, Suspense } from 'react';
+import { Upload, Scan, AlertCircle, CheckCircle, RefreshCw, Sparkles, Images, FileText, Maximize2, X } from 'lucide-react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 
-import ApproveCompleteCaseBar from '@/components/analysis/ApproveCompleteCaseBar';
 import ClinicalCopilotPanel from '@/components/analysis/ClinicalCopilotPanel';
 import ZoomableImage from '@/components/analysis/ZoomableImage';
 import { Button, Card, Spinner, SectionHeader } from '@/components/ui';
@@ -15,12 +14,11 @@ import { useAnalysis } from '@/contexts/AnalysisContext';
 import { useApp } from '@/contexts/AppContext';
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import { useMarkings } from '@/hooks/useMarkings';
-import { analyzeImage, PRIMARY_MODEL, type AnalysisWithMarkings, ApiError } from '@/services/aiService';
+import { analyzeImage, PRIMARY_MODEL, ApiError } from '@/services/aiService';
 import { buildCaseTitle , stripAiArtifacts} from '@/services/clinicalCaseIntegrationService';
 import { generateLaudoReport } from '@/services/pdfService';
 import { uploadRadiografia, getSignedImageUrl } from '@/services/supabase';
-import type { ClinicalCase, CaseExam } from '@/types';
-import type { MarkingTool, MarkingsData } from '@/types/markings';
+import type { MarkingsData } from '@/types/markings';
 
 type Mode = 'idle' | 'preview' | 'analyzing' | 'result';
 
@@ -29,14 +27,12 @@ const MAX_FILE_SIZE_MB = 15;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 export default function AnalysisPage() {
-  const { currentAnalysis, setCurrentAnalysis, addAnalysisToHistory } = useAnalysis();
+  const { addAnalysisToHistory } = useAnalysis();
   const { user, approveAndIntegrateCase, openCase, setCurrentPage, addToast, analysisMode, setAnalysisMode } = useApp();
   const [mode, setMode] = useState<Mode>('idle');
   const [imageData, setImageData] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [streamError, setStreamError] = useState('');
-  const [isAnnotating, setIsAnnotating] = useState<boolean>(false);
-  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [aiGeneratedMarkings, setAiGeneratedMarkings] = useState<MarkingsData | null>(null);
   const konvaStageRef = useRef<Konva.Stage | null>(null);
@@ -50,9 +46,9 @@ export default function AnalysisPage() {
   }, []);
 
   const {
-    markings, activeTool, setActiveTool,
-    addCircle, addAngle, addMarker, addROI,
-    clearAll, hasUnsavedChanges
+    markings: _markings, activeTool: _activeTool, setActiveTool: _setActiveTool,
+    addCircle: _addCircle, addAngle: _addAngle, addMarker: _addMarker, addROI: _addROI,
+    clearAll: _clearAll, hasUnsavedChanges: _hasUnsavedChanges
   } = useMarkings();
 
 
@@ -222,7 +218,7 @@ export default function AnalysisPage() {
   }, [norbergAngle]);
 
   // Lógica de badge refatorada para maior clareza
-  const dysplasiaBadge = useMemo(() => {
+  const _dysplasiaBadge = useMemo(() => {
     const riskMap: Record<string, { label: string; variant: 'danger' | 'warning' | 'success' | 'info' }> = {
       Alto: { label: 'Alto', variant: 'danger' },
       Moderado: { label: 'Moderado', variant: 'warning' },
@@ -231,7 +227,7 @@ export default function AnalysisPage() {
     return riskMap[dysplasiaRisk] || { label: 'Indeterminado', variant: 'info' };
   }, [dysplasiaRisk]);
 
-  const recommendations = useMemo(() => {
+  const _recommendations = useMemo(() => {
     const lines = analysisText.split('\n').filter((l) => l.trim().length > 0 && !l.startsWith('**'));
     return lines.slice(0, 6);
   }, [analysisText]);
