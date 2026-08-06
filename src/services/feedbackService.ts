@@ -28,7 +28,8 @@ export async function salvarFeedback(
   casoClinico: string,
   respostaIA: { diagnostico_principal?: string; tratamento_inicial_sugerido?: string },
   avaliacao: 'aprovado' | 'corrigido' | 'rejeitado',
-  correcaoVeterinario?: string
+  correcaoVeterinario?: string,
+  signal?: AbortSignal
 ) {
   const { error: feedbackError } = await supabase.from('feedback_ia').insert({
     caso_id: casoId,
@@ -59,12 +60,19 @@ export async function salvarFeedback(
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers.Authorization = `Bearer ${token}`;
 
+    const finalSignal = signal ?? (() => {
+      const c = new AbortController();
+      setTimeout(() => c.abort(), 30000);
+      return c.signal;
+    })();
+
     const embeddingRes = await fetch('/api/embeddings', {
       method: 'POST',
       headers,
       body: JSON.stringify({
         text: `${casoClinico} -> ${diagnostico}`,
       }),
+      signal: finalSignal,
     });
 
     if (!embeddingRes.ok) {

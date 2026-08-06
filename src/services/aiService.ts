@@ -357,6 +357,7 @@ export async function proxyRequest(body: {
   messages: ProxyMessage[];
   max_tokens?: number;
   json_mode?: boolean;
+  signal?: AbortSignal;
 }): Promise<string> {
   assertAiConsentGranted();
 
@@ -368,8 +369,17 @@ export async function proxyRequest(body: {
     return cached;
   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
+  // Usa signal externo ou cria timeout interno de 60s
+  let controller: AbortController | null = null;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  let finalSignal: AbortSignal;
+  if (body.signal) {
+    finalSignal = body.signal;
+  } else {
+    controller = new AbortController();
+    timeoutId = setTimeout(() => controller!.abort(), 60000);
+    finalSignal = controller.signal;
+  }
 
   let res: Response;
   try {
@@ -382,17 +392,17 @@ export async function proxyRequest(body: {
         max_tokens: body.max_tokens,
         ...(body.json_mode && { json_mode: true }),
       }),
-      signal: controller.signal,
+      signal: finalSignal,
     });
   } catch (err) {
-    clearTimeout(timeoutId);
+    if (timeoutId) clearTimeout(timeoutId);
     if (err instanceof Error && err.name === 'AbortError') {
-      throw new ApiError(408, 'A requisição para a IA excedeu o tempo limite de 60 segundos.');
+      throw new ApiError(408, 'A requisição para a IA foi cancelada ou excedeu o tempo limite.');
     }
     // Re-lança outros erros de rede/fetch
     throw err;
   }
-  clearTimeout(timeoutId);
+  if (timeoutId) clearTimeout(timeoutId);
 
   if (!res.ok) {
     const errorText = await res.text();
@@ -447,7 +457,8 @@ export async function sendChatMessage(
 export async function sendChatMessageStream(
   userMessage: string,
   history: { role: 'user' | 'assistant'; content: string }[],
-  onChunk: (accumulatedText: string) => void
+  onChunk: (accumulatedText: string) => void,
+  signal?: AbortSignal
 ): Promise<string> {
   assertAiConsentGranted();
 
@@ -460,6 +471,12 @@ export async function sendChatMessageStream(
     { role: 'user', content: userMessage },
   ];
 
+  const finalSignal = signal ?? (() => {
+    const c = new AbortController();
+    setTimeout(() => c.abort(), 60000);
+    return c.signal;
+  })();
+
   try {
     const res = await fetch(AI_PROXY, {
       method: 'POST',
@@ -470,6 +487,7 @@ export async function sendChatMessageStream(
         max_tokens: 1000,
         stream: true,
       }),
+      signal: finalSignal,
     });
 
     if (!res.ok) {
@@ -704,7 +722,8 @@ IMPLICAÇÃO BIOMECÂNICA: Ajuste sua análise baseado no peso e porte deste pac
 export async function analyzeImagesComparison(
   beforeBase64: string,
   afterBase64: string,
-  caseInfo?: Partial<ClinicalCase>
+  caseInfo?: Partial<ClinicalCase>,
+  signal?: AbortSignal
 ): Promise<{
   alignment: string;
   boneDensity: string;
@@ -784,6 +803,7 @@ Seja objetivo e técnico. NUNCA alucine dados não visíveis.`;
         },
       ],
       max_tokens: 1000,
+      signal,
     });
 
     try {
@@ -841,7 +861,8 @@ Seja objetivo e técnico. NUNCA alucine dados não visíveis.`;
 
 /** Consolida chat + contexto em análise diagnóstica refinada (multimodal) */ export async function sendClinicalCopilotStream(
   payload: ClinicalCopilotPayload,
-  onChunk: (accumulatedText: string) => void
+  onChunk: (accumulatedText: string) => void,
+  signal?: AbortSignal
 ): Promise<string> {
   assertAiConsentGranted();
 
@@ -868,6 +889,13 @@ Seja objetivo e técnico. NUNCA alucine dados não visíveis.`;
     },
   ];
 
+  // Usa signal externo ou cria timeout interno de 60s
+  const finalSignal = signal ?? (() => {
+    const c = new AbortController();
+    setTimeout(() => c.abort(), 60000);
+    return c.signal;
+  })();
+
   try {
     const res = await fetch(AI_PROXY, {
       method: 'POST',
@@ -878,6 +906,7 @@ Seja objetivo e técnico. NUNCA alucine dados não visíveis.`;
         max_tokens: 1000,
         stream: true,
       }),
+      signal: finalSignal,
     });
 
     if (!res.ok) {

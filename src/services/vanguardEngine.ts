@@ -186,14 +186,22 @@ Caso clínico:
 `;
 
 // ── ✅ NOVO: RAG (Retrieval-Augmented Generation) ──
-export async function getEmbedding(text: string): Promise<number[]> {
+export async function getEmbedding(text: string, signal?: AbortSignal): Promise<number[]> {
   const token = await getSupabaseAccessToken();
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const finalSignal = signal ?? (() => {
+    const c = new AbortController();
+    setTimeout(() => c.abort(), 30000);
+    return c.signal;
+  })();
+
   const res = await fetch('/api/embeddings', {
     method: 'POST',
     headers,
     body: JSON.stringify({ text }),
+    signal: finalSignal,
   });
   if (!res.ok) throw new Error('Falha ao gerar embedding');
   const data = await res.json();
