@@ -28,13 +28,8 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'CLÍNICO',
     items: [
       { label: 'Pacientes', icon: Users, page: 'patients' },
-      { label: 'Visão da Clínica', icon: Activity, page: 'dashboard' },
-    ]
-  },
-  {
-    title: 'ARQUIVOS',
-    items: [
       { label: 'Central de Casos', icon: Images, page: 'gallery' },
+      { label: 'Visão da Clínica', icon: Activity, page: 'dashboard' },
     ]
   },
   {
