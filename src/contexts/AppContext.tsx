@@ -540,8 +540,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       exams: enriched.exams ?? null,
       markings: enriched.markings ?? null,
       veterinarian_id: enriched.veterinarianId,
-      created_at: enriched.createdAt,
-      updated_at: enriched.updatedAt,
     }).then(({ error }) => {
       if (error) {
         console.error('addCase Supabase error:', error.message);
@@ -605,7 +603,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (updates.image_path !== undefined) dbUpdates.image_path = updates.image_path;
     if (updates.avatar_path !== undefined) dbUpdates.avatar_path = updates.avatar_path;
     if (updates.pdf_url !== undefined) dbUpdates.pdf_url = updates.pdf_url;
-    dbUpdates.updated_at = new Date().toISOString();
 
     supabase.from('clinical_cases').update(dbUpdates).eq('id', id)
       .then(({ error }) => {
