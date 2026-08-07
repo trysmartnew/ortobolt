@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import { Button } from '@/components/ui';
 import { useApp } from '@/contexts/AppContext';
+import { reportWorkflowStep } from '@/hooks/useWorkflowStep';
 import { analyzeImagesComparison } from '@/services/aiService';
 import type { ClinicalCase } from '@/types';
 
@@ -62,6 +63,22 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
   useEffect(() => {
     setWorkflowStatus(existingApprovalStatus);
   }, [existingApprovalStatus]);
+
+  // Derivacao reativa do workflow (5 steps reportados ao layout)
+  useEffect(() => {
+    let step = 0;
+    if (imageBefore && imageAfter) step = 1;
+    if (aiAnalysisResult) step = 2;
+    if (savedCase) step = 3;
+    if (isExportingPDF) step = 4;
+    reportWorkflowStep('comparative', step);
+  }, [imageBefore, imageAfter, aiAnalysisResult, savedCase, isExportingPDF]);
+
+  useEffect(() => {
+    return () => {
+      reportWorkflowStep(null, -1);
+    };
+  }, []);
 
   const handleFile = (
     e: React.ChangeEvent<HTMLInputElement>,

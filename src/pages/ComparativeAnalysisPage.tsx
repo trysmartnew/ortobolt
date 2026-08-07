@@ -1,7 +1,8 @@
 // src/pages/ComparativeAnalysisPage.tsx
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { reportWorkflowStep } from '@/hooks/useWorkflowStep';
 import { SectionHeader, Card, EmptyState } from '@/components/ui';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { useApp } from '@/contexts/AppContext';
@@ -16,6 +17,13 @@ import { User, ArrowLeft } from 'lucide-react';
 export default function ComparativeAnalysisPage() {
   const { user, approveAndIntegrateCase, addToast, activeCase, setCurrentPage } = useApp();
   const { addAnalysisToHistory } = useAnalysis();
+
+  useEffect(() => {
+    if (!activeCase) reportWorkflowStep(null, -1);
+    return () => {
+      reportWorkflowStep(null, -1);
+    };
+  }, [activeCase]);
 
   if (!activeCase) {
     return (

@@ -14,6 +14,7 @@ import { useAnalysis } from '@/contexts/AnalysisContext';
 import { useApp } from '@/contexts/AppContext';
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import { useMarkings } from '@/hooks/useMarkings';
+import { reportWorkflowStep } from '@/hooks/useWorkflowStep';
 import { analyzeImage, PRIMARY_MODEL, ApiError } from '@/services/aiService';
 import { buildCaseTitle , stripAiArtifacts} from '@/services/clinicalCaseIntegrationService';
 import { generateLaudoReport } from '@/services/pdfService';
@@ -75,6 +76,25 @@ export default function AnalysisPage() {
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Derivacao reativa do workflow
+  useEffect(() => {
+    const step =
+      mode === 'idle'
+        ? 0
+        : approving || generatingPdf
+          ? 3
+          : mode === 'analyzing'
+            ? 1
+            : 2;
+    reportWorkflowStep('analysis', step);
+  }, [mode, approving, generatingPdf]);
+
+  useEffect(() => {
+    return () => {
+      reportWorkflowStep(null, -1);
+    };
+  }, []);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
