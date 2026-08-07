@@ -1,7 +1,7 @@
 import {
-  ClipboardList, Scan, Activity, BarChart3,
-  Bot, Bell, User, Settings, LogOut,
-  Users, TrendingUp, Ruler, HelpCircle, Sparkles, Images
+  Activity, BarChart3,
+  Bot, Bell, Settings, LogOut,
+  Users, HelpCircle, Sparkles, Images
 } from 'lucide-react';
 import { useMemo, useState, useCallback } from 'react';
 
@@ -118,7 +118,7 @@ export default function Sidebar() {
 
       {/* Menu Items */}
       <nav className="flex-1 py-4 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(41,163,153,0.2) transparent' }}>
-        {MENU_SECTIONS.map((section, sectionIdx) => (
+        {MENU_SECTIONS.map((section) => (
           <div key={section.title}>
             {/* Section Title */}
             <div className={`px-4 mt-6 mb-2`}>

@@ -26,8 +26,6 @@ const ComparativeAnalysisPage = lazy(() => import('@/pages/ComparativeAnalysisPa
 
 const COPILOT_PAGES: Page[] = ['dashboard', 'gallery', 'case', 'patients', 'patientDetail', 'evolutionaryAnalysis', 'alignmentAnalysis', 'comparative'];
 import AppLayout from '@/components/AppLayout';
-import Sidebar from '@/components/Sidebar';
-import TopBar from '@/components/TopBar';
 import ProductTour from '@/components/ProductTour';
 import ToastContainer from '@/components/ToastContainer';
 import AIAssistant from '@/components/AIAssistant';
@@ -89,13 +87,11 @@ function AppInner() {
   const {
     currentView, authLoading,
     currentPage, tourActive, tourForceShow, closeTour,
-    analysisMode, setAnalysisMode,
+    setAnalysisMode,
     logout, setUserFromSession, setCurrentView,
     toasts, removeToast,
   } = useApp();
 
-  const ANALYSIS_PAGES: Page[] = ['analysis', 'evolutionaryAnalysis', 'alignmentAnalysis', 'comparative'];
-  const isAnalysisPage = ANALYSIS_PAGES.includes(currentPage);
 
   const logoutRef = useRef(logout);
   const setSessionRef = useRef(setUserFromSession);
