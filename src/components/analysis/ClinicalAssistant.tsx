@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import { useClinicalCopilot } from '@/hooks/useClinicalCopilot';
 import type { ClinicalCase as Case, AIAnalysisResult } from '@/types/index';
@@ -13,7 +13,7 @@ interface ClinicalAssistantProps {
 
 export default function ClinicalAssistant({ caseData, originalAnalysis, enabled = true }: ClinicalAssistantProps) {
   const imageBase64 = (originalAnalysis as any)?.imageData?.split(',')[1] || (originalAnalysis as any)?.imageData;
-  const prevCaseData = useRef(caseData);
+  const _prevCaseData = useRef(caseData);
   
   const {
     session,

@@ -2,14 +2,12 @@ import {
     Stethoscope,
     GitCompare,
     TrendingUp,
-    Activity,
     X,
     LucideIcon,
 } from 'lucide-react';
 import React, { memo, useCallback, useEffect } from 'react';
 
 import { useApp } from '@/contexts/AppContext';
-import type { Page } from '@/contexts/AppContext';
 
 /**
  * Configuração estática das 4 análises veterinárias

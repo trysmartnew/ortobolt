@@ -39,7 +39,7 @@ function formatRelativeTime(date: Date | string): string {
   return `há ${diffDays} dias`;
 }
 
-function NotifRow({ n, onRead, cases, onViewCase, onIgnore, onViewReport, onDownloadPDF, onAcceptCase, onConfirmReminder }: {
+function NotifRow({ n, onRead, cases: _cases, onViewCase, onIgnore, onViewReport, onDownloadPDF, onAcceptCase, onConfirmReminder }: {
   n: Notification;
   onRead: (id: string) => void;
   cases: any[];
@@ -174,7 +174,7 @@ export default function NotificationsPage() {
     addToast('Download iniciado.', 'success');
   };
 
-  const handleAcceptCase = (caseId: string) => {
+  const handleAcceptCase = (_caseId: string) => {
     addToast('Caso aceito com sucesso.', 'success');
   };
 
