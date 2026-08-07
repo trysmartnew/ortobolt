@@ -1,3 +1,6 @@
+import { createLogger } from '../utils/logger';
+const logger = createLogger('VanguardEngine');
+
 ﻿// src/services/vanguardEngine.ts
 // ✅ Validação em Camadas + Structured Output (Zod)
 // ✅ Complementa aiService.ts sem quebrar arquitetura existente
@@ -72,7 +75,7 @@ export const RespostaOrtopedicaSchema = z.object({
   }
 
   // Validação cruzada: red flags graves exigem alertas_criticos
-  if (data.redFlagsEstruturadas?.some((f: any) => f.severidade === 'grave' || f.severidade === 'crítica')) {
+  if (data.redFlagsEstruturadas?.some((f) => f.severidade === 'grave' || f.severidade === 'crítica')) {
     if (!data.alertas_criticos || data.alertas_criticos.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -221,9 +224,9 @@ export async function buscarContextoRAG(descricaoCaso: string): Promise<string> 
 
     if (error || !data || data.length === 0) return '';
 
-    return data.map((doc: any) => `FONTE: ${doc.source ?? ''}\nCONTEÚDO: ${doc.content ?? ''}`).join('\n\n');
+    return data.map((doc: { source?: string; content?: string }) => `FONTE: ${doc.source ?? ''}\nCONTEÚDO: ${doc.content ?? ''}`).join('\n\n');
   } catch (err) {
-    console.error('Erro no RAG:', err);
+    logger.error('Erro no RAG', err);
     return '';
   }
 }

@@ -1,3 +1,6 @@
+import { createLogger } from '../utils/logger';
+const logger = createLogger('FeedbackService');
+
 // src/services/feedbackService.ts
 import { supabase } from '@/services/supabase';
 import { getSupabaseAccessToken } from '@/services/supabase';
@@ -17,7 +20,7 @@ async function casoJaIndexado(descricao: string, diagnostico: string): Promise<b
     .eq('diagnostico_final', diagnostico);
 
   if (error) {
-    console.warn('casoJaIndexado:', error.message);
+    logger.warn('casoJaIndexado', error.message);
     return false;
   }
   return (count ?? 0) > 0;
@@ -76,7 +79,7 @@ export async function salvarFeedback(
     });
 
     if (!embeddingRes.ok) {
-      console.error('Embedding feedback falhou:', embeddingRes.status);
+      logger.error('Embedding feedback falhou', embeddingRes.status);
       return;
     }
 
@@ -93,6 +96,6 @@ export async function salvarFeedback(
       indexedCases.add(key);
     }
   } catch (err) {
-    console.error('Erro ao salvar caso validado:', err);
+    logger.error('Erro ao salvar caso validado', err);
   }
 }

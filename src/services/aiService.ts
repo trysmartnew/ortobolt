@@ -1,3 +1,6 @@
+import { createLogger } from '../utils/logger';
+const logger = createLogger('AiService');
+
 // src/services/aiService.ts
 // Chave removida do cliente — todas as chamadas vão para /api/ai
 // Anonimização no cliente + servidor; consentimento via aiConsent
@@ -365,7 +368,7 @@ export async function proxyRequest(body: {
   const cacheKey = await getCacheKey(body.model, messages);
   const cached = getCachedResponse(cacheKey);
   if (cached) {
-    if (import.meta.env.DEV) console.log('📦 Cache hit:', cacheKey.slice(0, 40));
+    if (import.meta.env.DEV) logger.debug('📦 Cache hit:', cacheKey.slice(0, 40));
     return cached;
   }
 
@@ -446,7 +449,7 @@ export async function sendChatMessage(
       max_tokens: 1000,
     });
   } catch (err) {
-    console.error('AI chat error:', err);
+    logger.error('AI chat error', err);
     if (err instanceof AiConsentDeniedError) return err.message;
     if (err instanceof ApiError) return `⚠️ Erro ${err.status}: ${err.message}`;
     return '⚠️ OrthoAI temporariamente indisponível.\n\nVerifique sua conexão e tente novamente.';
@@ -532,7 +535,7 @@ export async function sendChatMessageStream(
 
     return stripThinking(accumulated) || 'Resposta não disponível.';
   } catch (err) {
-    console.error('AI chat stream error:', err);
+    logger.error('AI chat stream error', err);
     let msg: string;
     if (err instanceof AiConsentDeniedError) {
       msg = err.message;

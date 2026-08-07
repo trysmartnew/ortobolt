@@ -1,3 +1,6 @@
+import { createLogger } from '../utils/logger';
+const logger = createLogger('ClinicalEngine');
+
 // src/services/clinicalEngine.ts
 // Camada determinística entre LLM e persistência
 // Transforma AIAnalysisResult em ClinicalEvidence validado
@@ -20,7 +23,12 @@ function extractMeasurements(aiAnalysis: AIAnalysisResult): {
   alignment?: 'normal' | 'mild' | 'moderate' | 'severe';
   gap?: number;
 } {
-  const measurements: any = {};
+  const measurements: {
+    angle?: number;
+    displacement?: number;
+    alignment?: 'normal' | 'mild' | 'moderate' | 'severe';
+    gap?: number;
+  } = {};
   
   // Extrair ângulo tibial se disponível (TPLO)
   const tibialAngle = aiAnalysis.anatomicalLandmarks.find(l => 
@@ -186,7 +194,7 @@ export function deriveClinicalEvidence(aiAnalysis: AIAnalysisResult): ClinicalEv
   const result = ClinicalEvidenceSchema.safeParse(evidence);
   
   if (!result.success) {
-    console.error('[ClinicalEngine] Validação falhou:', result.error);
+    logger.error('Validação falhou', result.error);
     // Em produção: logar erro e retornar evidência mínima válida
     const fallbackEvidence = {
       measurements: {},
