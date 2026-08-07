@@ -7,7 +7,6 @@ import { Button, Card, StatusBadge, PrecisionGauge, RiskTag, Modal, SectionHeade
 import { PROCEDURE_LABELS, SPECIES_LABELS } from '@/constants/labels';
 import { useApp } from '@/contexts/AppContext';
 import { uploadImageToStorage } from '@/services/imageService';
-import { uploadCaseImage } from '@/services/supabase';
 import type { ClinicalCase, CaseStatus, ProcedureType, AnimalSpecies } from '@/types/index';
 
 const STATUS_FILTERS: { value: CaseStatus | 'all'; label: string }[] = [

@@ -21,7 +21,6 @@ const MAGIC_BYTES = {
   png: [0x89, 0x50, 0x4E, 0x47] as const,
 } as const;
 
-type ImageFormat = 'jpg' | 'png' | 'webp' | 'unknown';
 
 // Constantes de validação de dimensões de imagem
 const MIN_IMAGE_WIDTH = 200;

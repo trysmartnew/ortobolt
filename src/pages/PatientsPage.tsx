@@ -2,7 +2,6 @@ import { Search, Plus, Edit3, Eye, Trash2, Calendar, Activity, Bot } from 'lucid
 import React, { useState, useMemo } from 'react';
 
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
-import { CLINICAL_TERMS } from '@/constants/clinicalTerms';
 import { SPECIES_LABELS } from '@/constants/labels';
 import { useApp } from '@/contexts/AppContext';
 import type { ClinicalCase, CaseStatus, AnimalSpecies } from '@/types/index';

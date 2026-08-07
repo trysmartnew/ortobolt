@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import type { ApproveCompleteCaseInput } from '@/types/casePipeline';
 
 export const ApproveCompleteCaseInputSchema = z.object({
   veterinarianId: z.string().uuid(),

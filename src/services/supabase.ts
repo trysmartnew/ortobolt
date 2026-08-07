@@ -208,7 +208,7 @@ export async function uploadAndPersistPdf(
     const arrayBuffer = await blob.arrayBuffer();
     const uint8 = new Uint8Array(arrayBuffer);
     const binary = String.fromCharCode(...uint8);
-    const b64 = btoa(binary);
+    const _b64 = btoa(binary);
     const filePath = `${user.id}/${caseId}/report.pdf`;
 
     // Upload para storage

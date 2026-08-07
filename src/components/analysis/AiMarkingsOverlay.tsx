@@ -14,7 +14,7 @@ interface AiMarkingsOverlayProps {
 
 const GRID_SPACING = 60;
 
-function CornerLines({ x, y, w, h, size, stroke, strokeWidth }: { x: number; y: number; w: number; h: number; size: number; stroke: string; strokeWidth: number }) {
+function CornerLines({ x, y, w, h, size: _size, stroke, strokeWidth }: { x: number; y: number; w: number; h: number; size: number; stroke: string; strokeWidth: number }) {
   return (
     <Group>
       <Line points={[x, y, x + w, y]} stroke={stroke} strokeWidth={strokeWidth} />

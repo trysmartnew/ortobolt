@@ -18,7 +18,7 @@ import {
 import { Card, Button, Badge, EmptyState, Spinner } from '@/components/ui';
 import { SPECIES_LABELS } from '@/constants/labels';
 import { useApp } from '@/contexts/AppContext';
-import type { ClinicalCase , CaseStatus } from '@/types/index';
+import type { CaseStatus } from '@/types/index';
 
 function formatDate(iso: string): string {
   try {

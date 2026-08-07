@@ -22,7 +22,7 @@ export default function CopilotClinical({
   caseData,
   onRefine,
 }: CopilotClinicalProps) {
-  const {  setCopilotContext } = useAnalysis();
+  const { setCopilotContext: _setCopilotContext } = useAnalysis();
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
   const [loading, setLoading] = useState(false);

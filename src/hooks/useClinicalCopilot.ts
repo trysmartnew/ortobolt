@@ -5,7 +5,6 @@ import {
   getDisplayAnalysis,
   loadCopilotSession,
   refineSessionAnalysis,
-  saveCopilotSession,
   sendCopilotMessage,
   updateSessionContext,
 } from '@/services/clinicalCopilotService';

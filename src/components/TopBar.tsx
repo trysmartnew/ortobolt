@@ -26,7 +26,6 @@ export default React.memo(function TopBar() {
   const { title, subtitle } = PAGE_TITLES[currentPage] || PAGE_TITLES.dashboard;
   // Centraliza a lógica de quais páginas são consideradas de "análise"
   const ANALYSIS_PAGES: Page[] = ['analysis', 'evolutionaryAnalysis', 'alignmentAnalysis', 'comparative'];
-  const isAnalysisPage = ANALYSIS_PAGES.includes(currentPage);
   const [online, setOnline] = React.useState(navigator.onLine);
   const hasTour = (TOUR_STEPS[currentPage]?.length ?? 0) > 0;
   const [timeString, setTimeString] = React.useState(() => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));

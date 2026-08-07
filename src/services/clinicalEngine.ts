@@ -135,7 +135,7 @@ function applyClinicalRules(
 function calculateConfidence(
   aiAnalysis: AIAnalysisResult,
   measurements: ReturnType<typeof extractMeasurements>,
-  findings: ClinicalFinding[]
+  _findings: ClinicalFinding[]
 ): number {
   // Fator 1: Confidence base do LLM (peso: 40%)
   const llmConfidence = aiAnalysis.confidence * 0.4;
