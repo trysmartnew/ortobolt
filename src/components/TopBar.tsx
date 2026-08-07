@@ -4,7 +4,6 @@ import React from 'react';
 
 import { TOUR_STEPS } from '@/components/ProductTour';
 import { useApp } from '@/contexts/AppContext';
-import type { Page } from '@/contexts/AppContext';
 
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   dashboard: { title: 'Visão da Clínica', subtitle: 'Visão geral em tempo real' },
