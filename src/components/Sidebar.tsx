@@ -81,18 +81,18 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-[250px] bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a]">
+    <aside className="w-[220px] bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a]">
       {/* Header */}
       <header className="h-[84px] w-full shrink-0 flex flex-col justify-center px-4 border-b border-white/5 bg-[#0e1011]">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#29a399]/20 to-transparent border border-[#29a399]/20 flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#29a399]/20 to-transparent border border-[#29a399]/20 flex items-center justify-center">
             <span className="text-[#29a399] font-bold text-sm">V</span>
           </div>
-          <h1 className="text-brand-h1 text-white">
+          <h1 className="text-sm font-bold text-white leading-tight">
             Vanguard <span className="text-[#29a399]">Veterinary</span>
           </h1>
         </div>
-        <p className="mt-1 ml-[40px] font-mono text-[10px] tracking-widest text-white/70 uppercase">
+        <p className="mt-1 ml-[36px] font-mono text-[10px] tracking-widest text-white/70 uppercase">
           Ortopedia de Precisão
         </p>
       </header>

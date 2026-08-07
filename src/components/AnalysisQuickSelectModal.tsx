@@ -6,6 +6,7 @@ import {
     LucideIcon,
 } from 'lucide-react';
 import React, { memo, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 import { useApp } from '@/contexts/AppContext';
 
@@ -198,8 +199,9 @@ export const AnalysisQuickSelectModal = memo<AnalysisQuickSelectModalProps>(
         // Evita render do portal se modal está fechado
         if (!isOpen) return null;
 
-        return (
+        return createPortal(
             <>
+
                 {/* Overlay com blur background */}
                 <div
                     className="
@@ -267,9 +269,8 @@ export const AnalysisQuickSelectModal = memo<AnalysisQuickSelectModalProps>(
                         {/* Grid de Cards com stagger animation */}
                         <div
                             className="
-                grid grid-cols-2 gap-6
-                md:gap-4
-                sm:grid-cols-1
+                grid grid-cols-1 gap-4
+                sm:grid-cols-3
               "
                         >
                             {ANALYSIS_TYPES.map((type, index) => (
@@ -350,7 +351,7 @@ export const AnalysisQuickSelectModal = memo<AnalysisQuickSelectModalProps>(
           }
         `}</style>
             </>
-        );
+        , document.body);
     }
 );
 
