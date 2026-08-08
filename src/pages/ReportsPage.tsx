@@ -554,7 +554,7 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            <div data-tour="tour-report-metrics" className="grid grid-cols-3 gap-3 mb-4">
+            <div data-tour="tour-report-metrics" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
               <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
                 <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Métricas de Precisão</p>
                 <p className="text-lg font-bold text-white">{precisionMetric.toFixed(1)}%</p>
