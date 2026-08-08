@@ -1,5 +1,5 @@
 ﻿import jsPDF from 'jspdf';
-import { Upload, X, Columns, Layers, AlertCircle, RefreshCw, Eye, Brain, Save, Download } from 'lucide-react';
+import { Upload, X, Columns, Layers, AlertCircle, RefreshCw, Eye, Brain, Save, Download, Image, Check } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 
 import { Button } from '@/components/ui';
@@ -28,6 +28,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
   }, []);
 
   const [imageBefore, setImageBefore] = useState<string | null>(null);
+
   const [imageAfter, setImageAfter] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [viewMode, setViewMode] = useState<'side' | 'slider'>('side');
@@ -53,7 +54,40 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [workflowStatus, setWorkflowStatus] = useState(existingApprovalStatus);
   const [savedCase, setSavedCase] = useState<ClinicalCase | null>(null);
-  const { openCase } = useApp();
+  const { openCase, activeCase } = useApp();
+
+  // Derivar imagens disponíveis do paciente ativo, ordenadas cronologicamente
+  const patientImages = React.useMemo(() => {
+    if (!activeCase) return [];
+    const imgs: Array<{ url: string; label: string; date: string }> = [];
+    
+    // Imagem principal do caso
+    if (activeCase.imageUrl) {
+      imgs.push({
+        url: activeCase.imageUrl,
+        label: 'Imagem Principal',
+        date: activeCase.createdAt,
+      });
+    }
+    
+    // Imagens dos exames vinculados
+    if (activeCase.exams && Array.isArray(activeCase.exams)) {
+      activeCase.exams.forEach((exam) => {
+        if (exam.imageUrls && Array.isArray(exam.imageUrls)) {
+          exam.imageUrls.forEach((url, idx) => {
+            imgs.push({
+              url,
+              label: `${exam.modality} #${idx + 1}`,
+              date: exam.createdAt,
+            });
+          });
+        }
+      });
+    }
+    
+    // Ordenar cronologicamente (mais antigo primeiro)
+    return imgs.sort((a, b) => a.date.localeCompare(b.date));
+  }, [activeCase]);
 
   const refBefore = useRef<HTMLInputElement>(null);
   const refAfter = useRef<HTMLInputElement>(null);
@@ -445,12 +479,51 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
 
       {/* Canvas da Mesa de Luz */}
       <div className="p-6 bg-slate-950" data-tour="tour-compare-upload">
+
+  {/* Seletor de Imagens do Paciente */}
+  {patientImages.length > 0 && (
+    <div className="mb-4 p-3 rounded-lg bg-slate-900/50 border border-slate-700">
+      <div className="flex items-center gap-2 mb-2">
+        <Image size={14} className="text-[#29a399]" />
+        <span className="text-xs font-semibold text-white/80">Imagens do Paciente ({patientImages.length})</span>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        {patientImages.map((img, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => {
+              if (!imageBefore) setImageBefore(img.url);
+              else if (!imageAfter) setImageAfter(img.url);
+            }}
+            disabled={imageBefore === img.url || imageAfter === img.url}
+            className="relative aspect-square rounded-lg overflow-hidden border border-slate-700 hover:border-[#29a399] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title={`${img.label} — ${new Date(img.date).toLocaleDateString('pt-BR')}`}
+          >
+            <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 right-0 bg-slate-950/90 px-1 py-0.5 text-[9px] text-white/70 truncate">
+              {img.label}
+            </div>
+            {(imageBefore === img.url || imageAfter === img.url) && (
+              <div className="absolute inset-0 bg-[#29a399]/20 flex items-center justify-center">
+                <Check size={16} className="text-white" />
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+      <p className="text-[10px] text-white/40 mt-2 italic">
+        Clique em uma imagem para usá-la como Pré (se vazio) ou Pós (se Pré já carregado).
+      </p>
+    </div>
+  )}
+
         <input type="file" ref={refBefore} accept="image/*" onChange={(e) => handleFile(e, setImageBefore)} className="hidden" />
         <input type="file" ref={refAfter} accept="image/*" onChange={(e) => handleFile(e, setImageAfter)} className="hidden" />
 
         {(!imageBefore || !imageAfter) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Slot Imagem Pré */}
+            {/* Slot Imagem Pré — Upload manual ou seleção da galeria do paciente acima */}
             <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') (e.currentTarget as HTMLElement).click(); }} 
               onClick={() => !imageBefore && refBefore.current?.click()}
               className={`relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center border-2 border-dashed transition-all ${
