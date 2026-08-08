@@ -21,14 +21,14 @@ export default function WorkflowStepper(): React.ReactElement | null {
 
   return (
     <div
-      className="w-full px-6 pt-4 pb-3 border-b border-[#22262a] bg-[#0e1011] shrink-0"
+      className="w-full px-4 sm:px-6 pt-4 pb-3 border-b border-[#22262a] bg-[#0e1011] shrink-0 overflow-x-auto"
       role="progressbar"
       aria-label="Progresso do fluxo de analise"
       aria-valuenow={currentStep + 1}
       aria-valuemin={1}
       aria-valuemax={total}
     >
-      <div className="relative max-w-5xl mx-auto">
+      <div className="relative max-w-5xl mx-auto min-w-[560px]">
         <div className="absolute top-3 left-0 right-0 h-0.5 bg-white/10 rounded-full" />
         <div
           className="absolute top-3 left-0 h-0.5 bg-[#29a399] rounded-full transition-all duration-500 ease-out"
