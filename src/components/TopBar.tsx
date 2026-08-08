@@ -51,7 +51,7 @@ export default React.memo(function TopBar() {
   }, []);
 
   return (
-    <header className="h-16 flex items-center justify-between px-6 sticky top-0 z-20 shrink-0 bg-[#0e1011] border-b border-[#22262a]">
+    <header className="min-h-16 flex flex-wrap sm:flex-nowrap items-center justify-between px-4 sm:px-6 py-2 sticky top-0 z-20 shrink-0 bg-[#0e1011] border-b border-[#22262a]">
       <div>
         <h1 className="text-[26px] font-semibold text-white" style={{ fontFamily: 'Montserrat' }}>{title}</h1>
         <p className="text-[13px] text-[#7a828a] font-normal">{subtitle}</p>
@@ -66,7 +66,7 @@ export default React.memo(function TopBar() {
           </div>
         )}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {hasTour && !tourActive && (
           <button
             onClick={startTour}
