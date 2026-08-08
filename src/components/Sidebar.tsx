@@ -3,7 +3,7 @@ import {
   Bot, Bell, Settings, LogOut,
   Users, HelpCircle, Sparkles, Images
 } from 'lucide-react';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 
 import { useApp } from '@/contexts/AppContext';
 import type { Page } from '@/contexts/AppContext';
@@ -80,8 +80,24 @@ export default function Sidebar() {
     return item.badge ?? null;
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setIsOpen(true);
+    window.addEventListener('open-sidebar', handler);
+    return () => window.removeEventListener('open-sidebar', handler);
+  }, []);
+
   return (
-    <aside className="w-[220px] bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a]">
+    <>
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+    <aside className="w-[220px] bg-[#0e1011] text-white h-screen flex flex-col border-r border-[#22262a] md:static fixed inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
       {/* Header */}
       <header className="h-[84px] w-full shrink-0 flex flex-col justify-center px-4 border-b border-white/5 bg-[#0e1011]">
         <div className="flex items-center gap-2">
@@ -186,7 +202,7 @@ export default function Sidebar() {
       <AnalysisQuickSelectModal
         isOpen={isAnalysisModalOpen}
         onClose={closeAnalysisModal}
-      />
-    </aside>
+      />    </aside>
+    </>
   );
 }

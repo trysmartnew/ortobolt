@@ -1,5 +1,5 @@
 // src/components/TopBar.tsx
-import { Bell, Wifi, WifiOff, MapPin } from 'lucide-react';
+import { Bell, Wifi, WifiOff, MapPin, Menu } from 'lucide-react';
 import React from 'react';
 
 import { TOUR_STEPS } from '@/components/ProductTour';
@@ -52,6 +52,13 @@ export default React.memo(function TopBar() {
 
   return (
     <header className="min-h-16 flex flex-wrap sm:flex-nowrap items-center justify-between px-4 sm:px-6 py-2 sticky top-0 z-20 shrink-0 bg-[#0e1011] border-b border-[#22262a]">
+    <button
+      onClick={() => window.dispatchEvent(new Event('open-sidebar'))}
+      className="md:hidden p-2 rounded-lg text-[#9a9fa5] hover:bg-white/5"
+      aria-label="Abrir menu"
+    >
+      <Menu size={20} />
+    </button>
       <div>
         <h1 className="text-[26px] font-semibold text-white" style={{ fontFamily: 'Montserrat' }}>{title}</h1>
         <p className="text-[13px] text-[#7a828a] font-normal">{subtitle}</p>
