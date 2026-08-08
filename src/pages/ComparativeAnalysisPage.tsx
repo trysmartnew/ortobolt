@@ -3,7 +3,7 @@ import React, { Suspense, lazy, useEffect } from 'react';
 
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { reportWorkflowStep } from '@/hooks/useWorkflowStep';
-import { SectionHeader, Card, EmptyState } from '@/components/ui';
+import { SectionHeader, Card } from '@/components/ui';
 import { useAnalysis } from '@/contexts/AnalysisContext';
 import { useApp } from '@/contexts/AppContext';
 import { PRIMARY_MODEL } from '@/services/aiService';
@@ -19,7 +19,9 @@ export default function ComparativeAnalysisPage() {
   const { addAnalysisToHistory } = useAnalysis();
 
   useEffect(() => {
-    if (!activeCase) reportWorkflowStep(null, -1);
+    if (!activeCase) {
+      reportWorkflowStep('comparative', 0);
+    }
     return () => {
       reportWorkflowStep(null, -1);
     };
@@ -27,12 +29,63 @@ export default function ComparativeAnalysisPage() {
 
   if (!activeCase) {
     return (
-      <div className="p-6 flex items-center justify-center h-full">
-        <EmptyState
-          icon={<User size={48} className="text-white/40" />}
-          title="Nenhum Paciente Ativo"
-          description="Por favor, selecione um paciente na galeria antes de iniciar uma análise comparativa."
-        />
+      <div className="p-4 w-full space-y-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011] text-white min-h-full">
+        {/* Texto de valor clínico */}
+        <div className="max-w-3xl mx-auto text-center space-y-2 pt-4">
+          <h2 className="text-lg font-semibold text-white tracking-wide uppercase">
+            Análise Comparativa
+          </h2>
+          <p className="text-sm text-white/60 italic">
+            Evolução ortopédica baseada em imagem
+          </p>
+          <p className="text-sm text-white/80 mt-4 leading-relaxed">
+            Compare o estado pré e pós-operatório do paciente para acompanhar alterações radiográficas ao longo do tempo.
+          </p>
+        </div>
+
+        {/* Empty State com ação */}
+        <div className="flex flex-col items-center justify-center py-8 space-y-4">
+          <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+            <User size={32} className="text-white/40" />
+          </div>
+          <div className="text-center space-y-1">
+            <h3 className="text-base font-semibold text-white">Selecione um paciente</h3>
+            <p className="text-sm text-white/60">Inicie uma análise comparativa pré e pós-operatória.</p>
+          </div>
+          <button
+            onClick={() => setCurrentPage('gallery')}
+            className="px-6 py-2.5 rounded-xl bg-[#29a399] hover:bg-[#1c6b62] text-white text-sm font-semibold transition-all shadow-premium-glow"
+          >
+            Selecionar paciente
+          </button>
+        </div>
+
+        {/* Conteúdo contextual: Comparação Orientada */}
+        <div className="max-w-4xl mx-auto pt-6 pb-4">
+          <div className="border-t border-white/10 pt-6">
+            <h4 className="text-xs font-semibold text-white/80 tracking-wider uppercase mb-4 text-center">
+              Comparação Orientada
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                <div className="text-xs font-semibold text-[#29a399] mb-1">PRÉ-OPERATÓRIO</div>
+                <p className="text-xs text-white/70 leading-relaxed">Imagem inicial como referência.</p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                <div className="text-xs font-semibold text-[#29a399] mb-1">PÓS-OPERATÓRIO</div>
+                <p className="text-xs text-white/70 leading-relaxed">Imagem atual para comparação.</p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                <div className="text-xs font-semibold text-[#29a399] mb-1">EVOLUÇÃO</div>
+                <p className="text-xs text-white/70 leading-relaxed">Visualize diferenças entre os exames.</p>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-[11px] text-white/40 mt-4 italic">
+            Este conteúdo ajuda a compreender o propósito clínico da análise comparativa.
+          </p>
+        </div>
       </div>
     );
   }
