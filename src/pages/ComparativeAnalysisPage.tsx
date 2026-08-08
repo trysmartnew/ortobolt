@@ -15,7 +15,7 @@ const PrePostComparison = lazy(() => import('@/components/analysis/PrePostCompar
 import { User, ArrowLeft } from 'lucide-react';
 
 export default function ComparativeAnalysisPage() {
-  const { user, approveAndIntegrateCase, addToast, activeCase, setCurrentPage } = useApp();
+  const { user, approveAndIntegrateCase, addToast, activeCase, setActiveCase, cases, setCurrentPage } = useApp();
   const { addAnalysisToHistory } = useAnalysis();
 
   useEffect(() => {
@@ -27,9 +27,46 @@ export default function ComparativeAnalysisPage() {
     };
   }, [activeCase]);
 
+  const renderPatientSelector = () => (
+    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+      <User size={14} className="text-[#29a399] shrink-0" />
+      <span className="text-xs text-white/60 shrink-0">Paciente:</span>
+      <select
+        value={activeCase?.id ?? ''}
+        onChange={(e) => {
+          const next = cases.find((k) => k.id === e.target.value);
+          if (next) {
+            setActiveCase(next);
+            // Mesma chave de persistencia usada por AppContext (openCase/restauracao F5)
+            sessionStorage.setItem('vanguard-veterinary_active_case_id', next.id);
+          }
+        }}
+        aria-label="Selecionar paciente para análise comparativa"
+        className="flex-1 min-w-0 bg-[#1a1d1f] border border-white/20 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-[#29a399]"
+      >
+        <option value="" disabled>Selecione um paciente…</option>
+        {activeCase && !cases.some((k) => k.id === activeCase.id) && (
+          <option value={activeCase.id}>{activeCase.patientName} — {activeCase.title}</option>
+        )}
+        {cases.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.patientName} — {c.title}
+          </option>
+        ))}
+      </select>
+      <button
+        onClick={() => setCurrentPage('gallery')}
+        className="shrink-0 text-[11px] font-semibold text-[#29a399] hover:text-white transition-colors"
+      >
+        Abrir galeria
+      </button>
+    </div>
+  );
+
   if (!activeCase) {
     return (
       <div className="p-4 w-full space-y-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011] text-white min-h-full">
+        {cases.length > 0 && renderPatientSelector()}
         {/* Texto de valor clínico */}
         <div className="max-w-3xl mx-auto text-center space-y-2 pt-4">
           <h2 className="text-lg font-semibold text-white tracking-wide uppercase">
@@ -160,6 +197,7 @@ export default function ComparativeAnalysisPage() {
 
   return (
     <div className="p-4 w-full space-y-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#16191b] to-[#0e1011] text-white">
+      {renderPatientSelector()}
       <SectionHeader
         title="Mesa de Luz Digital"
         subtitle="Comparação de exames pré e pós-operatórios"
@@ -182,7 +220,7 @@ export default function ComparativeAnalysisPage() {
             <div className="w-8 h-8 border-4 border-[#29a399]/20 border-t-[#29a399] rounded-full animate-spin" />
           </div>
         }>
-          <PrePostComparison onSaveCase={handleSaveComparisonCase} />
+          <PrePostComparison key={activeCase.id} onSaveCase={handleSaveComparisonCase} />
         </Suspense>
         </ErrorBoundary>
       </Card>
