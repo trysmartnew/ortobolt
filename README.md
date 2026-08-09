@@ -240,6 +240,11 @@ A ordem de execução do pipeline de pré-commit é inviolável para garantir a 
     npx tsc --noEmit
     npm run build
 
+**Rollback/Reversão:**
+- Em caso de falha crítica, use `Copy-Item arquivo.bkp arquivo -Force` para reverter
+- Para reverter commits: `git revert HEAD` ou `git reset --hard HEAD~1`
+- Nunca force-push sem backup local
+
 **Deploy (NUNCA usar git add .):**
     git add arquivo-especifico.ts
     git commit -m 'fix: descricao clara e objetiva'
@@ -273,6 +278,11 @@ A ordem de execução do pipeline de pré-commit é inviolável para garantir a 
 - api/lib/verifySupabaseJwt.ts
 
 ### Investigacao de Problemas
+
+**Monitoramento e Observabilidade:**
+- Use `createLogger` (src/utils/logger) para logs estruturados
+- Logs são visíveis no console do navegador (desenvolvimento) e Vercel Logs (produção)
+- Sempre logar erros com contexto completo antes de lançar exceções
 - Exibir **todos os erros reais** encontrados
 - **Nunca** esconder erros de compilacao, TypeScript, runtime, Supabase ou Vercel
 - **Nunca** substituir erros por interpretacoes ou suposicoes
