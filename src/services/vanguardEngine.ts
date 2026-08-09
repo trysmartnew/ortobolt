@@ -1,7 +1,7 @@
 import { createLogger } from '../utils/logger';
 const logger = createLogger('VanguardEngine');
 
-﻿// src/services/vanguardEngine.ts
+// src/services/vanguardEngine.ts
 // ✅ Validação em Camadas + Structured Output (Zod)
 // ✅ Complementa aiService.ts sem quebrar arquitetura existente
 // ✅ Importar em: AIAssistant.tsx, AnalysisPage.tsx
