@@ -194,3 +194,96 @@ A ordem de execução do pipeline de pré-commit é inviolável para garantir a 
 - As chaves legadas de storage `ortobolt_*` e `ortobolt-*` são migradas automaticamente no startup para `vanguard-veterinary_*` e `vanguard-veterinary-*`; referências remanescentes são apenas fallback/migração ou branding interno.
 - As classes claras legadas (`bg-white`, `bg-slate-50`) foram migradas para tokens premium; novos componentes devem usar `glass-panel-premium` e `premium-header-bg`.
 - O branding interno foi migrado para `Vanguard Veterinary`; o nome `OrtoBoltAuditDB` (IndexedDB) é mantido como legado para preservar dados locais de auditoria.
+
+
+## Diretrizes de Implementação
+
+> Regras canônicas obrigatórias para IA (Nemotron, Cline, Copilot) e desenvolvedores humanos.
+> Ultima atualizacao: 2026-08-09
+
+### Stack Tecnica Validada
+- **React**: ^19.0.0 (usar use() hook; useContext esta depreciado)
+- **TypeScript**: ~5.8.2 (strict mode)
+- **Vite**: ^6.2.0
+- **Tailwind CSS**: ^4.1.14 (v4 - usar bg-neutral-*, text-neutral-*; bg-gray-* depreciado)
+- **Supabase**: ^2.98.0 (RLS ativo; projeto ortobolt-v2, regiao sa-east-1)
+- **Zod**: ^4.4.3 (validacao de schemas)
+- **Konva**: ^10.3.0 + react-konva ^19.2.5
+- **Recharts**: ^2.15.4, **lucide-react**: ^0.546.0, **jspdf**: ^4.2.0, **dompurify**: ^3.4.11
+
+### Ambiente de Desenvolvimento
+- **Sistema Operacional**: Windows 10
+- **Shell**: PowerShell 7 (PS7)
+- **Extensao de IA recomendada**: Kilo Code + Nvidia Nemotron 3 Super Free (via OpenRouter)
+
+### Regras Absolutas (Zero Tolerancia)
+- **Nenhum mock, placeholder, dado ficticio ou implementacao temporaria**
+- **Nenhum TODO/FIXME como solucao**
+- **Nunca inventar arquivos, comandos, APIs, caminhos ou dependencias**
+- **Nunca editar .env, *.bkp, *.py, *.ps1 ou *.json de auditoria**
+- **Nunca commitar: *.py, *.ps1, *.bkp, *.json de auditoria, scripts utilitarios da raiz**
+
+### PowerShell 7 Obrigatorio
+- Use Select-String em vez de grep
+- Use Copy-Item em vez de cp
+- Use aspas simples sempre que possivel
+- Nao assumir compatibilidade com Bash/Linux
+
+### Fluxo de Trabalho Obrigatorio
+
+**Antes de qualquer modificacao:**
+1. **Dry-run** (sem alterar arquivos) para validar existencia, padroes e contexto
+2. **exact-match-count** - abortar se quantidade de ocorrencias diferente do esperado (normalmente 1)
+3. **Backup .bkp** obrigatorio antes de qualquer escrita
+
+**Apos qualquer modificacao:**
+    npx tsc --noEmit
+    npm run build
+
+**Deploy (NUNCA usar git add .):**
+    git add arquivo-especifico.ts
+    git commit -m 'fix: descricao clara e objetiva'
+    git push origin main
+
+### Regras de Implementacao
+
+**Supabase e RLS:**
+- Sempre usar .eq() ou .in() para respeitar Row Level Security
+- Validar JWT em API routes: api/lib/verifySupabaseJwt.ts
+- Service client apenas em contextos seguros: src/services/supabase.ts
+
+**React 19:**
+- Usar use() hook para promises e context
+- **Nunca** usar useContext
+- Componentes funcionais apenas
+
+**Tailwind CSS v4:**
+- Usar bg-neutral-*, text-neutral-*, border-neutral-*
+- **Nunca** usar bg-gray-* (depreciado no v4)
+- Consultar src/components/ui.tsx antes de criar novos componentes
+
+**TypeScript:**
+- Strict mode ativo
+- Tipos explicitos em props e retornos
+- Evitar any (preferir unknown + type guards)
+
+### Caminhos Canonicos (Previamente Validados)
+- src/contexts/
+- src/services/supabase.ts
+- api/lib/verifySupabaseJwt.ts
+
+### Investigacao de Problemas
+- Exibir **todos os erros reais** encontrados
+- **Nunca** esconder erros de compilacao, TypeScript, runtime, Supabase ou Vercel
+- **Nunca** substituir erros por interpretacoes ou suposicoes
+- Diferenciar claramente **fatos verificados** de **hipoteses**
+
+### Principio Geral
+- Alteracoes **reproduziveis, auditaveis, minimas e tecnicamente corretas**
+- Priorizar **precisao sobre velocidade**
+- Mudancas pequenas, isoladas e facilmente reversiveis
+- Nunca alterar multiplas areas em uma unica etapa quando dificultar validacao
+
+### Gate Pre-Commit Obrigatorio
+    npm run lint
+Se qualquer validacao falhar: **INTERROMPA IMEDIATAMENTE**, informe o motivo exato, nao proponha solucoes baseadas em suposicoes.
