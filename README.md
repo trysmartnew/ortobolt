@@ -1,15 +1,17 @@
-﻿# Vanguard Veterinary
+# Vanguard Veterinary
 
 ## Visão Geral
 
 **Nome do Projeto:** Vanguard Veterinary
 **Propósito Clínico:** Plataforma de ortopedia veterinária de precisão.
 **URL de Produção:** `https://vanguard-veterinary.vercel.app`
+**Repositório:** `https://github.com/trysmartnew/ortobolt`
 
 ## Stack Técnica
 
 **Dependências:**
 - `@supabase/supabase-js`: `^2.98.0`
+  - Projeto: `ortobolt-v2` | Região: `sa-east-1` | RLS ativo
 - `@tailwindcss/vite`: `^4.1.14`
 - `@types/dompurify`: `^3.0.5`
 - `@vitejs/plugin-react`: `^5.0.4`
@@ -115,21 +117,22 @@ const PAGE_MAP = {
 - `ToastContainer.tsx`: Container para exibir mensagens de notificação (toasts).
 - `TopBar.tsx`: Barra superior da aplicação.
 - `ui.tsx`: Coleção de componentes de UI genéricos.
+- `WorkflowStepper.tsx`: Stepper de workflow para processos clínicos multi-etapas.
 
 ## Serviços & API
 
 **Serviços Locais (`src/services/`):**
 - `aiConsent.ts`: Gerencia o consentimento do usuário para análises de IA.
 - `aiService.ts`: Funções para interagir com serviços de IA.
-- `backupService.ts`: Utilitários para backup de dados.
 - `clinicalCaseIntegrationService.ts`: Integração de casos clínicos com a plataforma.
 - `clinicalCopilotService.ts`: Funções do copilot clínico.
 - `clinicalEngine.ts`: Lógica central do motor clínico.
 - `feedbackService.ts`: Gerencia o envio de feedback.
 - `imageService.ts`: Serviços para manipulação e processamento de imagens.
 - `localAuditService.ts`: Serviços de auditoria local.
-- `ortoboltEngine.ts`: Motor principal do OrtoBolt.
 - `pdfService.ts`: Geração de documentos PDF.
+- `storageMigration.ts`: Migração de chaves legadas do localStorage (ortobolt_* → vanguard-veterinary_*).
+- `vanguardEngine.ts`: Motor principal do Vanguard com validação em camadas e structured output (Zod).
 - `supabase.ts`: Configuração e interação com o Supabase.
 - `veterinaryPrompts.ts`: Gerencia prompts específicos para veterinária.
 
