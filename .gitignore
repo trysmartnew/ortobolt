@@ -68,3 +68,6 @@ yarn-error.log*
 *.bkp*
 _audit/
 .kilo/
+
+# Kilo Code local configuration (nao versionar)
+.kilocode/
