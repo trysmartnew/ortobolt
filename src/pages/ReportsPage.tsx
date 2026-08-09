@@ -37,7 +37,15 @@ const TYPE_COLORS: Record<string, 'blue' | 'success' | 'warning' | 'info'> = {
 };
 
 export default function ReportsPage() {
-  const { user, cases, addToast } = useApp();
+  const { user, cases, addToast, pendingReportCaseId, setPendingReportCaseId } = useApp();
+
+  useEffect(() => {
+    if (!pendingReportCaseId) return;
+    const caseId = pendingReportCaseId;
+    setPendingReportCaseId(null);
+    handleGenerateTechnicalReport(caseId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingReportCaseId]);
 
   const precisionMetric = useMemo(() => {
     const completedCases = cases.filter(c => c.status === 'completed');

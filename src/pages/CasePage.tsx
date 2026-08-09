@@ -296,7 +296,7 @@ function getStatusLabel(status: CaseStatus): string {
 }
 
 export default function CasePage() {
-  const { activeCase, closeCase, deleteCase, updateCase, addToast, setCurrentPage, user } = useApp();
+  const { activeCase, closeCase, deleteCase, updateCase, addToast, setCurrentPage, user, setPendingReportCaseId } = useApp();
   const [aiMarkingsFromSession, setAiMarkingsFromSession] = useState<MarkingsData | null>(null);
   const [saving, setSaving] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -640,7 +640,8 @@ export default function CasePage() {
   };
 
   const handleGoToReports = () => {
-    setCurrentPage('reports');
+    setPendingReportCaseId(activeCase.id);
+        setCurrentPage('reports');
     addToast(
       activeCase.aiAnalysis
         ? 'Laudos e Relatórios: o PDF usará este caso integrado.'

@@ -1,4 +1,4 @@
-﻿// src/contexts/AppContext.tsx
+// src/contexts/AppContext.tsx
 // ✅ C-02: Rate limiting — 5 tentativas → bloqueio 15 min
 // ✅ A-05: useMemo para unreadCount
 // ✅ U-02: Sistema de Toast global
@@ -133,6 +133,8 @@ interface AppContextType {
   removeToast: (id: number) => void;
   loginLocked: boolean;
   loginLockSecondsLeft: number;
+  pendingReportCaseId: string | null;
+  setPendingReportCaseId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -224,6 +226,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [lockedUntil, setLockedUntil] = useState<Date | null>(null);
+  const [pendingReportCaseId, setPendingReportCaseId] = useState<string | null>(null);
   const [, setLockTick] = useState(0);
 
   const loginLocked = !!(lockedUntil && new Date() < lockedUntil);
@@ -718,6 +721,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       onboardingActive, onboardingStageIndex, startOnboarding, advanceOnboarding, skipOnboarding,
       toasts, addToast, removeToast,
       loginLocked, loginLockSecondsLeft,
+    pendingReportCaseId, setPendingReportCaseId,
     }}>
       {children}
     </AppContext.Provider>

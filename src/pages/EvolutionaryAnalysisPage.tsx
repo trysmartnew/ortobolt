@@ -15,6 +15,8 @@ import {
 import { Card, Button, Badge, EmptyState, Spinner, SectionHeader } from '@/components/ui';
 import { SPECIES_LABELS } from '@/constants/labels';
 import { useApp } from '@/contexts/AppContext';
+import { generateCaseReport } from '@/services/pdfService';
+import { uploadAndPersistPdf } from '@/services/supabase';
 import type { ClinicalCase , CaseStatus } from '@/types/index';
 
 function formatDate(iso: string): string {
@@ -154,18 +156,40 @@ export default function EvolutionaryAnalysisPage() {
   }, [trends, boneDensityData]);
 
 
-  const handleGenerateReport = () => {
+  const handleGenerateReport = async () => {
     setLoading(true);
     try {
-      sessionStorage.setItem('vanguard-veterinary_evolution_report', JSON.stringify(reportPayload));
-    } catch {
-      console.warn('Falha ao serializar relatório evolutivo.');
-    }
-    setTimeout(() => {
+      if (!activeCase) {
+        addToast('Nenhum caso ativo para gerar o relatório.', 'error');
+        setLoading(false);
+        return;
+      }
+      const evolutionNotes = [
+        progressText,
+        predictionText,
+        '',
+        '--- Dados de Evolução ---',
+        'Densidade óssea: ' + boneDensityData.map(d => d.name + ': ' + d.value.toFixed(3)).join(', '),
+        'Espaço articular: ' + jointSpaceData.map(d => d.name + ': ' + d.value.toFixed(3)).join(', '),
+      ].join('\n');
+      const evolutionCase = { ...activeCase, notes: evolutionNotes };
+      const blob = await generateCaseReport(evolutionCase, {
+        reportTitle: 'Relatório Evolutivo',
+        notes: evolutionNotes,
+      });
+      if (blob) {
+        await uploadAndPersistPdf(blob, activeCase.id);
+        addToast('Relatório de evolução gerado e persistido com sucesso.', 'success');
+        setCurrentPage('reports');
+      } else {
+        addToast('Falha ao gerar o relatório evolutivo.', 'error');
+      }
+    } catch (error) {
+      console.error('Erro ao gerar relatório evolutivo:', error);
+      addToast('Erro ao gerar relatório evolutivo.', 'error');
+    } finally {
       setLoading(false);
-      addToast('Relatório de evolução gerado com sucesso.', 'success');
-      setCurrentPage('reports');
-    }, 1500);
+    }
   };
 
   const reportPayload = useMemo(() => ({
