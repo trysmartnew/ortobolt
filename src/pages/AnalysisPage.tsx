@@ -74,6 +74,7 @@ export default function AnalysisPage() {
 
   const [approving, setApproving] = useState(false);
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  const SHOW_LEGACY_PDF_EXPORT = false; // Slice B - ocultar engine paralela de PDF
   const [zoomOpen, setZoomOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -544,14 +545,14 @@ export default function AnalysisPage() {
                   <Images className="w-4 h-4 text-[#29a399]" />
                   <span className="text-sm">Aprovar e ir à Central de Casos</span>
                 </button>
-                <button
+                {SHOW_LEGACY_PDF_EXPORT && (<button
                   onClick={handleGeneratePdf}
                   disabled={generatingPdf}
                   className="flex-1 h-[42px] rounded-[8px] flex items-center justify-center gap-2 border border-[rgba(41,163,153,0.3)] bg-gradient-to-r from-[#29a399]/15 to-[#29a399]/05 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(41,163,153,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FileText className="w-4 h-4 text-[#29a399]" />
                   <span className="text-sm">{generatingPdf ? 'Gerando PDF...' : 'Gerar Laudo em PDF'}</span>
-                </button>
+                </button>)}
               </div>
             </div>
           )}

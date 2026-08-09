@@ -1,4 +1,6 @@
-﻿import jsPDF from 'jspdf';
+import jsPDF from 'jspdf';
+
+const SHOW_LEGACY_PDF_EXPORT = false; // Slice B - ocultar engine paralela de PDF
 import { Upload, X, Columns, Layers, AlertCircle, RefreshCw, Eye, Brain, Save, Download, Image, Check } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 
@@ -394,7 +396,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
                 {isAnalyzing ? 'Analisando...' : 'Análise de IA'}
               </Button>
 
-              {aiAnalysisResult && (
+              {aiAnalysisResult && SHOW_LEGACY_PDF_EXPORT && (
                 <Button
                   variant="secondary"
                   size="sm"
