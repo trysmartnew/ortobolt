@@ -500,7 +500,7 @@ export default function AnalysisPage() {
                       <Sparkles size={14} className="text-[#29a399]" /> Laudo Radiográfico
                     </h3>
                   </div>
-                  <div className="p-4 max-h-[50vh] overflow-y-auto space-y-1">
+                  <div className="p-4 overflow-y-auto space-y-1">
                     {renderResult(stripAiArtifacts(analysisText))}
                   </div>
                 </Card>
