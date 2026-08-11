@@ -399,6 +399,8 @@ export default function ReportsPage() {
         clinicName,
         clinicSubtitle,
         notes: filteredNotes,
+        responsibleName: user?.name || '',
+        responsibleCrmv: user?.crmv || '',
       });
       if (blob) { await uploadAndPersistPdf(blob, selectedCase.id); }
       addToast('Laudo técnico gerado com sucesso.', 'success');
@@ -451,6 +453,8 @@ export default function ReportsPage() {
         clinicName,
         clinicSubtitle,
         notes: filteredNotes,
+        responsibleName: user?.name || '',
+        responsibleCrmv: user?.crmv || '',
       });
       if (blob) { await uploadAndPersistPdf(blob, selectedCase.id); }
       addToast('Guia para o tutor gerado com sucesso.', 'success');

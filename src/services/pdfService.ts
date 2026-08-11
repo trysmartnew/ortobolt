@@ -257,7 +257,7 @@ export async function generateLaudoReport(
 
 export async function generateCaseReport(
   c: ClinicalCase,
-  options?: { isTutorGuide?: boolean; logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string; notes?: string; reportTitle?: string; imageDataUrl?: string | null }
+  options?: { isTutorGuide?: boolean; logoUrl?: string | null; clinicName?: string; clinicSubtitle?: string; notes?: string; reportTitle?: string; imageDataUrl?: string | null; responsibleName?: string; responsibleCrmv?: string }
 ): Promise<Blob | null> {
   const tutorMode = options?.isTutorGuide ?? false;
   const JsPDF = await getJsPDF();
@@ -285,6 +285,16 @@ export async function generateCaseReport(
     doc.text(`${label}: ${value}`, 14, y, { charSpace: 0 }); y += 5;
   }
   y += 5;
+
+  // ── Slice B: Responsável Técnico e CRMV (condicional) ──
+  if (options?.responsibleName && options?.responsibleCrmv) {
+    if (y > 270) { doc.addPage(); y = 30; }
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
+    doc.text(`Responsável Técnico: ${safe(options.responsibleName)} | CRMV: ${safe(options.responsibleCrmv)}`, 14, y, { charSpace: 0 });
+    y += 7;
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
+  }
+
 
   // Notes — ✅ A-03: wrapping para notas longas
   const cleanNotes = sanitizeClinicalNotes(options?.notes || c.notes || '');
