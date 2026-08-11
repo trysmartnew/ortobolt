@@ -330,3 +330,26 @@ export async function updateCaseMarkings(
     .eq('id', caseId);
   if (error) throw error;
 }
+
+export async function insertReportRecord(params: {
+  userId: string;
+  title: string;
+  type: 'monthly' | 'case' | 'audit' | 'performance' | 'evolution';
+  period: string;
+  sizeKb: number;
+}): Promise<void> {
+  const { userId, title, type, period, sizeKb } = params;
+  const { error } = await supabase.from('reports').insert({
+    id: crypto.randomUUID(),
+    user_id: userId,
+    title,
+    type,
+    generated_at: new Date().toISOString(),
+    period,
+    status: 'ready',
+    size_kb: sizeKb,
+  });
+  if (error) {
+    console.error('[insertReportRecord] Erro ao inserir registro:', error.message);
+  }
+}

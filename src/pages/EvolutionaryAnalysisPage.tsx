@@ -16,7 +16,7 @@ import { Card, Button, Badge, EmptyState, Spinner, SectionHeader } from '@/compo
 import { SPECIES_LABELS } from '@/constants/labels';
 import { useApp } from '@/contexts/AppContext';
 import { generateCaseReport } from '@/services/pdfService';
-import { uploadAndPersistPdf } from '@/services/supabase';
+import { uploadAndPersistPdf, insertReportRecord } from '@/services/supabase';
 import type { ClinicalCase , CaseStatus } from '@/types/index';
 
 function formatDate(iso: string): string {
@@ -94,7 +94,7 @@ function getStatusLabel(status: CaseStatus): string {
 }
 
 export default function EvolutionaryAnalysisPage() {
-  const { cases, activeCase, authLoading, addToast, setCurrentPage } = useApp();
+  const { cases, activeCase, authLoading, addToast, setCurrentPage, user } = useApp();
   const [loading, setLoading] = useState(false);
 
   const patientName = activeCase?.patientName ?? 'Paciente';
@@ -179,6 +179,7 @@ export default function EvolutionaryAnalysisPage() {
       });
       if (blob) {
         await uploadAndPersistPdf(blob, activeCase.id);
+        await insertReportRecord({ userId: user?.id ?? "", title: "Relatorio Evolutivo", type: "evolution", period: new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" }), sizeKb: Math.round((blob?.size ?? 0) / 1024) });
         addToast('Relatório de evolução gerado e persistido com sucesso.', 'success');
         setCurrentPage('reports');
       } else {

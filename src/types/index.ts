@@ -1,4 +1,4 @@
-// ── Core User & Auth ──────────────────────────────────────────────────────────
+﻿// ── Core User & Auth ──────────────────────────────────────────────────────────
 export interface User {
   id: string;
   name: string;
@@ -45,7 +45,7 @@ export type NotificationType = 'alert'|'info'|'success'|'warning';
 export interface Notification { id:string; type:NotificationType; title:string; message:string; timestamp:string; read:boolean; caseId?:string; }
 
 // ── Reports ───────────────────────────────────────────────────────────────────
-export interface Report { id:string; title:string; type:'monthly'|'case'|'audit'|'performance'; generatedAt:string; period:string; status:'ready'|'generating'|'error'; sizeKb:number; }
+export interface Report { id:string; title:string; type:'monthly'|'case'|'audit'|'performance'|'evolution'; generatedAt:string; period:string; status:'ready'|'generating'|'error'; sizeKb:number; }
 
 
 
