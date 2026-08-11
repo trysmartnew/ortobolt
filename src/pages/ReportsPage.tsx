@@ -338,7 +338,17 @@ export default function ReportsPage() {
         const caseToRegenerate = cases.find(c => c.id === (r as Report & { case_id: string }).case_id);
         if (caseToRegenerate) {
           const blob = await generateCaseReport(caseToRegenerate, { logoUrl: logoPreview, clinicName, clinicSubtitle });
-          if (blob) { await uploadAndPersistPdf(blob, caseToRegenerate.id); }
+          if (blob) {
+            await uploadAndPersistPdf(blob, caseToRegenerate.id);
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `laudo-${caseToRegenerate.id}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+          }
         } else {
           addToast(`Caso associado ao relatório não foi encontrado.`, 'error');
         }
@@ -402,7 +412,17 @@ export default function ReportsPage() {
         responsibleName: user?.name || '',
         responsibleCrmv: user?.crmv || '',
       });
-      if (blob) { await uploadAndPersistPdf(blob, selectedCase.id); }
+      if (blob) {
+        await uploadAndPersistPdf(blob, selectedCase.id);
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `laudo-tecnico-${selectedCase.id}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
       addToast('Laudo técnico gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
@@ -456,7 +476,17 @@ export default function ReportsPage() {
         responsibleName: user?.name || '',
         responsibleCrmv: user?.crmv || '',
       });
-      if (blob) { await uploadAndPersistPdf(blob, selectedCase.id); }
+      if (blob) {
+        await uploadAndPersistPdf(blob, selectedCase.id);
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `guia-tutor-${selectedCase.id}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
       addToast('Guia para o tutor gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
