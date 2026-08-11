@@ -477,77 +477,7 @@ export default function ReportsPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       {/* Report Customization */}
-      <Card data-tour="tour-report-customization" className="p-5">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex-1 min-w-0 self-start">
-            <div className="flex items-center gap-2">
-              <Settings size={18} className="text-[var(--color-accent)]" />
-              <p className="text-sm text-slate-400">Personalização de Laudos e Relatórios</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-4">
-              <div>
-                <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</span>
-                <input
-                  type="text"
-                  value={clinicName}
-                  onChange={e => setClinicName(e.target.value)}
-                  className="w-48 px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                />
-              </div>
-              <div>
-                <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</span>
-                <input
-                  type="text"
-                  value={clinicSubtitle}
-                  onChange={e => setClinicSubtitle(e.target.value)}
-                  className="w-48 px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                />
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {logoPreview ? (
-                <div className="relative">
-                  <img src={logoPreview} alt="Logo" className="w-40 h-16 object-contain rounded-lg border border-[var(--color-border)] glass-panel-premium p-1" />
-                  <button
-                    onClick={handleRemoveLogo}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-600"
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <label className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[var(--color-accent)] bg-[var(--color-surface-muted)] hover:bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-lg cursor-pointer transition">
-                  <Upload size={14} /> Fazer Upload do Logo (PNG, JPG)
-                  <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
-                </label>
-              )}
-              <Button variant="primary" size="sm" onClick={handleSavePrefs}>Salvar Preferências</Button>
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 md:hidden">
-          <div>
-            <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</span>
-            <input
-              type="text"
-              value={clinicName}
-              onChange={e => setClinicName(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-            />
-          </div>
-          <div>
-            <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</span>
-            <input
-              type="text"
-              value={clinicSubtitle}
-              onChange={e => setClinicSubtitle(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-            />
-          </div>
-        </div>
-      </Card>
+      
 
       {/* Grid Principal */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -700,6 +630,76 @@ export default function ReportsPage() {
               )}
             </div>
           ))}
+        </div>
+      </Card><Card data-tour="tour-report-customization" className="p-5">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex-1 min-w-0 self-start">
+            <div className="flex items-center gap-2">
+              <Settings size={18} className="text-[var(--color-accent)]" />
+              <p className="text-sm text-slate-400">Personalização de Laudos e Relatórios</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-4">
+              <div>
+                <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</span>
+                <input
+                  type="text"
+                  value={clinicName}
+                  onChange={e => setClinicName(e.target.value)}
+                  className="w-48 px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                />
+              </div>
+              <div>
+                <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</span>
+                <input
+                  type="text"
+                  value={clinicSubtitle}
+                  onChange={e => setClinicSubtitle(e.target.value)}
+                  className="w-48 px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {logoPreview ? (
+                <div className="relative">
+                  <img src={logoPreview} alt="Logo" className="w-40 h-16 object-contain rounded-lg border border-[var(--color-border)] glass-panel-premium p-1" />
+                  <button
+                    onClick={handleRemoveLogo}
+                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-600"
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : (
+                <label className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[var(--color-accent)] bg-[var(--color-surface-muted)] hover:bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-lg cursor-pointer transition">
+                  <Upload size={14} /> Fazer Upload do Logo (PNG, JPG)
+                  <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+                </label>
+              )}
+              <Button variant="primary" size="sm" onClick={handleSavePrefs}>Salvar Preferências</Button>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 md:hidden">
+          <div>
+            <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</span>
+            <input
+              type="text"
+              value={clinicName}
+              onChange={e => setClinicName(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+            />
+          </div>
+          <div>
+            <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</span>
+            <input
+              type="text"
+              value={clinicSubtitle}
+              onChange={e => setClinicSubtitle(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+            />
+          </div>
         </div>
       </Card>
 

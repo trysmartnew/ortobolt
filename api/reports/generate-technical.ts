@@ -251,7 +251,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const arrayBuffer = doc.output('arraybuffer');
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="laudo-tecnico.pdf"');
-    return res.status(200).send(Buffer.from(arrayBuffer));
+    await insertReportRecord({
+    userId: auth.user.id,
+    title: caseRow.patient_name ?? caseRow.patientName ?? "Laudo Tecnico",
+    type: "case",
+    period: dateStr,
+    sizeKb: Math.round(arrayBuffer.byteLength / 1024),
+  });
+  return res.status(200).send(Buffer.from(arrayBuffer));
   } catch (err) {
     console.error('generate-technical error:', err);
     return res.status(500).json({ error: 'Internal server error' });

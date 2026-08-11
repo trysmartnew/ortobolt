@@ -56,7 +56,7 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [workflowStatus, setWorkflowStatus] = useState(existingApprovalStatus);
   const [savedCase, setSavedCase] = useState<ClinicalCase | null>(null);
-  const { openCase, activeCase } = useApp();
+  const { openCase, activeCase, addToast } = useApp();
 
   // Derivar imagens disponíveis do paciente ativo, ordenadas cronologicamente
   const patientImages = React.useMemo(() => {
@@ -125,12 +125,14 @@ export default function PrePostComparison({ onSaveCase, existingApprovalStatus =
 
     if (!ALLOWED_MIME_TYPES.includes(f.type)) {
       setError(`Formato inválido: "${f.type || 'desconhecido'}". Use JPG, PNG ou WEBP.`);
+        addToast('Formato de arquivo inválido. Use JPG, PNG ou WEBP.', 'error');
       if (e.target) e.target.value = '';
       return;
     }
 
     if (f.size > MAX_FILE_SIZE_BYTES) {
       setError(`Arquivo muito grande. O limite máximo é de ${MAX_FILE_SIZE_MB}MB.`);
+        addToast('Arquivo muito grande. O limite máximo é de 15MB.', 'error');
       if (e.target) e.target.value = '';
       return;
     }
