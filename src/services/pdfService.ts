@@ -301,14 +301,16 @@ export async function generateCaseReport(
   if (cleanNotes) {
     if (y > 250) { doc.addPage(); y = 30; }
     doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-    doc.text('Notas Clínicas', 14, y, { charSpace: 0 }); y += 6;
+    // ── CORREÇÃO: Renomear para "Laudo Radiográfico" no modo técnico ──
+    const notesTitle = tutorMode ? 'Notas Clínicas' : 'Laudo Radiográfico';
+    doc.text(notesTitle, 14, y, { charSpace: 0 }); y += 6;
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
     y = addWrappedText(doc, safe(cleanNotes), 14, y, 182, 5);
     y += 5;
   }
 
-  // AI Analysis
-  if (c.aiAnalysis) {
+  // AI Analysis — apenas no modo tutor (evita duplicação no modo técnico)
+  if (c.aiAnalysis && tutorMode) {
     if (y > 220) { doc.addPage(); y = 30; }
 
     if (tutorMode) {

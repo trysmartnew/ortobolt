@@ -337,7 +337,12 @@ export default function ReportsPage() {
         // Correção de Sanetização: Cast seguro para acessar case_id.
         const caseToRegenerate = cases.find(c => c.id === (r as Report & { case_id: string }).case_id);
         if (caseToRegenerate) {
-          const blob = await generateCaseReport(caseToRegenerate, { logoUrl: logoPreview, clinicName, clinicSubtitle });
+          const blob = await generateCaseReport(caseToRegenerate, { 
+            logoUrl: logoPreview, 
+            clinicName, 
+            clinicSubtitle,
+            reportTitle: 'Laudo Radiográfico',
+          });
           if (blob) {
             await uploadAndPersistPdf(blob, caseToRegenerate.id);
             const url = window.URL.createObjectURL(blob);
@@ -411,6 +416,7 @@ export default function ReportsPage() {
         notes: filteredNotes,
         responsibleName: user?.name || '',
         responsibleCrmv: user?.crmv || '',
+        reportTitle: 'Laudo Radiográfico',
       });
       if (blob) {
         await uploadAndPersistPdf(blob, selectedCase.id);
