@@ -1,7 +1,7 @@
 // src/pages/ReportsPage.tsx
 // ✅ Produção Real — Dados do Supabase (SEM MOCKS)
 // ✅ RESTAURADO: Personalização de Laudos + Modal de Seleção de Caso
-import { Download, FileText, Clock, CheckCircle, AlertCircle, Upload, Settings, Search, Calendar, User, X } from 'lucide-react';
+import { Download, FileText, Clock, CheckCircle, AlertCircle, Upload, Settings, Search, Calendar, User, X, ChevronDown, ChevronRight, Stethoscope, Activity, History } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import {
   ResponsiveContainer,
@@ -474,236 +474,18 @@ export default function ReportsPage() {
     );
   }
 
+
+  const [isIdentityExpanded, setIsIdentityExpanded] = useState(false);
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
+  const [isIndicatorsExpanded, setIsIndicatorsExpanded] = useState(false);
+
+  const isIdentityConfigured = Boolean(
+    localStorage.getItem('vanguard-veterinary_pdf_clinic_name') &&
+    localStorage.getItem('vanguard-veterinary_pdf_clinic_subtitle')
+  );
+
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      {/* Report Customization */}
-      
-
-      {/* Grid Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Coluna ESQUERDA: Relatório Mensal */}
-        <div className="lg:col-span-5 space-y-4">
-          <Card data-tour="tour-report-monthly" className="p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <FileText className="text-[var(--color-accent)]" size={18} />
-              <div>
-                <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>Relatório Mensal</h3>
-                <p className="text-sm text-slate-400">KPIs, evolução e casos do período</p>
-              </div>
-            </div>
-
-            <div data-tour="tour-report-metrics" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-              <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
-                <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Métricas de Precisão</p>
-                <p className="text-lg font-bold text-white">{precisionMetric.toFixed(1)}%</p>
-              </div>
-              <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
-                <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Volume de Casos</p>
-                <p className="text-lg font-bold text-white">{caseVolume}</p>
-              </div>
-              <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
-                <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Taxa de Sucesso</p>
-                <p className="text-lg font-bold text-white">{successRate.toFixed(1)}%</p>
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <p data-tour="tour-report-chart" className="text-xs font-semibold text-white/70 mb-2">Evolução Temporal dos últimos 7 meses</p>
-              <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={monthlyData}>
-                  <XAxis dataKey="name" stroke="var(--color-text-secondary)" fontSize={12} />
-                  <YAxis stroke="var(--color-text-secondary)" label={{ value: 'Casos', angle: -90, position: 'insideLeft' }} domain={[0, 'auto']} />
-                  <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text-primary)' }} />
-                  <Line type="monotone" dataKey="value" stroke="var(--color-accent)" strokeWidth={2} dot={{ fill: 'var(--color-accent)', r: 4 }} activeDot={{ r: 6 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            <RequireRole>
-              <Button data-tour="tour-report-generate"
-                onClick={handleGenerateMonthlyReport}
-                className="w-full mt-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-                disabled={generating === 'monthly' || metricsLoading}
-              >
-                {generating === 'monthly' ? 'Gerando...' : metricsLoading ? 'Carregando dados...' : 'Gerar e Baixar PDF'}
-              </Button>
-            </RequireRole>
-          </Card>
-        </div>
-
-        {/* Coluna DIREITA: Clinical Reports & Tutor Guides */}
-        <div className="lg:col-span-7 space-y-4">
-          <Card data-tour="tour-report-clinical" className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-sm font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>Laudos Clínicos e Guias para o Tutor</h3>
-                <p className="text-sm text-slate-400 mt-0.5">Gera o laudo técnico completo com métricas de IA, landmarks e fatores de risco.</p>
-              </div>
-              <Badge variant="info" className="border-0">{availableCasesCount} casos disponíveis</Badge>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-colors">
-                <div className="flex items-center gap-2 mb-2">
-                  <FileText className="text-[var(--color-accent)]" size={18} />
-                  <h4 className="text-xs font-bold text-white">Selecionar Caso e Gerar Laudo Técnico</h4>
-                </div>
-                <p className="text-xs text-slate-400 mb-3">Gera o laudo técnico completo com métricas de IA, landmarks anatômicos e fatores de risco identificados.</p>
-                <RequireRole>
-                  <Button className="w-full" variant="secondary" onClick={handleOpenTechnicalReport} disabled={!cases || cases.length === 0}>
-                    <FileText size={14} /> Selecionar Caso
-                  </Button>
-                </RequireRole>
-              </div>
-
-              <div className="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] hover:border-[var(--color-accent)] transition-colors">
-                <div className="flex items-center gap-2 mb-2">
-                  <User className="text-[var(--color-accent)]" size={18} />
-                  <h4 className="text-xs font-bold text-white">Selecionar Caso e Gerar Guia para o Tutor</h4>
-                </div>
-                <p className="text-xs text-slate-400 mb-3">Gera um guia simplificado, sem jargões técnicos, ideal para entregar ao tutor do animal com instruções pós-operatórias.</p>
-                <RequireRole>
-                  <Button className="w-full" variant="secondary" onClick={handleOpenTutorGuide} disabled={!cases || cases.length === 0}>
-                    <User size={14} /> Selecionar Caso
-                  </Button>
-                </RequireRole>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </div>
-
-      {/* Reports list */}
-      <Card data-tour="tour-report-history" className="overflow-hidden">
-        <div className="p-5 border-b border-slate-50">
-          <SectionHeader
-            title="Histórico de Laudos e Relatórios"
-            subtitle={`${reports.length} relatórios gerados`}
-          />
-        </div>
-        <div className="divide-y divide-slate-50">
-          {reports.map(r => (
-            <div
-              key={r.id}
-              className="flex items-center gap-4 px-5 py-3.5 hover:glass-panel-premium/50 transition-colors"
-            >
-              <StatusIcon status={r.status} />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-white truncate">{r.title}</p>
-                <div className="flex items-center gap-2 mt-0.5 text-[13px] text-menu-muted font-mono leading-relaxed">
-                  <Clock size={10} />
-                  <span>
-                    {new Date(r.generatedAt).toLocaleString('pt-BR', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </span>
-                  {r.sizeKb > 0 && (
-                    <>
-                      <span>·</span>
-                      <span>{r.sizeKb} KB</span>
-                    </>
-                  )}
-                </div>
-              </div>
-              <Badge variant={TYPE_COLORS[r.type] || 'default'}>
-                {TYPE_LABELS[r.type] || r.type}
-              </Badge>
-              {r.status === 'ready' && (
-                <RequireRole>
-                  <button
-                    onClick={() => handleRegenerateAndDownloadReport(r)}
-                    disabled={downloadingId === r.id}
-                    title="Regenerar e Baixar Relatório"
-                    className="text-[#29a399] hover:text-[#1c6b62] transition-colors p-1.5 rounded-lg hover:bg-blue-50 disabled:opacity-50"
-                  >
-                    {downloadingId === r.id ? (
-                      <Spinner size="sm" />
-                    ) : (
-                      <Download size={15} />
-                    )}
-                  </button>
-                </RequireRole>
-              )}
-            </div>
-          ))}
-        </div>
-      </Card><Card data-tour="tour-report-customization" className="p-5">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex-1 min-w-0 self-start">
-            <div className="flex items-center gap-2">
-              <Settings size={18} className="text-[var(--color-accent)]" />
-              <p className="text-sm text-slate-400">Personalização de Laudos e Relatórios</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-4">
-              <div>
-                <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</span>
-                <input
-                  type="text"
-                  value={clinicName}
-                  onChange={e => setClinicName(e.target.value)}
-                  className="w-48 px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                />
-              </div>
-              <div>
-                <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</span>
-                <input
-                  type="text"
-                  value={clinicSubtitle}
-                  onChange={e => setClinicSubtitle(e.target.value)}
-                  className="w-48 px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                />
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {logoPreview ? (
-                <div className="relative">
-                  <img src={logoPreview} alt="Logo" className="w-40 h-16 object-contain rounded-lg border border-[var(--color-border)] glass-panel-premium p-1" />
-                  <button
-                    onClick={handleRemoveLogo}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-600"
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <label className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[var(--color-accent)] bg-[var(--color-surface-muted)] hover:bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-lg cursor-pointer transition">
-                  <Upload size={14} /> Fazer Upload do Logo (PNG, JPG)
-                  <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
-                </label>
-              )}
-              <Button variant="primary" size="sm" onClick={handleSavePrefs}>Salvar Preferências</Button>
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 md:hidden">
-          <div>
-            <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</span>
-            <input
-              type="text"
-              value={clinicName}
-              onChange={e => setClinicName(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-            />
-          </div>
-          <div>
-            <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</span>
-            <input
-              type="text"
-              value={clinicSubtitle}
-              onChange={e => setClinicSubtitle(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-            />
-          </div>
-        </div>
-      </Card>
-
-      {/* Modal de Seleção de Caso */}
+    <div className="p-6 max-w-3xl mx-auto space-y-6">
       {isReportModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="glass-panel-premium rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
@@ -716,7 +498,6 @@ export default function ReportsPage() {
                 <X size={20} className="text-menu-muted" />
               </button>
             </div>
-
             <div className="p-5 border-b border-white/10 flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
@@ -743,7 +524,6 @@ export default function ReportsPage() {
                 </button>
               </div>
             </div>
-
             <div className="flex-1 overflow-y-auto p-2">
               {filteredAndSortedCases.length === 0 ? (
                 <EmptyState icon={<Search size={32} />} title="Sem Casos" description="Nenhum caso encontrado com os filtros atuais." />
@@ -782,7 +562,192 @@ export default function ReportsPage() {
           </div>
         </div>
       )}
+
+      <div className="flex items-center justify-between">
+        <SectionHeader title="Laudos e Relatórios" subtitle="Documentos técnicos com a identidade da sua clínica" />
+      </div>
+
+      <div className="space-y-4">
+        <Card className={`p-5 ${!isIdentityConfigured ? 'border-l-4 border-l-[var(--color-accent)]' : ''}`}>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)]/10 flex items-center justify-center flex-shrink-0">
+                <Stethoscope size={20} className="text-[var(--color-accent)]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-[var(--color-text-primary)]">Identidade Profissional</p>
+                <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
+                  {isIdentityConfigured ? `Clínica ${clinicName} configurada` : "Configure para personalizar seus laudos"}
+                </p>
+              </div>
+            </div>
+            <div className="flex-shrink-0 flex items-center gap-2">
+              <Button variant="secondary" size="sm" onClick={() => setIsIdentityExpanded(!isIdentityExpanded)}>
+                {isIdentityConfigured ? 'Editar' : 'Configurar'}
+              </Button>
+            </div>
+          </div>
+          {isIdentityExpanded && (
+            <div className="mt-5 pt-5 border-t border-white/10 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Nome da Clínica</span>
+                  <input type="text" value={clinicName} onChange={e => setClinicName(e.target.value)} className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</span>
+                  <input type="text" value={clinicSubtitle} onChange={e => setClinicSubtitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                {logoPreview ? (
+                  <div className="relative">
+                    <img src={logoPreview} alt="Logo" className="w-40 h-16 object-contain rounded-lg border border-[var(--color-border)] glass-panel-premium p-1" />
+                    <button onClick={handleRemoveLogo} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-600">×</button>
+                  </div>
+                ) : (
+                  <label className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[var(--color-accent)] bg-[var(--color-surface-muted)] hover:bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-lg cursor-pointer transition">
+                    <Upload size={14} /> Fazer Upload do Logo (PNG, JPG)
+                    <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+                  </label>
+                )}
+                <Button variant="primary" size="sm" onClick={handleSavePrefs}>Salvar e aplicar</Button>
+              </div>
+            </div>
+          )}
+        </Card>
+
+        <Card className={`p-5 ${isIdentityConfigured ? 'border-l-4 border-l-[var(--color-accent)]' : ''}`}>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)]/10 flex items-center justify-center flex-shrink-0">
+                <FileText size={20} className="text-[var(--color-accent)]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-[var(--color-text-primary)]">Gerar Laudo em PDF</p>
+                <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Laudos técnicos e guias para tutores com a identidade da sua clínica</p>
+              </div>
+            </div>
+            <div className="flex-shrink-0 flex items-center gap-2">
+              <RequireRole>
+                <div className="flex gap-2">
+                  <Button variant="secondary" size="sm" onClick={handleOpenTechnicalReport} disabled={!cases || cases.length === 0}>
+                    <FileText size={14} /> Laudo Técnico
+                  </Button>
+                  <Button variant="secondary" size="sm" onClick={handleOpenTutorGuide} disabled={!cases || cases.length === 0}>
+                    <User size={14} /> Guia Tutor
+                  </Button>
+                </div>
+              </RequireRole>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)]/10 flex items-center justify-center flex-shrink-0">
+                <History size={20} className="text-[var(--color-accent)]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-[var(--color-text-primary)]">Histórico de Laudos</p>
+                <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{reports.length > 0 ? `${reports.length} relatórios gerados` : "Nenhum laudo gerado ainda"}</p>
+              </div>
+            </div>
+            <div className="flex-shrink-0 flex items-center gap-2">
+              {reports.length > 0 && (
+                <button onClick={() => setIsHistoryExpanded(!isHistoryExpanded)} className="text-slate-400 hover:text-white transition">
+                  {isHistoryExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                </button>
+              )}
+            </div>
+          </div>
+          {isHistoryExpanded && (
+            <div className="mt-4 border-t border-white/10 pt-4">
+              {reports.length === 0 ? (
+                <EmptyState icon={<FileText size={32} />} title="Sem laudos" description="Use 'Gerar Laudo em PDF' acima para criar o primeiro." />
+              ) : (
+                <div className="divide-y divide-white/5">
+                  {reports.map(r => (
+                    <div key={r.id} className="flex items-center gap-4 py-3.5 hover:glass-panel-premium/50 transition-colors rounded-lg px-2">
+                      <StatusIcon status={r.status} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-white truncate">{r.title}</p>
+                        <div className="flex items-center gap-2 mt-0.5 text-[13px] text-menu-muted font-mono leading-relaxed">
+                          <Clock size={10} />
+                          <span>{new Date(r.generatedAt).toLocaleString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                          {r.sizeKb > 0 && (<><span>·</span><span>{r.sizeKb} KB</span></>)}
+                        </div>
+                      </div>
+                      <Badge variant={TYPE_COLORS[r.type] || 'default'}>{TYPE_LABELS[r.type] || r.type}</Badge>
+                      {r.status === 'ready' && (
+                        <RequireRole>
+                          <button onClick={() => handleRegenerateAndDownloadReport(r)} disabled={downloadingId === r.id} title="Regenerar e Baixar Relatório" className="text-[#29a399] hover:text-[#1c6b62] transition-colors p-1.5 rounded-lg hover:bg-blue-50 disabled:opacity-50">
+                            {downloadingId === r.id ? (<Spinner size="sm" />) : (<Download size={15} />)}
+                          </button>
+                        </RequireRole>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)]/10 flex items-center justify-center flex-shrink-0">
+                <Activity size={20} className="text-[var(--color-accent)]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-[var(--color-text-primary)]">Indicadores</p>
+                <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Volume mensal e métricas de precisão</p>
+              </div>
+            </div>
+            <div className="flex-shrink-0 flex items-center gap-2">
+              <button onClick={() => setIsIndicatorsExpanded(!isIndicatorsExpanded)} className="text-slate-400 hover:text-white transition">
+                {isIndicatorsExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+              </button>
+            </div>
+          </div>
+          {isIndicatorsExpanded && (
+            <div className="mt-4 border-t border-white/10 pt-4 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
+                  <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Métricas de Precisão</p>
+                  <p className="text-lg font-bold text-white">{precisionMetric.toFixed(1)}%</p>
+                </div>
+                <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
+                  <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Volume de Casos</p>
+                  <p className="text-lg font-bold text-white">{caseVolume}</p>
+                </div>
+                <div className="p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center">
+                  <p className="text-[10px] font-semibold text-menu-muted uppercase mb-1">Taxa de Sucesso</p>
+                  <p className="text-lg font-bold text-white">{successRate.toFixed(1)}%</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-white/70 mb-2">Evolução Temporal dos últimos 7 meses</p>
+                <ResponsiveContainer width="100%" height={200}>
+                  <LineChart data={monthlyData}>
+                    <XAxis dataKey="name" stroke="var(--color-text-secondary)" fontSize={12} />
+                    <YAxis stroke="var(--color-text-secondary)" label={{ value: 'Casos', angle: -90, position: 'insideLeft' }} domain={[0, 'auto']} />
+                    <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)',color: 'var(--color-text-primary)' }} />
+                    <Line type="monotone" dataKey="value" stroke="var(--color-accent)" strokeWidth={2} dot={{ fill: 'var(--color-accent)', r: 4 }} activeDot={{ r: 6 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <RequireRole>
+                <Button onClick={handleGenerateMonthlyReport} className="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors" disabled={generating === 'monthly' || metricsLoading}>
+                  {generating === 'monthly' ? 'Gerando...' : metricsLoading ? 'Carregando dados...' : 'Gerar Relatório Mensal'}
+                </Button>
+              </RequireRole>
+            </div>
+          )}
+        </Card>
+      </div>
     </div>
   );
 }
-
