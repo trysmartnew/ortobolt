@@ -465,6 +465,15 @@ export default function ReportsPage() {
     return <AlertCircle className="h-4 w-4 text-red-500" />;
   };
 
+  const [isIdentityExpanded, setIsIdentityExpanded] = useState(false);
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
+  const [isIndicatorsExpanded, setIsIndicatorsExpanded] = useState(false);
+
+  const isIdentityConfigured = Boolean(
+    localStorage.getItem('vanguard-veterinary_pdf_clinic_name') &&
+    localStorage.getItem('vanguard-veterinary_pdf_clinic_subtitle')
+  );
+
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center">
@@ -474,15 +483,6 @@ export default function ReportsPage() {
     );
   }
 
-
-  const [isIdentityExpanded, setIsIdentityExpanded] = useState(false);
-  const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
-  const [isIndicatorsExpanded, setIsIndicatorsExpanded] = useState(false);
-
-  const isIdentityConfigured = Boolean(
-    localStorage.getItem('vanguard-veterinary_pdf_clinic_name') &&
-    localStorage.getItem('vanguard-veterinary_pdf_clinic_subtitle')
-  );
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
