@@ -86,6 +86,8 @@ export default function ReportsPage() {
   // ── Personalização de Laudos (Logo e Cabeçalho) ──
   const [clinicName, setClinicName] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary');
   const [clinicSubtitle, setClinicSubtitle] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente');
+  const [clinicPhone, setClinicPhone] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_phone') || '');
+  const [clinicAddress, setClinicAddress] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_address') || '');
   const [logoPreview, setLogoPreview] = useState<string | null>(localStorage.getItem('vanguard-veterinary_pdf_logo'));
   const [, ] = useState(false);
 
@@ -124,6 +126,8 @@ export default function ReportsPage() {
   const handleSavePrefs = () => {
     localStorage.setItem('vanguard-veterinary_pdf_clinic_name', clinicName);
     localStorage.setItem('vanguard-veterinary_pdf_clinic_subtitle', clinicSubtitle);
+    localStorage.setItem('vanguard-veterinary_pdf_clinic_phone', clinicPhone);
+    localStorage.setItem('vanguard-veterinary_pdf_clinic_address', clinicAddress);
     // O toast já existe, não precisa adicionar outro.
     addToast('Preferências de Laudo salvas.', 'success');
   };
@@ -660,6 +664,14 @@ export default function ReportsPage() {
                 <div>
                   <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Subtítulo / Especialidade</span>
                   <input type="text" value={clinicSubtitle} onChange={e => setClinicSubtitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Telefone/WhatsApp *</span>
+                  <input type="text" value={clinicPhone} onChange={e => setClinicPhone(e.target.value)} placeholder="(11) 99999-9999" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Endereço *</span>
+                  <input type="text" value={clinicAddress} onChange={e => setClinicAddress(e.target.value)} placeholder="Rua, número, cidade, UF, CEP" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
                 </div>
               </div>
               <div className="flex items-center justify-between gap-4 flex-wrap">
