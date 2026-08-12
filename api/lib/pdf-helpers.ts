@@ -97,7 +97,9 @@ export function stripPdfNotes(text: string): string {
 
   cleaned = cleaned.replace(/---\s*Análise IA.*?---/g, '');
   cleaned = cleaned.replace(/```[\s\S]*?(?:```|$)/g, '');
-  cleaned = cleaned.replace(/((?:[A-Za-zÀ-ÿ\u00C0-\u00FF]\s+){2,}[A-Za-zÀ-ÿ\u00C0-\u00FF])/g, (m) => m.replace(/\s+/g, ''));
+  cleaned = cleaned.replace(/\[[^\]\n]*(?:OrthoAI|OrtoAI)[^\]\n]*\]\s*/gi, '');
+  cleaned = cleaned.replace(/\[?\u00d8=\u00dci[^\]\n]*\]\s*/gi, '');
+  cleaned = cleaned.replace(/((?:[A-Za-zÀ-ÿ\u00C0-\u00FF][ \u00A0]){6,}[A-Za-zÀ-ÿ\u00C0-\u00FF])/g, (m) => m.replace(/[ \u00A0]/g, ''));
   cleaned = cleaned.replace(/^\s*\|.*\|\s*$/gm, '');
   cleaned = cleaned.replace(/^\s*\|[-:\s|]+\|\s*$/gm, '');
   cleaned = cleaned.replace(/#{1,4}\s+/g, '');

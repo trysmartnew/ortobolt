@@ -143,8 +143,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         y += 5;
       } else {
         for (const lm of landmarks) {
-          const label = lm?.name ? sanitize(lm.name) : '—';
-          const status = lm?.detected ? `✓ ${Math.round(parseConfidence(lm.confidence) * 100)}%` : '✗ Não detectado';
+          const rawLabel = lm?.name ? sanitize(lm.name) : '—';
+          const label = rawLabel.replace(/((?:[A-Za-zÀ-ÿ\u00C0-\u00FF][ \u00A0]){6,}[A-Za-zÀ-ÿ\u00C0-\u00FF])/g, (mm) => mm.replace(/[ \u00A0]/g, ''));
+          if (/interpreta[cç][ãa]o radiogr[áa]fica integrada/i.test(label)) continue;
+          const pct = Math.round(parseConfidence(lm.confidence) * 100);
+          const status = lm?.detected ? `Detectado: ${pct}%` : 'Nao detectado';
           const bullet = `• ${label}: ${status}`;
           const split = doc.splitTextToSize(bullet, 170);
           for (const s of split) {
