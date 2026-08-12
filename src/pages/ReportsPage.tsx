@@ -89,6 +89,7 @@ export default function ReportsPage() {
   const [clinicSubtitle, setClinicSubtitle] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente');
   const [clinicPhone, setClinicPhone] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_phone') || '');
   const [clinicAddress, setClinicAddress] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_address') || '');
+  const [userCrmv, setUserCrmv] = useState(localStorage.getItem('vanguard-veterinary_pdf_crmv') || '');
   const [logoPreview, setLogoPreview] = useState<string | null>(localStorage.getItem('vanguard-veterinary_pdf_logo'));
   const [, ] = useState(false);
 
@@ -129,6 +130,7 @@ export default function ReportsPage() {
     localStorage.setItem('vanguard-veterinary_pdf_clinic_subtitle', clinicSubtitle);
     localStorage.setItem('vanguard-veterinary_pdf_clinic_phone', clinicPhone);
     localStorage.setItem('vanguard-veterinary_pdf_clinic_address', clinicAddress);
+    localStorage.setItem('vanguard-veterinary_pdf_crmv', userCrmv);
     // O toast já existe, não precisa adicionar outro.
     addToast('Preferências de Laudo salvas.', 'success');
   };
@@ -386,7 +388,7 @@ export default function ReportsPage() {
     // Gate de Validação de Identidade Profissional (6 campos obrigatórios)
     const REQUIRED_IDENTITY_FIELDS = [
       { key: 'name', source: 'user', label: 'Nome do Médico-Veterinário' },
-      { key: 'crmv', source: 'user', label: 'CRMV' },
+      { key: 'crmv', source: 'localStorage', lsKey: 'vanguard-veterinary_pdf_crmv', label: 'CRMV' },
       { key: 'email', source: 'user', label: 'E-mail' },
       { key: 'clinicName', source: 'state', label: 'Nome da Clínica' },
       { key: 'phone', source: 'localStorage', lsKey: 'vanguard-veterinary_pdf_clinic_phone', label: 'Telefone/WhatsApp' },
@@ -664,6 +666,10 @@ export default function ReportsPage() {
                 <div>
                   <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Endereço *</span>
                   <input type="text" value={clinicAddress} onChange={e => setClinicAddress(e.target.value)} placeholder="Rua, número, cidade, UF, CEP" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-menu-muted mb-1 block">CRMV *</span>
+                  <input type="text" value={userCrmv} onChange={e => setUserCrmv(e.target.value)} placeholder="Ex: 9637-RJ" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
                 </div>
               </div>
               <div className="flex items-center justify-between gap-4 flex-wrap">

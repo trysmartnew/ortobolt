@@ -124,6 +124,13 @@ export async function upsertUserProfile(supaUser: any): Promise<void> {
   try {
     const name = supaUser.user_metadata?.full_name ?? supaUser.user_metadata?.name ?? null;
     const avatar = supaUser.user_metadata?.avatar_url ?? null;
+    // Buscar perfil existente para preservar campos preenchidos
+    const { data: existing } = await supabase
+      .from('profiles')
+      .select('crmv, institution')
+      .eq('id', supaUser.id)
+      .single();
+
     await supabase.from('profiles').upsert(
       {
         id: supaUser.id,
@@ -132,7 +139,7 @@ export async function upsertUserProfile(supaUser: any): Promise<void> {
         avatar,
         role: 'professional',
         specialty: 'Ortopedia Veterinária',
-        crmv: '',
+        crmv: existing?.crmv ?? '',
         institution: '',
         preferences: {
           notifications: true,
