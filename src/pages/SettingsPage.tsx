@@ -1,5 +1,5 @@
 ﻿// src/pages/SettingsPage.tsx
-import { Bell, Globe, Brain, FileText, Download, Check, Crown } from 'lucide-react';
+import { Bell, Globe, Brain, FileText, Download, Check, Crown, Phone, MapPin, User } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 import { Card, Button, SectionHeader } from '@/components/ui';
@@ -38,6 +38,8 @@ export default function SettingsPage() {
   const { user, cases, addToast } = useApp();
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [clinicPhone, setClinicPhone] = useState(() => localStorage.getItem('vanguard-veterinary_pdf_clinic_phone') || '');
+  const [clinicAddress, setClinicAddress] = useState(() => localStorage.getItem('vanguard-veterinary_pdf_clinic_address') || '');
   const [prefs, setPrefs] = useState(() => {
     try {
       const s = localStorage.getItem('vanguard-veterinary_prefs');
@@ -69,6 +71,8 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       localStorage.setItem('vanguard-veterinary_prefs', JSON.stringify(prefs));
+      localStorage.setItem('vanguard-veterinary_pdf_clinic_phone', clinicPhone);
+      localStorage.setItem('vanguard-veterinary_pdf_clinic_address', clinicAddress);
       if (user?.id) {
         await supabase.from('profiles').update({ preferences: prefs }).eq('id', user.id);
       }
@@ -184,6 +188,31 @@ export default function SettingsPage() {
               <Button variant="secondary" size="sm" disabled title="Em breve">
                 Ver Planos
               </Button>
+            </div>
+          </SettingCard>
+
+          <SettingCard icon={User} title="Identidade Profissional" description="Dados obrigatórios para geração de laudos em PDF (persistidos localmente)" accent tourId="tour-settings-identity">
+            <div className="w-full space-y-3 mt-1">
+              <div>
+                <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Nome do Médico-Veterinário *</label>
+                <input type="text" value={user?.name || ''} readOnly disabled className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface-muted)] text-[var(--color-text-primary)] cursor-not-allowed opacity-60" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">CRMV *</label>
+                <input type="text" value={user?.crmv || ''} readOnly disabled className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface-muted)] text-[var(--color-text-primary)] cursor-not-allowed opacity-60" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">E-mail *</label>
+                <input type="text" value={user?.email || ''} readOnly disabled className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface-muted)] text-[var(--color-text-primary)] cursor-not-allowed opacity-60" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1"><span className="inline-flex items-center gap-1"><Phone size={12} /> Telefone/WhatsApp *</span></label>
+                <input type="text" value={clinicPhone} onChange={e => setClinicPhone(e.target.value)} placeholder="(11) 99999-9999" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1"><span className="inline-flex items-center gap-1"><MapPin size={12} /> Endereço *</span></label>
+                <input type="text" value={clinicAddress} onChange={e => setClinicAddress(e.target.value)} placeholder="Rua, número, cidade, UF, CEP" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+              </div>
             </div>
           </SettingCard>
 

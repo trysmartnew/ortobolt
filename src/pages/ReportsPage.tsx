@@ -376,6 +376,29 @@ export default function ReportsPage() {
 
     const filteredNotes = sanitizeClinicalNotes(selectedCase.notes || '');
 
+    // Gate de Validação de Identidade Profissional (6 campos obrigatórios)
+    const REQUIRED_IDENTITY_FIELDS = [
+      { key: 'name', source: 'user', label: 'Nome do Médico-Veterinário' },
+      { key: 'crmv', source: 'user', label: 'CRMV' },
+      { key: 'email', source: 'user', label: 'E-mail' },
+      { key: 'clinicName', source: 'state', label: 'Nome da Clínica' },
+      { key: 'phone', source: 'localStorage', lsKey: 'vanguard-veterinary_pdf_clinic_phone', label: 'Telefone/WhatsApp' },
+      { key: 'address', source: 'localStorage', lsKey: 'vanguard-veterinary_pdf_clinic_address', label: 'Endereço' },
+    ];
+    const u = user as any;
+    const missingFields: string[] = [];
+    for (const f of REQUIRED_IDENTITY_FIELDS) {
+      let val: unknown = '';
+      if (f.source === 'user') val = u?.[f.key];
+      else if (f.source === 'state') val = clinicName;
+      else if (f.source === 'localStorage') val = localStorage.getItem(f.lsKey!);
+      if (!val || String(val).trim() === '') missingFields.push(f.label);
+    }
+    if (missingFields.length > 0) {
+      addToast(`Identidade profissional incompleta. Para gerar o laudo em PDF, preencha os dados obrigatórios: ${missingFields.join(', ')}.`, 'error');
+      return;
+    }
+
     setGenerating('case');
     try {
       try {

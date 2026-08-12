@@ -29,6 +29,8 @@ export function parseConfidence(val: unknown): number {
 export function removeAiDuplicateSections(text: string): string {
   return text
     .replace(/(?:^|\n)(Landmarks Anat[oô]micos:|Recomenda[cç][oõ]es:|Fatores de Risco:)[\s\S]*?(?=\n(?:Landmarks Anat[oô]micos:|Recomenda[cç][oõ]es:|Fatores de Risco:)|$)/gi, '')
+    .replace(/\.\s*(\d+\.\s+(?:Fratura|Les[aã]o|Achado|Edema|Luxa[cç][aã]o|Osteo|Artrose)[\s\S]*)$/gi, '.')
+    .replace(/\.\s*(Urgente:|Necess[aá]rio:|Por favor, prossiga[\s\S]*)$/gi, '.')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }

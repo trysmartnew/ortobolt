@@ -134,18 +134,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // AI analysis (if present)
     if (aiObj) {
       // Landmarks Anatômicos
-      doc.setFontSize(10);
-      doc.text('Landmarks Anatômicos:', 15, y, { charSpace: 0 });
-      y += 5;
-      const landmarks = Array.isArray(aiObj.anatomicalLandmarks) ? aiObj.anatomicalLandmarks : [];
-      if (landmarks.length === 0) {
-        doc.text('—', 18, y, { charSpace: 0 });
+      const allLandmarks = Array.isArray(aiObj.anatomicalLandmarks) ? aiObj.anatomicalLandmarks : [];
+      const landmarks = allLandmarks.filter(lm => {
+        const rawLabel = lm?.name ? sanitize(lm.name) : '—';
+        return !/interpreta[cç][ãa]o radiogr[áa]fica integrada/i.test(rawLabel);
+      });
+      if (landmarks.length > 0) {
+        doc.setFontSize(10);
+        doc.text('Landmarks Anatômicos:', 15, y, { charSpace: 0 });
         y += 5;
-      } else {
         for (const lm of landmarks) {
           const rawLabel = lm?.name ? sanitize(lm.name) : '—';
           const label = rawLabel.replace(/((?:[A-Za-zÀ-ÿ\u00C0-\u00FF][ \u00A0]){6,}[A-Za-zÀ-ÿ\u00C0-\u00FF])/g, (mm) => mm.replace(/[ \u00A0]/g, ''));
-          if (/interpreta[cç][ãa]o radiogr[áa]fica integrada/i.test(label)) continue;
           const pct = Math.round(parseConfidence(lm.confidence) * 100);
           const status = lm?.detected ? `Detectado: ${pct}%` : 'Nao detectado';
           const bullet = `• ${label}: ${status}`;
