@@ -14,7 +14,7 @@ import { supabaseAdmin } from '../lib/supabase-admin.js';
 
 
 
-import { sanitize, serializeField, parseConfidence, removeAiDuplicateSections, SPECIES_MAP, PROCEDURE_MAP, STATUS_MAP, translateEnum, field, addLine, stripPdfNotes } from '../lib/pdf-helpers.js';
+import { sanitize, serializeField, parseConfidence, removeAiDuplicateSections, SPECIES_MAP, PROCEDURE_MAP, STATUS_MAP, translateEnum, field, addLine, stripPdfNotes, extractRiskFactorsFromNotes } from '../lib/pdf-helpers.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   applyCors(res, (req.headers.origin as string) || '');
@@ -29,6 +29,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const caseId = sanitize(body?.caseId);
     if (!caseId) return res.status(400).json({ error: 'caseId is required' });
 
+    const ctx = body?.context || {};
+    const responsible = ctx.responsible || {};
+    const examMeta = ctx.exam_meta || {};
+    const patientExtra = ctx.patient_extra || {};
+    const clinicName = sanitize(body?.clinicName) || 'VANGUARD VETERINARY';
+    const clinicSubtitle = sanitize(body?.clinicSubtitle) || 'Ortopedia Veterinária';
+    const clinicPhone = sanitize(body?.clinicPhone) || '';
+    const clinicAddress = sanitize(body?.clinicAddress) || '';
+    const clinicCnpj = sanitize(body?.clinicCnpj) || '';
+
     const { data: caseRow, error } = await supabaseAdmin
       .from('clinical_cases')
       .select('*')
@@ -40,52 +50,70 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let vetName = '—';
     let vetCrmv = '—';
+    let vetEmail = '—';
     try {
       const { data: vetProfile } = await supabaseAdmin
         .from('profiles')
-        .select('name, crmv')
+        .select('name, crmv, email')
         .eq('id', auth.user.id)
         .single();
       if (vetProfile) {
         vetName = field(vetProfile.name);
         vetCrmv = field(vetProfile.crmv);
+        vetEmail = field(vetProfile.email);
       }
     } catch { /* fallback: manter '—' */ }
 
     const { jsPDF } = await import('jspdf');
     const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
     
-
     const now = new Date();
-    const dateStr = now.toLocaleString('pt-BR');
+    const dateStr = now.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
 
-    // ─── Cabeçalho Clínico ───
+    // ─── Cabeçalho Institucional ───
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('VANGUARD VETERINARY', 15, 20, { charSpace: 0 });
+    doc.text(clinicName.toUpperCase(), 15, 20, { charSpace: 0 });
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('Ortopedia Veterinária', 15, 26, { charSpace: 0 });
-    doc.setDrawColor(0, 86, 179);
-    doc.line(15, 30, 195, 30);
+    doc.text(clinicSubtitle, 15, 26, { charSpace: 0 });
+    if (clinicPhone) doc.text(clinicPhone, 15, 31, { charSpace: 0 });
+    if (clinicAddress) doc.text(clinicAddress, 15, 36, { charSpace: 0 });
+    if (clinicCnpj) doc.text(`CNPJ: ${clinicCnpj}`, 15, 41, { charSpace: 0 });
+    doc.setDrawColor(41, 163, 153);
+    doc.setLineWidth(0.5);
+    doc.line(15, 45, 195, 45);
 
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.text('LAUDO TÉCNICO', 15, 40, { charSpace: 0 });
+    doc.text('LAUDO TÉCNICO', 15, 55, { charSpace: 0 });
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Data: ${dateStr}`, 15, 47, { charSpace: 0 });
-    doc.text(`Responsável Técnico: ${vetName} — CRMV: ${vetCrmv}`, 15, 53, { charSpace: 0 });
+    doc.text(`Data de Emissão: ${dateStr}`, 15, 62, { charSpace: 0 });
+    doc.text(`Responsável Técnico: ${vetName} — CRMV: ${vetCrmv}`, 15, 68, { charSpace: 0 });
 
-    // ─── 1. DADOS DO PACIENTE ───
-    let y = 63;
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('1. DADOS DO PACIENTE', 15, y, { charSpace: 0 });
-    y += 7;
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
+    let y = 80;
+    const addSection = (num: number, title: string) => {
+      if (y > 255) { doc.addPage(); y = 30; }
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(41, 163, 153);
+      doc.text(`${num}. ${title}`, 15, y, { charSpace: 0 });
+      y += 6;
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+    };
 
+    // ─── 1. RESPONSÁVEL PELO ANIMAL (Res. CFMV 1.653/2025) ───
+    addSection(1, 'RESPONSÁVEL PELO ANIMAL');
+    y = addLine(doc, `Nome: ${field(responsible.tutorName)}`, 18, y, 170);
+    y = addLine(doc, `Telefone: ${field(responsible.tutorPhone)}`, 18, y, 170);
+    y = addLine(doc, `E-mail: ${field(responsible.tutorEmail)}`, 18, y, 170);
+    y += 4;
+
+    // ─── 2. DADOS DO PACIENTE ───
+    addSection(2, 'DADOS DO PACIENTE');
     y = addLine(doc, `Nome: ${field(caseRow.patient_name ?? caseRow.patientName)}`, 18, y, 170);
     y = addLine(doc, `Espécie: ${translateEnum(caseRow.species, SPECIES_MAP)}`, 18, y, 170);
     y = addLine(doc, `Raça: ${field(caseRow.breed)}`, 18, y, 170);
@@ -93,18 +121,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     y = addLine(doc, `Idade: ${ageVal && Number(ageVal) > 0 ? `${ageVal} anos` : '—'}`, 18, y, 170);
     const weightVal = caseRow.weight_kg ?? caseRow.weightKg;
     y = addLine(doc, `Peso: ${weightVal && Number(weightVal) > 0 ? `${weightVal} kg` : '—'}`, 18, y, 170);
+    if (patientExtra.microchip) {
+      y = addLine(doc, `Microchip: ${field(patientExtra.microchip)}`, 18, y, 170);
+    }
+    y += 4;
+
+    // ─── 3. DADOS CRONOLÓGICOS E TÉCNICOS ───
+    addSection(3, 'DADOS CRONOLÓGICOS E TÉCNICOS');
+    y = addLine(doc, `Data do Exame: ${field(examMeta.examDate)}`, 18, y, 170);
+    y = addLine(doc, `Tipo de Exame: ${field(examMeta.examType)}`, 18, y, 170);
+    if (examMeta.equipment) {
+      y = addLine(doc, `Equipamento: ${field(examMeta.equipment)}`, 18, y, 170);
+    }
     y = addLine(doc, `Procedimento: ${translateEnum(caseRow.procedure, PROCEDURE_MAP)}`, 18, y, 170);
     y = addLine(doc, `Status: ${translateEnum(caseRow.status, STATUS_MAP)}`, 18, y, 170);
     y += 4;
 
-    // ─── 2. NOTAS CLÍNICAS ───
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('2. NOTAS CLÍNICAS', 15, y, { charSpace: 0 });
-    y += 7;
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-
+    // ─── 4. ACHADOS CLÍNICOS ───
+    addSection(4, 'ACHADOS CLÍNICOS');
     const rawAi = caseRow.ai_analysis ?? caseRow.aiAnalysis ?? null;
     let aiObj: any = null;
     if (rawAi) {
@@ -116,74 +150,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       notesContent = removeAiDuplicateSections(notesContent);
     }
     if (notesContent) {
-      y = addLine(doc, notesContent, 18, y, 170);
+      const splitN = doc.splitTextToSize(notesContent, 170);
+      for (const s of splitN) {
+        if (y > 270) { doc.addPage(); y = 20; }
+        doc.text(s, 18, y, { charSpace: 0 });
+        y += 5;
+      }
     } else {
       doc.text('—', 18, y, { charSpace: 0 });
       y += 6;
     }
     y += 4;
 
-    // ─── 3. ANÁLISE DE IA ───
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('3. ANÁLISE DE IA', 15, y, { charSpace: 0 });
-    y += 7;
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-
-    // AI analysis (if present)
+    // ─── 5. ANÁLISE DE IA ───
+    addSection(5, 'ANÁLISE DE IA');
     if (aiObj) {
-      // Landmarks Anatômicos
       const allLandmarks = Array.isArray(aiObj.anatomicalLandmarks) ? aiObj.anatomicalLandmarks : [];
       const landmarks = allLandmarks.filter(lm => {
         const rawLabel = lm?.name ? sanitize(lm.name) : '—';
         return !/interpreta[cç][ãa]o radiogr[áa]fica integrada/i.test(rawLabel);
       });
       if (landmarks.length > 0) {
-        doc.setFontSize(10);
         doc.text('Landmarks Anatômicos:', 15, y, { charSpace: 0 });
         y += 5;
         for (const lm of landmarks) {
           const rawLabel = lm?.name ? sanitize(lm.name) : '—';
-          const label = rawLabel.replace(/((?:[A-Za-zÀ-ÿ\u00C0-\u00FF][ \u00A0]){6,}[A-Za-zÀ-ÿ\u00C0-\u00FF])/g, (mm) => mm.replace(/[ \u00A0]/g, ''));
+          const label = rawLabel.replace(/((?:[A-Za-zÀ-ÿÀ-ÿ][  ]){6,}[A-Za-zÀ-ÿÀ-ÿ])/g, (mm) => mm.replace(/[  ]/g, ''));
           const pct = Math.round(parseConfidence(lm.confidence) * 100);
           const status = lm?.detected ? `Detectado: ${pct}%` : 'Nao detectado';
           const bullet = `• ${label}: ${status}`;
-          const split = doc.splitTextToSize(bullet, 170);
-          for (const s of split) {
+          const splitL = doc.splitTextToSize(bullet, 170);
+          for (const s of splitL) {
             if (y > 270) { doc.addPage(); y = 20; }
             doc.text(s, 18, y, { charSpace: 0 });
             y += 5;
           }
         }
       }
-      y += 4;
+    } else {
+      doc.text('—', 18, y, { charSpace: 0 });
+      y += 6;
+    }
+    y += 4;
 
-      // Recomendações
-      doc.text('Recomendações:', 15, y, { charSpace: 0 });
-      y += 5;
-      const recs = Array.isArray(aiObj.recommendations) ? aiObj.recommendations : [];
-      if (recs.length === 0) {
-        doc.text('—', 18, y, { charSpace: 0 });
-        y += 5;
-      } else {
-        for (const r of recs) {
-          const bullet = `• ${sanitize(typeof r === 'string' ? r : JSON.stringify(r))}`;
-          const split = doc.splitTextToSize(bullet, 170);
-          for (const s of split) {
-            if (y > 270) { doc.addPage(); y = 20; }
-            doc.text(s, 18, y, { charSpace: 0 });
-            y += 5;
-          }
-        }
-      }
-      y += 4;
-
-      // Fatores de Risco
+    // ─── 6. CONCLUSÃO DIAGNÓSTICA ───
+    addSection(6, 'CONCLUSÃO DIAGNÓSTICA');
+    if (aiObj) {
       doc.text('Fatores de Risco:', 15, y, { charSpace: 0 });
       y += 5;
       let risks = Array.isArray(aiObj.riskFactors) ? aiObj.riskFactors : [];
-      // Se a IA retornou fallback genérico, extrair do texto das notas
       if (risks.length === 0 || (risks.length === 1 && /Achado clínico.*maior gravidade/i.test(risks[0]?.description || ''))) {
         risks = extractRiskFactorsFromNotes(notesContent);
       }
@@ -196,15 +211,52 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           const cat = rf?.category ? `${sanitize(rf.category)}: ` : '';
           const desc = rf?.description ? sanitize(rf.description) : sanitize(serializeField(rf));
           const bullet = `• ${sev}${cat}${desc}`;
-          const split = doc.splitTextToSize(bullet, 170);
-          for (const s of split) {
+          const splitRf = doc.splitTextToSize(bullet, 170);
+          for (const s of splitRf) {
             if (y > 270) { doc.addPage(); y = 20; }
             doc.text(s, 18, y, { charSpace: 0 });
             y += 5;
           }
         }
       }
+    } else {
+      doc.text('—', 18, y, { charSpace: 0 });
+      y += 6;
     }
+    y += 4;
+
+    // ─── 7. CONDUTA RECOMENDADA ───
+    addSection(7, 'CONDUTA RECOMENDADA');
+    if (aiObj && Array.isArray(aiObj.recommendations) && aiObj.recommendations.length > 0) {
+      aiObj.recommendations.forEach((r: any, i: number) => {
+        const bullet = `${i + 1}. ${sanitize(typeof r === 'string' ? r : JSON.stringify(r))}`;
+        const splitC = doc.splitTextToSize(bullet, 170);
+        for (const s of splitC) {
+          if (y > 270) { doc.addPage(); y = 20; }
+          doc.text(s, 18, y, { charSpace: 0 });
+          y += 5;
+        }
+      });
+    } else {
+      doc.text('Aguardando avaliação clínica complementar.', 18, y, { charSpace: 0 });
+      y += 6;
+    }
+    y += 8;
+
+    // ─── DECLARAÇÃO DE RESPONSABILIDADE SOBRE IA ───
+    if (y > 230) { doc.addPage(); y = 30; }
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(100, 116, 139);
+    const decl = 'Este laudo foi auxiliado por ferramentas de Inteligência Artificial como suporte à análise. A responsabilidade técnica pelo diagnóstico e conduta é exclusiva do Médico-Veterinário signatário, conforme Resoluções CFMV nº 1.321/2020, nº 1.653/2025 e nº 1.465/2022.';
+    const splitDecl = doc.splitTextToSize(decl, 170);
+    for (const s of splitDecl) {
+      doc.text(s, 15, y, { charSpace: 0 });
+      y += 4;
+    }
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'normal');
+    y += 6;
 
     // ─── 4. ASSINATURA E VALIDAÇÃO ───
     y += 10;

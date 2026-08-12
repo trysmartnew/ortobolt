@@ -18,6 +18,7 @@ import { useApp } from '@/contexts/AppContext';
 import { sanitizeClinicalNotes } from '@/services/clinicalCaseIntegrationService';
 import { generateMonthlyReport, generateCaseReport } from '@/services/pdfService';
 import { supabase, getSupabaseAccessToken , uploadAndPersistPdf } from '@/services/supabase';
+import ReportContextModal from '../components/ReportContextModal';
 import type { Report, KPIMetric, ChartDataPoint, ClinicalCase } from '@/types/index';
 
 
@@ -200,6 +201,8 @@ export default function ReportsPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState<string | null>(null);
+  const [contextModalOpen, setContextModalOpen] = useState(false);
+  const [selectedCaseIdForReport, setSelectedCaseIdForReport] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   // ✅ Estados para dados REAIS do Supabase
@@ -403,50 +406,34 @@ export default function ReportsPage() {
       return;
     }
 
+    // Abre o Modal de Contexto para coleta dos dados complementares CFMV
+    setSelectedCaseIdForReport(caseId);
+    setContextModalOpen(true);
+    return;
+  };
+
+  const handleConfirmGenerate = async (context: any) => {
+    if (!selectedCaseIdForReport) return;
+    const selectedCase = cases.find(c => c.id === selectedCaseIdForReport);
+    if (!selectedCase) return;
+
     setGenerating('case');
     try {
-      try {
-        const token = await getSupabaseAccessToken();
-        if (!token) {
-          addToast('Sessão expirada. Faça login novamente.', 'error');
-          return;
-        }
-        const response = await fetch('/api/reports/generate-technical', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ caseId: selectedCase.id }),
-        });
-        if (response.ok) {
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `laudo-tecnico-${selectedCase.id}.pdf`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-          addToast('Laudo técnico gerado com sucesso.', 'success');
-          return;
-        }
-      } catch {
-        console.warn('API de laudo técnico não disponível, usando geração client-side.');
-        addToast('API não disponível. Gerando laudo localmente...', 'info');
+      const token = await getSupabaseAccessToken();
+      if (!token) {
+        addToast('Sessão expirada. Faça login novamente.', 'error');
+        return;
       }
-      const blob = await generateCaseReport(selectedCase, {
-        logoUrl: logoPreview,
-        clinicName,
-        clinicSubtitle,
-        notes: filteredNotes,
-        responsibleName: user?.name || '',
-        responsibleCrmv: user?.crmv || '',
-        reportTitle: 'Laudo Radiográfico',
+      const response = await fetch('/api/reports/generate-technical', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ caseId: selectedCase.id, context }),
       });
-      if (blob) {
-        await uploadAndPersistPdf(blob, selectedCase.id);
+      if (response.ok) {
+        const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -455,14 +442,19 @@ export default function ReportsPage() {
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+        addToast('Laudo técnico gerado com sucesso.', 'success');
+      } else {
+        addToast('Erro ao gerar laudo técnico.', 'error');
       }
-      addToast('Laudo técnico gerado com sucesso.', 'success');
+    } catch (err) {
+      console.error(err);
+      addToast('Erro ao gerar laudo.', 'error');
     } finally {
       setGenerating(null);
     }
   };
 
-  const handleGenerateTutorGuide = async (caseId?: string) => {
+    const handleGenerateTutorGuide = async (caseId?: string) => {
     if (!caseId) {
       addToast('Nenhum caso selecionado para gerar o guia.', 'warning');
       return;
@@ -822,7 +814,13 @@ export default function ReportsPage() {
             </div>
           )}
         </Card>
-      </div>
+      </div>      <ReportContextModal
+        isOpen={contextModalOpen}
+        onClose={() => setContextModalOpen(false)}
+        caseId={selectedCaseIdForReport || ''}
+        onGenerate={handleConfirmGenerate}
+      />
+
     </div>
   );
 }
