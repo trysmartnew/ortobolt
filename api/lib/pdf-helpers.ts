@@ -29,8 +29,8 @@ export function parseConfidence(val: unknown): number {
 export function removeAiDuplicateSections(text: string): string {
   return text
     .replace(/(?:^|\n)(Landmarks Anat[oô]micos:|Recomenda[cç][oõ]es:|Fatores de Risco:)[\s\S]*?(?=\n(?:Landmarks Anat[oô]micos:|Recomenda[cç][oõ]es:|Fatores de Risco:)|$)/gi, '')
-    .replace(/\.\s*(\d+\.\s+(?:Fratura|Les[aã]o|Achado|Edema|Luxa[cç][aã]o|Osteo|Artrose)[\s\S]*)$/gi, '.')
-    .replace(/\.\s*(Urgente:|Necess[aá]rio:|Por favor, prossiga[\s\S]*)$/gi, '.')
+    .replace(/\.(\d+\.\s+(?:Fratura|Les[aã]o|Achado|Edema|Luxa[cç][aã]o|Osteo|Artrose)[\s\S]*)$/gi, '.')
+    .replace(/\.(Urgente:|Necess[aá]rio:|Por favor, prossiga[\s\S]*)$/gi, '.')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
@@ -70,6 +70,37 @@ export function field(val: unknown): string {
   const s = sanitize(val);
   if (!s || s.toLowerCase() === 'sem nome' || s === '0') return '—';
   return s;
+}
+
+export function extractRiskFactorsFromNotes(notes: string): Array<{severity: string; category: string; description: string}> {
+  const factors: Array<{severity: string; category: string; description: string}> = [];
+  const n = notes.toLowerCase();
+  
+  if (/fratura cominutiva|fratura exposta|luxa[cç][aã]o/i.test(notes)) {
+    factors.push({
+      severity: 'HIGH',
+      category: 'Achado ortopédico',
+      description: 'Fratura complexa requer estabilização cirúrgica urgente e monitoramento pós-operatório rigoroso.',
+    });
+  }
+  
+  if (/edema|hemorragia|inflama[cç][aã]o/i.test(notes)) {
+    factors.push({
+      severity: 'MEDIUM',
+      category: 'Tecidos moles',
+      description: 'Sinais de lesão em partes moles requerem controle de dor e prevenção de infecção.',
+    });
+  }
+  
+  if (/artrose|osteofitose|degenera[cç][aã]o/i.test(notes)) {
+    factors.push({
+      severity: 'MEDIUM',
+      category: 'Doença crônica',
+      description: 'Alterações degenerativas presentes requerem manejo de longo prazo e acompanhamento periódico.',
+    });
+  }
+  
+  return factors;
 }
 
 export function addLine(doc: any, text: string, x: number, y: number, maxWidth: number, lineHeight: number = 6): number {

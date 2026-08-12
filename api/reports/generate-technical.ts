@@ -182,7 +182,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Fatores de Risco
       doc.text('Fatores de Risco:', 15, y, { charSpace: 0 });
       y += 5;
-      const risks = Array.isArray(aiObj.riskFactors) ? aiObj.riskFactors : [];
+      let risks = Array.isArray(aiObj.riskFactors) ? aiObj.riskFactors : [];
+      // Se a IA retornou fallback genérico, extrair do texto das notas
+      if (risks.length === 0 || (risks.length === 1 && /Achado clínico.*maior gravidade/i.test(risks[0]?.description || ''))) {
+        risks = extractRiskFactorsFromNotes(notesContent);
+      }
       if (risks.length === 0) {
         doc.text('—', 18, y, { charSpace: 0 });
         y += 5;
