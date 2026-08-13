@@ -31,7 +31,7 @@ export interface CaseExam { id:string; modality:ExamModality; imageUrls:string[]
 export interface ClinicalCase { id:string; title:string; patientName:string; species:AnimalSpecies; breed:string; ageYears:number; weightKg:number; procedure:ProcedureType; status:CaseStatus; precisionScore?:number; riskLevel:'low'|'medium'|'high'; createdAt:string; updatedAt:string; tags:string[]; imageUrl?:string; image_path?: string; aiAnalysis?:AIAnalysisResult; notes?:string; avatarUrl?:string; avatar_path?: string; veterinarianId:string; clinicalEvidence?:import('@/schemas/clinicalEvidence').ClinicalEvidence; markings?:import('@/types/markings').MarkingsData; exams?:CaseExam[]; pdf_url?: string; }
 export interface ExamMeta { examDate?: string; examType?: string; equipment?: string; }
 export interface Responsible { tutorName?: string; tutorPhone?: string; tutorEmail?: string; }
-export interface PatientExtra { microchip?: string; insurance?: string; }
+export interface PatientExtra { observations?: string; insurance?: string; }
 
 export interface AIAnalysisResult {
   id:string;

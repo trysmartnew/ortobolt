@@ -149,3 +149,22 @@ export function stripPdfNotes(text: string): string {
   return cleaned.trim();
 }
 
+
+export function extractDiagnosticConclusion(notes: string): string {
+  if (!notes || typeof notes !== 'string') return '';
+  const m = notes.match(/(?:revela|evidencia|demonstra|identifica|confirma)\s+([^.\n]+)/i);
+  if (m && m[1]) {
+    let core = m[1].trim();
+    core = core.replace(/^(uma|um)\s+/i, '');
+    if (!core) return '';
+    core = core.charAt(0).toUpperCase() + core.slice(1);
+    return core + '.';
+  }
+  const sentences = notes.match(/[^.!?]+[.!?]?/g) || [];
+  for (const s of sentences) {
+    if (/fratura|luxa[cç][ãa]o|desvio|fragmento|edema|les[ãa]o|oste/i.test(s)) {
+      return s.trim();
+    }
+  }
+  return '';
+}

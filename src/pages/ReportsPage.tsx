@@ -432,7 +432,16 @@ export default function ReportsPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ caseId: selectedCase.id, context }),
+        body: JSON.stringify({
+          caseId: selectedCase.id,
+          context,
+          clinicName,
+          clinicSubtitle,
+          clinicPhone: localStorage.getItem('vanguard-veterinary_pdf_clinic_phone') || '',
+          clinicAddress: localStorage.getItem('vanguard-veterinary_pdf_clinic_address') || '',
+          clinicCnpj: localStorage.getItem('vanguard-veterinary_pdf_cnpj') || '',
+          userCrmv: localStorage.getItem('vanguard-veterinary_pdf_crmv') || '',
+        }),
       });
       if (response.ok) {
         const blob = await response.blob();

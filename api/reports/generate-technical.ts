@@ -14,7 +14,7 @@ import { supabaseAdmin } from '../lib/supabase-admin.js';
 
 
 
-import { sanitize, serializeField, parseConfidence, removeAiDuplicateSections, SPECIES_MAP, PROCEDURE_MAP, STATUS_MAP, translateEnum, field, addLine, stripPdfNotes, extractRiskFactorsFromNotes } from '../lib/pdf-helpers.js';
+import { sanitize, serializeField, removeAiDuplicateSections, SPECIES_MAP, PROCEDURE_MAP, STATUS_MAP, translateEnum, field, addLine, stripPdfNotes, extractRiskFactorsFromNotes, extractDiagnosticConclusion } from '../lib/pdf-helpers.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   applyCors(res, (req.headers.origin as string) || '');
@@ -63,6 +63,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         vetEmail = field(vetProfile.email);
       }
     } catch { /* fallback: manter '—' */ }
+
+    const bodyCrmv = sanitize(body?.userCrmv);
+    if (bodyCrmv) vetCrmv = bodyCrmv;
 
     const { jsPDF } = await import('jspdf');
     const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
@@ -121,8 +124,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     y = addLine(doc, `Idade: ${ageVal && Number(ageVal) > 0 ? `${ageVal} anos` : '—'}`, 18, y, 170);
     const weightVal = caseRow.weight_kg ?? caseRow.weightKg;
     y = addLine(doc, `Peso: ${weightVal && Number(weightVal) > 0 ? `${weightVal} kg` : '—'}`, 18, y, 170);
-    if (patientExtra.microchip) {
-      y = addLine(doc, `Microchip: ${field(patientExtra.microchip)}`, 18, y, 170);
+    if (patientExtra.observations) {
+      y = addLine(doc, `Observações: ${field(patientExtra.observations)}`, 18, y, 170);
     }
     y += 4;
 
@@ -130,10 +133,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     addSection(3, 'DADOS CRONOLÓGICOS E TÉCNICOS');
     y = addLine(doc, `Data do Exame: ${field(examMeta.examDate)}`, 18, y, 170);
     y = addLine(doc, `Tipo de Exame: ${field(examMeta.examType)}`, 18, y, 170);
-    if (examMeta.equipment) {
+    if (examMeta.equipment && examMeta.equipment !== 'Não informado') {
       y = addLine(doc, `Equipamento: ${field(examMeta.equipment)}`, 18, y, 170);
     }
-    y = addLine(doc, `Procedimento: ${translateEnum(caseRow.procedure, PROCEDURE_MAP)}`, 18, y, 170);
+    const procLabel = translateEnum(caseRow.procedure, PROCEDURE_MAP);
+    if (procLabel && procLabel !== 'Outro') {
+      y = addLine(doc, `Procedimento: ${procLabel}`, 18, y, 170);
+    }
     y = addLine(doc, `Status: ${translateEnum(caseRow.status, STATUS_MAP)}`, 18, y, 170);
     y += 4;
 
@@ -162,50 +168,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     y += 4;
 
-    // ─── 5. ANÁLISE DE IA ───
-    addSection(5, 'ANÁLISE DE IA');
-    if (aiObj) {
-      const allLandmarks = Array.isArray(aiObj.anatomicalLandmarks) ? aiObj.anatomicalLandmarks : [];
-      const landmarks = allLandmarks.filter(lm => {
-        const rawLabel = lm?.name ? sanitize(lm.name) : '—';
-        return !/interpreta[cç][ãa]o radiogr[áa]fica integrada/i.test(rawLabel);
-      });
-      if (landmarks.length > 0) {
-        doc.text('Landmarks Anatômicos:', 15, y, { charSpace: 0 });
+    // ─── 5. CONCLUSÃO DIAGNÓSTICA ───
+    addSection(5, 'CONCLUSÃO DIAGNÓSTICA');
+    const conclusion = extractDiagnosticConclusion(notesContent);
+    if (conclusion) {
+      const splitConc = doc.splitTextToSize(conclusion, 170);
+      for (const s of splitConc) {
+        if (y > 270) { doc.addPage(); y = 20; }
+        doc.text(s, 18, y, { charSpace: 0 });
         y += 5;
-        for (const lm of landmarks) {
-          const rawLabel = lm?.name ? sanitize(lm.name) : '—';
-          const label = rawLabel.replace(/((?:[A-Za-zÀ-ÿÀ-ÿ][  ]){6,}[A-Za-zÀ-ÿÀ-ÿ])/g, (mm) => mm.replace(/[  ]/g, ''));
-          const pct = Math.round(parseConfidence(lm.confidence) * 100);
-          const status = lm?.detected ? `Detectado: ${pct}%` : 'Nao detectado';
-          const bullet = `• ${label}: ${status}`;
-          const splitL = doc.splitTextToSize(bullet, 170);
-          for (const s of splitL) {
-            if (y > 270) { doc.addPage(); y = 20; }
-            doc.text(s, 18, y, { charSpace: 0 });
-            y += 5;
-          }
-        }
       }
     } else {
-      doc.text('—', 18, y, { charSpace: 0 });
+      doc.text('Não informada.', 18, y, { charSpace: 0 });
       y += 6;
     }
     y += 4;
 
-    // ─── 6. CONCLUSÃO DIAGNÓSTICA ───
-    addSection(6, 'CONCLUSÃO DIAGNÓSTICA');
     if (aiObj) {
-      doc.text('Fatores de Risco:', 15, y, { charSpace: 0 });
-      y += 5;
       let risks = Array.isArray(aiObj.riskFactors) ? aiObj.riskFactors : [];
-      if (risks.length === 0 || (risks.length === 1 && /Achado clínico.*maior gravidade/i.test(risks[0]?.description || ''))) {
-        risks = extractRiskFactorsFromNotes(notesContent);
-      }
+      risks = risks.filter(rf => !/maior gravidade/i.test(rf?.description || ''));
       if (risks.length === 0) {
-        doc.text('—', 18, y, { charSpace: 0 });
+        risks = extractRiskFactorsFromNotes(notesContent).filter(rf => !/maior gravidade/i.test(rf?.description || ''));
+      }
+      if (risks.length > 0) {
+        doc.text('Fatores de Risco:', 15, y, { charSpace: 0 });
         y += 5;
-      } else {
         for (const rf of risks) {
           const sev = rf?.severity ? `[${sanitize(String(rf.severity)).toUpperCase()}] ` : '';
           const cat = rf?.category ? `${sanitize(rf.category)}: ` : '';
@@ -219,14 +206,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           }
         }
       }
-    } else {
-      doc.text('—', 18, y, { charSpace: 0 });
-      y += 6;
     }
     y += 4;
 
-    // ─── 7. CONDUTA RECOMENDADA ───
-    addSection(7, 'CONDUTA RECOMENDADA');
+    // ─── 6. CONDUTA RECOMENDADA ───
+    addSection(6, 'CONDUTA RECOMENDADA');
     if (aiObj && Array.isArray(aiObj.recommendations) && aiObj.recommendations.length > 0) {
       aiObj.recommendations.forEach((r: any, i: number) => {
         const bullet = `${i + 1}. ${sanitize(typeof r === 'string' ? r : JSON.stringify(r))}`;

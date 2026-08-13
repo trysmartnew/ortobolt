@@ -13,8 +13,8 @@ const ReportContextModal: React.FC<ReportContextModalProps> = ({ isOpen, onClose
   const [tutorEmail, setTutorEmail] = useState('');
   const [examDate, setExamDate] = useState('');
   const [examType, setExamType] = useState('Radiografia');
-  const [equipment, setEquipment] = useState('');
-  const [microchip, setMicrochip] = useState('');
+  const [equipment, setEquipment] = useState('Não informado');
+  const [observations, setObservations] = useState('');
 
   if (!isOpen) return null;
 
@@ -23,7 +23,7 @@ const ReportContextModal: React.FC<ReportContextModalProps> = ({ isOpen, onClose
     onGenerate({
       responsible: { tutorName, tutorPhone, tutorEmail },
       exam_meta: { examDate, examType, equipment },
-      patient_extra: { microchip },
+      patient_extra: { observations },
     });
     onClose();
   };
@@ -48,11 +48,18 @@ const ReportContextModal: React.FC<ReportContextModalProps> = ({ isOpen, onClose
               <input type='date' value={examDate} onChange={(e) => setExamDate(e.target.value)} className='w-full px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-teal-400' />
               <input type='text' placeholder='Tipo de Exame' value={examType} onChange={(e) => setExamType(e.target.value)} className='w-full px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-teal-400' />
             </div>
-            <input type='text' placeholder='Equipamento Utilizado (opcional)' value={equipment} onChange={(e) => setEquipment(e.target.value)} className='w-full mt-3 px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-teal-400' />
+            <select value={equipment} onChange={(e) => setEquipment(e.target.value)} className='w-full px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-teal-400'>
+              <option value='Não informado'>Não informado</option>
+              <option value='Radiografia Digital (DR)'>Radiografia Digital (DR)</option>
+              <option value='Radiografia Analógica'>Radiografia Analógica</option>
+              <option value='Tomógrafo Computadorizado (TC)'>Tomógrafo Computadorizado (TC)</option>
+              <option value='Ressonância Magnética (RM)'>Ressonância Magnética (RM)</option>
+              <option value='Ultrassonografia (US)'>Ultrassonografia (US)</option>
+            </select>
           </div>
           <div>
             <h3 className='text-lg font-semibold text-teal-400 mb-3'>Dados Adicionais do Paciente</h3>
-            <input type='text' placeholder='Microchip (opcional)' value={microchip} onChange={(e) => setMicrochip(e.target.value)} className='w-full px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-teal-400' />
+            <input type='text' placeholder='Observações Adicionais (opcional)' value={observations} onChange={(e) => setObservations(e.target.value)} className='w-full px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-teal-400' />
           </div>
           <div className='flex justify-end gap-3 pt-4 border-t border-white/10'>
             <button type='button' onClick={onClose} className='px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors'>Cancelar</button>
