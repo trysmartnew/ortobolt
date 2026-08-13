@@ -300,8 +300,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184);
-      doc.text(`${clinicName} • ${clinicSubtitle}`, 15, 287);
-      doc.text(`Laudo de Diagnóstico • ${vetName} • Emitido em ${dateStr} • Página ${i} de ${pageCount}`, 105, 287, { align: 'center' });
+      doc.text(`${clinicName} • ${clinicSubtitle}`, 15, 285);
+      doc.text(`Laudo de Diagnóstico • ${vetName}`, 105, 285, { align: 'center' });
+      doc.text(`Emitido em ${dateStr} • Página ${i} de ${pageCount}`, 105, 289, { align: 'center' });
     }
     doc.setTextColor(0, 0, 0);
 
