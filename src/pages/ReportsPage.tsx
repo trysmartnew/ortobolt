@@ -88,7 +88,16 @@ export default function ReportsPage() {
   const [clinicName, setClinicName] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary');
   const [clinicSubtitle, setClinicSubtitle] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente');
   const [clinicPhone, setClinicPhone] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_phone') || '');
-  const [clinicAddress, setClinicAddress] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_address') || '');
+  const [clinicStreet, setClinicStreet] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_street') || '');
+  const [clinicDistrict, setClinicDistrict] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_district') || '');
+  const [clinicCity, setClinicCity] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_city') || '');
+  const [clinicCep, setClinicCep] = useState(localStorage.getItem('vanguard-veterinary_pdf_clinic_cep') || '');
+  const addressParts: string[] = [];
+  if (clinicStreet) addressParts.push(clinicStreet);
+  if (clinicDistrict) addressParts.push(clinicDistrict);
+  if (clinicCity) addressParts.push(clinicCity);
+  if (clinicCep) addressParts.push(`CEP: ${clinicCep}`);
+  const clinicAddress = addressParts.length > 0 ? addressParts.join(' | ') : (localStorage.getItem('vanguard-veterinary_pdf_clinic_address') || '');
   const [userCrmv, setUserCrmv] = useState(localStorage.getItem('vanguard-veterinary_pdf_crmv') || '');
   const [logoPreview, setLogoPreview] = useState<string | null>(localStorage.getItem('vanguard-veterinary_pdf_logo'));
   const [, ] = useState(false);
@@ -129,6 +138,10 @@ export default function ReportsPage() {
     localStorage.setItem('vanguard-veterinary_pdf_clinic_name', clinicName);
     localStorage.setItem('vanguard-veterinary_pdf_clinic_subtitle', clinicSubtitle);
     localStorage.setItem('vanguard-veterinary_pdf_clinic_phone', clinicPhone);
+    localStorage.setItem('vanguard-veterinary_pdf_clinic_street', clinicStreet);
+    localStorage.setItem('vanguard-veterinary_pdf_clinic_district', clinicDistrict);
+    localStorage.setItem('vanguard-veterinary_pdf_clinic_city', clinicCity);
+    localStorage.setItem('vanguard-veterinary_pdf_clinic_cep', clinicCep);
     localStorage.setItem('vanguard-veterinary_pdf_clinic_address', clinicAddress);
     localStorage.setItem('vanguard-veterinary_pdf_crmv', userCrmv);
     // O toast já existe, não precisa adicionar outro.
@@ -438,7 +451,11 @@ export default function ReportsPage() {
           clinicName,
           clinicSubtitle,
           clinicPhone: localStorage.getItem('vanguard-veterinary_pdf_clinic_phone') || '',
-          clinicAddress: localStorage.getItem('vanguard-veterinary_pdf_clinic_address') || '',
+          clinicAddress,
+          clinicStreet,
+          clinicDistrict,
+          clinicCity,
+          clinicCep,
           clinicCnpj: localStorage.getItem('vanguard-veterinary_pdf_cnpj') || '',
           userCrmv: localStorage.getItem('vanguard-veterinary_pdf_crmv') || '',
         }),
@@ -673,8 +690,20 @@ export default function ReportsPage() {
                   <input type="text" value={clinicPhone} onChange={e => setClinicPhone(e.target.value)} placeholder="(11) 99999-9999" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Endereço *</span>
-                  <input type="text" value={clinicAddress} onChange={e => setClinicAddress(e.target.value)} placeholder="Rua, número, cidade, UF, CEP" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+                  <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Endereço (Logradouro, Número) *</span>
+                  <input type="text" value={clinicStreet} onChange={e => setClinicStreet(e.target.value)} placeholder="Estrada São Vicente, 200" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Bairro</span>
+                  <input type="text" value={clinicDistrict} onChange={e => setClinicDistrict(e.target.value)} placeholder="Nossa Senhora da Aparecida" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-menu-muted mb-1 block">Município/UF</span>
+                  <input type="text" value={clinicCity} onChange={e => setClinicCity(e.target.value)} placeholder="Sapucaia/RJ" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-menu-muted mb-1 block">CEP</span>
+                  <input type="text" value={clinicCep} onChange={e => setClinicCep(e.target.value)} placeholder="25886-000" className="w-full px-3 py-2 text-sm border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]" />
                 </div>
                 <div>
                   <span className="text-[10px] font-semibold text-menu-muted mb-1 block">CRMV *</span>

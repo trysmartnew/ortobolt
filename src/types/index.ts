@@ -32,6 +32,7 @@ export interface ClinicalCase { id:string; title:string; patientName:string; spe
 export interface ExamMeta { examDate?: string; examType?: string; equipment?: string; }
 export interface Responsible { tutorName?: string; tutorPhone?: string; tutorEmail?: string; }
 export interface PatientExtra { observations?: string; insurance?: string; }
+export interface ClinicAddress { street?: string; district?: string; city?: string; cep?: string; }
 
 export interface AIAnalysisResult {
   id:string;

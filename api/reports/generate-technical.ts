@@ -38,6 +38,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const clinicPhone = sanitize(body?.clinicPhone) || '';
     const clinicAddress = sanitize(body?.clinicAddress) || '';
     const clinicCnpj = sanitize(body?.clinicCnpj) || '';
+    const clinicStreet = sanitize(body?.clinicStreet) || '';
+    const clinicDistrict = sanitize(body?.clinicDistrict) || '';
+    const clinicCity = sanitize(body?.clinicCity) || '';
+    const clinicCep = sanitize(body?.clinicCep) || '';
 
     const { data: caseRow, error } = await supabaseAdmin
       .from('clinical_cases')
@@ -79,23 +83,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     doc.text(clinicName.toUpperCase(), 15, 20, { charSpace: 0 });
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text(clinicSubtitle, 15, 26, { charSpace: 0 });
-    if (clinicPhone) doc.text(clinicPhone, 15, 31, { charSpace: 0 });
-    if (clinicAddress) doc.text(clinicAddress, 15, 36, { charSpace: 0 });
-    if (clinicCnpj) doc.text(`CNPJ: ${clinicCnpj}`, 15, 41, { charSpace: 0 });
+    let hy = 26;
+    doc.text(clinicSubtitle, 15, hy, { charSpace: 0 });
+    hy += 5;
+    if (clinicPhone) { doc.text(clinicPhone, 15, hy, { charSpace: 0 }); hy += 5; }
+    if (clinicStreet) { doc.text(`Endereço: ${clinicStreet}`, 15, hy, { charSpace: 0 }); hy += 5; }
+    if (clinicDistrict) { doc.text(`Bairro: ${clinicDistrict}`, 15, hy, { charSpace: 0 }); hy += 5; }
+    if (clinicCity) { doc.text(`Município/UF: ${clinicCity}`, 15, hy, { charSpace: 0 }); hy += 5; }
+    if (clinicCep) { doc.text(`CEP: ${clinicCep}`, 15, hy, { charSpace: 0 }); hy += 5; }
+    if (!clinicStreet && !clinicDistrict && !clinicCity && !clinicCep && clinicAddress) { doc.text(clinicAddress, 15, hy, { charSpace: 0 }); hy += 5; }
+    if (clinicCnpj) { doc.text(`CNPJ: ${clinicCnpj}`, 15, hy, { charSpace: 0 }); hy += 5; }
+    hy += 2;
     doc.setDrawColor(41, 163, 153);
     doc.setLineWidth(0.5);
-    doc.line(15, 45, 195, 45);
+    doc.line(15, hy, 195, hy);
+    hy += 10;
 
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.text('LAUDO TÉCNICO', 15, 55, { charSpace: 0 });
+    doc.text('LAUDO TÉCNICO', 15, hy, { charSpace: 0 });
+    hy += 7;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Data de Emissão: ${dateStr}`, 15, 62, { charSpace: 0 });
-    doc.text(`Responsável Técnico: ${vetName} — CRMV: ${vetCrmv}`, 15, 68, { charSpace: 0 });
+    doc.text(`Data de Emissão: ${dateStr}`, 15, hy, { charSpace: 0 });
+    hy += 6;
+    doc.text(`Responsável Técnico: ${vetName} — CRMV: ${vetCrmv}`, 15, hy, { charSpace: 0 });
+    hy += 12;
 
-    let y = 80;
+    let y = hy;
     const addSection = (num: number, title: string) => {
       if (y > 255) { doc.addPage(); y = 30; }
       doc.setFontSize(11);
