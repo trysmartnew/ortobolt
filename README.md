@@ -53,8 +53,8 @@
 **Tipo `Page`:**
 ```typescript
   | 'dashboard' | 'chat' | 'analysis' | 'gallery'
-  | 'case' | 'profile' | 'reports' | 'settings' | 'notifications'
-  | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'comparative' | 'help';
+  | 'case' | 'reports' | 'settings' | 'notifications'
+  | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'comparative' | 'help' | 'login';
 ```
 
 **`PAGE_MAP` (Mapeamento de Páginas para Componentes):**
@@ -185,8 +185,9 @@ A ordem de execução do pipeline de pré-commit é inviolável para garantir a 
 
 ## Gaps & Pendências Conhecidas:
 
-- Rota `profile` órfã (enum sem componente no `PAGE_MAP`)
-- `ComparativeAnalysisPage` sem saída de navegação (botão de
+- Nenhum gap crítico de navegação ou mapeamento pendente.
+- A rota `profile` foi removida do tipo `Page` (commit c37870ba).
+- `ComparativeAnalysisPage` possui saídas funcionais para `gallery` (commit c37870ba).
 
 ## Pendências de Auditoria (estado real)
 
