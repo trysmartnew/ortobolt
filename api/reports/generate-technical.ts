@@ -300,9 +300,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184);
-      doc.text('Vanguard Veterinary — Ortopedia Veterinária', 15, 287, { charSpace: 0 });
-      doc.text(`Página ${i} de ${pageCount}`, 170, 287, { charSpace: 0 });
-      doc.text(`Gerado em: ${dateStr}`, 105, 287, { charSpace: 0,  align: 'center' });
+      doc.text(`${clinicName} • ${clinicSubtitle}`, 15, 287);
+      doc.text(`Laudo de Diagnóstico • ${vetName} • Emitido em ${dateStr} • Página ${i} de ${pageCount}`, 105, 287, { align: 'center' });
     }
     doc.setTextColor(0, 0, 0);
 
