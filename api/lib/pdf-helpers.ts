@@ -84,11 +84,15 @@ export function extractRiskFactorsFromNotes(notes: string): Array<{severity: str
     });
   }
   
-  if (/edema|hemorragia|inflama[cç][aã]o/i.test(notes)) {
+  const soft: string[] = [];
+  if (/edema/i.test(notes)) soft.push('edema');
+  if (/hemorragia/i.test(notes)) soft.push('hemorragia');
+  if (/inflama[cç][aã]o/i.test(notes)) soft.push('inflamação');
+  if (soft.length > 0) {
     factors.push({
       severity: 'MEDIUM',
       category: 'Tecidos moles',
-      description: 'Sinais de lesão em partes moles requerem controle de dor e prevenção de infecção.',
+      description: `Sinais de ${soft.join(' e ')} em partes moles requerem controle de dor e monitoramento clínico.`,
     });
   }
   
@@ -152,19 +156,39 @@ export function stripPdfNotes(text: string): string {
 
 export function extractDiagnosticConclusion(notes: string): string {
   if (!notes || typeof notes !== 'string') return '';
-  const m = notes.match(/(?:revela|evidencia|demonstra|identifica|confirma)\s+([^.\n]+)/i);
-  if (m && m[1]) {
-    let core = m[1].trim();
-    core = core.replace(/^(uma|um)\s+/i, '');
-    if (!core) return '';
-    core = core.charAt(0).toUpperCase() + core.slice(1);
-    return core + '.';
-  }
   const sentences = notes.match(/[^.!?]+[.!?]?/g) || [];
-  for (const s of sentences) {
-    if (/fratura|luxa[cç][ãa]o|desvio|fragmento|edema|les[ãa]o|oste/i.test(s)) {
-      return s.trim();
+  let main = '';
+  let mainIdx = -1;
+  for (let i = 0; i < sentences.length; i++) {
+    const s = sentences[i];
+    const m = s.match(/(?:revela|evidencia|demonstra|identifica|confirma)\s+([^.\n]+)/i);
+    if (m && m[1]) {
+      main = m[1].trim().replace(/^(uma|um)\s+/i, '');
+      mainIdx = i;
+      break;
     }
   }
-  return '';
+  if (!main) {
+    for (const s of sentences) {
+      if (/fratura|luxa[cç][ãa]o|desvio|fragmento|edema|les[ãa]o|oste/i.test(s)) {
+        return s.trim();
+      }
+    }
+    return '';
+  }
+  const descParts: string[] = [];
+  for (let i = mainIdx + 1; i < sentences.length && descParts.length < 1; i++) {
+    const s = sentences[i];
+    if (/encurtamento|desvio|fragmento|borboleta/i.test(s)) {
+      let d = s.trim().replace(/^(observa-se|nota-se|evidencia-se|visualiza-se)\s+/i, '');
+      d = d.replace(/[.!?]$/, '');
+      if (d) descParts.push(d);
+    }
+  }
+  let core = main.charAt(0).toUpperCase() + main.slice(1);
+  core = core.replace(/[.!?]$/, '');
+  if (descParts.length > 0) {
+    core = core + ', com ' + descParts.join(' e ');
+  }
+  return core + '.';
 }
