@@ -75,7 +75,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
     
     const now = new Date();
-    const dateStr = now.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+    const rawDateStr = now.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+    const dateStr = rawDateStr.replace(', ', ' às ').replace(/:\d{2}$/, '');
 
     // ─── Cabeçalho Institucional ───
     doc.setFontSize(14);
@@ -301,8 +302,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184);
       doc.text(`${clinicName} • ${clinicSubtitle}`, 15, 285);
-      doc.text(`Laudo de Diagnóstico • ${vetName}`, 105, 285, { align: 'center' });
-      doc.text(`Emitido em ${dateStr} • Página ${i} de ${pageCount}`, 105, 289, { align: 'center' });
+      doc.text(`Laudo de Diagnóstico • ${vetName} • Emitido em ${dateStr} • Página ${i} de ${pageCount}`, 15, 289);
     }
     doc.setTextColor(0, 0, 0);
 
