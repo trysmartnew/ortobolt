@@ -6,6 +6,20 @@ import type { User, ClinicalCase, KPIMetric, ChartDataPoint } from '@/types/inde
 
 import { sanitizeClinicalNotes } from './clinicalCaseIntegrationService';
 
+const SPECIES_MAP_CLIENT: Record<string, string> = { canine: 'Canina', feline: 'Felina', equine: 'Equina', exotic: 'Exótica', other: 'Outra' };
+const PROCEDURE_MAP_CLIENT: Record<string, string> = { tplo: 'TPLO', fho: 'FHO', tta: 'TTA', lcp: 'LCP', fracture: 'Fratura', other: 'Outro' };
+const RISK_MAP_CLIENT: Record<string, string> = { low: 'Baixo', medium: 'Médio', high: 'Alto', critical: 'Crítico' };
+function translateEnumClient(val: unknown, map: Record<string, string>): string {
+  const v = String(val || '').toLowerCase().trim();
+  return map[v] || String(val || '');
+}
+function sanitizeTutorBlocks(text: string): string {
+  return text
+    .replace(/(Urgente:|Necess[áa]rio:)[\s\S]*$/i, '')
+    .replace(/Por favor, prossiga[\s\S]*$/i, '')
+    .trim();
+}
+
 async function getJsPDF() {
   const { jsPDF } = await import('jspdf');
   return jsPDF;
@@ -123,7 +137,9 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
     doc.setTextColor(148, 163, 184);
     doc.setFont('helvetica', 'normal');
     const clinicNameF = (localStorage.getItem('vanguard-veterinary_pdf_clinic_name') || 'Vanguard Veterinary').replace(/((?:[A-Za-z\u00c0-\u00ff] ){3,}[A-Za-z\u00c0-\u00ff])/g, (m) => m.replace(/ /g, '')).replace(/ {2,}/g, ' ');
-    doc.text(safe(clinicNameF) + ' — Ortopedia Veterinária', 14, 290, { charSpace: 0 });
+    const clinicSubtitleF = localStorage.getItem('vanguard-veterinary_pdf_clinic_subtitle') || 'Ortopedia Veterinária Inteligente';
+    const dateStrF = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    doc.text(safe(clinicNameF) + ' • ' + safe(clinicSubtitleF), 14, 290, { charSpace: 0 });
     doc.text(`Página ${i} de ${pageCount}`, 185, 290, { align: 'right', charSpace: 0 });
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 290, { align: 'center', charSpace: 0 });
   }
@@ -273,12 +289,12 @@ export async function generateCaseReport(
   doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
   const patientFields: [string, string][] = [
     ['Nome', safe(c.patientName)],
-    ['Espécie', safe(c.species)],
+    ['Espécie', translateEnumClient(c.species, SPECIES_MAP_CLIENT)],
     ['Raça', safe(c.breed)],
     ['Idade', `${c.ageYears} anos`],
     ['Peso', `${c.weightKg} kg`],
-    ['Procedimento', safe(c.procedure)],
-    ['Risco', safe(c.riskLevel)],
+    ['Procedimento', translateEnumClient(c.procedure, PROCEDURE_MAP_CLIENT)],
+    ['Risco', translateEnumClient(c.riskLevel, RISK_MAP_CLIENT)],
   ];
   for (const [label, value] of patientFields) {
     if (y > 270) { doc.addPage(); y = 30; }
@@ -297,7 +313,7 @@ export async function generateCaseReport(
 
 
   // Notes — ✅ A-03: wrapping para notas longas
-  const cleanNotes = sanitizeClinicalNotes(options?.notes || c.notes || '');
+  const cleanNotes = tutorMode ? sanitizeTutorBlocks(sanitizeClinicalNotes(options?.notes || c.notes || '')) : sanitizeClinicalNotes(options?.notes || c.notes || '');
   if (cleanNotes) {
     if (y > 250) { doc.addPage(); y = 30; }
     doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
@@ -318,7 +334,7 @@ export async function generateCaseReport(
       doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
       doc.text('Orientações para o Tutor', 14, y, { charSpace: 0 }); y += 7;
       doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
-      y = addWrappedText(doc, 'Este documento foi preparado pela equipe veterinária para orientar os cuidados com seu pet após o procedimento.', 14, y, 182, 5);
+      y = addWrappedText(doc, 'Este documento foi preparado pela equipe veterinária para orientar os cuidados com seu pet com base nas avaliações realizadas.', 14, y, 182, 5);
       y += 8;
 
       // Recommendations
