@@ -141,7 +141,7 @@ function addFooter(doc: InstanceType<Awaited<ReturnType<typeof getJsPDF>>>) {
     const dateStrF = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     doc.text(safe(clinicNameF) + ' • ' + safe(clinicSubtitleF), 14, 290, { charSpace: 0 });
     doc.text(`Página ${i} de ${pageCount}`, 185, 290, { align: 'right', charSpace: 0 });
-    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 290, { align: 'center', charSpace: 0 });
+    doc.text(`Gerado em: ${dateStrF}`, 105, 290, { align: 'center', charSpace: 0 });
   }
 }
 
