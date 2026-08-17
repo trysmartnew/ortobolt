@@ -2,7 +2,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import { verifySupabaseBearer } from '../lib/verifySupabaseJwt.js';
 import { supabaseAdmin } from '../lib/supabase-admin.js';
-import { jsPDF } from 'jspdf';
 import { tutorGuideSchema, validateTutorGuide, generateSafeFallback } from '../lib/tutorGuide.js';
 import { TUTOR_GUIDE_SYSTEM_PROMPT, buildTutorGuideUserPrompt } from '../lib/tutorGuidePrompts.js';
 
@@ -141,6 +140,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // 7. Gera PDF server-side
+  const { jsPDF } = await import('jspdf');
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   
   // Header
