@@ -2,8 +2,104 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import { verifySupabaseBearer } from '../lib/verifySupabaseJwt.js';
 import { supabaseAdmin } from '../lib/supabase-admin.js';
-import { tutorGuideSchema, validateTutorGuide, generateSafeFallback } from '../lib/tutorGuide.js';
-import { TUTOR_GUIDE_SYSTEM_PROMPT, buildTutorGuideUserPrompt } from '../lib/tutorGuidePrompts.js';
+// Modulos puros inline (Hobby: max 12 funcoes; helpers nao podem viver em api/lib)
+import { z } from 'zod';
+
+export const tutorGuideSchema = z.object({
+  avaliado: z.string().max(400),
+  achados: z.array(z.string().max(300)).min(1).max(4),
+  significado: z.string().max(400),
+  agora: z.array(z.string().max(300)).min(1).max(5),
+  proximos: z.array(z.string().max(300)).max(5).optional(),
+  atencao: z.array(z.string().max(300)).max(5).optional(),
+  mensagem: z.string().max(300),
+});
+
+export type TutorGuide = z.infer<typeof tutorGuideSchema>;
+
+export function validateTutorGuide(
+  guide: unknown, 
+  source: { recommendations: string[]; riskFactors: any[] }
+): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  const g = guide as any;
+  
+  // Guard 1: cardinalidade (não pode inventar mais itens que a fonte)
+  if (Array.isArray(g?.agora) && g.agora.length > source.recommendations.length) {
+    errors.push(`agora.length (${g.agora.length}) > recommendations.length (${source.recommendations.length})`);
+  }
+  
+  // Guard 2: regex de proibidos (doses, prognóstico, cura, garantia)
+  const proibidosRegex = /\b(mg|ml|mg\/kg|progn[óo]stico|cura|garantia|definitivo)\b|100%/gi;
+  const guideText = JSON.stringify(g);
+  const matches = guideText.match(proibidosRegex);
+  if (matches) {
+    errors.push(`Termos proibidos encontrados: ${matches.join(', ')}`);
+  }
+  
+  return { valid: errors.length === 0, errors };
+}
+
+export function generateSafeFallback(source: { 
+  recommendations: string[]; 
+  riskFactors: any[] 
+}): TutorGuide {
+  return {
+    avaliado: 'Exame radiográfico realizado pela equipe veterinária.',
+    achados: ['Foram identificados achados que requerem avaliação adicional.'],
+    significado: 'A equipe veterinária está avaliando o caso e fornecerá orientações específicas.',
+    agora: (source.recommendations.length ? source.recommendations.slice(0, 5) : ['Seguir as orientações da equipe veterinária.']).map(r => `Conforme recomendação da equipe: ${r}`),
+    proximos: ['Retornar para avaliação complementar conforme orientação veterinária.'],
+    atencao: source.riskFactors.slice(0, 3).map(rf => `Ponto de atenção: ${rf.description}`),
+    mensagem: 'Siga as orientações da equipe veterinária e retorne conforme agendado.',
+  };
+}
+
+export const TUTOR_GUIDE_SYSTEM_PROMPT = `Você é um assistente veterinário especializado em comunicação com tutores de animais.
+
+Sua tarefa: transformar um laudo técnico veterinário em uma guia compreensível para o tutor do animal.
+
+REGRAS ABSOLUTAS (anti-alucinação):
+1. Use APENAS informações presentes no laudo técnico fornecido.
+2. NÃO invente diagnósticos, prognósticos, medicamentos, doses, restrições ou condutas.
+3. NÃO use termos como "prognóstico", "cura", "garantia", "definitivo".
+4. Traduza termos técnicos para linguagem leiga (ex: "fratura cominutiva" → "fratura com múltiplos fragmentos").
+5. Se uma informação não estiver no laudo, omita-a (não invente).
+
+ESTRUTURA OBRIGATÓRIA (JSON):
+{
+  "avaliado": "O que foi examinado (1 frase simples)",
+  "achados": ["Principais descobertas (array de 1-4 frases curtas)"],
+  "significado": "O que isso significa para o pet (1-2 frases)",
+  "agora": ["O que fazer agora (array de 1-5 ações práticas)"],
+  "proximos": ["Próximos passos (array de 0-5 etapas)"],
+  "atencao": ["Sinais de alerta (array de 0-5 situações)"],
+  "mensagem": "Mensagem final de reforço (1 frase)"
+}
+
+EXEMPLO DE TRADUÇÃO:
+- Técnico: "Fratura cominutiva completa da diáfise do fêmur direito com desvio caudal"
+- Leigo: "Fratura no osso da coxa direita, com múltiplos fragmentos e desalinhamento"
+
+Retorne APENAS o JSON válido.`;
+
+export function buildTutorGuideUserPrompt(
+  laudo: string, 
+  recommendations: string[], 
+  riskFactors: any[]
+): string {
+  return `LAUDO TÉCNICO:
+${laudo}
+
+RECOMENDAÇÕES DA EQUIPE:
+${recommendations.map((r, i) => `${i + 1}. ${r}`).join('\n')}
+
+FATORES DE RISCO:
+${riskFactors.map(rf => `- [${rf.severity}] ${rf.category}: ${rf.description}`).join('\n')}
+
+Gere a guia para o tutor em formato JSON válido.`;
+}
+
 
 function translateEnum(val: unknown, map: Record<string, string>): string {
   const v = String(val || '').toLowerCase().trim();
