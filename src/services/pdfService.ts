@@ -312,14 +312,12 @@ export async function generateCaseReport(
   }
 
 
-  // Notes — ✅ A-03: wrapping para notas longas
-  const cleanNotes = tutorMode ? sanitizeTutorBlocks(sanitizeClinicalNotes(options?.notes || c.notes || '')) : sanitizeClinicalNotes(options?.notes || c.notes || '');
-  if (cleanNotes) {
+  // Notes — apenas no modo técnico (não tutor)
+  const cleanNotes = sanitizeClinicalNotes(options?.notes || c.notes || '');
+  if (cleanNotes && !tutorMode) {
     if (y > 250) { doc.addPage(); y = 30; }
     doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
-    // ── CORREÇÃO: Renomear para "Laudo Radiográfico" no modo técnico ──
-    const notesTitle = tutorMode ? 'Notas Clínicas' : 'Laudo Radiográfico';
-    doc.text(notesTitle, 14, y, { charSpace: 0 }); y += 6;
+    doc.text('Laudo Radiográfico', 14, y, { charSpace: 0 }); y += 6;
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
     y = addWrappedText(doc, safe(cleanNotes), 14, y, 182, 5);
     y += 5;
