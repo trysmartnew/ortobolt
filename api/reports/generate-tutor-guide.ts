@@ -3,8 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { verifySupabaseBearer } from '../lib/verifySupabaseJwt.js';
 import { supabaseAdmin } from '../lib/supabase-admin.js';
 import { jsPDF } from 'jspdf';
-import { tutorGuideSchema, validateTutorGuide, generateSafeFallback } from '../../src/schemas/tutorGuide';
-import { TUTOR_GUIDE_SYSTEM_PROMPT, buildTutorGuideUserPrompt } from '../../src/services/tutorGuidePrompts';
+import { tutorGuideSchema, validateTutorGuide, generateSafeFallback } from '../lib/tutorGuide.js';
+import { TUTOR_GUIDE_SYSTEM_PROMPT, buildTutorGuideUserPrompt } from '../lib/tutorGuidePrompts.js';
 
 function translateEnum(val: unknown, map: Record<string, string>): string {
   const v = String(val || '').toLowerCase().trim();
