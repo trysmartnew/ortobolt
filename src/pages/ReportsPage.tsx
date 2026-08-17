@@ -434,31 +434,19 @@ export default function ReportsPage() {
 
     setGenerating('case');
     try {
-      const token = await getSupabaseAccessToken();
-      if (!token) {
-        addToast('Sessão expirada. Faça login novamente.', 'error');
-        return;
-      }
-      const response = await fetch('/api/reports/generate-technical', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          caseId: selectedCase.id,
-          context,
-          clinicName,
-          clinicSubtitle,
-          clinicPhone: localStorage.getItem('vanguard-veterinary_pdf_clinic_phone') || '',
-          clinicAddress,
-          clinicStreet,
-          clinicDistrict,
-          clinicCity,
-          clinicCep,
-          clinicCnpj: localStorage.getItem('vanguard-veterinary_pdf_cnpj') || '',
-          userCrmv: localStorage.getItem('vanguard-veterinary_pdf_crmv') || '',
-        }),
+      const response = await authenticatedPost('/api/reports/generate-technical', {
+        caseId: selectedCase.id,
+        context,
+        clinicName,
+        clinicSubtitle,
+        clinicPhone: localStorage.getItem('vanguard-veterinary_pdf_clinic_phone') || '',
+        clinicAddress,
+        clinicStreet,
+        clinicDistrict,
+        clinicCity,
+        clinicCep,
+        clinicCnpj: localStorage.getItem('vanguard-veterinary_pdf_cnpj') || '',
+        userCrmv: localStorage.getItem('vanguard-veterinary_pdf_crmv') || '',
       });
       if (response.ok) {
         const blob = await response.blob();
@@ -475,11 +463,29 @@ export default function ReportsPage() {
         addToast('Erro ao gerar laudo técnico.', 'error');
       }
     } catch (err) {
+      if (err instanceof Error && err.message === 'SESSION_EXPIRED') {
+        addToast('Sessão expirada. Faça login novamente.', 'error');
+        return;
+      }
       console.error(err);
       addToast('Erro ao gerar laudo.', 'error');
     } finally {
       setGenerating(null);
     }
+  };
+
+  // Helper: POST autenticado para endpoints internos
+  const authenticatedPost = async (url: string, body: object): Promise<Response> => {
+    const token = await getSupabaseAccessToken();
+    if (!token) throw new Error('SESSION_EXPIRED');
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
   };
 
     const handleGenerateTutorGuide = async (caseId?: string) => {
@@ -498,11 +504,7 @@ export default function ReportsPage() {
     setGenerating('case');
     try {
       try {
-        const response = await fetch('/api/reports/generate-tutor-guide', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ caseId: selectedCase.id }),
-        });
+        const response = await authenticatedPost('/api/reports/generate-tutor-guide', { caseId: selectedCase.id });
         if (response.ok) {
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
@@ -516,7 +518,11 @@ export default function ReportsPage() {
           addToast('Guia para o tutor gerado com sucesso.', 'success');
           return;
         }
-      } catch {
+      } catch (err) {
+        if (err instanceof Error && err.message === 'SESSION_EXPIRED') {
+          addToast('Sessão expirada. Faça login novamente.', 'error');
+          return;
+        }
         console.warn('API de guia para tutor não disponível, usando geração client-side.');
         addToast('API não disponível. Gerando guia localmente...', 'info');
       }
