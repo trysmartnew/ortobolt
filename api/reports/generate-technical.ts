@@ -202,7 +202,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (aiObj) {
       let risks = Array.isArray(aiObj.riskFactors) ? aiObj.riskFactors : [];
-      risks = risks.filter(rf => !/maior gravidade/i.test(rf?.description || ''));
+      risks = risks.filter((rf: { description?: string }) => !/maior gravidade/i.test(rf?.description || ''));
       if (risks.length === 0) {
         risks = extractRiskFactorsFromNotes(notesContent).filter(rf => !/maior gravidade/i.test(rf?.description || ''));
       }
