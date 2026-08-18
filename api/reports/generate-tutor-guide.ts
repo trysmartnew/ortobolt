@@ -40,6 +40,10 @@ export function validateTutorGuide(
   return { valid: errors.length === 0, errors };
 }
 
+function sanitizeTerm(t: string): string {
+  return t.replace(/\b(mg|ml|mg\/kg|progn[óo]stico|cura|garantia|definitivo)\b|100%/gi, '').replace(/\s+/g, ' ').trim();
+}
+
 export function generateSafeFallback(source: { 
   recommendations: string[]; 
   riskFactors: any[] 
@@ -48,7 +52,7 @@ export function generateSafeFallback(source: {
     avaliado: 'Exame radiográfico realizado pela equipe veterinária.',
     achados: ['Foram identificados achados que requerem avaliação adicional.'],
     significado: 'A equipe veterinária está avaliando o caso e fornecerá orientações específicas.',
-    agora: (source.recommendations.length ? source.recommendations.slice(0, 5) : ['Seguir as orientações da equipe veterinária.']).map(r => `Conforme recomendação da equipe: ${r}`),
+    agora: (source.recommendations.length ? source.recommendations.slice(0, 5) : ['Seguir as orientações da equipe veterinária.']).map(r => `Conforme recomendação da equipe: ${sanitizeTerm(r)}`),
     proximos: ['Retornar para avaliação complementar conforme orientação veterinária.'],
     atencao: source.riskFactors.slice(0, 3).map(rf => `Ponto de atenção: ${rf.description}`),
     mensagem: 'Siga as orientações da equipe veterinária e retorne conforme agendado.',
