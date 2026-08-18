@@ -214,12 +214,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content || data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    let content = data.choices?.[0]?.message?.content || data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     
-    // Parse JSON da resposta
+    // Remove markdown code blocks se presentes
+    content = content.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+    
+    // Parse JSON da resposta com tratamento de erro robusto
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      guide = JSON.parse(jsonMatch[0]);
+      try {
+        guide = JSON.parse(jsonMatch[0]);
+      } catch (parseErr) {
+        console.error('JSON parse error:', parseErr);
+        guide = null;
+      }
     }
   } catch (err) {
     console.error('IA error, using fallback:', err);
@@ -244,8 +252,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   
   // Header
-  const clinicName = caseRow.clinic_name || 'Clínica Veterinária';
-  const clinicSubtitle = caseRow.clinic_subtitle || 'Ortopedia Veterinária';
+  const clinicName = req.body.clinicName || caseRow.clinic_name || 'Clínica Veterinária';
+  const clinicSubtitle = req.body.clinicSubtitle || caseRow.clinic_subtitle || 'Ortopedia Veterinária';
   doc.setFontSize(14); doc.setFont('helvetica', 'bold');
   doc.text(sanitize(clinicName), 14, 20);
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
@@ -291,7 +299,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   ];
 
   for (const section of sections) {
-    if (y > 260) { doc.addPage(); y = 30; }
+    if (y > 270) { doc.addPage(); y = 30; }
     doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
     doc.text(section.title, 14, y); y += 7;
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
@@ -308,7 +316,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // Próximos passos (se houver)
   if (guide.proximos && guide.proximos.length > 0) {
-    if (y > 260) { doc.addPage(); y = 30; }
+    if (y > 270) { doc.addPage(); y = 30; }
     doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
     doc.text('5. Próximos passos', 14, y); y += 7;
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);
@@ -320,7 +328,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // Cuidados e pontos de atenção (se houver)
   if (guide.atencao && guide.atencao.length > 0) {
-    if (y > 260) { doc.addPage(); y = 30; }
+    if (y > 270) { doc.addPage(); y = 30; }
     doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 86, 179);
     doc.text('6. Cuidados e pontos de atenção', 14, y); y += 7;
     doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0);

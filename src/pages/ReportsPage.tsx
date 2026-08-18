@@ -504,7 +504,7 @@ export default function ReportsPage() {
     setGenerating('case');
     try {
       try {
-        const response = await authenticatedPost('/api/reports/generate-tutor-guide', { caseId: selectedCase.id });
+        const response = await authenticatedPost('/api/reports/generate-tutor-guide', { caseId: selectedCase.id, clinicName, clinicSubtitle });
         if (response.ok) {
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
