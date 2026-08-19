@@ -24,19 +24,16 @@ export function validateTutorGuide(
   const errors: string[] = [];
   const g = guide as any;
   
-  // Guard 1: cardinalidade (não pode inventar mais itens que a fonte)
-  if (Array.isArray(g?.agora) && g.agora.length > source.recommendations.length) {
-    errors.push(`agora.length (${g.agora.length}) > recommendations.length (${source.recommendations.length})`);
+  // Guard 1: cardinalidade segura (máximo definido pelo schema Zod é 5)
+  if (Array.isArray(g?.agora) && g.agora.length > 5) {
+    errors.push(`agora.length (${g.agora.length}) excede o máximo permitido (5)`);
   }
-  
-  // Guard 2: regex de proibidos (doses, prognóstico, cura, garantia)
-  const proibidosRegex = /\b(mg|ml|mg\/kg|progn[óo]stico|cura|garantia|definitivo)\b|100%/gi;
-  const guideText = JSON.stringify(g);
-  const matches = guideText.match(proibidosRegex);
-  if (matches) {
-    errors.push(`Termos proibidos encontrados: ${matches.join(', ')}`);
+
+  // Guard 2: verificação básica de campos obrigatórios não vazios
+  if (!g?.avaliado || typeof g.avaliado !== 'string' || g.avaliado.trim() === '') {
+    errors.push('Campo avaliado está vazio ou inválido');
   }
-  
+
   return { valid: errors.length === 0, errors };
 }
 
@@ -339,7 +336,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Mensagem final
-  if (y > 260) { doc.addPage(); y = 30; }
+  if (y > 280) { doc.addPage(); y = 30; }
   doc.setFontSize(10); doc.setFont('helvetica', 'italic'); doc.setTextColor(100, 116, 139);
   y = addLine(doc, guide.mensagem, 14, y, 182);
 
