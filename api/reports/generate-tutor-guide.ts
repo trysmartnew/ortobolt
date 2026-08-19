@@ -7,9 +7,9 @@ import { z } from 'zod';
 
 export const tutorGuideSchema = z.object({
   avaliado: z.string().max(400),
-  achados: z.array(z.string().max(300)).min(1).max(4),
+  achados: z.array(z.string().max(300)).min(0).max(4),
   significado: z.string().max(400),
-  agora: z.array(z.string().max(300)).min(1).max(5),
+  agora: z.array(z.string().max(300)).min(0).max(5),
   proximos: z.array(z.string().max(300)).max(5).optional(),
   atencao: z.array(z.string().max(300)).max(5).optional(),
   mensagem: z.string().max(300),
