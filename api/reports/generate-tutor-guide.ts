@@ -6,13 +6,13 @@ import { supabaseAdmin } from '../lib/supabase-admin.js';
 import { z } from 'zod';
 
 export const tutorGuideSchema = z.object({
-  avaliado: z.string().max(400),
-  achados: z.array(z.string().max(300)).min(0).max(4),
-  significado: z.string().max(400),
-  agora: z.array(z.string().max(300)).min(0).max(5),
-  proximos: z.array(z.string().max(300)).max(5).optional(),
-  atencao: z.array(z.string().max(300)).max(5).optional(),
-  mensagem: z.string().max(300),
+  avaliado: z.preprocess((v) => (typeof v === 'string' && v.trim() !== '') ? v.trim() : undefined, z.string().max(400).default("Exame radiográfico realizado pela equipe veterinária.")),
+  achados: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string().max(300)).max(4)),
+  significado: z.preprocess((v) => (typeof v === 'string' && v.trim() !== '') ? v.trim() : undefined, z.string().max(400).default("A equipe veterinária está avaliando o caso.")),
+  agora: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string().max(300)).max(5)),
+  proximos: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string().max(300)).max(5)).optional(),
+  atencao: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string().max(300)).max(5)).optional(),
+  mensagem: z.preprocess((v) => (typeof v === 'string' && v.trim() !== '') ? v.trim() : undefined, z.string().max(300).default("Siga as orientações da equipe veterinária.")),
 });
 
 export type TutorGuide = z.infer<typeof tutorGuideSchema>;
@@ -230,11 +230,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('IA error, using fallback:', err);
   }
 
-  // 5. Valida com Zod
+  // 5. Valida e normaliza com Zod (Schema resiliente a nulos, strings vazias e tipos incorretos)
   const parsed = tutorGuideSchema.safeParse(guide);
   if (!parsed.success) {
     console.warn('Zod validation failed, using fallback:', parsed.error);
     guide = generateSafeFallback(aiAnalysis);
+  } else {
+    guide = parsed.data; // Usa os dados normalizados e com defaults seguros
   }
 
   // 6. Aplica guards
