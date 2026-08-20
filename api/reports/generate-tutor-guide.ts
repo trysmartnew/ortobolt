@@ -17,9 +17,6 @@ export const tutorGuideSchema = z.object({
 
 export type TutorGuide = z.infer<typeof tutorGuideSchema>;
 
-export function validateTutorGuide(
-  guide: unknown, 
-  source: { recommendations: string[]; riskFactors: any[] }
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   const g = guide as any;
@@ -100,7 +97,6 @@ ${riskFactors.map(rf => `- [${rf.severity}] ${rf.category}: ${rf.description}`).
 
 Gere a guia para o tutor em formato JSON válido.`;
 }
-
 
 function translateEnum(val: unknown, map: Record<string, string>): string {
   const v = String(val || '').toLowerCase().trim();
@@ -237,13 +233,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     guide = generateSafeFallback(aiAnalysis);
   } else {
     guide = parsed.data; // Usa os dados normalizados e com defaults seguros
-  }
-
-  // 6. Aplica guards
-  const validation = validateTutorGuide(guide, aiAnalysis);
-  if (!validation.valid) {
-    console.warn('Guard validation failed, using fallback:', validation.errors);
-    guide = generateSafeFallback(aiAnalysis);
   }
 
   // 7. Gera PDF server-side
