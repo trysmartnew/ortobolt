@@ -6,33 +6,18 @@ import { supabaseAdmin } from '../lib/supabase-admin.js';
 import { z } from 'zod';
 
 export const tutorGuideSchema = z.object({
-  avaliado: z.preprocess((v) => (typeof v === 'string' && v.trim() !== '') ? v.trim() : undefined, z.string().max(400).default("Exame radiográfico realizado pela equipe veterinária.")),
-  achados: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string().max(300)).max(4)),
-  significado: z.preprocess((v) => (typeof v === 'string' && v.trim() !== '') ? v.trim() : undefined, z.string().max(400).default("A equipe veterinária está avaliando o caso.")),
-  agora: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string().max(300)).max(5)),
-  proximos: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string().max(300)).max(5)).optional(),
-  atencao: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string().max(300)).max(5)).optional(),
-  mensagem: z.preprocess((v) => (typeof v === 'string' && v.trim() !== '') ? v.trim() : undefined, z.string().max(300).default("Siga as orientações da equipe veterinária.")),
+  avaliado: z.preprocess((v) => (typeof v === 'string' && v.trim() !== '') ? v.trim() : undefined, z.string().catch("Exame radiográfico realizado pela equipe veterinária.")),
+  achados: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string()).catch([])),
+  significado: z.preprocess((v) => (typeof v === 'string' && v.trim() !== '') ? v.trim() : undefined, z.string().catch("A equipe veterinária está avaliando o caso.")),
+  agora: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string()).catch([])),
+  proximos: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string()).catch([])).optional(),
+  atencao: z.preprocess((v) => Array.isArray(v) ? v : (typeof v === 'string' ? [v] : []), z.array(z.string()).catch([])).optional(),
+  mensagem: z.preprocess((v) => (typeof v === 'string' && v.trim() !== '') ? v.trim() : undefined, z.string().catch("Siga as orientações da equipe veterinária.")),
 });
 
 export type TutorGuide = z.infer<typeof tutorGuideSchema>;
 
-): { valid: boolean; errors: string[] } {
-  const errors: string[] = [];
-  const g = guide as any;
-  
-  // Guard 1: cardinalidade segura (máximo definido pelo schema Zod é 5)
-  if (Array.isArray(g?.agora) && g.agora.length > 5) {
-    errors.push(`agora.length (${g.agora.length}) excede o máximo permitido (5)`);
-  }
 
-  // Guard 2: verificação básica de campos obrigatórios não vazios
-  if (!g?.avaliado || typeof g.avaliado !== 'string' || g.avaliado.trim() === '') {
-    errors.push('Campo avaliado está vazio ou inválido');
-  }
-
-  return { valid: errors.length === 0, errors };
-}
 
 function sanitizeTerm(t: string): string {
   return t.replace(/\b(mg|ml|mg\/kg|progn[óo]stico|cura|garantia|definitivo)\b|100%/gi, '').replace(/\s+/g, ' ').trim();
@@ -227,9 +212,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // 5. Valida e normaliza com Zod (Schema resiliente a nulos, strings vazias e tipos incorretos)
-  const parsed = tutorGuideSchema.safeParse(guide);
+  const parsed = tutorGuideSchema.safeParse(guide || {});
   if (!parsed.success) {
-    console.warn('Zod validation failed, using fallback:', parsed.error);
+    console.warn('Zod validation failed, using fallback:', parsed.error.issues);
     guide = generateSafeFallback(aiAnalysis);
   } else {
     guide = parsed.data; // Usa os dados normalizados e com defaults seguros
