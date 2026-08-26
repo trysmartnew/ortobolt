@@ -57,27 +57,7 @@
   | 'patients' | 'patientDetail' | 'evolutionaryAnalysis' | 'alignmentAnalysis' | 'comparative' | 'help' | 'login';
 ```
 
-**`PAGE_MAP` (Mapeamento de Páginas para Componentes):**
-```typescript
-const PAGE_MAP = {
-  dashboard: DashboardPage,
-  chat: ChatPage,
-  analysis: AnalysisPage,
-  gallery: GalleryPage,
-  case: CasePage,
-  reports: ReportsPage,
-  settings: SettingsPage,
-  help: HelpPage,
-  notifications: NotificationsPage,
-  patients: PatientsPage,
-  patientDetail: PatientDetailPage,
-  evolutionaryAnalysis: EvolutionaryAnalysisPage,
-  alignmentAnalysis: AlignmentAnalysisPage,
-  comparative: ComparativeAnalysisPage,
-} as const;
-```
-
-**Regra `setCurrentPage`:** A função `setCurrentPage` persiste a página atual no `sessionStorage` sob a chave `vanguard-veterinary_page`, para sobreviver a recarregamentos (F5). A chave legada `ortobolt_page` é lida como fallback e removida automaticamente após migração.
+**Regra de Navegação:** A navegação é gerenciada pelo estado global da aplicação (`AppContext`), utilizando a função `setCurrentPage` para renderizar o componente correspondente. Não há um mapeamento estático de componentes (`PAGE_MAP`) no código-fonte atual.
 
 ## Páginas do Sistema
 
