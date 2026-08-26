@@ -212,12 +212,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // 5. Valida e normaliza com Zod (Schema resiliente a nulos, strings vazias e tipos incorretos)
-  const parsed = tutorGuideSchema.safeParse(guide || {});
+// Verifica se a IA retornou dados reais antes de validar
+const hasRealContent = guide && typeof guide === "object" && (guide.avaliado || (guide.achados && guide.achados.length > 0) || guide.significado || (guide.agora && guide.agora.length > 0));
+
+if (!hasRealContent) {
+  console.warn("IA retornou dados vazios ou incompletos, usando fallback completo");
+  guide = generateSafeFallback(aiAnalysis);
+} else {
+  const parsed = tutorGuideSchema.safeParse(guide);
   if (!parsed.success) {
-    console.warn('Zod validation failed, using fallback:', parsed.error.issues);
+    console.warn("Zod validation failed, using fallback:", parsed.error.issues);
     guide = generateSafeFallback(aiAnalysis);
   } else {
-    guide = parsed.data; // Usa os dados normalizados e com defaults seguros
+    guide = parsed.data;
+  }
+}
   }
 
   // 7. Gera PDF server-side
