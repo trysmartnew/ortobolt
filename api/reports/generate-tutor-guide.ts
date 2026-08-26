@@ -193,6 +193,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const data = await response.json();
     let content = data.choices?.[0]?.message?.content || data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log("IA raw response:", content.substring(0, 500));
     
     // Remove markdown code blocks se presentes
     content = content.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();

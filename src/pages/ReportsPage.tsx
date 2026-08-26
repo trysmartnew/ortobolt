@@ -434,41 +434,29 @@ export default function ReportsPage() {
 
     setGenerating('case');
     try {
-      const response = await authenticatedPost('/api/reports/generate-technical', {
-        caseId: selectedCase.id,
-        context,
-        clinicName,
-        clinicSubtitle,
-        clinicPhone: localStorage.getItem('vanguard-veterinary_pdf_clinic_phone') || '',
-        clinicAddress,
-        clinicStreet,
-        clinicDistrict,
-        clinicCity,
-        clinicCep,
-        clinicCnpj: localStorage.getItem('vanguard-veterinary_pdf_cnpj') || '',
-        userCrmv: localStorage.getItem('vanguard-veterinary_pdf_crmv') || '',
-      });
-      if (response.ok) {
+      try {
+        const response = await authenticatedPost('/api/reports/generate-tutor-guide', { caseId: selectedCase.id, clinicName, clinicSubtitle });
+        if (!response.ok) {
+          throw new Error(`API retornou status ${response.status}`);
+        }
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `laudo-tecnico-${selectedCase.id}.pdf`;
+        a.download = `guia-tutor-${selectedCase.id}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-        addToast('Laudo técnico gerado com sucesso.', 'success');
-      } else {
-        addToast('Erro ao gerar laudo técnico.', 'error');
+        addToast('Guia para o tutor gerado com sucesso.', 'success');
+      } catch (err) {
+        if (err instanceof Error && err.message === 'SESSION_EXPIRED') {
+          addToast('Sessão expirada. Faça login novamente.', 'error');
+          return;
+        }
+        console.error("API de guia para tutor falhou:", err);
+        addToast("Erro ao gerar guia. Tente novamente.", "error");
       }
-    } catch (err) {
-      if (err instanceof Error && err.message === 'SESSION_EXPIRED') {
-        addToast('Sessão expirada. Faça login novamente.', 'error');
-        return;
-      }
-      console.error(err);
-      addToast('Erro ao gerar laudo.', 'error');
     } finally {
       setGenerating(null);
     }
