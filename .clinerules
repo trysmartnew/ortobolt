@@ -1,21 +1,69 @@
 # OrtoBolt - AI Agent Constraints & Quota Optimization Rules
 
-## 🚨 CRITICAL: RPM/TPM Rate Limit Protection
-To prevent "429 Too Many Requests" and optimize Google AI Studio quota usage, you MUST strictly adhere to the following execution rules:
+## CRITICAL: RPM/TPM Rate Limit Protection
+To prevent "429 Too Many Requests" and optimize quota usage, you MUST strictly adhere to the following execution rules:
 
 ### 1. Batch Processing & Thought Before Action
-- **No Chain-Tooling:** Never call a tool immediately after another tool without a consolidated plan. Group your file reads and file edits into the fewest steps possible.
-- **Analyze First:** Before reading a file, clearly state *why* you are reading it. If you need to check multiple files, request them sequentially in a single thought block or use specific paths. Do not search the entire directory blindly.
+- No Chain-Tooling: Never call a tool immediately after another tool without a consolidated plan. Group your file reads and file edits into the fewest steps possible.
+- Analyze First: Before reading a file, clearly state why you are reading it. If you need to check multiple files, request them sequentially in a single thought block or use specific paths. Do not search the entire directory blindly.
 
 ### 2. Smart Compilation & Validation Throttling
-- **Single-Shot Builds:** Do NOT run `npm run build`, `npx tsc`, or test commands recursively after every small line edit. 
-- **The Rule of One:** Apply ALL planned edits to the files first. Only run the validation terminal command (`npx tsc --noEmit && npm run build`) ONCE per task phase, or when explicitly requested by the user.
+- Single-Shot Builds: Do NOT run npm run build, npx tsc, or test commands recursively after every small line edit.
+- The Rule of One: Apply ALL planned edits to the files first. Only run the validation terminal command (npx tsc --noEmit and npm run build) ONCE per task phase, or when explicitly requested by the user.
 
 ### 3. Preventing Loop Hallucinations
-- If a compilation error occurs, do not blindly attempt to fix it and re-run the build immediately. 
+- If a compilation error occurs, do not blindly attempt to fix it and re-run the build immediately.
 - Pause, analyze the error output completely, formulate the definitive fix, apply the fix, and only then re-run the validation.
 - If you fail to fix a bug after 2 attempts, STOP tool execution immediately and ask the user for guidance to avoid burning API quotas.
 
 ### 4. Context Preservation (Prompt Caching Optimization)
-- Do not request directory listings (`ls`, `find`) repeatedly. Rely on your existing cached knowledge of the workspace tree.
+- Do not request directory listings (ls, find) repeatedly. Rely on your existing cached knowledge of the workspace tree.
 - Keep modifications clean and targeted to maintain high prompt cache efficiency.
+
+---
+
+## Anti-Hallucination Rules (Zero Tolerance)
+
+### 5. No Invention
+- NEVER invent files, commands, APIs, functions, paths, dependencies, results, or outputs.
+- If information cannot be confirmed in the project, explicitly state it is unverified and request verification.
+- Differentiate clearly between verified facts and hypotheses.
+
+### 6. No Mocks or Placeholders
+- NO mocks, placeholders, fictitious data, or temporary implementations.
+- NO TODO/FIXME as a solution.
+
+### 7. Mandatory Pre-Modification Workflow
+Before ANY file modification:
+- Dry-run (without altering files) to validate existence, patterns, and context.
+- exact-match-count: abort if occurrence count differs from expected (usually 1).
+- Backup .bkp mandatory before any write.
+
+### 8. PowerShell 7 Mandatory
+- Use Select-String instead of grep.
+- Use Copy-Item instead of cp.
+- Use single quotes whenever possible.
+- Do NOT assume Bash/Linux compatibility.
+
+### 9. Post-Modification Validation
+After ANY modification:
+- npx tsc --noEmit
+- npm run build
+- If any validation fails: STOP IMMEDIATELY, report the exact reason, do NOT propose assumption-based solutions.
+
+### 10. Deployment (NEVER use git add .)
+- git add specific-file.ts
+- git commit -m 'fix: clear and objective description'
+- git push origin main
+- NEVER commit: *.py, *.ps1, .bkp, audit .json files, root utility scripts.
+
+### 11. Canonical Paths (Pre-validated)
+- src/contexts/
+- src/services/supabase.ts
+- api/lib/verifySupabaseJwt.ts
+
+### 12. General Principle
+- Reproducible, auditable, minimal, and technically correct changes.
+- Prioritize precision over speed.
+- Small, isolated, easily reversible changes.
+- Never alter multiple areas in a single step when it hinders validation.

@@ -212,22 +212,98 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('IA error, using fallback:', err);
   }
 
-  // 5. Valida e normaliza com Zod (Schema resiliente a nulos, strings vazias e tipos incorretos)
-// Verifica se a IA retornou dados reais antes de validar
-const hasRealContent = guide && typeof guide === "object" && (guide.avaliado || (guide.achados && guide.achados.length > 0) || guide.significado || (guide.agora && guide.agora.length > 0));
-
-if (!hasRealContent) {
-  console.warn("IA retornou dados vazios ou incompletos, usando fallback completo");
-  guide = generateSafeFallback(aiAnalysis);
-} else {
+  // 5. Semantic Gateway: Validacao + Autocritica + Glossario
+  
+  const hasRealContent = guide && typeof guide === "object" && (guide.avaliado || (guide.achados && guide.achados.length > 0) || guide.significado || (guide.agora && guide.agora.length > 0));
+  
+  if (!hasRealContent) {
+    console.error("IA retornou dados vazios ou incompletos");
+    return res.status(500).json({ error: "Nao foi possivel gerar a guia. Tente novamente." });
+  }
+  
   const parsed = tutorGuideSchema.safeParse(guide);
   if (!parsed.success) {
-    console.warn("Zod validation failed, using fallback:", parsed.error.issues);
-    guide = generateSafeFallback(aiAnalysis);
-  } else {
-    guide = parsed.data;
+    console.error("Zod validation failed:", parsed.error.issues);
+    return res.status(500).json({ error: "Erro na validacao da guia. Tente novamente." });
   }
-}
+  
+  guide = parsed.data;
+  
+  // 5c. Gate local: detecta jargao veterinario
+  const guideText = JSON.stringify(guide);
+  const detectedJargon = detectJargon(guideText);
+  
+  if (detectedJargon.length > 0) {
+    console.log(`Jargao detectado: ${detectedJargon.join(', ')}`);
+    
+    // 5d. Autocritica dirigida: segunda chamada condicional
+    try {
+      const critiqueProtocol = process.env.VERCEL_URL?.startsWith('localhost') ? 'http' : 'https';
+      const critiqueHost = process.env.VERCEL_URL || 'localhost:3000';
+      const critiqueUrl = `${critiqueProtocol}://${critiqueHost}/api/ai`;
+      
+      const critiqueMessages = [
+        { role: 'system', content: TUTOR_GUIDE_SYSTEM_PROMPT },
+        { role: 'user', content: buildCritiquePrompt(guideText, detectedJargon) },
+      ];
+      
+      const critiqueResponse = await fetch(critiqueUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': req.headers.authorization || '',
+        },
+        body: JSON.stringify({
+          model: 'gemini-2.5-flash-lite',
+          messages: critiqueMessages,
+          max_tokens: 2000,
+          json_mode: true,
+        }),
+      });
+      
+      if (critiqueResponse.ok) {
+        const critiqueData = await critiqueResponse.json();
+        let critiqueContent = critiqueData.choices?.[0]?.message?.content || critiqueData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        console.log("IA critique response:", critiqueContent.substring(0, 500));
+        
+        critiqueContent = critiqueContent.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+        const critiqueMatch = critiqueContent.match(/\{[\s\S]*\}/);
+        
+        if (critiqueMatch) {
+          try {
+            const revisedGuide = JSON.parse(critiqueMatch[0]);
+            const revisedParsed = tutorGuideSchema.safeParse(revisedGuide);
+            if (revisedParsed.success) {
+              guide = revisedParsed.data;
+              console.log("Guide revised successfully after critique");
+            }
+          } catch (reviseErr) {
+            console.warn("Failed to parse revised guide:", reviseErr);
+          }
+        }
+      }
+    } catch (critiqueErr) {
+      console.warn("Critique call failed:", critiqueErr);
+    }
+  }
+  
+  // 5e. Glossario como rede de seguranca final
+  function applyGlossaryToGuide(g: TutorGuide): TutorGuide {
+    return {
+      ...g,
+      avaliado: applyGlossary(g.avaliado),
+      achados: g.achados.map(applyGlossary),
+      significado: applyGlossary(g.significado),
+      agora: g.agora.map(applyGlossary),
+      proximos: g.proximos ? g.proximos.map(applyGlossary) : [],
+      atencao: g.atencao ? g.atencao.map(applyGlossary) : [],
+      mensagem: applyGlossary(g.mensagem),
+    };
+  }
+  
+  guide = applyGlossaryToGuide(guide);
+  console.log("Glossary applied as final safety net");
+}}
   }
 
   // 7. Gera PDF server-side

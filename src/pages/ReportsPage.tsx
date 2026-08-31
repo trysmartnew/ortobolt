@@ -511,30 +511,9 @@ export default function ReportsPage() {
           addToast('Sessão expirada. Faça login novamente.', 'error');
           return;
         }
-        console.warn('API de guia para tutor não disponível, usando geração client-side.');
-        addToast('API não disponível. Gerando guia localmente...', 'info');
+        addToast('Não foi possível gerar a guia para o tutor. Tente novamente.', 'error');
+        return;
       }
-      const blob = await generateCaseReport(selectedCase, {
-        isTutorGuide: true,
-        logoUrl: logoPreview,
-        clinicName,
-        clinicSubtitle,
-        notes: filteredNotes,
-        responsibleName: user?.name || '',
-        responsibleCrmv: user?.crmv || '',
-      });
-      if (blob) {
-        await uploadAndPersistPdf(blob, selectedCase.id);
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `guia-tutor-${selectedCase.id}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }
-      addToast('Guia para o tutor gerado com sucesso.', 'success');
     } finally {
       setGenerating(null);
     }
