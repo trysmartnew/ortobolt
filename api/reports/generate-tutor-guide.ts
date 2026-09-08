@@ -31,9 +31,9 @@ export function generateSafeFallback(source: {
     avaliado: 'Exame radiográfico realizado pela equipe veterinária.',
     achados: ['Foram identificados achados que requerem avaliação adicional.'],
     significado: 'A equipe veterinária está avaliando o caso e fornecerá orientações específicas.',
-    agora: (source.recommendations.length ? source.recommendations.slice(0, 5) : ['Seguir as orientações da equipe veterinária.']).map(r => `Conforme recomendação da equipe: ${sanitizeTerm(r)}`),
+    agora: translateRecommendations(source.recommendations.length ? source.recommendations.slice(0, 5) : ['Seguir as orientações da equipe veterinária.']),
     proximos: ['Retornar para avaliação complementar conforme orientação veterinária.'],
-    atencao: source.riskFactors.slice(0, 3).map(rf => `Ponto de atenção: ${rf.description}`),
+    atencao: source.riskFactors.slice(0, 3).map(rf => `Ponto de atenção: ${translateRecommendations([String(rf.description || '')])[0]}`),
     mensagem: 'Siga as orientações da equipe veterinária e retorne conforme agendado.',
   };
 }
@@ -87,7 +87,9 @@ const ORTHOPEDIC_JARGON = Object.freeze([
   'osteotomia', 'artrodese', 'luxacao', 'displasia', 'fragmento', 'condilar',
   'epifise', 'diafise', 'metafise', 'patela', 'tibia', 'femur', 'ligamento',
   'menisco', 'osteossintese', 'fratura', 'implante', 'reabilitacao',
-  'analgesia', 'edema', 'callo osseo',
+  'analgesia', 'edema', 'callo osseo', 'craniocaudal', 'coxofemoral',
+  'projecao ortogonal', 'projeção ortogonal', 'tomografia', 'tc', 'tecidual',
+  'membro', 'articulacao', 'articulação', 'ósseo', 'osseo',
 ]);
 
 const ORTHOPEDIC_GLOSSARY: Readonly<Record<string, string>> = Object.freeze({
@@ -107,6 +109,21 @@ const ORTHOPEDIC_GLOSSARY: Readonly<Record<string, string>> = Object.freeze({
   analgesia: 'controle da dor',
   edema: 'inchaco causado por acumulo de liquido',
   'callo osseo': 'tecido de cicatrizacao que une os fragmentos de uma fratura',
+  craniocaudal: 'imagem feita de frente para trás',
+  coxofemoral: 'articulação entre o quadril e a coxa',
+  'projecao ortogonal': 'exames de imagem em ângulos diferentes',
+  'projeção ortogonal': 'exames de imagem em ângulos diferentes',
+  tomografia: 'exame de imagem mais detalhado',
+  tc: 'exame de imagem mais detalhado',
+  tecidual: 'dos tecidos do corpo',
+  membro: 'pata',
+  articulacao: 'junta do corpo',
+  articulação: 'junta do corpo',
+  epifise: 'extremidade do osso',
+  diafise: 'parte central do osso',
+  metafise: 'região entre a parte central e a extremidade do osso',
+  ósseo: 'do osso',
+  osseo: 'do osso',
 });
 
 function escapeRegexTerm(term: string): string {
@@ -142,8 +159,29 @@ Reescreva o texto substituindo os termos tecnicos listados por explicacoes simpl
 function applyGlossary(text: string): string {
   return text.replace(GLOSSARY_REGEX, (term) => {
     const explanation = ORTHOPEDIC_GLOSSARY[term.toLowerCase()];
-    return `${term.toLowerCase()} (${explanation})`;
+    return explanation;
   });
+}
+
+function translateRecommendations(recommendations: string[]): string[] {
+  return recommendations.map(recommendation => applyGlossary(sanitizeTerm(recommendation)));
+}
+
+function applyGenericFallback(guide: TutorGuide): TutorGuide {
+  const replaceIfContaminated = (text: string, fallback: string): string => (
+    detectJargon(text).length > 0 ? fallback : text
+  );
+
+  return {
+    ...guide,
+    avaliado: replaceIfContaminated(guide.avaliado, 'Exame realizado pela equipe veterinária.'),
+    achados: guide.achados.map(item => replaceIfContaminated(item, 'Foram identificados achados que requerem avaliação da equipe veterinária.')),
+    significado: replaceIfContaminated(guide.significado, 'A equipe veterinária explicará os achados e os próximos cuidados.'),
+    agora: guide.agora.map(item => replaceIfContaminated(item, 'Seguir as orientações da equipe veterinária.')),
+    proximos: guide.proximos?.map(item => replaceIfContaminated(item, 'Retornar para avaliação conforme orientação veterinária.')),
+    atencao: guide.atencao?.map(item => replaceIfContaminated(item, 'Observar o pet e procurar a equipe veterinária se houver piora.')),
+    mensagem: replaceIfContaminated(guide.mensagem, 'Siga as orientações da equipe veterinária e retorne conforme agendado.'),
+  };
 }
 
 function translateEnum(val: unknown, map: Record<string, string>): string {
@@ -339,6 +377,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const revisedParsed = tutorGuideSchema.safeParse(revisedGuide);
             if (revisedParsed.success) {
               guide = revisedParsed.data;
+              const revisedJargon = detectJargon(JSON.stringify(guide));
+              if (revisedJargon.length > 0) {
+                console.warn(`Jargao residual apos revisao: ${revisedJargon.join(', ')}`);
+                guide = applyGenericFallback(guide);
+              }
               console.log("Guide revised successfully after critique");
             }
           } catch (reviseErr) {
@@ -367,6 +410,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   
   guide = applyGlossaryToGuide(guide);
   console.log("Glossary applied as final safety net");
+
+  const finalJargon = detectJargon(JSON.stringify(guide));
+  if (finalJargon.length > 0) {
+    console.warn(`Jargao residual antes do PDF: ${finalJargon.join(', ')}`);
+    guide = applyGenericFallback(guide);
+  }
 
   // 7. Gera PDF server-side
   const { jsPDF } = await import('jspdf');
