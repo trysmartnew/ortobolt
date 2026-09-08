@@ -437,6 +437,11 @@ export default function ReportsPage() {
       try {
         const response = await authenticatedPost('/api/reports/generate-tutor-guide', { caseId: selectedCase.id, clinicName, clinicSubtitle });
         if (!response.ok) {
+          const errorBody = await response.json().catch(() => null);
+          console.error('API de guia para tutor retornou erro:', {
+            status: response.status,
+            body: errorBody,
+          });
           throw new Error(`API retornou status ${response.status}`);
         }
         const blob = await response.blob();
@@ -506,6 +511,12 @@ export default function ReportsPage() {
           addToast('Guia para o tutor gerado com sucesso.', 'success');
           return;
         }
+        const errorBody = await response.json().catch(() => null);
+        console.error('API de guia para tutor retornou erro:', {
+          status: response.status,
+          body: errorBody,
+        });
+        addToast('Não foi possível gerar a guia para o tutor. Tente novamente.', 'error');
       } catch (err) {
         if (err instanceof Error && err.message === 'SESSION_EXPIRED') {
           addToast('Sessão expirada. Faça login novamente.', 'error');
