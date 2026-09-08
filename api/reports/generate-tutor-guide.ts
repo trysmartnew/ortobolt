@@ -83,6 +83,69 @@ ${riskFactors.map(rf => `- [${rf.severity}] ${rf.category}: ${rf.description}`).
 Gere a guia para o tutor em formato JSON válido.`;
 }
 
+const ORTHOPEDIC_JARGON = Object.freeze([
+  'osteotomia', 'artrodese', 'luxacao', 'displasia', 'fragmento', 'condilar',
+  'epifise', 'diafise', 'metafise', 'patela', 'tibia', 'femur', 'ligamento',
+  'menisco', 'osteossintese', 'fratura', 'implante', 'reabilitacao',
+  'analgesia', 'edema', 'callo osseo',
+]);
+
+const ORTHOPEDIC_GLOSSARY: Readonly<Record<string, string>> = Object.freeze({
+  osteotomia: 'procedimento cirurgico para cortar e realinhar o osso',
+  artrodese: 'fusao cirurgica de uma articulacao para eliminar a dor e estabilizar',
+  luxacao: 'deslocamento de um osso de sua posicao normal na articulacao',
+  displasia: 'desenvolvimento anormal de uma articulacao ou tecido',
+  fragmento: 'pedaco pequeno de osso ou tecido',
+  condilar: 'relativo a parte arredondada da extremidade de um osso',
+  patela: 'rotula do joelho',
+  ligamento: 'tecido que conecta os ossos e estabiliza a articulacao',
+  menisco: 'amortecedor de cartilagem dentro do joelho',
+  osteossintese: 'cirurgia para unir fragmentos osseos com implantes',
+  fratura: 'quebra ou rachadura em um osso',
+  implante: 'dispositivo colocado cirurgicamente para estabilizar o osso',
+  reabilitacao: 'processo de recuperacao da funcao e mobilidade',
+  analgesia: 'controle da dor',
+  edema: 'inchaco causado por acumulo de liquido',
+  'callo osseo': 'tecido de cicatrizacao que une os fragmentos de uma fratura',
+});
+
+function escapeRegexTerm(term: string): string {
+  return term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+const JARGON_REGEX = new RegExp(
+  `\\b(?:${ORTHOPEDIC_JARGON.map(escapeRegexTerm).join('|')})\\b`,
+  'gi'
+);
+
+const GLOSSARY_REGEX = new RegExp(
+  `\\b(?:${Object.keys(ORTHOPEDIC_GLOSSARY).map(escapeRegexTerm).join('|')})\\b`,
+  'gi'
+);
+
+function detectJargon(text: string): string[] {
+  return Array.from(new Set((text.match(JARGON_REGEX) ?? []).map(term => term.toLowerCase())));
+}
+
+function buildCritiquePrompt(originalText: string, detectedJargon: string[]): string {
+  return `REESCRITA PARA O TUTOR:
+
+Texto original:
+${originalText}
+
+Termos tecnicos detectados:
+${detectedJargon.join(', ')}
+
+Reescreva o texto substituindo os termos tecnicos listados por explicacoes simples e acolhedoras, mantendo a precisao clinica e usando apenas as informacoes do texto original. Retorne somente o JSON valido no formato solicitado.`;
+}
+
+function applyGlossary(text: string): string {
+  return text.replace(GLOSSARY_REGEX, (term) => {
+    const explanation = ORTHOPEDIC_GLOSSARY[term.toLowerCase()];
+    return `${term.toLowerCase()} (${explanation})`;
+  });
+}
+
 function translateEnum(val: unknown, map: Record<string, string>): string {
   const v = String(val || '').toLowerCase().trim();
   return map[v] || String(val || '');
@@ -303,8 +366,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   
   guide = applyGlossaryToGuide(guide);
   console.log("Glossary applied as final safety net");
-}}
-  }
 
   // 7. Gera PDF server-side
   const { jsPDF } = await import('jspdf');
