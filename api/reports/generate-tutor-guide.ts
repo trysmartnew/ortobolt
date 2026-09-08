@@ -281,13 +281,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   
   if (!hasRealContent) {
     console.error("IA retornou dados vazios ou incompletos");
-    return res.status(500).json({ error: "Nao foi possivel gerar a guia. Tente novamente." });
+    guide = generateSafeFallback(aiAnalysis);
   }
   
-  const parsed = tutorGuideSchema.safeParse(guide);
+  let parsed = tutorGuideSchema.safeParse(guide);
   if (!parsed.success) {
     console.error("Zod validation failed:", parsed.error.issues);
-    return res.status(500).json({ error: "Erro na validacao da guia. Tente novamente." });
+    guide = generateSafeFallback(aiAnalysis);
+    parsed = tutorGuideSchema.safeParse(guide);
   }
   
   guide = parsed.data;
